@@ -5,8 +5,8 @@
 # hlsearch on (H) or off (h):
 ~H
 # Command Line History (newest to oldest):
-:q!
 :wq
+:q!
 :q
 
 # Search String History (newest to oldest):
@@ -20,12 +20,16 @@
 	
 
 # File marks:
-'0  1  0  /tmp/cvs8DX3pR
-'1  1  30  ~/.cvspass
-'2  20  43  ~/.bashrc
-'3  21  3  ~/.bashrc
+'0  1  3  /tmp/cvsXIPh7k
+'1  1  0  /tmp/cvs8DX3pR
+'2  1  30  ~/.cvspass
+'3  20  43  ~/.bashrc
+'4  21  3  ~/.bashrc
 
 # History of marks within files (newest to oldest):
+
+> /tmp/cvsXIPh7k
+	"	1	3
 
 > /tmp/cvs8DX3pR
 	"	1	0
