@@ -1,0 +1,72 @@
+#$MTIMFH
+#$-:Image Map file created by Map THIS!
+#$-:Map THIS! free image map editor by Todd C. Wilson
+#$-:Please do not edit lines starting with "#$"
+#$VERSION:1.30
+#$TITLE:URC-9910New
+#$DATE:Thu Feb 17 12:17:31 2005
+#$PATH:C:\Backups\JP1\Images\
+#$GIF:URC-9910New.jpg
+#$FORMAT:ncsa
+#$EOH
+default 9910
+circle $01:TV  21,80 28,87
+circle $09:VCR  41,84 48,91
+circle $24:home_theater  61,87 68,94
+circle $21:DVD  81,83 88,90
+circle $23:AUX  102,80 109,87
+circle $11:SAT  32,100 39,107
+circle $12:CBL  51,103 58,110
+circle $22:RCVR/AMP  71,102 78,109
+circle $0A:CD  90,99 97,106
+circle $36:guide  29,130 36,137
+circle $14:menu  18,114 24,120
+circle $13:info  104,113 110,119
+circle $37:exit  94,130 101,137
+circle $03:POWER  62,120 81,126
+circle $35:SELECT  61,151 71,156
+circle $08:MUTE  25,202 31,208
+circle $38:PREV  98,201 104,207
+circle $04:VOL+  26,177 34,190
+circle $05:VOL-  44,194 51,204
+circle $06:CH+  97,178 105,191
+circle $07:CH-  81,194 88,204
+circle $15:1  31,221 41,228
+circle $16:2  62,220 72,227
+circle $17:3  94,220 104,227
+circle $19:4  31,239 41,246
+circle $1A:5  63,239 73,246
+circle $1B:6  94,238 104,245
+circle $1C:7  32,256 42,263
+circle $1D:8  63,255 73,262
+circle $1E:9  94,255 104,262
+circle $1F:0  63,273 73,280
+circle $2C:fav  62,198 68,204
+circle $3A:PIP  33,368 41,373
+circle $3C:Swap  75,367 83,372
+circle $3B:Move  54,368 62,373
+circle $2B:Com/Skip  95,367 103,372
+circle $18:ENTER  32,273 42,280
+circle $0B:rew  32,292 41,299
+circle $29:f.rew  32,323 41,330
+circle $0C:PLAY  63,292 72,299
+circle $0D:fwd  94,292 103,299
+circle $2A:f.fwd  95,322 104,329
+circle $20:TV/VID  94,273 104,280
+circle $30:sleep  32,338 40,343
+circle $2D:m1  53,338 61,343
+circle $2E:m2  74,338 82,343
+circle $2F:m3  95,338 103,343
+circle $25:l1  32,353 40,358
+circle $26:l2  54,353 62,358
+circle $27:l3  75,353 83,358
+circle $28:l4  95,352 103,357
+circle $0F:PAUSE  79,307 88,314
+circle $10:rec  47,307 56,314
+circle $02:SET[Setup]  96,382 104,387
+circle $39:{LIGHT}  33,383 41,388
+circle $0E:stop  63,323 73,330
+circle $33:left  39,152 45,158
+circle $34:right  83,152 89,158
+circle $31:up  61,135 67,141
+circle $32:down  61,167 67,173

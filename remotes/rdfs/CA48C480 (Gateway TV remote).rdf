@@ -1,0 +1,133 @@
+[General]
+Name=Gateway
+EepromSize=$800
+AdvCodeAddr=$020..$0FF
+UpgradeAddr=$100..$3FF
+LearnedAddr=$400..$7FD
+Processor=S3C80
+RAMAddr=$8000
+RDFSync=3
+ImageMap=Outlaw-Audio.map
+
+[SpecialProtocols]
+Multiplex=01FE
+
+[Settings]
+VPT Device=$01f.7.4.1.0 DeviceButtons
+VPT Status=$01f.3.1.0.0 (Off;On)
+TV Lock=$01d.0.1.1.0 (On;Off)
+TV2  Lock=$01d.1.1.1.0 (On;Off)
+VCR Lock=$01d.2.1.1.0 (On;Off)
+DVD Lock=$01d.3.1.0.0 (On;Off)
+AMP Lock=$01d.4.1.1.0 (On;Off)
+AUX Lock=$01d.5.1.1.0 (On;Off)
+CD  Lock=$01d.6.1.1.0 (On;Off)
+CBL Lock=$01d.7.1.0.0 (On;Off)
+
+[Checksums]
+^$000:$002..$7FD
+
+[DeviceTypes]
+CBL/SAT  = 0, $00
+TV       = 0, $01
+VCR      = 0, $02
+AUDIO    = 1, $03
+OEM      = 2, $04
+
+[DeviceTypeAliases]
+CBL/SAT	= Cable,SAT,Video Acc
+TV	= TV
+VCR	= VCR,DVD,Tape,Laserdisc
+AUDIO	= CD,Tuner,DAT,Home Auto,Misc Audio,Phono,Amp
+OEM	= OEM Mode
+
+[DeviceButtons]
+TV	= $00A $00B
+TV2	= $00C $00D
+VCR	= $00E $00F
+DVD	= $010 $011
+AMP	= $012 $013
+AUX	= $014 $015
+CD	= $016 $017
+CBL	= $018 $019
+
+[Buttons]
+TV2,
+Setup,
+POWER,
+"vol up":VOL+,
+"vol down":VOL-,
+"channel up":CH+,
+"channel down":CH-,
+MUTE,
+TV,
+VCR,
+"rewind":REW{Position},
+"play":PLAY{PIP},
+"fast fwd":FWD{Swap},
+"Stop":STOP{Style},
+"pause":PAUSE{Source},
+"record":REC{CC},
+DVD,
+"enter":100/ENTER,
+"prev ch":LAST,
+"SELECT":OK,
+1,
+2,
+3,
+INPUT,
+4,
+5,
+6,
+7,
+8,
+9,
+0,
+"display":INFO,
+AMP,
+CBL/SAT,
+"exit":EXIT,
+pip_size-,
+pip_size+,
+pip_ch-,
+MENU,
+SLEEP,
+CD,
+AUX,
+pip_ch+,
+"guide":WIDE{Guide},
+zoom,
+freeze,
+pip_scan,
+audio,
+"up arrow":UP,
+"down arrow":DOWN,
+"left arrow":LEFT,
+"right arrow":RIGHT,
+tv,
+comp,
+pc,
+av
+
+
+
+[ButtonMaps]
+0 = ($1f, $15, $16, $17, $19, $1a, $1b, $1c, $1d, $1e), ($04, $05, $08), ($06, $07), 
+     $03, $12, $13, $28, $27, $31, $32, $33, $34, $23, $14, $20, $2c, $18, $2b, $24, $25, $26, $0c, $0f, $0b, $0d, $0e, $10
+1 = ($1f, $15, $16, $17, $19, $1a, $1b, $1c, $1d, $1e), ($04, $05, $08), ($06, $07), 
+     $03, $12, $13, $28, $27, $31, $32, $33, $34, $2b, $23, $14, $20, $2c, $18, $0c, $0f, $0b, $0d, $0e, $10
+2 = ($1f, $15, $16, $17, $19, $1a, $1b, $1c, $1d, $1e), ($04, $05, $08), ($06, $07), 
+     $03, $12, $13, $28, $27, $31, $32, $33, $34, $23, $14, $20, $2c, $18, $0c, $0f, $0b, $0d, $0e, $10, $24, $25, $26, $2b, $2d, $2e, $2f, $30, $35, $36, $37, $38, $39, $3a, $3b, $3c
+
+[DigitMaps]
+72  53 94 92 03  90 44 86 21 11 87 58 46 10 83 01
+126 23 81 16 127 34 32 75 33 30 29 03 80 64 91 130
+128 129 
+
+[Protocols]
+0000, 0002, 0006, 000C, 0014, 0015, 001C, 001F, 0022, 0027, 
+0029, 0034, 003A, 003F, 0045, 0058, 005A, 005C, 005D, 005E, 
+005F, 0060, 0061, 0065, 006A, 0073, 007E, 0092, 009C, 009E, 
+00A4, 00AF, 00B6, 00C4, 00C9, 00CA, 00CD, 00CE, 00DE, 00E2, 
+00E3, 00E8, 00F2, 00F5, 00F8, 010F, 0111, 0114, 0125, 0171, 
+0184

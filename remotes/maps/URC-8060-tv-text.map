@@ -1,0 +1,51 @@
+#$MTIMFH
+#$-:Image Map file created by Map THIS!
+#$-:Map THIS! free image map editor by Todd C. Wilson
+#$-:Please do not edit lines starting with "#$"
+#$VERSION:1.30
+#$TITLE:URC-8060
+#$AUTHOR:KUPAKAI
+#$DATE:Sun May 27 12:39:21 2007
+#$PATH:C:\Archive\JP1\NEW IMAGES\8060\
+#$GIF:URC-8060-tv-text.jpg
+#$FORMAT:ncsa
+#$EOH
+default URC-8060
+rect M4 110,449 123,462
+rect M3 83,449 96,462
+rect M2 55,449 68,462
+rect M1 27,449 41,462
+rect TELETEXT-INDEX 96,377 127,398
+rect TELETEXT-OFF 60,379 91,400
+rect TELETEXT-MIX 23,377 54,398
+rect TELETEXT-HOLD 96,352 127,373
+rect TELETEXT 60,356 91,377
+rect TELETEXT-EXPAND 23,352 54,373
+rect 3 101,103 119,121
+rect 2 67,103 85,121
+rect 1 33,103 52,121
+rect 0 67,166 85,184
+rect 9 101,143 119,162
+rect 8 67,143 85,162
+rect 7 33,143 52,162
+rect 6 101,124 119,142
+rect 5 67,124 85,142
+rect 4 33,124 52,142
+rect DVD 100,20 124,43
+rect VCR 74,20 98,43
+rect TV 48,20 72,43
+rect CD 100,44 124,66
+rect AUD 74,44 98,66
+rect SAT/CBL 48,44 72,66
+circle MAGIC[SETUP]  42,85 55,98
+circle POWER  108,85 121,98
+circle SCROLL  76,84 90,93
+circle CH+  32,208 44,220
+circle CH-  32,238 44,250
+circle VOL+  119,208 131,220
+circle VOL-  119,238 131,250
+circle RED  37,409 47,419
+circle GREEN  62,410 72,420
+circle BLUE  112,410 122,420
+circle YELLOW  88,410 98,420
+circle MUTE  76,223 91,232

@@ -1,0 +1,95 @@
+[General]
+Identification=Made in Korea
+Name=DirecTV Version 1
+EepromSize=$400
+AdvCodeAddr=$014..$0FB
+UpgradeAddr=$100..$3FC
+Processor=6805
+ProcessorVersion=RC16/18
+MaxProtocolLength=128
+DevComb=,$F5D,$10FD,$F40,,$66,$100
+Shift=$80,shift
+XShift=$C0,shift-alt
+RDFSync=3
+ImageMap=DirecTV.map
+
+[SpecialProtocols]
+Multiplex=01FE
+
+[Settings]
+VPT Device=$012.7.8.1.0 DeviceButtons
+VPT Status=$013.3.1.0.0 (Off;On)
+
+#second signature = "DTV0"
+[FixedData]
+$0FC= $44 $54 $56 $30
+
+[Checksums]
+^$000:$002..$3FC
+
+[DeviceTypes]
+CBL/SAT	 = 0
+TV	 = 1
+VCR/DVD	 = 2
+Audio	 = 3
+
+[DeviceTypeAliases]
+CBL/SAT	= Cable,SAT,Video Acc
+TV	= TV
+VCR/DVD	= VCR,DVD,Tape,Laserdisc,PVR
+Audio	= CD,Tuner,DAT,Home Auto,Misc Audio,Phono,Amp
+
+[DeviceButtons]
+DirecTV	= $00A $006 $00E
+TV	= $00B $007 $00F
+VCR	= $00C $008 $010
+AUX	= $00D $009 $011
+
+[Buttons]
+setup=$02,
+DirecTV=$18,TV=$01,VCR=$0A,AUX=$09,
+power=$03,TV/VCR=$38,
+"vol up":vol+=$04,"vol down":vol-=$05,mute=$08,
+"channel up":ch+/page+=$06,"channel down":ch-/page-=$07,
+1=$15,2=$16,3=$17,4=$19,5=$1A,6=$1B,7=$1C,8=$1D,9=$1E,0=$1F,
+enter:"enter/alt.audio"=$11,
+"prev ch":"prev ch/back"=$12,
+rewind=$0B,play=$0C,"fast fwd":"fast fwd"=$0D,stop=$0E,pause:"pause (VCR)"=$0F,record=$10,
+"up arrow":up=$31,"down arrow":down=$32,"left arrow":left=$33,"right arrow":right=$34,select:OK/select=$13,
+menu=$20,display:info=$21,guide=$22,"+100":help=$2D,exit:clear=$29,
+"fav/scan":favorite=$25,
+"next track":"page up"=$2B,
+"prev track":"page down"=$2C,
+"shift-left":"page up 2"=$2A,
+"shift-right":"page down 2"=$2E,
+"surround":enter=$2F,
+slow:"pause (DTV)"=$14,
+rear:PPV=$23,center:P=$24,x2:diamond=$30,
+"slow+":day+=$27,"slow-":day-=$28,
+macro1:F1=$35,macro2:F2=$36,macro3:F3=$37,
+phantom1:button38=$26,
+phantom2:button60=$3C
+
+[ButtonMaps]
+0 = ($1F, $15, $16, $17, $19, $1A, $1B, $1C, $1D, $1E), ($04, $05, $08), ($06, $07),
+    $03, $13, $2D, $21, $29, $2A, $2B, $2C, $14, $22, $20, $26, $25, $12, $0C, $0F,
+    $0B, $0D, $0E, $10, $27, $28, $E4, $E5, $E6, $E7, $E8, $E9, $EA, $EB, $EC, $ED,
+    $C2, $C3, $C4, $C5, $C6, $C7, $C8, $C9, $CA, $CB, $CC, $CD, $CE, $CF, $D0, $D1,
+    $D2, $FC, $D3, $D4, $D5, $D6, $D7, $D8, $D9, $DA, $DB, $DC, $DD, $DE, $DF, $E0,
+    $E1, $E2, $E3
+1 = ($1F, $15, $16, $17, $19, $1A, $1B, $1C, $1D, $1E), ($04, $05, $08), ($06, $07),
+    $03, $14, $13, $2D, $29, $2A, $2B, $2C, $22, $25, $21, $E4
+2 = ($1F, $15, $16, $17, $19, $1A, $1B, $1C, $1D, $1E), ($04, $05, $08), ($06, $07),
+    $03, $13, $2D, $29, $2A, $2B, $2C, $14, $22, $25, $21, $0C, $0B, $0D, $10, $0F,
+    $0E, $28, $27, $E4
+3 = ($1F, $15, $16, $17, $19, $1A, $1B, $1C, $1D, $1E), ($04, $05, $08), ($06, $07),
+    $03, $2D, $0C, $0B, $0D, $10, $0F, $0E, $28, $27
+
+[DigitMaps]
+92 53 90 94 21 46 29 11 01 86 34 32 75 33 30 80 64 91
+
+[Protocols]
+0000, 000C, 0014, 001C, 001F, 0022, 0027:old, 002D, 0034, 0058,
+005A, 005C, 005D, 005E:2, 005F, 0065, 006A, 0073, 007E:2, 0092,
+009C, 009E, 00AF, 00B6, 00C9, 00CA, 00CD, 00DE, 00E2, 00E8,
+00F2, 00F8:3, 0111, 0114

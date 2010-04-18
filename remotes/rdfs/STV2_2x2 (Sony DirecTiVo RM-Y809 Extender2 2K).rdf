@@ -1,0 +1,145 @@
+[General]
+Name=Sony DirecTiVo RM-Y809 (URC-9020B00) Extender 2 (2K)
+EepromSize=$800
+AdvCodeAddr=$500..$78C
+UpgradeAddr=$100..$4FF
+PowerButtons=$01,$02
+Processor=S3C80
+RAMAddr=$FF00
+DevComb=$74,$F37,$983,,$83EF,$9E0
+RDFSync=3
+ImageMap=SonyTiVoRMT-Y809.map
+XShift=$C0
+
+[SpecialProtocols]
+DSM=01FC
+LDKP=01F9
+Multiplex=01FE
+Pause=01FB
+ToadTog=0181
+
+[Extender] 
+DeviceSetup=SAT/1800,ToadTog
+DeviceSetup=TV/1106,LDKP
+DeviceSetup=TV/1104,Pause
+DeviceSetup=TV/1103,DSM
+DeviceSetup=TV/1101,Multiplexer
+
+[Settings]
+V Device=$07E6.7.8.1.0 DeviceButtons
+O Device=$07E7.7.8.1.0 DeviceButtons
+Shift Button Keycode=$07CB.7.8.1.0
+Alt Shift Button Keycode=$07D0.7.8.1.0
+Alt Shift=$07D5.6.1.0.1 (Xshift;Ordinary)
+Autoexec Macro Keycode=$078C.7.8.0.0
+
+[Checksums]
+^$000:$002..$3FC
+
+[FixedData]
+
+[DeviceTypes]
+TV	= 0
+RCVR	= 0
+SAT	= 1
+
+[DeviceTypeAliases]
+TV   = TV
+RCVR = Tuner,Amp
+SAT  = Cable,VCR,CD,DVD,SAT,Tape,Laserdisc,DAT,Home Auto,Misc Audio,Phono,Video Acc,OEM Mode
+
+[DeviceButtons]
+TV	= $7E8 $7E9
+TiVo	= $7EA $7EB
+CBL	= $7EC $7ED
+VCR	= $7EE $7EF
+CD	= $7F0 $7F1
+DVD	= $7F2 $7F3
+AUX1	= $7F4 $7F5
+AUX2	= $7F6 $7F7
+AUX3	= $7F8 $7F9
+AUX4	= $7FA $7FB
+AUX5	= $7FC $7FD
+AUX6	= $7FE $7FF
+
+[Buttons]
+TV_Power=$01,
+SAT_Power=$02,
+Guide=$03,
+"vol up":Vol+=$04,
+"vol down":Vol-=$05,
+"channel up":Ch+{Page+}=$06,
+"channel down":Ch-{Page-}=$07,
+"shift-right":List=$08,
+"pip freeze":TiVo=$09,
+"mute":Muting=$0A,
+"rewind":Back=$0B,
+Play=$0C,
+"fast fwd":Fwd=$0D,
+Slow=$0E,
+Pause=$0F,
+record:Rec_On/Off=$10,
+exit:Clear=$11,
+enter:Enter{Jump}=$12,
+"slow+":ThumbsUp=$13,
+"slow-":ThumbsDown=$14,
+1=$15,
+2=$16,
+3=$17,
+4=$19,
+5=$1A,
+6=$1B,
+7=$1C,
+8=$1D,
+9=$1E,
+0=$1F,
+"next track":Advance=$18,
+"prev track":Replay=$20,
+"up arrow":Up=$21,
+"down arrow":Down=$22,
+"left arrow":Left=$23,
+"right arrow":Right=$24,
+Select=$25,
+"tv/vcr":TV/Video=$26,
+"shift-left":LiveTV=$27,
+Display=$28,
+Menu=$2A,
+"+100":Delimiter=$2B,
+rear:Phantom0=$29,
+Phantom1=$3A, Phantom2=$3B, Phantom3=$3C, Phantom4=$3D, DiscreteON=$3E, DiscreteOFF=$3F
+X_TV=$5B:AllBind,V_TV,O_TV,
+X_TIVO,V_TIVO,O_TIVO,
+X_CBL,V_CBL,O_CBL,
+X_VCR,V_VCR,O_VCR,
+X_CD,V_CD,O_CD,
+X_DVD,V_DVD,O_DVD,
+X_AUX1,V_AUX1,O_AUX1,
+X_AUX2,V_AUX2,O_AUX2,
+X_AUX3,V_AUX3,O_AUX3,
+X_AUX4,V_AUX4,O_AUX4,
+X_AUX5,V_AUX5,O_AUX5,
+X_AUX6,V_AUX6,O_AUX6,
+X_Cancel
+ph4=$2A,ph5,ph6,ph7,ph8,ph9,
+phA,phB,phC,phD,phE,phF,phG,phH,phI,phJ
+
+
+[ButtonMaps]
+0 = ($1F, $15, $16, $17, $19, $1A, $1B, $1C, $1D, $1E), ($04, $05, $0A),
+    ($06, $07), $01, $12, $26, $2A, $27, $21, $22, $23, $24, $25, $28, $2B
+1 = ($1F, $15, $16, $17, $19, $1A, $1B, $1C, $1D, $1E), ($04, $05, $0A),
+    ($06, $07), $21, $22, $23, $24, $25, $12, $28, $27, $2A, $2B, $02,
+     $09, $13, $14, $10, $0C, $0F, $0D, $0B, $0E, $03, $20, $18, $11,
+     $08, $29
+
+[DigitMaps]
+032 086 142 094 027 033 143 101 021 090 092 109 034 029 038 012
+144 053 083 085 061 011
+
+[Protocols]
+0000, 0007, 000A, 000C, 000D, 000E, 0010, 0013, 0014, 0015, 
+0016, 0018, 001A, 001B, 001C, 0022, 002A, 002D, 0032, 0034, 
+0039, 003D, 0042, 0043, 0045, 0051, 0053, 0056, 005A, 005C, 
+005D, 005E, 005F, 0061, 0065, 0067, 006A, 006E, 0073, 0083, 
+0087, 0093, 009C, 009E, 00A5, 00AF, 00BB, 00C2, 00C9, 00CA, 
+00CD, 00D5, 00DB, 00E2, 00E8, 00F2, 00F8, 00FF

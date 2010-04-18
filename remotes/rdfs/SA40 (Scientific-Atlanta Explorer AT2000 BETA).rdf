@@ -1,0 +1,156 @@
+[General]
+Name=Scientific Atlanta Explorer AT2000 BETA
+EepromSize=$400
+AdvCodeAddr=$022..$0FB
+UpgradeAddr=$100..$3FE
+DevCodeOffset=14
+Processor=6805
+ProcessorVersion=RC16/18
+MaxProtocolLength=121
+DevComb=,$1331,$1531,$1314,,$66,$107
+RDFSync=3
+ImageMap=ScExplorer.map
+
+[SpecialProtocols]
+Multiplex=01FE
+
+[Settings] 
+Cable Setup Lock (996)=$013.0.1.1.1 (Off;On)
+VPT Device=$012.6.7.1.0 DeviceButtons 
+VPT Status=$012.7.1.0.0 (On;Off)
+AUX VPT Device=$015.6.7.0.0 DeviceButtons 
+AUX VPT Status=$015.7.1.1.0 (On;Off)
+VCR Keys Punch-Thru (999)=$016.0.1.1.0 (CBL;VCR)
+TV Channel Lock to CBL=$014.1.1.1.0 (Yes;No)
+VCR Channel Lock to CBL=$014.2.1.1.0 (Yes;No)
+AUX Channel Lock to CBL=$014.0.1.1.0 (Yes;No)
+Power on CBL=$014.7.1.0.0 (No;Yes)
+Power on TV=$014.6.1.0.0 (No;Yes)
+Power on VCR=$014.5.1.0.0 (No;Yes)
+Power on AUX=$014.4.1.0.0 (No;Yes)
+
+[Checksums]0
+^$000:$002..$3FE
+
+
+# EEPROM bytes not accounted for
+# 017
+# 018
+# 019
+# 01A
+# 01B
+# 01C
+# 01D
+# 01E
+# 01F
+# 020
+# 021
+
+# 2nd signature at FC-FF "SA40" 
+[FixedData] 
+$0FC = $53 $41 $34 $30
+
+[DeviceTypes]
+CBL   = 0
+TV    = 1
+VCR   = 2
+AUX   = 3
+
+[DeviceTypeAliases]
+CBL = Cable,SAT,Video Acc
+TV  = TV
+VCR = VCR,DVD,Tape,Laserdisc
+AUX = CD,Tuner,DAT,Home Auto,Misc Audio,Phono,Amp
+
+[DeviceButtons]
+CBL = $00A $006 $00E
+TV  = $00B $007 $00F
+VCR = $00C $008 $010
+AUX = $00D $009 $011
+
+[Buttons]
+CBL=$3E,
+TV=$3D,
+VCR=$3C,
+AUX=$3B,
+Power=$39,
+"vol up":VOL+=$2B,
+"vol down":VOL-=$23,
+Mute=$2A,
+"channel up":CH+=$26,
+"channel down":CH-=$25,
+0=$0B,
+1=$1A,
+2=$19,
+3=$1C,
+4=$1B,
+5=$11,
+6=$1D,
+7=$13,
+8=$12,
+9=$15,
+enter:"#/Enter"=$22,
+"prev ch":Last=$29,
+display:Info=$3A,
+"fav/scan":FAV=$2D,
+Menu=$1E,
+Guide=$33,
+"up arrow":Up=$31,
+"down arrow":Down=$2C,
+"left arrow":Left=$36,
+"right arrow":Right=$2E,
+Select=$35,
+Exit=$14,
+surround:A_Yellow_Triangle=$0D,
+input:B_Blue_Square=$21,
+"+100":C_Red_Circle=$24,
+"next track":"+/Next"=$01,
+"prev track":"-/Previous"=$34,
+sleep:"*/PPV"=$32,
+Play=$09,
+Pause=$04,
+Stop=$03,
+"fast fwd":FFwd=$0A,
+rewind:Rew=$0C,
+record:REC=$02,
+"tv/vcr":Bypass=$05,
+KeyCodeHex06=$06,
+KeyCodeHex07=$07,
+KeyCodeHex08=$08,
+KeyCodeHex0E=$0E,
+KeyCodeHex0F=$0F,
+KeyCodeHex10=$10,
+KeyCodeHex16=$16,
+KeyCodeHex17=$17,
+KeyCodeHex18=$18,
+KeyCodeHex1F=$1F,
+KeyCodeHex20=$20,
+KeyCodeHex27=$27,
+KeyCodeHex28=$28,
+KeyCodeHex2F=$2F,
+KeyCodeHex30=$30,
+KeyCodeHex37=$37,
+KeyCodeHex38=$38,
+KeyCodeHex3F=$3F
+
+[ButtonMaps]
+0 = ($0B, $1A, $19, $1C, $1B, $11, $1D, $13, $12, $15), ($2B, $23, $2A), ($26, $25),
+    $39, $29, $2D, $33, $14, $31, $2C, $36, $2E, $35, $3A, $1E, $34, $01, $05, $09,
+    $04, $0C, $0A, $03, $02, $0D, $21, $24, $32, $22
+1 = ($0B, $1A, $19, $1C, $1B, $11, $1D, $13, $12, $15), ($2B, $23, $2A), ($26, $25),
+    $39, $29, $2D, $14, $31, $2C, $36, $2E, $35, $3A, $1E, $05
+2 = ($0B, $1A, $19, $1C, $1B, $11, $1D, $13, $12, $15), ($2B, $23, $2A), ($26, $25),
+    $39, $29, $2D, $14, $31, $2C, $36, $2E, $35, $3A, $1E, $05, $09, $04, $0C, $0A,
+    $03, $02
+3 = ($0B, $1A, $19, $1C, $1B, $11, $1D, $13, $12, $15), ($2B, $23, $2A), ($26, $25),
+    $39, $29, $2D, $35, $3A, $05, $09, $04, $0C, $0A, $03, $02
+
+[DigitMaps]
+72 53 94 03 90 46 86 21 11 87 92 29 10 83 34 32 75 33 30 13 80 64 91
+
+[Protocols]
+0000, 000C, 0013, 0014, 001C, 001D, 001F, 0022, 0027, 002D,
+0034, 003F, 005A, 005C, 005D, 005E, 005F, 0060, 0061, 0065,
+006A, 0073, 0078, 007E:2, 008D, 0092, 009C, 009E, 00AF, 00B6,
+00BF, 00C4, 00C9, 00CA, 00CD, 00CE, 00DE, 00E2, 00E8, 00F8,
+0105, 0111

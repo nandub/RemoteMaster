@@ -1,0 +1,105 @@
+[General]
+Name=URC-7562-B01 6 Device One for All
+EepromSize=$800
+AdvCodeAddr=$022..$0FF
+UpgradeAddr=$100..$3FF
+LearnedAddr=$400..$7FD
+Processor=S3C80
+RAMAddr=$FF00
+RDFSync=3
+ImageMap=URC-7562.map
+XShift=$C0,Menu
+AdvCodeFormat=EFC
+EFCDigits=5
+
+[SpecialProtocols]
+Multiplex=01FE
+
+[Settings]
+VPT Master Status=$016.2.1.0.0 (Off;On)
+TV  VPT Status=$018.0.1.1.0 (Off;On)
+SAT VPT Status=$018.1.1.1.0 (Off;On)
+VCR VPT Status=$018.2.1.1.0 (Off;On)
+DVD VPT Status=$018.3.1.1.0 (Off;On)
+CD  VPT Status=$018.4.1.1.0 (Off;On)
+AUD VPT Status=$018.5.1.1.0 (Off;On)
+VPT Device=$017.2.3.0.0 DeviceButtons
+TV  Sleeptimer enable=$020.0.1.0.0 (Off;On)
+SAT Sleeptimer enable=$020.1.1.0.0 (Off;On)
+CD  Sleeptimer enable=$020.4.1.0.0 (Off;On)
+AUD Sleeptimer enable=$020.5.1.0.0 (Off;On)
+Home Theater PLAY group=$019.2.3.2.0 DeviceButtons
+Home Theater VOL. group=$01A.2.3.5.0 DeviceButtons
+Home Theater CHAN group=$01B.2.3.0.0 DeviceButtons
+Home Theater NUMS group=$01C.2.3.0.0 DeviceButtons
+Home Theater MENU group=$01D.2.3.1.0 DeviceButtons
+Home Theater POWER btn.=$01E.2.3.0.0 DeviceButtons
+
+[Checksums]
+^$000:$002..$7FD
+
+[FixedData]
+$01F = $04
+
+[DeviceTypes]
+TV        = 0
+Sat/Cable = 2
+VCR/DVD   = 1
+CD/Audio  = 3
+
+[DeviceTypeAliases]
+Sat/Cable = Cable,SAT,Video Acc
+TV        = TV
+VCR/DVD   = VCR,DVD,Tape,Laserdisc
+CD/Audio  = CD,Tuner,DAT,Home Auto,Misc Audio,Phono,Amp
+
+[DeviceButtons]
+TV	= $00A $00B
+SAT	= $00C $00D
+VCR	= $00E $00F
+DVD	= $010 $011
+CD	= $012 $013
+AUD	= $014 $015
+
+[Buttons]
+"setup":MAGIC[Setup]=$02, Menu=$20, Power=$03, SLEEP=$83,
+"theater":HOME_THEATER=$12,
+TV=$01, VCR=$0A, SAT=$09,
+CD=$11, AUD=$21, DVD=$22,
+1=$15, 2=$16, 3=$17,
+4=$19, 5=$1A, 6=$1B,
+7=$1C, 8=$1D, 9=$1E,
+0=$1F, +10{-/--}=$2F, AV{Exit_20}=$18, EXIT=$D8,
+"channel up":CH+{Bright+}=$06, "channel down":CH-{Bright-}=$07, BRIGHT+=$86, BRIGHT-=$87,
+"vol up":VOL+{Color+}=$04, "vol down":VOL-{Color-}=$05, COLOR+=$84, COLOR-=$85, "mute":MUTE{Select}=$08, Select=$C8,
+"up arrow":UP=$29, "down arrow":DOWN=$2A, "left arrow":LEFT=$2B, "right arrow":RIGHT=$2C,
+"rewind":REW{TextOn}=$0B, "play":PLAY{TextOff}=$0C, "pause":PAUSE{Hold}=$0F, "fast fwd":FFWD{Expand}=$0D,
+SP/LP{Red}=$14, "stop":STOP{Green}=$0E, "record":REC{Yellow}=$10, AUTO{Blue}=$13,
+A=$23, B=$24, C=$25, D=$26, E=$27, F=$28, G=$2D, H=$2E,
+Phantom01=$31, Phantom02=$32, Phantom03=$33, Phantom04=$35, Phantom05=$36, Phantom06=$37, Phantom07=$38,
+Phantom08=$39, Phantom09=$3A, Phantom10=$3B, Phantom11=$3C, Phantom12=$3D, Phantom13=$3E, Phantom14=$3F
+
+[ButtonMaps]
+0 = ($1F, $15, $16, $17, $19, $1A, $1B, $1C, $1D, $1E), ($04, $05, $08), ($06, $07),
+    $03, $18, $2F, $20, $29, $2A, $2B, $2C, $C8, $D8, $86, $87, $84, $85, $0C, $0B, $14, $0E, $10, $13, $0D, $0F, $83, $23, $24, $25, $26, $27, $28, $2D, $2E
+1 = ($1F, $15, $16, $17, $19, $1A, $1B, $1C, $1D, $1E), ($04, $05, $08), ($06, $07),
+    $03, $0C, $0F, $0B, $0D, $0E, $10, $18, $C8, $20, $29, $2A, $2B, $2C, $D8, $2F, $14, $13, $23, $24, $25, $26, $27, $28, $2D, $2E
+2 = ($1F, $15, $16, $17, $19, $1A, $1B, $1C, $1D, $1E), ($04, $05, $08), ($06, $07),
+    $03, $C8, $2F, $18, $20, $29, $2A, $2B, $2C, $D8, $0B, $0C, $0F, $0D, $14, $0E, $10, $13, $83, $23, $24, $25, $26, $27, $28, $2D, $2E
+3 = ($1F, $15, $16, $17, $19, $1A, $1B, $1C, $1D, $1E), ($04, $05, $08), ($06, $07),
+    $03, $2F, $18, $20, $0C, $0F, $0B, $0D, $0E, $10, $D8, $29, $2A, $2B, $2C, $C8, $14, $13, $83, $23, $24, $25, $26, $27, $28, $2D, $2E
+
+[DigitMaps]
+03 92 74 94 86 21 87 29 69 34 64 01 139 42 38 14
+32 43 37 95 999 140 12 75 71 33 85 26 59 53 999 46
+39 31 09 999 141 
+
+[Protocols]
+0002:5, 000B, 000D, 0011, 0013, 0014, 0018, 001A, 001C, 001D,
+001F:8, 0020, 0027:new, 002A, 002C, 0034, 003D, 003F, 0045, 004A,
+004B:7, 0058, 005A, 005C, 005D, 005E:2, 0064, 0065, 0066, 0068,
+006A, 0073, 0075, 007E:3, 0087, 008C, 0095, 0098, 009C, 009E,
+00A1, 00A5, 00A6, 00A8, 00AA, 00AB, 00AF, 00B0, 00B2, 00B6,
+00BD, 00C4, 00C9, 00CA, 00CC, 00CD:2, 00D4, 00D5, 00DE, 00E2,
+00E5, 00E8, 00EB, 00ED, 00F0, 00F3, 00F8:3, 0111, 0112, 011B:2,
+011E, 015E, 0160, 0173, 0176, 017E, 0182

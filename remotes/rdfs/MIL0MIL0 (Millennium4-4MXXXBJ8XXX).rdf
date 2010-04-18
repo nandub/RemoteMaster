@@ -1,0 +1,137 @@
+[General]
+Name=Millennium 4 4-Device (URC-4MXXXBJ8-XXX)
+Identification=Just below the JP1 pins on the PCB you can see M7, M6, M5 and M4. There are no components visible near the JP1 connector. FixedData of $13 at $019 is for Eeprom size of 1K. The three Macro keys are located just above the sliding cover, and may be labelled differently. Keys under the sliding cover may also be labelled differently. From left to right, top to bottom, these keys here are called: Rew, Play, FF, REC, Stop, Pause, Help/*, Day-, Day+, TV/VCR, Bypass, A, B, C.
+EepromSize=$400
+AdvCodeAddr=$01A..$0FF
+UpgradeAddr=$100..$3FC
+Processor=S3C80
+RAMAddr=$FF00
+DevComb=,$23A3,$30D1,,$74BF,$3136
+RDFSync=3
+ImageMap=Millennium4bj8.map
+
+[SpecialProtocols]
+UDSM=01FC
+Multiplex=01FE
+
+[Settings]
+VPT Status=$012.2.1.1.0 (Off;On)
+VPT Device=$013.7.8.1.0 DeviceButtons
+CBL uses VPT=$014.0.1.1.0 (No;Yes)
+TV uses VPT=$014.1.1.1.0 (No;Yes)
+VCR uses VPT=$014.2.1.1.0 (No;Yes)
+Channel Lock to CBL (996)=$012.3.1.1.0 (Off;On)
+CBL Setup Lock (997)=$015.0.1.1.1 (Off;On)
+
+# $019 = EEPROM size ($13 = 1K)
+[FixedData]
+$019 = $13
+
+[Checksums]
+^$000:$002..$3FC
+
+[DeviceTypes]
+Cable = 0
+TV    = 1
+VCR   = 2
+Audio = 3
+
+[DeviceTypeAliases]
+Cable = Cable,SAT,Video Acc
+TV    = TV
+VCR   = VCR,DVD,Tape,Laserdisc
+Audio = CD,Tuner,DAT,Home Auto,Misc Audio,Phono,Amp
+
+[DeviceButtons]
+CBL   = $00A $00B
+TV    = $00C $00D
+VCR   = $00E $00F
+AUDIO = $010 $011
+
+[Buttons]
+CBL=$09,
+TV=$01,
+VCR=$0A,
+AUDIO=$11,
+Setup=$02,
+Power=$03,
+"vol up":Vol+=$04,
+"vol down":Vol-=$05,
+Mute=$08,
+"channel up":Ch+=$06,
+"channel down":Ch-=$07,
+1=$15,
+2=$16,
+3=$17,
+4=$19,
+5=$1A,
+6=$1B,
+7=$1C,
+8=$1D,
+9=$1E,
+0=$1F,
+enter:Enter/Music=$12,
+"prev ch":Last=$13,
+"fav/scan":Fav=$21,
+"up arrow":Up=$31,
+"down arrow":Down=$32,
+"left arrow":Left=$33,
+"right arrow":Right=$34,
+select:OK=$14,
+"slow+":Lock=$24,
+Exit=$23,
+Guide=$2C,
+display:Info=$20,
+Menu=$27,
+"next track":Page+=$25,
+"prev track":Page-=$26,
+macro1:Macro_A=$29,
+macro2:Macro_B=$2A,
+macro3:Macro_C=$2B,
+rewind:Rew=$0B,
+Play=$0C,
+"fast fwd":FF=$0D,
+record:Rec=$10,
+Stop=$0E,
+Pause=$0F,
+"slow-":"Help/*"=$28,
+"shift-right":Day-=$2E,
+"shift-left":Day+=$2F,
+TV/VCR=$18,
+x2:Bypass=$2D,
+"pip freeze":A=$30,
+slow:B=$35,
+eject:C=$36,
+phantom6:DiscreteON=$3E,
+phantom7:DiscreteOFF=$3F,
+Phantom1=$22,
+Phantom2=$3C,
+Phantom3=$3D
+
+[MultiMacros]
+Macro_A=$016,
+Macro_B=$017,
+Macro_C=$018
+
+[ButtonMaps]
+0 = ($1F, $15, $16, $17, $19, $1A, $1B, $1C, $1D, $1E), ($04, $05, $08), ($06, $07),
+    $03, $32, $23, $2C, $33, $27, $25, $26, $34, $14, $31, $2D, $30, $35, $36, $2E,
+    $2F, $12, $21, $28, $20, $13, $18, $24, $0C, $0B, $0D, $0E, $0F, $10
+1 = ($1F, $15, $16, $17, $19, $1A, $1B, $1C, $1D, $1E), ($04, $05, $08), ($06, $07),
+    $03, $12, $13, $18
+2 = ($1F, $15, $16, $17, $19, $1A, $1B, $1C, $1D, $1E), ($04, $05, $08), ($06, $07),
+    $03, $32, $23, $0D, $2C, $33, $27, $0F, $0C, $10, $0B, $34, $14, $0E, $31, $12,
+    $13, $18
+3 = ($1F, $15, $16, $17, $19, $1A, $1B, $1C, $1D, $1E), ($04, $05, $08), ($06, $07),
+    $03, $0D, $0F, $0C, $10, $0B, $0E, $18
+
+[DigitMaps]
+53 94 72 90 92 11 46 16 01 29 21 32 33 34 86 75
+30 03 91 64 17 103 129 130
+
+[Protocols]
+0000, 0002:2, 0006, 000C, 000D, 0013, 0014, 001C, 0022, 0027,
+002D, 0034, 0045, 0058, 005A, 005C, 005D, 005E:2, 0060, 0065,
+006A, 0073, 007E:2, 0092, 009C, 009E, 00A4, 00AF, 00B6, 00C4,
+00C9, 00CA, 00CD, 00DE, 00E2, 00E3, 00E8, 00F2, 00F8:2, 010F,
+0111:2byte, 0114, 0171, 0184

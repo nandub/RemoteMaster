@@ -1,0 +1,75 @@
+#$MTIMFH
+#$-:Image Map file created by Map THIS!
+#$-:Map THIS! free image map editor by Todd C. Wilson
+#$-:Please do not edit lines starting with "#$"
+#$VERSION:1.30
+#$TITLE:15-21162117
+#$DATE:Tue Jul 05 10:25:26 2005
+#$PATH:C:\Software\JP1\Images\
+#$GIF:Motorola-DCP501R.jpg
+#$FORMAT:ncsa
+#$EOH
+default Motorola-DR501R
+circle VCR2  48,65 53,75
+circle CATV  30,46 35,56
+circle tape  69,62 74,72
+circle TV  108,47 113,57
+circle DVD/CD  49,39 54,49
+circle V1  89,66 94,76
+circle VCR1  29,73 34,83
+circle TRACK+  97,360 107,365
+circle page+  29,96 34,101
+circle exit  101,158 106,163
+circle help  36,157 41,162
+circle page-  109,96 114,101
+circle Power  69,32 75,43
+circle ok  68,131 75,138
+circle Mute  67,223 78,227
+circle VOL+  34,195 42,203
+circle VOL-  34,219 41,226
+circle Ch+  101,195 109,203
+circle Ch-  101,219 108,226
+circle 1  38,256 48,261
+circle 2  67,255 77,260
+circle 3  94,256 104,261
+circle 4  39,273 49,278
+circle 5  66,273 76,278
+circle 6  95,273 105,278
+circle 7  39,290 49,295
+circle 8  66,290 76,295
+circle 9  94,290 104,295
+circle 0  66,307 76,312
+circle Last  67,194 77,198
+circle night  38,307 48,312
+circle fav  67,208 77,212
+circle ENTER{Music}  94,308 104,313
+circle a  34,239 43,243
+circle FFWD{Tune+}  97,343 107,348
+circle repeat  76,377 84,381
+circle TRACK-  35,360 45,365
+circle REW{Tune-}  35,342 45,347
+circle audio_mode  97,392 105,396
+circle TV/VCR{Input/A-B}  34,376 42,380
+circle Setup  34,27 39,32
+circle lock  69,83 77,87
+circle V2  109,74 114,84
+circle Eject{Day-}  35,325 45,330
+circle pause  67,325 77,330
+circle Play{Day+}  97,326 107,331
+circle Record{FM_Mode}  66,342 76,347
+circle Disc_Skip  66,359 76,364
+circle shuffle  55,376 63,380
+circle tone  97,377 105,381
+circle prog  34,392 42,396
+circle clear  55,392 63,396
+circle angle  75,392 83,396
+circle am/fm  89,39 94,49
+circle guide  49,171 54,176
+circle menu  68,176 73,181
+circle Info  87,172 92,177
+circle up  69,113 76,120
+circle right  88,132 95,139
+circle left  49,132 56,139
+circle down  68,152 75,159
+circle b  67,238 76,242
+circle c  100,239 109,243

@@ -1,0 +1,141 @@
+[General]
+Name=6131nw PVR Remote 2K
+EepromSize=$800
+AdvCodeAddr=$01E..$0FF
+UpgradeAddr=$100..$7FD
+Processor=S3C80
+RAMAddr=$FF00
+RDFSync=3
+DevComb=,$AD0,$1782,,$75BF,$17E7,$100
+AdvCodeFormat=EFC
+ImageMap=URC-6131nw.map
+
+[SpecialProtocols]
+Multiplex=01FE
+
+[Settings]
+VPT Status=$01a.2.1.0.0 (Off;On)
+VPT Device=$01b.7.8.1.0 DeviceButtons
+CBL/SAT VPT=$01c.0.1.1.0 (Off;On)
+TV   VPT=$01c.1.1.1.0 (Off;On)
+PVR  VPT=$01c.2.1.1.0 (Off;On)
+VCR  VPT=$01c.3.1.0.0 (Off;On)
+DVD  VPT=$01c.4.1.1.0 (Off;On)
+AUD  VPT=$01c.5.1.0.0 (Off;On)
+dev7 VPT=$01c.6.1.0.0 (Off;On)
+dev8 VPT=$01c.7.1.0.0 (Off;On)
+
+[Checksums]
+^$000:$002..$3FC
+
+[FixedData]
+$01D = $03
+
+[DeviceTypes]
+CBL/SAT = 0
+TV      = 1
+VCR/DVD = 2
+AUD     = 2
+
+[DeviceTypeAliases]
+CBL/SAT = Cable, SAT, Video Acc
+TV      = TV
+VCR/DVD = VCR, DVD, Tape, Laserdisc, DAT, PVR
+AUD     = CD, Home Auto, Phono, Tuner, Misc Audio, Amp
+
+
+[DeviceButtons]
+CBL/SAT = $00A $00B
+TV      = $00C $00D
+PVR     = $00E $00F
+VCR     = $010 $011
+DVD     = $012 $013
+AUD     = $014 $015
+dev7    = $016 $017
+dev8    = $018 $019
+
+
+[Buttons]
+Power=$03,
+DVD=$11,
+PVR=$0A,
+TV=$01,
+CBL/SAT=$09,
+"prev track":Replay=$27,
+VCR=$39,
+AUD=$22,
+"next track":Advance=$29,
+dev7=$28,
+dev8=$38,
+Rewind=$0B,
+Play=$0C,
+"fast fwd":Fast_Forward=$0D,
+Pause=$0F,
+record:REC=$10,
+Stop=$0E,
+"shift-right":Prev_Track=$2A,
+Slow:Eject=$2E,
+"shift-left":Next_Track=$2B,
+Guide=$14,
+Menu=$21,
+display:Info=$18,
+Exit=$24,
+"up arrow":Up=$31,
+"left arrow":Left=$33,
+select:Select=$35,
+"right arrow":Right=$34,
+"down arrow":Down=$32,
+"slow-":Thumbs_Down=$2D,
+"slow+":Thumbs_Up=$2C,
+"vol up":Vol+=$04,
+"vol down":Vol-=$05,
+Mute=$08,
+"prev ch":Prev=$23,
+"pip freeze":PVR_Menu=$36,
+"channel up":CH+=$06,
+"channel down":CH-=$07,
+1=$15,
+2=$16,
+3=$17,
+4=$19,
+5=$1A,
+6=$1B,
+7=$1C,
+8=$1D,
+9=$1E,
+"tv/vcr":TV/VID=$13,
+0=$1F,
+Enter=$12,
+sleep:Angle{Sleep}=$26,
+CC:ClosedCaption=$45,
+input:Audio=$37,
+slow:Subtitle=$25,
+"pip move":Move=$30,
+"pip on/off":PIP=$2F,
+"pip swap":Swap=$20,
+"setup":SET[Setup]=$02,
+Phantom1=$3D,
+Phantom2=$3E,
+Phantom3=$3F,
+Phantom4=$40
+
+[ButtonMaps]
+0 = ($1f, $15, $16, $17, $19, $1a, $1b, $1c, $1d, $1e), ($04, $05, $08), ($06, $07),
+     $03, $21, $18, $35, $23, $13, $24, $31, $32, $33, $34, $14, $12, $2b, $2a, $2e, $36, $29, $27, $2c, $2d, $0c, $0f, $0b, $0d, $0e, $10
+1 = ($1f, $15, $16, $17, $19, $1a, $1b, $1c, $1d, $1e), ($04, $05, $08), ($06, $07),
+     $03, $23, $13, $18, $21, $26, $31, $32, $33, $34, $35, $24, $2f, $20, $30, $12, $14, $45, $37
+2 = ($1f, $15, $16, $17, $19, $1a, $1b, $1c, $1d, $1e), ($04, $05, $08), ($06, $07),
+     $03, $0c, $0f, $0b, $0d, $0e, $10, $13, $18, $21, $24, $31, $32, $33, $34, $14, $35, $23, $25, $12, $2b, $2a, $2e, $45, $37, $26, $36, $29, $27, $2c, $2d
+
+[DigitMaps]
+072 048 053 094 092 003 090 044 046 086 021 011 087 058 029 010
+085 126 023 081 016 001 127 083 034 032 075 033 030 003 080 064
+013 091 145 125 130 131 069 129
+
+[Protocols]
+0000, 0002:5, 0006, 0007, 000A, 000C, 000D, 0013, 0014, 0015,
+0018, 001A, 001C, 001F:8, 0022, 0027:new, 0029, 002D, 002F, 0034,
+003A, 0045, 0046, 0058, 005A, 005C, 005D, 005E:2, 0060, 0065,
+006A, 0073, 007E:3, 0092, 0093, 009C, 009E, 00A4, 00AF, 00B6,
+00C4, 00C9, 00CA, 00CD:2, 00DE, 00E2, 00E3, 00E8, 00F8:3, 010F,
+0111, 0114, 0117, 011A, 011B, 0162, 0174, 0184

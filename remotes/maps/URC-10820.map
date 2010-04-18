@@ -1,0 +1,73 @@
+#$MTIMFH
+#$-:Image Map file created by Map THIS!
+#$-:Map THIS! free image map editor by Todd C. Wilson
+#$-:Please do not edit lines starting with "#$"
+#$VERSION:1.30
+#$TITLE:10820
+#$DATE:Sat Mar 10 16:02:44 2007
+#$PATH:C:\JP1\Images\
+#$GIF:URC-10820.jpg
+#$FORMAT:ncsa
+#$EOH
+default 10820
+circle $11:AUX1  25,45 34,54
+circle $03:Power  69,36 78,45
+circle $3A:AUX2  114,44 123,53
+circle $29:DVD  25,64 34,73
+circle $0A:VCR  54,60 63,69
+circle $22:SAT  87,61 96,70
+circle $01:TV  114,64 123,73
+circle $21:CD  25,83 34,92
+circle $39:PVr  55,80 64,89
+circle $2A:AUD  87,80 96,89
+circle $09:CBL  115,82 124,91
+circle $0B:Rewind  33,103 46,110
+circle $0C:Play  70,103 89,111
+circle $0D:Fast_Forward  106,103 119,110
+circle $10:Record  33,121 46,128
+circle $0F:Pause  69,121 82,128
+circle $0E:Stop  105,121 118,128
+circle $2E:Skip-  33,138 46,145
+circle $2D:Skip+  105,139 118,146
+circle $2F:Format  70,140 79,149
+circle $2C:Guide  32,171 40,179
+circle $27:Menu  56,159 64,167
+circle $26:Info  83,159 91,167
+circle $2B:Exit  108,172 116,180
+circle $30:CC  28,242 36,250
+circle $13:Prev  112,242 120,250
+circle $35:OK  71,209 84,222
+poly $31:Up 49,185 59,195 70,191 81,195 90,185 79,178 69,176 58,179 49,185 49,185
+poly $33:Left 43,232 54,221 51,212 55,203 43,191 38,201 36,212 38,223 43,232 43,232
+poly $32:Down 90,235 79,225 69,228 59,225 49,236 60,242 69,243 81,241 90,235 90,235
+poly $34:Right 84,220 95,229 101,220 103,210 101,199 95,190 85,200 88,210 84,220 84,220
+circle $18:Fav  70,274 83,281
+circle $08:Mute  70,293 83,300
+circle $15:1  38,321 51,328
+circle $16:2  70,322 83,329
+circle $17:3  102,321 115,329
+circle $19:4  38,340 51,347
+circle $1C:7  39,359 52,366
+circle $1A:5  69,339 82,346
+circle $1B:6  102,339 115,346
+circle $1D:8  69,359 82,366
+circle $1E:9  101,358 114,365
+circle $20:Input  40,378 53,385
+circle $1F:0  70,377 83,384
+circle $12:Enter  100,377 113,384
+circle $14:Move  35,396 43,404
+circle $36:PIP  58,398 66,406
+circle $37:Swap  81,398 89,406
+circle $38:+100  104,397 112,405
+circle $3C:M1  36,415 44,423
+circle $3D:M2  59,418 67,426
+circle $3E:M3  81,418 90,426
+circle $28:Sleep  104,416 112,424
+circle $24:L2  57,436 65,445
+circle $23:L1  36,434 44,443
+circle $25:L3  82,437 90,445
+circle $02:SET[Setup]  102,435 110,443
+circle $04:VOL+  37,269 46,278
+circle $07:CH-  102,299 111,308
+circle $06:CH+  102,269 111,278
+circle $05:VOL-  37,300 46,309

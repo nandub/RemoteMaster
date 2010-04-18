@@ -1,0 +1,139 @@
+[General]
+Name=Slingbox with UEI RV Chip
+EepromSize=$800
+AdvCodeAddr=$018..$0FF
+UpgradeAddr=$100..$3FE
+Processor=S3C80
+RAMAddr=$FF00
+RDFSync=3
+ImageMap=Slingbox.map
+EncDec=KeyedEncrypterDecrypter(102)
+
+[Settings]
+
+[Checksums]
+^$000:$002..$7FF
+
+[DeviceTypes]
+Cable    = 0, $0101
+Sat      = 1, $0303
+VCR      = 2, $0404
+DVD      = 3, $0606
+
+[DeviceAbbreviations]
+TV=T,Cable=C,Vid_Acc=N,Sat=S,VCR=V,Laser=L,DVD=Y,Tuner=R,Amp=AM,CD=D,Home_CT=H
+
+#Phono=P,Cassette=K,Misc_Audio=M,DAT=J
+
+[DeviceTypeAliases]
+Cable    = Cable,TV,Video Acc
+Sat      = SAT
+VCR      = VCR,Tape,DAT
+DVD      = DVD,Laserdisc,Tuner,Amp,Misc Audio,Phono,CD,Home Auto
+
+[DeviceButtons]
+CBL = $00A $00B
+
+[Buttons]
+Power=1,
+Power_On=2,
+Power_Off=3,
+"channel up":CH+=4,
+"channel down":CH-=5,
+"vol up":VOL+=6,
+"vol down":VOL-=7,
+Mute=8,
+"1":num_1=9,
+"2":num_2=10,
+"3":num_3=11,
+"4":num_4=12,
+"5":num_5=13,
+"6":num_6=14,
+"7":num_7=15,
+"8":num_8=16,
+"9":num_9=17,
+"0":num_0=18,
+Enter=19,
+100=20,
+"prev ch":Last_ch=21,
+tv/vcr=22,
+External=23,
+Play=24,
+Stop=25,
+Pause=26,
+rewind=27,
+"fast fwd":ffwd=28,
+Record=29,
+"next track":Skip+=30,
+"prev track":Skip-=31,
+Live=32,
+Menu=33,
+Setup=34,
+Guide=35,
+Cancel=36,
+exit=37,
+"up arrow":up_arrow=38,
+"down arrow":down_arrow=39,
+"left arrow":left_arrow=40,
+"right arrow":right_arrow=41,
+Select=42,
+"shift-right":Page+=43,
+"shift-left":Page-=44,
+"fav/scan":Fav=45,
+"display":Info=46,
+Format=47,
+SAP/subtitle=48,
+Surround=49,
+Slow=50,
+Eject=51,
+Random=52,
+"pip on/off":PIP=53,
+PIP_Format=54,
+"pip freeze":PIP_Freeze=55,
+"pip swap":PIP_Swap=56,
+"pip move":PIP_Move=57,
+PIP_Source=58,
+PIP_CH+=59,
+PIP_CH-=60,
+PIP_Multi=61,
+FP1=62,
+FP2=63,
+FP3=64,
+FP4=65,
+FP5=66,
+FP6=67,
+FP7=68,
+FP8=69,
+FP9=70,
+FP10=71,
+INPUT01=72,
+INPUT02=73,
+INPUT03=74,
+INPUT04=75,
+INPUT05=76,
+INPUT06=77,
+INPUT07=78,
+INPUT08=79,
+INPUT09=80,
+INPUT10=81
+
+
+[ButtonMaps]
+0 = ($12, $09, $0A, $0B, $0C, $0D, $0E, $0F, $10, $11), ($06, $07, $08), ($04, $05),
+     $01, $02, $03, $21, $22, $2e, $2a, $15, $16, $24, $26, $27, $28, $29, $2d, $17, $23, $2b, $2c, $30, $31, $3e, $3f, $40, $41, $42, $43, $44, $45, $46, $47, $18, $1a, $1b, $1c, $19, $1d, $25, $2f, $13, $14, $1e, $1f, $20, $33, $32, $34, $35, $36, $37, $38, $39, $3a, $3b, $3c, $3d, $48, $49, $4a, $4b, $4c, $4d, $4e, $4f, $50, $51
+1 = ($12, $09, $0A, $0B, $0C, $0D, $0E, $0F, $10, $11), ($06, $07, $08), ($04, $05),
+     $01, $02, $03, $21, $22, $2e, $2a, $15, $16, $24, $30, $26, $27, $28, $29, $2d, $17, $23, $2b, $2c, $13, $14, $3e, $3f, $40, $41, $42, $43, $44, $45, $46, $47, $18, $1a, $1b, $1c, $19, $1d, $25, $2f, $1e, $1f, $20, $33, $32, $31, $34, $35, $36, $37, $38, $39, $3a, $3b, $3c, $3d, $48, $49, $4a, $4b, $4c, $4d, $4e, $4f, $50, $51
+2 = ($12, $09, $0A, $0B, $0C, $0D, $0E, $0F, $10, $11), ($06, $07, $08), ($04, $05),
+     $01, $02, $03, $18, $1a, $1b, $1c, $19, $1d, $16, $17, $21, $22, $26, $27, $28, $29, $2a, $23, $32, $2e, $1e, $1f, $25, $15, $2f, $33, $2d, $14, $24, $20, $30, $3e, $3f, $40, $41, $42, $43, $44, $45, $46, $47, $13, $2b, $2c, $31, $34, $35, $36, $37, $38, $39, $3a, $3b, $3c, $3d, $48, $49, $4a, $4b, $4c, $4d, $4e, $4f, $50, $51
+3 = ($12, $09, $0A, $0B, $0C, $0D, $0E, $0F, $10, $11), ($06, $07, $08), ($04, $05),
+     $01, $02, $03, $18, $1a, $1b, $1c, $19, $1d, $22, $21, $26, $27, $28, $29, $2a, $1e, $1f, $30, $31, $2e, $15, $23, $33, $24, $25, $32, $2f, $13, $2d, $16, $3e, $3f, $40, $41, $42, $43, $44, $45, $46, $47, $2b, $2c, $14, $20, $17, $34, $35, $36, $37, $38, $39, $3a, $3b, $3c, $3d, $48, $49, $4a, $4b, $4c, $4d, $4e, $4f, $50, $51
+
+[DigitMaps]
+
+[Protocols]
+0000, 0002, 000D, 0014, 001C, 001F, 0020, 0027, 0034, 0045, 
+004B, 0058, 005A, 005C, 005D, 005E, 0065, 0066, 0073, 007E, 
+0087, 0098, 009C, 00A5, 00AB, 00AF, 00B6, 00B9, 00BD, 00C4, 
+00C9, 00CA, 00CD, 00DE, 00E8, 00ED, 00F0, 00F8, 0111, 0112, 
+011A, 011B, 011E, 015E, 0161, 016C, 0173, 0176, 017E, 0182, 
+018C

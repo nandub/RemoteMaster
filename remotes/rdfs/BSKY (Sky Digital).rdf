@@ -1,0 +1,99 @@
+[General]
+Name=Sky Digital URC-1610
+EepromSize=$800
+AdvCodeAddr=$012..$0FB
+UpgradeAddr=$100..$3FC
+Processor=6805
+ProcessorVersion=RC16/18
+MaxProtocolLength=121
+DevComb=,$1077,$11DC,$105A,,$66,$107
+RDFSync=3
+ImageMap=Skydigital.map
+
+[SpecialProtocols]
+Multiplex=01FE
+
+# byte $011 still needs to be documented
+[Settings]
+VPT Device=$00F.7.8.1.0 DeviceButtons
+VPT Status=$010.3.1.0.0 (Off;On)
+
+[Checksums]
+^$000:$002..$3FC
+
+# second signature "SKY0"
+[FixedData]
+$0FC = $53 $4B $59 $30
+
+[DeviceTypes]
+SAT	= 0
+TV	= 1
+OEM	= 0
+
+[DeviceTypeAliases]
+SAT = Cable,SAT,Video Acc,VCR,DVD,Tape,Laserdisc,DAT,CD,Home Auto,Phono,Tuner,Misc Audio,Amp,PVR
+TV  = TV
+OEM = OEM Mode
+
+[DeviceButtons]
+SKY	= $009 $006 $00c
+TV	= $00a $007 $00d
+OEM	= $00b $008 $00e
+
+[Buttons]
+rear:SKY=2
+TV=3
+1=18
+2=34
+3=16
+4=38
+5=32
+6=15
+7=19
+8=24
+9=20
+0=39
+"vol up":vol+=28
+"vol down":vol-=4
+mute=25
+"channel up":ch+=30
+"channel down":ch-=6
+power=1
+"up arrow":up=29
+"down arrow":down=10
+"right arrow":right=37
+"left arrow":left=8
+select=31
+display:i_button=26
+"next track":text=5
+"prev ch":backup=11
+menu:help=7
+"+100":red=14
+exit:green=33
+surround:yellow=12
+input:blue=35
+guide:"TV guide"=21
+"shift-left":"box office"=22
+"shift-right":services=23
+"prev track":interactive=27
+center:shift-power=$81
+phantom1:"TV phantom"=9
+
+[ButtonMaps]
+0 = ($27, $12, $22, $10, $26, $20, $0f, $13, $18, $14), ($1c, $04, $19), ($1e, $06),
+     $01, $1f, $05, $1a, $07, $0b, $0e, $21, $0c, $23, $1d, $0a, $08, $25, $09, $02, $15, $16, $17, $1b, $81
+1 = ($27, $12, $22, $10, $26, $20, $0f, $13, $18, $14), ($1c, $04, $19), ($1e, $06),
+     $01, $1f, $05, $1a, $07, $0b, $0e, $21, $0c, $23
+
+[DigitMaps]
+160 29 46 12 92 75 94 32 38 161 07 162 89 104 71 37 
+33 74 85 26 79 163 164 105 22 165 
+
+[Protocols]
+0001, 000B, 000D, 0010, 0011, 0013, 0014, 0018, 001C, 002A,
+002C, 002E, 0034, 0037, 003D, 0041, 0045, 004A, 0051, 0056,
+005A, 005C, 0064, 0065, 0067, 0068, 0075, 0079, 007A, 0080,
+0082, 0087, 008C, 008E, 008F, 0090, 0098, 009D, 00A1, 00A5,
+00A6, 00A8, 00AA, 00B0, 00B2, 00BD, 00C9, 00CA, 00D1, 00D4,
+00D5, 00D9, 00DF, 00E8, 00EB, 00EE, 00F3, 00F4, 00F6, 00FF
+

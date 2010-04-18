@@ -1,0 +1,131 @@
+[General]
+Name=Cox URC-7820
+EepromSize=$400
+AdvCodeAddr=$016..$1FF
+UpgradeAddr=$200..$3FF
+Processor=HCS08
+BaseAddr=$F800
+RAMAddr=$FF00
+RDFSync=3
+SectionTerminator=$FF
+AdvCodeBindFormat=LONG
+AdvCodeFormat=EFC
+EFCDigits=5
+ImageMap=URC-7820.map
+
+[Settings]
+VPT Status=$012.2.1.1.0 (Off;On)
+VPT Device=$014.7.8.0.0 DeviceButtons
+TV   VPT=$015.0.1.1.0 (Off;On)
+DVD  VPT=$015.1.1.0.0 (Off;On)
+CBL  VPT=$015.2.1.1.0 (Off;On)
+AUX  VPT=$015.3.1.0.0 (Off;On)
+Channel Lock=$012.3.1.1.0 (Off;On)
+TV Setup Code Lock=$013.0.1.1.0 (Off;On)
+DVD Setup Code Lock=$013.1.1.0.0 (Off;On)
+CBL Setup Code Lock=$013.2.1.0.0 (Off;On)
+AUX Setup Code Lock=$013.3.1.0.0 (Off;On)
+
+[Checksums]
+^$008:$00A..$015
+
+[FixedData]
+
+[DeviceTypes]
+TV      = 0
+VCR/DVD	= 1
+CBL/SAT = 2
+AUX     = 3
+
+[DeviceTypeAliases]
+TV      = TV
+VCR/DVD = VCR,Tape,DAT,DVD,Laserdisc
+CBL/SAT = Cable,SAT,Video Acc
+AUX     = CD,Home Auto,Phono,Tuner,Misc Audio,Amp
+
+[DeviceButtons]
+TV    = $00A $00B
+DVD   = $00C $00D
+CABLE = $00E $00F
+AUX   = $010 $011
+
+[Buttons]
+CABLE=$33
+TV=$34
+DVD=$2C
+AUX=$36
+setup=$16
+Power=$13
+"On Demand":OnDemand=$38
+0=$11
+1=$2D
+2=$2F
+3=$2A
+4=$35
+5=$37
+6=$32
+7=$1C
+8=$19
+9=$31
+"vol up":Vol+=$1D
+"vol down":Vol-=$25
+Mute=$27
+"channel up":Ch+=$1F
+"channel down":Ch-=$24
+"prev ch":Last=$22
+"aspect":HD_Zoom=$0B
+"tv/vcr":Input=$14
+Enter=$29
+"up arrow":Up=$10
+"down arrow":Down=$07
+"left arrow":Left=$06
+"right arrow":Right=$03
+Select=$08
+Menu=$0A
+Guide=$05
+"display":Info=$0E
+Exit=$02
+"fav/scan":Fav=$1A
+Settings=$0D
+A=$15
+B=$17
+C=$12
+"prev track":PageUp=$18
+"next track":PageDown=$0F
+Play=$30
+Pause=$28
+Stop=$23
+Rewind=$2E
+"fast fwd":FFwd=$2B
+Record=$26
+Replay=$1E
+Live=$1B
+pvr:List=$20
+"pip on/off":PIP_ON/OFF=$01
+"pip swap":PIP_SWAP=$0C
+"pip move":PIP_MOVE=$21
+"pip ch+":PIP_CH+=$09
+"pip ch-":PIP_CH-=$04
+
+[ButtonMaps]
+0 = ($11, $2D, $2F, $2A, $35, $37, $32, $1C, $19, $31), ($1D, $25, $27), ($1A, $22),
+    $13, $0E, $29, $14, $1F, $24
+1 = ($11, $2D, $2F, $2A, $35, $37, $32, $1C, $19, $31), ($1D, $25, $27), ($1A, $22),
+    $13, $07, $02, $2B, $06, $28, $30, $26, $2E, $0D, $0A, $03, $08, $0E, $23, $29,
+    $10, $14, $1F, $0B, $24
+2 = ($11, $2D, $2F, $2A, $35, $37, $32, $1C, $19, $31), ($1D, $25, $27), ($1A, $22),
+    $13, $07, $02, $2B, $05, $06, $17, $28, $30, $26, $2E, $0D, $0A, $03, $08, $0E,
+    $23, $29, $10, $0F, $14, $18, $1F, $15, $12, $1B, $1E, $38, $20, $0B, $01, $21,
+    $09, $04, $0C, $24
+3 = ($11, $2D, $2F, $2A, $35, $37, $32, $1C, $19, $31), ($1D, $25, $27), ($1A, $22),
+    $13, $2B, $28, $30, $26, $2E, $0E, $23, $29, $14
+
+[DigitMaps]
+03 53 72 94 90 46 80 75 33 64 21 11 13 92 17 91 29 34 86 93 32 30 277 87 131 209
+210 01 170 289
+
+[Protocols]
+0000, 0006, 000A, 000C, 0013, 0014, 0015, 001C, 001F, 0022,
+0027, 0034, 0039, 0045, 0058, 005A, 005C, 005D, 005E, 0060,
+0065, 006A, 0073, 007E, 009E, 00AF, 00B6, 00C4, 00C9, 00CA,
+00CD, 00DE, 00E2, 00E8, 00F8, 0114

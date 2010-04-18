@@ -1,0 +1,72 @@
+#$MTIMFH
+#$-:Image Map file created by Map THIS!
+#$-:Map THIS! free image map editor by Todd C. Wilson
+#$-:Please do not edit lines starting with "#$"
+#$VERSION:1.30
+#$TITLE:Atlas 5 PVR Day
+#$DATE:Fri Dec 07 09:19:39 2007
+#$PATH:C:\JP1\Images\
+#$GIF:AtlasDVR-PVR.jpg
+#$FORMAT:ncsa
+#$EOH
+default Atlas
+circle $02:Setup  36,29 44,37
+circle $03:Power  92,30 100,38
+circle $12:AUX  36,62 42,71
+circle $0A:DVD  50,52 56,61
+circle $11:AUD  65,43 71,53
+circle $01:TV  80,52 85,62
+circle $09:CBL  92,61 97,70
+circle $21:Guide  35,87 43,95
+circle $2E:Settings{Menu}  65,76 77,82
+circle $13:Info  94,87 102,95
+circle $31:Day+  23,110 30,117
+circle $32:Day-  22,129 29,136
+circle $23:Page_Up  106,109 113,116
+circle $24:Page_Down  106,126 113,133
+circle $2D:Select  64,117 72,125
+circle $14:Exit  99,143 105,149
+circle $27:C  85,154 92,161
+circle $26:B  64,159 72,165
+circle $25:A  44,152 51,158
+circle $22:FAV  64,180 74,184
+circle $04:VOL+  37,171 45,179
+circle $05:VOL-  42,195 50,203
+circle $07:CH-  85,193 93,201
+circle $06:CH+  91,171 99,179
+poly $2B:Left 41,133 49,126 47,117 50,108 41,99 34,117 41,133 41,133
+poly $2C:Right 86,135 94,119 87,102 79,109 82,118 77,128 86,135 86,135
+poly $2A:Down 80,139 72,131 62,134 55,132 47,140 63,145 81,139 80,139 80,139
+poly $29:Up 72,102 80,94 63,90 47,94 54,101 63,99 72,102 72,102
+circle $33:Mute  39,215 47,220
+circle $08:Last  90,214 99,218
+circle $34:TuneIn1  39,231 49,235
+circle $35:TuneIn2  64,231 74,236
+circle $36:TuneIn3  89,231 99,235
+circle $37:Replay  39,247 47,253
+circle $28:List  63,247 75,251
+circle $2F:Live  89,247 97,253
+circle $0B:Rew  38,266 46,271
+circle $0C:Play  64,265 74,270
+circle $0D:FFWD  91,265 99,270
+circle $0E:Stop  41,283 47,289
+circle $0F:Pause  64,283 70,289
+circle $10:Rec  88,283 94,289
+circle $15:1  36,301 45,307
+circle $16:2  65,301 75,306
+circle $17:3  92,301 101,307
+circle $19:4  37,321 47,327
+circle $1A:5  64,321 73,327
+circle $1B:6  92,321 102,327
+circle $1C:7  37,341 47,347
+circle $1D:8  65,341 75,348
+circle $1E:9  91,340 101,347
+circle $20:[*]  37,360 44,367
+circle $1F:0  64,360 73,365
+circle $18:[#/Enter]  92,359 99,365
+circle $38:PIP_On/Off  36,380 42,388
+circle $39:PIP_Swap  54,380 60,387
+circle $3A:PIP_Move  77,379 83,387
+circle $3B:PIP_Ch+  93,379 99,387
+circle $3C:PIP_Ch-  93,404 99,412
+circle $30:Source  36,403 42,411

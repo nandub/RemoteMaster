@@ -1,0 +1,102 @@
+[General]
+Name=URC-3440 One For All 4
+EepromSize=$800
+AdvCodeAddr=$017..$0FF
+UpgradeAddr=$100..$3FC
+#MacroSupport=0
+Processor=S3C80
+RAMAddr=$FF00
+AdvCodeFormat=EFC
+RDFSync=3
+ImageMap=URC-3440.map
+
+[SpecialProtocols]
+Multiplex=01FE
+
+[Settings]
+VPT Status=$012.2.1.0.0 (Off;On)
+VPT Device=$013.7.8.1.0 DeviceButtons
+CH +/- Simulation Status=$012.1.1.0.0 (Off;On)
+CH +/- Simulation Device=$016.7.8.1.0 DeviceButtons
+
+[Checksums]
+^$000:$002..$3FC
+
+[DeviceTypes]
+TV      = 0
+VCR/DVD = 1
+CBL/SAT = 2
+
+[DeviceTypeAliases]
+TV      = TV
+VCR/DVD = VCR,DVD,Tape,Laserdisc,DAT,CD,Home Auto,Phono,Tuner,Misc Audio,Amp
+CBL/SAT = Cable,SAT,Video Acc
+
+[DeviceButtons]
+TV  = $00A $00B
+VCR = $00C $00D
+SAT = $00E $00F
+DVD = $010 $011
+
+[Buttons]
+setup:MAGIC=$02,
+Menu=$20,
+Power=$03,
+TV=$01,
+VCR=$0A,
+SAT=$09,
+DVD=$11,
+1=$15,
+2=$16,
+3=$17,
+4=$19,
+5=$1A,
+6=$1B,
+7=$1C,
+8=$1D,
+9=$1E,
+0=$1F,
+10{-/--}=$12,
+AV{20}=$18,
+"channel up":CH+=$06,
+"channel down":CH-=$07,
+"vol up":VOL+=$04,
+"vol down":VOL-=$05,
+MUTE=$08,
+"up arrow":UP=$86,
+"down arrow":DOWN=$87,
+"right arrow":RIGHT=$84,
+"left arrow":LEFT=$85,
+SELECT=$88,
+rewind:REW{TextOn}=$0B,
+play:PLAY{TextOff}=$0C,
+pause:PAUSE{Hold}=$0F,
+"fast fwd":FFWD{Expand}=$0D,
+SP/LP{Red}=$13,
+stop:STOP{Green}=$0E,
+record:REC{Yellow}=$10,
+AUTO{Blue}=$14
+
+[ButtonMaps]
+0 = ($1F, $15, $16, $17, $19, $1A, $1B, $1C, $1D, $1E), ($04, $05, $08), ($06, $07),
+     $03, $18, $12, $20, $88, $0B, $0C, $0F, $0D, $13, $0E, $10, $14, $86, $87, $85, $84
+1 = ($1F, $15, $16, $17, $19, $1A, $1B, $1C, $1D, $1E), ($04, $05, $08), ($06, $07),
+     $03, $0C, $0F, $0B, $0D, $0E, $10, $12, $18, $20, $13, $14, $86, $87, $85, $84, $88
+2 = ($1F, $15, $16, $17, $19, $1A, $1B, $1C, $1D, $1E), ($04, $05, $08), ($06, $07),
+     $03, $12, $18, $20, $88, $0B, $0C, $0F, $0D, $13, $0E, $10, $14, $86, $87, $85, $84
+
+[DigitMaps]
+094 003 053 092 074 062 034 064 001 038 139 042 014 055 015 086
+032 070 043 037 095 026 051 019 040 085 041 166 167 140 029 012
+075 006 007 021 071 033 059 022 091 046 013 039 017 031 009 141
+
+[Protocols]
+0000, 0001, 0002:5, 0006, 000B, 000D, 0010, 0011, 0014, 0018, 
+001C, 001F:8, 0020, 0022, 0027:new, 002A, 002C, 0034, 003D, 0041, 
+0045, 004A, 004B, 0051, 0058, 005A, 005B, 005C, 005D, 005E:2,
+0060, 0064, 0065, 0066, 0068, 0075, 0077, 007E:2, 0082, 0087,
+008C, 008E, 0095, 0098, 009C, 009D, 00A1, 00A5, 00A6, 00A8, 
+00AA, 00AB, 00B0, 00B2, 00B7, 00B9, 00BD, 00C4, 00C9, 00CA, 
+00CC, 00CD:2, 00D1, 00D4, 00D5, 00D9, 00DE, 00E2, 00E5, 00E8,
+00EB, 00ED, 00EF, 00F0, 00F3, 00F4, 00F8:3, 00FE, 0111, 0112, 
+011B, 011E, 015E, 0173, 0176, 0182, 0188

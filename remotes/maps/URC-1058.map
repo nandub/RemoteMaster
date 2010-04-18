@@ -1,0 +1,58 @@
+#$MTIMFH
+#$-:Image Map file created by Map THIS!
+#$-:Map THIS! free image map editor by Todd C. Wilson
+#$-:Please do not edit lines starting with "#$"
+#$VERSION:1.30
+#$DATE:Thu Jan 03 00:20:09 2008
+#$PATH:C:\Documents and Settings\harold\My Documents\JP1\Misc\comcast\final\
+#$GIF:URC-1058.jpg
+#$FORMAT:ncsa
+#$EOH
+default URC-1058
+circle AUX  35,68 43,76
+circle TV  51,51 59,59
+circle CABLE  75,45 83,53
+circle POWER  98,51 106,59
+circle SETUP  114,68 122,76
+circle ALL_ON  74,66 87,74
+rect ON_DEMAND 51,79 100,95
+rect REWIND 31,98 52,113
+circle PLAY  74,106 87,114
+rect FFWD 97,98 118,113
+rect STOP 37,119 54,135
+rect PAUSE 66,119 83,135
+circle RECORD  104,127 113,136
+circle A{Lock}  45,152 54,161
+circle B{Day-}  74,152 83,161
+circle C{Day+}  104,153 113,162
+circle PAGE_UP  32,177 41,189
+circle PAGE_DOWN  117,173 125,184
+poly UP 50,175 66,168 83,168 98,175 88,187 74,184 60,187 50,175 50,175
+poly LEFT 48,178 41,190 41,202 49,213 59,203 57,195 59,189 48,178 48,178
+poly RIGHT 90,189 101,178 108,190 108,201 101,213 90,202 92,195 90,189 90,189
+poly DOWN 50,218 60,206 73,209 88,206 100,218 84,225 65,225 50,218 50,218
+circle OK/SELECT  75,196 90,204
+circle GUIDE  42,225 51,234
+circle INFO  74,237 87,244
+circle MENU  107,224 117,233
+circle EXIT  36,248 46,257
+circle HELP  74,263 85,271
+circle LAST  113,248 123,257
+circle VOL+  37,274 47,284
+circle VOL-  40,295 50,305
+circle CH+  112,273 122,283
+circle CH-  110,294 120,304
+circle MUTE  63,297 72,306
+circle FAV  87,297 96,306
+circle 1  45,321 57,329
+circle 2  75,321 88,329
+circle 3  104,321 117,329
+circle 4  45,343 57,351
+circle 5  75,344 88,352
+circle 6  104,343 117,351
+circle 7  44,366 56,374
+circle 8  74,366 87,374
+circle 9  103,366 116,374
+circle 0  75,389 88,397
+circle TV/VCR{Input}  45,389 54,398
+circle HD_Zoom{Enter}  104,389 113,398

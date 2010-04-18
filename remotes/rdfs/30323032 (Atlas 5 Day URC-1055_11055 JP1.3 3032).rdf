@@ -1,0 +1,166 @@
+[General]
+Name=Atlas 5-Device PVR Day 3032 JP1.3
+EepromSize=$1500
+AdvCodeAddr=$001C..$007F
+UpgradeAddr=$0102..$08FF
+# Hidden UpgradeAddr
+# UpgradeAddr=$0902..$0CFF
+LearnedAddr=$0D00..$14FF
+Processor=S3F80
+BaseAddr=$0600
+RAMAddr=$FF00
+RDFSync=3
+AdvCodeBindFormat=LONG
+SectionTerminator=$FF
+LearnedDevBtnSwapped=Yes
+EFCDigits=5
+ImageMap=Atlas-5-PVR-DAY.map
+DevComb=,$23E6,$22B9,,$4EEF,$23C9
+2BytePid=Yes
+
+[SpecialProtocols]
+Multiplex=01FE
+
+[Checksums]
+^$008:$00A..$01B
+^$080:$08A..$0FF
+^$100:$102..$8FF
+^$900:$902..$CFF
+
+[Settings]
+VPT Device=$01A.7.8.0.0 DeviceButtons
+VPT Status=$019.2.1.1.0 (Off;On)
+MTS uses VPT=$01B.0.1.1.0 (No;Yes)
+TV  uses VPT=$01B.1.1.1.0 (No;Yes)
+DVD uses VPT=$01B.2.1.1.0 (No;Yes)
+AUD uses VPT=$01B.3.1.1.0 (No;Yes)
+AUX uses VPT=$01B.4.1.1.0 (No;Yes)
+MTS Channel Control Lock=$019.3.1.1.0 (Off;On)
+MTS Remote ID=$015.1.2.0.0 (IR;RF1;RF2;RF3)
+MTS Gateway ID(4-999) HiByte=$017.1.2.0.0
+MTS Gateway ID(4-999) LoByte=$018.7.8.0.0
+KeyMap=$014.5.1.1.0 (Standard;Alternate)
+
+# DeviceTypes
+# The order matches up with default type on DeviceButtons
+# The names match up with DeviceTypeAliases
+
+[DeviceTypes]
+Cable    = 0
+TV       = 1
+DVD  = 2
+CD/Audio = 3
+VCR  = 2,2
+
+[DeviceTypeAliases]
+Cable    = Cable,SAT,Video Acc
+TV       = TV
+DVD  = VCR,DVD,Tape,Laserdisc,DAT
+CD/Audio = CD,Tuner,Home Auto,Misc Audio,Phono,Amp
+
+[DeviceButtons]
+MTS = $00A $00B
+TV  = $00C $00D
+DVD = $00E $00F
+AUD = $010 $011
+AUX = $012 $013
+
+[Buttons]
+POWER=$01
+SETUP=$02
+AUD=$03
+MTS=$04
+AUX=$05
+DVD=$06
+TV=$07,
+menu:Menu{Settings}=$08,
+"pip freeze"::LIST=$09,
+Home=$0A,
+EXIT=$0B,
+"up arrow":UP=$0C,
+"down arrow":DOWN=$0D,
+"left arrow":LEFT=$0E,
+"right arrow":RIGHT=$0F,
+select:OK{SELECT}=$10,
+Guide=$11,
+display:INFO=$12,
+rewind:REW=$13,
+PLAY=$14,
+"fast fwd":FFWD=$15,
+"shift-right":Replay=$16,
+"shift-left":LIVE=$17
+record:REC=$18,
+PAUSE=$19,
+STOP=$1A,
+"vol up":VOL+=$1B,
+"vol down":VOL-=$1C,
+Mute=$1D
+"prev ch":LAST=$1E
+"channel up":CH+=$1F,
+"channel down":CH-=$20,
+center:DAY+=$21,
+rear:DAY-=$22,
+VOD=$23,
+"fav/scan":FAV=$24,
+"next track":Page+=$25,
+"prev track":Page-=$26,
+surround:A=$27,
+input:B=$28,
+"+100":C=$29,
+PPV=$2A,
+1=$2B,2=$2C,3=$2D,4=$2E,5=$2F,6=$30,7=$31,8=$32,9=$33,0=$35,
+enter:[#]/Enter=$34,
+"tv/vcr":"Video Source"=$36,
+CallId=$37,
+"PIP On/Off"=$39
+"PIP Swap"=$3A
+"PIP Move"=$3B
+"slow+":"PIP Ch+"=$3C
+"slow-":"PIP Ch-"=$3D
+Phantom1=$3E
+Phantom2=$3F
+
+[ButtonMaps]
+0 = ($35, $2B, $2C, $2D, $2E, $2F, $30, $31, $32, $33), ($1B, $1C, $1D), ($1F, $20),
+    $01, $11, $08, $12, $21, $22, $0C, $0D, $0E, $0F, $10, $25, $26, $0B, $27, $28,
+    $29, $24, $2A, $1E, $0A, $37, $23, $13, $14, $15, $1A, $19, $18, $60, $61, $16, 
+    $09, $17, $34, $39, $3A, $3B, $3C, $3D, $36, 
+1 = ($35, $2B, $2C, $2D, $2E, $2F, $30, $31, $32, $33), ($1B, $1C, $1D), ($1F, $20),
+    $01, $36, $08, $0C, $0D, $0E, $0F, $10, $12, $1E, $0B, $39, $3A, $3B, $14, $19, 
+    $13, $15, $1A, $18, $34, $3C, $3D, $11, $21, $22, $25, $26, $27, $28, $29, $24, 
+    $2A, $0A, $37, $23, $60, $61, $16, $09, $17
+2 = ($35, $2B, $2C, $2D, $2E, $2F, $30, $31, $32, $33), ($1B, $1C, $1D), ($1F, $20),
+    $01, $14, $19, $13, $15, $1A, $08, $0C, $0D, $0E, $0F, $10, $12, $0B, $1E, $36, 
+    $18, $34, $16, $17, $09, $11, $21, $22, $25, $26, $27, $28, $29, $24, $2A, $0A, 
+    $37, $23, $39, $3A, $3B, $3C, $3D, $60, $61
+3 = ($35, $2B, $2C, $2D, $2E, $2F, $30, $31, $32, $33), ($1B, $1C, $1D), ($1F, $20),
+    $01, $14, $13, $15, $1A, $19, $08, $0C, $0D, $0E, $0F, $10, $12, $36, $0B, $1E, 
+    $18, $11, $21, $22, $25, $26, $27, $28, $29, $24, $2A, $0A, $37, $23, $16, $09, 
+    $17, $34, $39, $3A, $3B, $3C, $3D, $60, $61
+
+[DigitMaps]
+011 114 094 021 092 032 029 027 368 369 069 093 370 227 228 125
+219 220 294 205 208 299 289 263 264 199 200 141 336 337 278 279
+257 258 064 290 237 238 086 046 136 083 084 101 053 090 150 034
+075 061 137 033 085 138 059 030 074 105 139 026 003 217 218 297
+298 001 124 325 295 387 291 206 207 192 193 251 252 247 248 244
+388 058 373 020 371 346 357 372 374 375 389 377 378 379 195 196
+270 271 235 236 080 275 276 283 284 261 262 225 226 253 254 129
+241 242 286 230 231 376 013 018 072 039 017 031 091 103 127 277
+209 210 170 087 130 131 267 367 174 197 312 380 243 215 305 229
+341
+
+[Protocols]
+0000, 0007, 000A, 000C, 000D, 000E, 0013, 0014, 0015, 0016, 
+0018, 0019, 001A, 001B, 001C, 001F:8, 0022, 0024, 0025, 0026, 
+0027:new, 002A, 002C, 002D, 002F, 0030, 0032, 0034, 0035, 0039, 
+003A, 003B, 003C, 003D, 0042, 0043, 0045, 0046, 004D, 0051, 
+0052, 0053, 0056, 0057, 0058:2, 005A, 005B, 005C, 005D, 005E:2, 
+005F, 0060, 0064, 0065:2, 0067, 006A, 006E, 0071, 0072, 0073, 
+0074, 007E:3, 0083, 0087, 008A, 0090, 0091, 0092:3, 0093, 0098:2, 
+009C, 009D, 009E, 00A1, 00A5, 00AF, 00B6, 00BE, 00C2, 00C5, 
+00C7, 00C8, 00C9, 00CA, 00CB, 00CD:2, 00D5, 00DB, 00DE, 00E1, 
+00E2, 00E8, 00EF, 00F2, 00F5, 00F8:3, 00FF, 0109, 010C, 0111, 
+0114:2, 0115, 0117, 0118, 0119, 011A:2, 011B, 011E, 012A:2, 0162, 
+017E, 0184:2, 018B, 019A, 01A4, 01A5, 01A7, 01BA, 01C4
+

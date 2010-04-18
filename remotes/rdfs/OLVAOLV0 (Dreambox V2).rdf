@@ -1,0 +1,138 @@
+[General]
+Name=Dreambox Remote V2
+EepromSize=$800
+AdvCodeAddr=$014..$0FF
+UpgradeAddr=$100..$7FD
+DevCodeOffset=30
+Processor=S3C80
+RAMAddr=$8000
+RDFSync=3
+ImageMap=DreamboxV2.map
+
+[SpecialProtocols]
+Multiplex=01FE
+
+[Settings]
+VPT Device=$010.7.8.1.0 DeviceButtons
+VPT Status=$013.3.1.0.0 (Off;On)
+Dream Locked=$011.0.1.0.1 (Off;On)
+TV Locked=$011.1.1.0.1 (Off;On)
+AUX Locked=$011.2.1.0.1 (Off;On)
+
+[Checksums]
+^$000:$002..$7FD
+
+[FixedData]
+$012 = $14
+
+[DeviceTypes]
+SAT       = 0
+TV        = 1
+VCR/LD/DVD= 2
+
+[DeviceTypeAliases]
+SAT        = Cable,SAT,Video Acc
+TV         = TV
+VCR/LD/DVD = VCR,DVD,Tape,Laserdisc,DAT,CD,Home Auto,Phono,Tuner,Misc Audio,Amp,PVR
+
+[DeviceButtons]
+Dream = $00A $00B
+TV    = $00C $00D
+AUX   = $00E $00F
+
+[Buttons]
+DREAM=$09,
+TV=$01,
+AUX=$0A,
+POWER=$03,
+1=$15,2=$16,3=$17,4=$19,5=$1A,
+6=$1B,7=$1C,8=$1D,9=$1E,0=$1F, 
+"vol up":VOL+=$04,"vol down":VOL-=$05,MUTE=$08,
+"tv/vcr":"BACK (AV)"=$11,
+"channel up":BOUQUET+=$06,"channel down":BOUQUET-=$07, 
+menu:"DREAM MENU"=$14,
+guide:AUDIO=$25,
+"up arrow":UP=$21,
+"down arrow":DOWN=$22,
+"left arrow":LEFT=$23,
+"right arrow":RIGHT=$24,
+select:OK=$12,
+display:INFO=$13,
+play:"GREEN (Play)"=$0C,
+pause:"YELLOW (Pause)"=$0F,
+rewind:"RED (Rewind)"=$0B,
+"fast fwd":"BLUE (Fast Fwd)"=$0D,
+stop:"TV (Stop)"=$0E,
+record:"RADIO (Record)"=$28,
+exit:VIDEO=$26,
+"+100":"FORWARD (-/--)"=$18,
+"next track":"Shift-VOL+"=$84,
+"prev track":"Shift-VOL-"=$85,
+"shift-left":"Shift-BOUQUET+"=$86,
+"shift-right":"Shift-BOUQUET-"=$87,
+"pip freeze":"Shift-TV (Stop)"=$8E,
+slow:TEXT=$27,
+eject:HELP=$10,
+"slow+":"LAME (Zoom)"=$20,
+"slow-":"Shift-LAME (Zoom)"=$A0,
+x2:"Shift-MUTE"=$88,
+center:"Shift-FORWARD (-/--)"=$98,
+rear:"Shift-BACK (AV)"=$91,
+Phantom1:Ph1=$F0,
+Phantom2:Ph2=$63,
+Phantom3:Ph3=$64,
+Phantom4:Ph4=$65,
+Phantom5:Ph5=$66,
+Phantom6:Ph6=$67,
+Phantom7:Ph7=$68,
+Phantom8:Ph8=$69,
+setup:"SHIFT (Setup)"=$02,
+"Shift-0"=$9F,"Shift-1"=$95,
+"Shift-2"=$96,"Shift-3"=$97,
+"Shift-4"=$99,"Shift-5"=$9A,
+"Shift-6"=$9B,"Shift-7"=$9C,
+"Shift-8"=$9D,"Shift-9"=$9E,
+"Shift-INFO"=$93,
+"Shift-DREAM MENU"=$94,
+"Shift-AUDIO"=$A5,
+"Shift-VIDEO"=$A6,
+"Shift-UP Arrow"=$A1,
+"Shift-DOWN Arrow"=$A2,
+"Shift-LEFT Arrow"=$A3,
+"Shift-RIGHT Arrow"=$A4,
+"Shift-OK"=$92,
+"Shift-RED (Rewind)"=$8B,
+"Shift-GREEN (Play)"=$8C,
+"Shift-YELLOW (Pause)"=$8F,
+"Shift-BLUE (Fast Fwd)"=$8D,
+"Shift-RADIO (Record)"=$A8,
+"Shift-VIDEO"=$A6,
+"Shift-TEXT"=$A7,
+"Shift-HELP"=$90,
+PhHlp=$29
+
+[ButtonMaps]
+0 = ($1F, $15, $16, $17, $19, $1A, $1B, $1C, $1D, $1E), ($04, $05, $08), ($06, $07),
+    $03, $18, $11, $20, $13, $14, $28, $21, $22, $23, $24, $12, $25, $0B, $0C, $0F, 
+    $0D, $0E, $26, $27, $10, $9F, $95, $96, $97, $99, $9A, $9B, $9C, $9D, $9E, $84, 
+    $85, $88, $86, $87, $98, $91, $A0, $93, $94, $A8,  $A1, $A2, $A3, $A4, $92, $A5,
+    $8B, $8C, $8F, $8D, $8E, $A6, $A7, $90, $29
+1 = ($1F, $15, $16, $17, $19, $1A, $1B, $1C, $1D, $1E), ($04, $05, $08), ($06, $07),
+    $03, $18, $11, $13, $14, $28, $21, $22, $23, $24, $12, $25, $0B, $0C, $0F, $0D,
+    $0E, $10, $26, $27, $84, $85, $86, $87, $20, $A0
+2 = ($1F, $15, $16, $17, $19, $1A, $1B, $1C, $1D, $1E), ($04, $05, $08), ($06, $07),
+    $03, $18, $11, $13, $14, $28, $21, $22, $23, $24, $12, $25, $0C, $0F, $0B, $0D,
+    $0E, $10
+    
+[DigitMaps]
+140 94 29 64 92 75 34 38 07 21 71 37 33 74 85 26
+59 86 79 53 32 13 46 39 17 31 09
+
+[Protocols]
+0001, 000B, 000D, 0010, 0011, 0013, 0014, 0018, 001C, 001F,
+002A, 002C, 0034, 003D, 0045, 004A, 004B, 0051, 0058, 005A,
+005B, 005C, 005D, 005E:2, 0064, 0065, 0068, 0072, 0075, 0079,
+007C, 007E:2, 0082, 0087, 008C, 0090, 0098, 00A1, 00A5, 00A6,
+00A8, 00AA, 00AB, 00B0, 00B2, 00B6, 00B7, 00BD, 00C9, 00CA,
+00D5, 00D9, 00DE, 00E2, 00E5, 00E8, 00EB, 00F3, 00F4, 00F8:2,
+0111, 0129, 0161, 016C

@@ -1,0 +1,95 @@
+[General]
+Name=Scientific-Atlanta ER1 (Explorer 3-device)
+EepromSize=$400
+AdvCodeAddr=$019..$0FB
+UpgradeAddr=$100..$3FD
+DevCodeOffset=14
+KeyMoveSupport=0
+PowerButtons=$3E,$39,$3B
+Processor=6805
+ProcessorVersion=RC16/18
+MaxProtocolLength=121
+ProtocolVectorOffset=$1E80
+DevComb=,$2CB8,$2E06,$2C9B,,$66,$107
+RDFSync=3
+ImageMap=SA-Exp3.map
+
+[SpecialProtocols]
+Multiplex=01FE
+
+# MultiMacros compliant with IR v6 or above
+# This remote will not utilize key moves at all (it ignores them).
+# Macros will only execute on the A, B or C buttons.
+#
+# VPT Status bit set to off with 993-Vol+, but then remote uses CBL vol cmds for all devices.
+# Byte $012 is not used.
+
+[Settings]
+VPT Device=$00F.1.2.1.0 DeviceButtons
+VPT Status=$00F.7.1.0.0 (On;Cable Only)
+Cable Setup Lock (996)=$010.0.1.1.1 (Off;On)
+TV/VCR Button Device=$011.0.1.1.0 (TV;VCR)
+
+[Checksums]
+^$000:$002..$3FC
+
+# 2nd signature at FC-FF "ER10"
+[FixedData]
+$0FC=$45 $52 $31 $30
+$012=$FF
+
+[DeviceTypes]
+Cable   = 0
+TV      = 1
+VCR     = 2
+
+[DeviceButtons]
+CBL = $009 $006 $00C
+TV  = $00A $007 $00D
+VCR = $00B $008 $00E
+
+[DeviceTypeAliases]
+Cable = Cable,SAT,Video Acc
+TV    = TV
+VCR   = VCR,CD,Tuner,DVD,Tape,Laserdisc,DAT,Home Auto,Misc Audio,Phono,Amp,PVR
+
+[Buttons]
+CBL=$3E,
+rear:TV=$39,
+center:VCR=$3B,
+"vol up":Vol+=$2B,"vol down":Vol-=$23,Mute=$2A,
+"channel up":Ch+=$26,"channel down":Ch-=$25,
+0=$0B,1=$1A,2=$19,3=$1C,4=$1B,5=$11,6=$1D,7=$13,8=$12,9=$15,
+Play=$09,Pause=$04,Stop=$03,"fast fwd":FFwd=$0A,"rewind":Rew=$0C,"record":Record=$02,
+"up arrow":Up=$31,"down arrow":Down=$2C,"left arrow":Left=$36,"right arrow":Right=$2E,Select=$35,
+menu:Settings=$34,Guide=$33,display:Info=$3A,
+"slow+":"Page Up"=$32,"slow-":"Page Down"=$2D,
+Exit=$29,"fav/scan":Fav=$0D,"prev ch":Last=$14,
+macro1:A_Yellow=$22,macro2:B_Blue=$21,macro3:C_Red=$24,
+TV/VCR=$01,x2:Bypass=$05
+
+[MultiMacros]
+A_Yellow=$016,$013
+B_Blue=$017,$014
+C_Red=$018,$015
+
+[ButtonMaps]
+0 = ($0B, $1A, $19, $1C, $1B, $11, $1D, $13, $12, $15),
+    ($2B, $23, $2A), ($26, $25),
+    $3E, $14, $0D, $3A, $31, $2C, $36, $2E, $35, $34,
+    $32, $2D, $29, $33, $05, $09, $0C, $0A, $03, $04,
+    $02, $22, $21, $24, $01, $39, $3B
+1 = ($0B, $1A, $19, $1C, $1B, $11, $1D, $13, $12, $15),
+    ($2B, $23, $2A), ($26, $25),
+    $39, $01
+2 = ($0B, $1A, $19, $1C, $1B, $11, $1D, $13, $12, $15),
+    ($2B, $23, $2A), ($26, $25),
+    $3B, $01, $09, $0C, $0A, $04, $03, $02
+
+[DigitMaps]
+72 48 107 03 53 90 
+
+[Protocols]
+0000, 0006, 000D, 0014, 001C, 001D, 001E, 0022, 002D, 0034,
+0056, 005A, 005C, 005D, 0060, 0065, 00C4, 00C9, 00CA, 00E2,
+00E8

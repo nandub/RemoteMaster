@@ -1,0 +1,111 @@
+[General]
+Name=Force Remote V2
+EepromSize=$800
+AdvCodeAddr=$014..$0FF
+UpgradeAddr=$100..$3FE
+LearnedAddr=$3FF..$7FD
+DevCodeOffset=30
+Processor=S3C80
+RAMAddr=$8000
+RDFSync=3
+ImageMap=Force.map
+
+[SpecialProtocols]
+Multiplex=01FE
+
+[Settings]
+VPT Device=$010.7.8.1.0 DeviceButtons
+VPT Status=$013.3.1.0.0 (Off;On)
+Force Locked=$011.0.1.0.1 (Off;On)
+TV Locked=$011.1.1.0.1 (Off;On)
+AUX Locked=$011.2.1.0.1 (Off;On)
+
+[Checksums]
+^$000:$002..$7FD
+
+[FixedData]
+$012 = $14
+
+[DeviceTypes]
+SAT       = 0
+TV        = 1
+VCR/LD/DVD= 2
+
+[DeviceTypeAliases]
+SAT        = Cable,SAT,Video Acc
+TV         = TV
+VCR/LD/DVD = VCR,DVD,Tape,Laserdisc,DAT,CD,Home Auto,Phono,Tuner,Misc Audio,Amp,PVR
+
+[DeviceButtons]
+Force = $00A $00B
+TV    = $00C $00D
+AUX   = $00E $00F
+
+[Buttons]
+"setup":SHIFT{Setup}=$02, POWER=$03, TV=$01, FORCE=$09, AUX=$0A,
+1=$15, 2=$16, 3=$17, 4=$19, 5=$1A, 6=$1B, 7=$1C, 8=$1D, 9=$1E, 0=$1F, 
+RADIO{AV}=$11, LANG{-/--}=$18, "vol up":VOL+=$04, "vol down":VOL-=$05, MESSAGES=$0E,
+MUTE=$08, "menu":MENU{Zoom}=$20, "channel up":CH+=$06, "channel down":CH-=$07, 
+"display":INFO=$13, EPG=$14, EXIT=$25, "prev ch":LAST=$26,
+"up arrow":UP=$21, "down arrow":DOWN=$22, "left arrow":LEFT=$23, "right arrow":RIGHT=$24,
+"select":OK=$12, "rewind":RED=$0B, "play":GREEN=$0C, "pause":YELLOW=$0F, "fast fwd":BLUE=$0D, 
+PVR=$28, TEXT=$27, "record":REC=$10,
+SHIFT_VOL+=$84, SHIFT_VOL-=$85, SHIFT_CH+=$86, SHIFT_CH-=$87, SHIFT_MENU=$A0,
+Phantom1=$F0, Phantom2=$3B, Phantom3=$3C, Phantom4=$3D, DiscreteON=$3E, DiscreteOFF=$3F
+"pip freeze":"MESSAGES"=$8E,
+x2:"Shift-MUTE"=$88,
+center:"Shift-LANG{-/--}"=$98,
+rear:"Shift-RADIO{AV}"=$91,
+Phantom1:Ph1=$F0,
+Phantom2:Ph2=$63,
+Phantom3:Ph3=$64,
+Phantom4:Ph4=$65,
+"Shift-0"=$9F,"Shift-1"=$95,
+"Shift-2"=$96,"Shift-3"=$97,
+"Shift-4"=$99,"Shift-5"=$9A,
+"Shift-6"=$9B,"Shift-7"=$9C,
+"Shift-8"=$9D,"Shift-9"=$9E,
+"Shift-INFO"=$93,
+"Shift-EPG"=$94,
+"Shift-EXIT"=$A5,
+"Shift-LAST"=$A6,
+"Shift-UP Arrow"=$A1,
+"Shift-DOWN Arrow"=$A2,
+"Shift-LEFT Arrow"=$A3,
+"Shift-RIGHT Arrow"=$A4,
+"Shift-OK"=$92,
+"Shift-RED (Rewind)"=$8B,
+"Shift-GREEN (Play)"=$8C,
+"Shift-YELLOW (Pause)"=$8F,
+"Shift-BLUE (Fast Fwd)"=$8D,
+"Shift-PVR"=$A8,
+"Shift-LAST"=$A6,
+"Shift-TEXT"=$A7,
+"Shift-REC"=$90,
+PhHlp=$29
+
+[ButtonMaps]
+0 = ($1F, $15, $16, $17, $19, $1A, $1B, $1C, $1D, $1E), ($04, $05, $08), ($06, $07),
+    $03, $18, $11, $20, $13, $14, $28, $21, $22, $23, $24, $12, $25, $0B, $0C, $0F, 
+    $0D, $0E, $26, $27, $10, $9F, $95, $96, $97, $99, $9A, $9B, $9C, $9D, $9E, $84, 
+    $85, $88, $86, $87, $98, $91, $A0, $93, $94, $A8,  $A1, $A2, $A3, $A4, $92, $A5,
+    $8B, $8C, $8F, $8D, $8E, $A6, $A7, $90, $29
+1 = ($1F, $15, $16, $17, $19, $1A, $1B, $1C, $1D, $1E), ($04, $05, $08), ($06, $07),
+    $03, $18, $11, $13, $14, $28, $21, $22, $23, $24, $12, $25, $0B, $0C, $0F, $0D,
+    $0E, $10, $26, $27, $84, $85, $86, $87, $20, $A0
+2 = ($1F, $15, $16, $17, $19, $1A, $1B, $1C, $1D, $1E), ($04, $05, $08), ($06, $07),
+    $03, $18, $11, $13, $14, $28, $21, $22, $23, $24, $12, $25, $0C, $0F, $0B, $0D,
+    $0E, $10
+    
+[DigitMaps]
+140 94 29 64 92 75 34 38 07 21 71 37 33 74 85 26
+59 86 79 53 32 13 46 39 17 31 09
+
+[Protocols]
+0001, 000B, 000D, 0010, 0011, 0013, 0014, 0018, 001C, 001F,
+002A, 002C, 0034, 003D, 0045, 004A, 004B, 0051, 0058, 005A,
+005B, 005C, 005D, 005E:2, 0064, 0065, 0068, 0072, 0075, 0079,
+007C, 007E:2, 0082, 0087, 008C, 0090, 0098, 00A1, 00A5, 00A6,
+00A8, 00AA, 00AB, 00B0, 00B2, 00B6, 00B7, 00BD, 00C9, 00CA,
+00D5, 00D9, 00DE, 00E2, 00E5, 00E8, 00EB, 00F3, 00F4, 00F8:2,
+0111, 0129, 0161, 016C

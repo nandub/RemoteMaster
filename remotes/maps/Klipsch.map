@@ -1,0 +1,59 @@
+#$MTIMFH
+#$-:Image Map file created by Map THIS!
+#$-:Map THIS! free image map editor by Todd C. Wilson
+#$-:Please do not edit lines starting with "#$"
+#$VERSION:1.30
+#$TITLE:SonyTiVoRMT-V303
+#$DATE:Mon Mar 05 14:52:28 2007
+#$PATH:C:\JP1\Images\
+#$GIF:Klipsch.jpg
+#$FORMAT:ncsa
+#$EOH
+default SonyTiVoRMT-V303
+circle mute  68,261 77,270
+circle POWER  79,58 93,67
+circle TV  95,36 104,45
+circle 1  44,83 52,91
+circle 2  80,82 88,90
+circle 3  116,82 124,90
+circle 4  44,107 52,115
+circle 5  80,105 88,113
+circle 6  116,105 124,113
+circle 7  45,131 53,139
+circle 8  81,131 89,139
+circle 9  117,129 125,137
+circle Klipsch  39,58 49,68
+circle 0  82,154 90,162
+circle cbl/sat  121,56 130,65
+circle fwd  121,322 132,332
+circle vcr  62,36 72,46
+circle VOL-  39,295 49,305
+circle guide  40,235 51,246
+circle VOL+  39,266 49,276
+circle record  122,352 132,362
+circle input_vcr  54,411 64,421
+circle pause  49,353 59,363
+circle UP  81,179 96,186
+circle DOWN  83,238 99,246
+circle stop  86,352 95,361
+circle ch+  129,263 139,273
+circle ch-  129,294 139,304
+circle rewind  50,323 60,333
+circle play  86,323 96,333
+circle input_tuner  87,385 97,395
+circle tv/vcr  68,284 77,294
+circle select  82,208 96,221
+circle left  47,209 62,218
+circle right  118,208 133,216
+circle input_tv  87,411 97,421
+circle +10  44,155 54,165
+circle input_dvd  52,386 62,396
+circle menu  39,186 49,196
+circle info  125,184 135,194
+circle exit  126,232 136,242
+circle input_aux  121,386 131,396
+circle input_video  120,410 130,420
+circle xxxxxxx  118,153 128,163
+circle last  100,284 110,294
+circle mono/stereo  99,261 109,271
+circle setup  38,36 45,43

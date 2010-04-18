@@ -1,0 +1,57 @@
+#$MTIMFH
+#$-:Image Map file created by Map THIS!
+#$-:Map THIS! free image map editor by Todd C. Wilson
+#$-:Please do not edit lines starting with "#$"
+#$VERSION:1.30
+#$TITLE:ScExplorer
+#$DATE:Fri Jul 22 12:21:12 2005
+#$PATH:C:\JP1\Images\
+#$GIF:ScExplorer.jpg
+#$FORMAT:ncsa
+#$EOH
+default SA3
+circle cbl  109,63 117,72
+circle mute  44,159 52,167
+circle tv  92,51 100,60
+circle exit  135,114 141,120
+circle */PPV  49,314 55,320
+circle fav  133,138 139,144
+circle guide  118,85 131,96
+circle aux  54,62 62,71
+circle select  82,122 93,133
+circle VOL+  58,182 65,189
+circle VOL-  60,204 67,211
+circle CH+  106,181 113,188
+circle CH-  104,204 111,211
+circle 1  49,255 58,262
+circle 2  82,254 91,261
+circle 3  114,255 123,262
+circle 4  49,275 58,282
+circle 5  82,274 91,281
+circle 6  115,275 124,282
+circle 7  49,295 58,302
+circle 8  82,293 91,300
+circle 9  115,294 124,301
+circle 0  82,313 91,320
+circle #/Enter  115,314 121,320
+circle PLAY  83,336 98,344
+circle ffwd  114,335 124,341
+circle rec  113,356 119,362
+poly A_Yellow_Triangle 49,228 57,241 41,241 49,229 49,228 49,228
+rect B_Blue_Square 76,229 88,241
+circle C_Red_Circle  113,235 120,242
+circle rew  50,335 60,341
+circle info  82,171 93,179
+circle -/Previous  31,137 37,143
+circle vcr  71,51 79,60
+circle last  120,158 128,166
+rect pause 45,351 57,362
+rect stop 74,350 91,366
+circle +/Next  28,112 34,118
+circle menu  44,85 57,96
+poly left 56,102 65,111 63,117 63,125 64,131 55,141 51,134 49,127 49,121 49,115 51,110 53,106 56,102 56,102
+poly right 99,111 109,102 113,110 115,118 115,122 115,127 114,131 112,135 111,137 108,140 99,131 100,127 101,123 101,119 100,117 98,112 99,111 99,111
+poly up 62,94 67,91 72,89 77,88 81,88 85,88 89,89 92,90 95,91 99,94 90,103 85,101 83,101 81,101 79,101 76,102 72,103 62,94 62,94
+poly down 72,138 76,140 80,141 84,141 88,140 91,138 100,148 97,150 91,153 88,153 85,154 81,154 76,154 73,153 68,151 63,148 72,138 72,138
+circle bypass  53,377 60,384
+circle power  82,72 94,78

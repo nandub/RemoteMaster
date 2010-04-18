@@ -1,0 +1,62 @@
+#$MTIMFH
+#$-:Image Map file created by Map THIS!
+#$-:Map THIS! free image map editor by Todd C. Wilson
+#$-:Please do not edit lines starting with "#$"
+#$VERSION:1.30
+#$TITLE:URC-6690_DVD
+#$DATE:Fri May 04 00:31:30 2007
+#$PATH:C:\Archive\JP1\NEW IMAGES\URC-6690\
+#$GIF:urc-6690_AUD.jpg
+#$FORMAT:ncsa
+#$EOH
+poly DOWN{REAR} 52,260 43,269 54,276 71,276 83,269 74,260 67,262 58,262 52,260 52,260
+circle STOP  87,128 96,137
+circle PAUSE  63,128 72,137
+circle RECORD  37,128 46,137
+circle POWER  63,34 71,42
+poly RIGHT{TEST} 88,226 78,236 81,241 81,249 78,255 88,264 95,252 95,239 88,226 88,226
+poly UP{FRONT} 43,221 52,231 59,227 67,227 74,230 83,221 71,214 55,214 43,221 43,221
+poly LEFT{CENTER} 39,226 31,237 31,252 38,264 47,255 44,248 45,240 48,235 39,226 39,226
+circle OK{SURROUND}  62,244 74,256
+circle MUTE  62,344 71,353
+circle FAV  62,326 71,335
+circle SET  99,449 107,457
+circle +100  75,451 83,459
+circle CC  50,451 58,459
+circle M1  26,448 34,456
+circle INPUT  30,426 38,434
+circle ENTER  95,426 103,434
+circle 0  62,428 70,436
+circle 9  95,405 103,413
+circle 8  62,408 70,416
+circle 7  30,405 38,413
+circle 4  30,385 38,393
+circle 5  62,387 70,395
+circle 6  95,385 103,393
+circle 3  95,364 103,372
+circle 1  30,364 38,372
+circle 2  62,367 70,375
+circle CH+  95,311 103,319
+circle CH-  95,339 103,347
+circle VOL-  30,339 38,347
+circle VOL+  30,311 38,319
+circle PREV  99,286 107,294
+circle PG+  76,297 84,305
+circle PG-  49,297 57,305
+circle SLEEP  26,286 34,294
+circle EXIT  99,203 107,211
+circle INFO  76,191 84,199
+circle MENU  48,191 56,199
+circle GUIDE  26,203 34,211
+circle SKIPBACK  37,149 48,160
+circle 169  63,150 74,161
+circle SKIPFWD  88,150 99,161
+circle FWD  88,105 99,116
+circle PLAY  63,105 74,116
+circle REWIND  37,105 48,116
+rect VCR/PVR 78,70 100,87
+rect AUDIO 52,70 74,87
+rect DVD 25,70 47,87
+rect TV 25,50 47,67
+rect AUX 52,50 74,67
+rect CBL/SAT 78,50 100,67

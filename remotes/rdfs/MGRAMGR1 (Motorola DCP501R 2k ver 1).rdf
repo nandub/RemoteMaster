@@ -1,0 +1,136 @@
+[General]
+Name=Motorola DCP501R Remote (w/2k EEPROM) ver 1
+EepromSize=$800
+#AdvCodeAddr=$018..$0FF
+UpgradeAddr=$100..$3FF
+Processor=S3C80
+RAMAddr=$FF00
+DevComb=,$0A5D,$173B,,$71BF,$17A0,$100
+RDFSync=3
+ImageMap=Motorola-DCP501R.map
+
+[SpecialProtocols]
+Multiplex=01FE
+
+[Settings]
+VPT Status=$014.2.1.0.0 (Off;On)
+VPT Device=$015.7.8.1.0 DeviceButtons
+Cable VPT=$016.0.1.1.0 (Off;On)
+Audio VPT=$016.1.1.1.0 (Off;On)
+TV    VPT=$016.2.1.1.0 (Off;On)
+VCR1  VPT=$016.3.1.0.0 (Off;On)
+VCR2  VPT=$016.4.1.1.0 (Off;On)
+
+[Checksums]
+^$000:$002..$3FE
+
+[FixedData]
+$017 = $13
+
+[DeviceTypes]
+Cable	= 3
+Audio	= 2
+TV	= 0
+VCR	= 1
+
+[DeviceTypeAliases]
+TV	= TV
+VCR	= VCR,DVD,Tape,Laserdisc,DAT
+Audio	= CD,Tuner,Home Auto,Misc Audio,Phono,Amp
+Cable	= Cable,SAT,Video Acc
+
+[DeviceButtons]
+CATV	= $00A $00B
+Audio	= $00C $00D
+TV	= $00E $00F
+VCR1	= $010 $011
+VCR2	= $012 $013
+
+#NOTE: the DVD/CD, AM/FM, TAPE, V1 and V2 buttons all switch the remote to AUDIO mode.
+
+[Buttons]
+SETUP=$01,
+AM/FM=$05,
+TV=$06,
+VCR1=$07,
+VCR2=$08,
+Tape=$09,
+V1=$0A,
+V2=$0B,
+"CBL":CATV=$02,
+"DVD":DVD/CD=$03,
+1=$23,
+2=$24,
+3=$25,
+4=$26,
+5=$27,
+6=$28,
+7=$29,
+8=$2A,
+9=$2B,
+0=$2C,
+Power=$04,
+"vol up":VOL+=$1C,
+"vol down":VOL-=$1D,
+Mute=$1B,
+"channel up":CH+=$1E,
+"channel down":CH-=$1F,
+"page up":PAGE+=$0C,
+"page down":PAGE-=$0D,
+Lock=$0E,
+"up arrow":UP=$0F,
+"down arrow":DOWN=$10,
+"left arrow":LEFT=$11,
+"right arrow":RIGHT=$12,
+"select":OK=$13,
+Help=$14,
+Guide=$15,
+Menu=$16,
+"display":INFO=$17,
+Exit=$18,
+"prev ch":LAST=$19,
+"fav/scan":FAV=$1A,
+"F1":A=$20,
+"F2":B=$21,
+"F3":C=$22,
+Night=$2D,
+"enter":ENTER{Music}=$2E,
+"rewind":REW{Tune-}=$2F,
+"play":Play{Day+}=$30,
+"fast fwd":FFWD{Tune+}=$31,
+"record":Record{FM_Mode}=$32,
+"eject":Eject{Day-}=$33,
+Pause=$34,
+"prev track":TRACK-=$35,
+"next track":TRACK+=$36,
+"stop":Disc_Skip=$37,
+"tv/vcr":TV/VCR{Input/A-B}=$38,
+Shuffle=$39,
+Repeat=$3A,
+Tone=$3B,
+Prog=$3C,
+Clear=$3D,
+Angle=$3E,
+"surround":Audio_Mode=$3F,
+Phantom1, Phantom2, Phantom3, Phantom4
+
+[ButtonMaps]
+0 = ($2c, $23, $24, $25, $26, $27, $28, $29, $2a, $2b), ($1c, $1d, $1b), ($1e, $1f),
+     $04, $38, $19, $2e, $17
+1 = ($2c, $23, $24, $25, $26, $27, $28, $29, $2a, $2b), ($1c, $1d, $1b), ($1e, $1f),
+     $04, $30, $34, $2f, $31, $33, $32, $17, $19, $2e, $38
+2 = ($2c, $23, $24, $25, $26, $27, $28, $29, $2a, $2b), ($1c, $1d, $1b), ($1e, $1f),
+     $04, $16, $17, $18, $2e, $15, $30, $34, $2f, $31, $33, $32, $1a, $19, $13, $0c, $0d, 
+     $0e, $14, $0f, $10, $11, $12, $20, $21, $22, $2d, $36, $35, $37, $38, $39, $3a, $3b, 
+     $3c, $3d, $3e, $3f, $01, $02, $03, $05, $07, $08, $09, $0a, $0b
+3 = ($2c, $23, $24, $25, $26, $27, $28, $29, $2a, $2b), ($1c, $1d, $1b), ($1e, $1f),
+     $16, $17, $18, $2e, $15, $30, $34, $2f, $31, $33, $32, $1a, $19, $13, $0c, $0d, $0e, 
+     $14, $94, $0f, $10, $11, $12, $20, $21, $22
+
+[Protocols]
+0000, 000C, 000D, 0014, 001C, 001F, 0022, 002D, 0034, 005A, 
+005C, 005D, 005E, 0065, 007E, 0092, 00AF, 00C4, 00C9, 00CA, 
+00DE, 00E2, 00E8, 00F5, 0111, 0169
+
+[DigitMaps]
+46 86 11 53 92 34 32 21 75 33 94 30 29 80 17 91

@@ -1,0 +1,48 @@
+#$MTIMFH
+#$-:Image Map file created by Map THIS!
+#$-:Map THIS! free image map editor by Todd C. Wilson
+#$-:Please do not edit lines starting with "#$"
+#$VERSION:1.30
+#$TITLE:URC-3440
+#$DATE:Sun Apr 22 07:47:29 2007
+#$PATH:C:\Archive\JP1\Tools\RemoteMaster\Images\
+#$GIF:URC-3440.jpg
+#$FORMAT:ncsa
+#$EOH
+default 7540
+circle 1  58,125 69,133
+circle 2  95,125 106,133
+circle 3  133,124 144,132
+circle 4  58,149 69,157
+circle 5  96,148 107,156
+circle 6  133,147 144,155
+circle 7  58,172 69,180
+circle 8  96,171 107,179
+circle 9  134,171 145,179
+circle 10{-/--}  58,195 69,203
+circle 0  97,195 108,203
+circle AV{20}  135,194 146,202
+circle CH+  97,242 115,254
+circle CH-  98,309 116,321
+circle VOL+  138,273 154,288
+circle VOL-  57,275 73,290
+circle mute  97,275 109,286
+poly PLAY{textoff} 76,329 76,348 94,339 76,329 76,329
+rect PAUSE{hold} 103,331 120,347
+circle sp/lp{red}  58,356 66,363
+rect STOP{green} 76,360 93,376
+circle REC{yellow}  113,368 122,377
+circle auto{blue}  139,356 146,363
+poly rew{texton} 44,328 56,319 64,319 64,337 54,337 44,328 44,328
+poly ffwd{expand} 130,335 139,335 151,327 139,318 130,318 130,335 130,335
+circle magic  68,39 78,49
+circle menu  94,38 104,48
+circle power  120,38 130,48
+circle tv  57,87 67,97
+circle vcr  82,86 92,96
+circle sat  107,86 117,96
+circle dvd  133,85 143,95
+poly LEFT 65,260 39,275 65,289 65,260
+poly UP 96,223 76,250 117,250 96,223
+poly RIGHT 126,258 126,291 154,274 126,258
+poly DOWN 77,298 118,298 98,322 77,298

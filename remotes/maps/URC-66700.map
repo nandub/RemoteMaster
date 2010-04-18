@@ -1,0 +1,64 @@
+#$MTIMFH
+#$-:Image Map file created by Map THIS!
+#$-:Map THIS! free image map editor by Todd C. Wilson
+#$-:Please do not edit lines starting with "#$"
+#$VERSION:1.30
+#$TITLE:Vizio OEM 66700 Remote
+#$AUTHOR:Cy Welch
+#$DATE:Fri Feb 23 22:11:15 2007
+#$PATH:C:\Save\
+#$GIF:URC-66700.jpg
+#$FORMAT:ncsa
+#$EOH
+circle 2  102,67 102,75
+circle 3  146,68 146,76
+circle 1  58,67 58,75
+circle 4  58,92 58,100
+circle 5  102,91 102,99
+circle 6  146,92 146,100
+circle 9  146,118 146,127
+circle 8  103,116 103,125
+circle 7  59,117 59,125
+circle Input  57,143 57,153
+circle 0  102,143 102,152
+circle Enter  146,144 146,154
+circle Last  102,175 102,184
+circle Mute  102,201 102,210
+circle Menu  53,234 53,244
+circle Guide  53,308 53,319
+circle Info  151,233 151,243
+circle Exit  150,308 150,318
+circle CC{Stop}  156,337 156,346
+circle MTS{Play}  122,338 122,347
+circle Sleep{Pause}  82,339 82,349
+circle Wide{Record}  46,339 46,347
+circle NTSC_TV{Skip-}  46,365 46,374
+circle AV{Rewind}  82,365 82,374
+circle Analog_HD{Fwd}  121,365 121,373
+circle Digital_HD{Skip+}  155,364 155,372
+circle Ok  102,272 102,284
+circle Power  144,27 144,35
+circle TV  56,45 56,52
+circle VCR  87,45 87,51
+circle CABLE  118,46 118,53
+circle DVD  149,47 149,54
+circle Ch+  57,171 57,180
+circle Ch-  56,203 56,213
+circle Vol+  146,172 146,181
+circle Vol-  146,201 146,211
+poly Right 132,262 155,257 158,262 157,284 153,287 133,281 133,264 132,262
+poly Up 91,241 85,224 118,224 111,245 92,246 91,241 91,241
+poly Left 47,258 70,262 70,279 46,285 43,271 46,258 47,258
+poly Down 90,297 112,298 119,318 85,318 90,299 90,297
+rect Zoom- 43,387 64,398
+rect Zoom+ 75,387 96,399
+rect Freeze 106,387 128,399
+rect RGB 138,386 161,398
+rect PiP 41,404 63,417
+rect PiP_Ch- 73,405 96,418
+rect PiP_Ch+ 106,405 130,418
+rect Audio 139,404 159,417
+rect Swap 138,423 158,435
+rect Lang 106,423 128,436
+rect PiP_Size 73,423 97,436
+rect PiP_Input 42,423 65,435

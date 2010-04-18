@@ -1,0 +1,121 @@
+[General]
+Name=Comcast URC-1067
+EepromSize=$400
+AdvCodeAddr=$012..$1FF
+UpgradeAddr=$200..$3FF
+Processor=HCS08
+BaseAddr=$F800
+RAMAddr=$FF00
+RDFSync=3
+SectionTerminator=$FF
+AdvCodeBindFormat=LONG
+AdvCodeFormat=EFC
+EFCDigits=5
+ImageMap=URC-1067.map
+
+[Settings]
+VPT Status=$00E.2.1.1.0 (Off;On)
+VPT Device=$010.7.8.1.0 DeviceButtons
+CBL uses VPT=$011.0.1.1.0 (No;Yes)
+TV uses VPT=$011.1.1.1.0 (No;Yes)
+AUX uses VPT=$011.2.1.1.0 (No;Yes)
+Channel Lock=$00E.3.1.1.0 (Off;On)
+CBL Setup Code Lock=$00F.0.1.1.0 (Off;On)
+TV Setup Code Lock=$00F.1.1.0.0 (Off;On)
+AUX Setup Code Lock=$00F.2.1.0.0 (Off;On)
+
+[Checksums]
+
+[FixedData]
+
+[DeviceTypes]
+CBL     = 0
+TV      = 1
+AUX     = 2
+
+[DeviceTypeAliases]
+CBL     = Cable,SAT,Video Acc
+TV      = TV
+AUX     = VCR,Tape,DAT,DVD,Laserdisc,CD,Home Auto,Phono,Tuner,Misc Audio,Amp
+
+[DeviceButtons]
+CABLE = $008 $009
+TV    = $00A $00B
+AUX   = $00C $00D
+
+[Buttons]
+CABLE=$08
+TV=$20
+AUX=$28
+Setup=$18
+Power=$10
+AllOn:"All_On"=$07
+OnDemand:"On_Demand"=$0f
+0=$2a
+1=$11
+2=$12
+3=$13
+4=$19
+5=$1a
+6=$1b
+7=$21
+8=$22
+9=$23
+"vol up":Vol+=$01
+"vol down":Vol-=$09
+Mute=$0A
+"channel up":Ch+=$03
+"channel down":Ch-=$0B
+"prev ch":Last=$04
+input:"TV/VCR{Input}"=$29
+enter:"HD_Zoom{Enter}"=$2B
+"up arrow":Up=$1d
+"down arrow":Down=$0d
+"left arrow":Left=$16
+"right arrow":Right=$14
+select:OK/Select=$15
+Menu=$0c
+Guide=$0e
+Info=$05
+Exit=$06
+Fav=$02
+Help=$2d
+A:"A{Lock}"=$26
+B:"B{Day-}"=$25
+C:"C{Day+}"=$24
+PageUp:"Page_Up"=$1e
+PageUp:"Page_Down"=$1c
+Play=$1f
+Pause=$2f
+Stop=$2e
+Rew=$27
+FF=$17
+Rec=$2c
+Replay=$31
+MyDVR:"My_DVR"=$32
+Live=$33
+PIP_On/Off:"PIP_On/Off"=$34
+PIP_Swap:"PIP_Swap"=$35
+PIP_Move:"PIP_Move"=$36
+PIP_Ch+:"PIP_Ch+"=$37
+PIP_Ch-:"PIP_Ch-"=$38
+
+[ButtonMaps]
+0 = ($2A, $11, $12, $13, $19, $1A, $1B, $21, $22, $23), ($01, $09, $0A), ($03, $0B),
+    $10, $0C, $29, $1D, $0D, $16, $14, $06, $05, $0E, $04, $15, $02, $1E, $1C, $1F,
+    $2F, $27, $17, $2E, $2C, $26, $25, $24, $2B, $2D, $0F, $31, $32, $33, $34, $35,
+    $36, $37, $38
+1 = ($2A, $11, $12, $13, $19, $1A, $1B, $21, $22, $23), ($01, $09, $0A), ($03, $0B),
+    $10, $29, $2B, $04
+2 = ($2A, $11, $12, $13, $19, $1A, $1B, $21, $22, $23), ($01, $09, $0A), ($03, $0B),
+    $10, $1F, $2E, $27, $17, $2F, $2C, $29, $2B, $04, $0C, $1D, $0D, $16, $14, $15,
+    $06, $05, $0E, $33
+    
+[Protocols]
+0000, 0006, 0014, 0015, 001C, 001D, 001F:8, 0022, 0027:new, 002D,
+0034, 003A, 0045, 0058, 005A, 005C, 005D, 005E:2, 0060, 0065,
+006A, 0073, 007E:3, 009C, 00AF, 00B6, 00C4, 00C9, 00CA, 00CD:2,
+00DE, 00E2, 00E8, 00F8:3, 0111:1byte, 0114, 0117, 011A, 011B
+
+[DigitMaps]
+72 53 94 03 90 21 46 29 86 83 11 92 34 32 75 33 30 01 64 13 209 210 131 241 242

@@ -1,0 +1,66 @@
+#$MTIMFH
+#$-:Image Map file created by Map THIS!
+#$-:Map THIS! free image map editor by Todd C. Wilson
+#$-:Please do not edit lines starting with "#$"
+#$VERSION:1.30
+#$DATE:Thu Dec 27 04:30:59 2007
+#$PATH:C:\Documents and Settings\harold\My Documents\JP1\Misc\comcast\final\
+#$GIF:URC-1067A.jpg
+#$FORMAT:ncsa
+#$EOH
+default URC-1067
+circle AUX  35,45 43,53
+circle TV  51,29 59,37
+circle CABLE  74,23 82,31
+circle POWER  97,30 105,38
+circle SETUP  114,46 122,54
+circle ALL_ON  74,48 86,56
+rect ON_DEMAND 50,61 99,77
+rect REWIND 27,79 50,94
+circle PLAY  75,90 88,98
+rect FFWD 98,79 121,94
+rect STOP 31,102 48,118
+rect PAUSE 59,102 90,118
+circle Record  109,110 118,119
+circle REPLAY  42,131 55,139
+rect MY_DVR 59,123 89,139
+circle LIVE  106,130 120,139
+circle A{Lock}  49,157 58,166
+circle B{Day-}  74,157 83,166
+circle C{Day+}  99,157 108,166
+circle PAGE_UP  30,174 39,186
+circle PAGE_DOWN  119,173 127,184
+poly UP 50,177 66,170 83,170 98,177 88,189 74,186 60,189 50,177 50,177
+poly LEFT 45,181 38,193 38,205 46,216 56,206 54,198 56,192 45,181 45,181
+poly RIGHT 93,192 104,181 111,193 111,204 104,216 93,205 95,198 93,192 93,192
+poly DOWN 50,220 60,208 73,211 88,208 100,220 84,227 65,227 50,220 50,220
+circle OK/SELECT  74,198 89,206
+circle GUIDE  35,223 44,232
+circle INFO  74,243 83,252
+circle MENU  114,223 123,232
+circle EXIT  36,254 45,263
+circle HELP  74,266 83,275
+circle LAST  112,254 121,263
+circle VOL+  37,277 47,287
+circle VOL-  39,300 49,310
+circle CH+  111,277 121,287
+circle CH-  109,300 119,310
+circle MUTE  62,301 71,310
+circle FAV  86,301 95,310
+circle 1  44,326 56,334
+circle 2  74,326 87,334
+circle 3  103,326 116,334
+circle 4  44,346 56,354
+circle 5  74,346 87,354
+circle 6  103,346 116,354
+circle 7  44,366 56,374
+circle 8  74,366 87,374
+circle 9  103,366 116,374
+circle 0  74,386 87,394
+circle TV/VCR{Input}  45,386 54,395
+circle HD_Zoom{Enter}  103,386 112,395
+circle PIP_ON/OFF  45,413 54,422
+circle PIP_SWAP  64,413 73,422
+circle PIP_MOVE  84,413 93,422
+circle PIP_CH+  103,413 112,422
+circle PIP_CH-  97,431 106,440

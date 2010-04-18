@@ -1,0 +1,60 @@
+#$MTIMFH
+#$-:Image Map file created by Map THIS!
+#$-:Map THIS! free image map editor by Todd C. Wilson
+#$-:Please do not edit lines starting with "#$"
+#$VERSION:1.30
+#$TITLE:URC-9960
+#$AUTHOR:STEVE MOON
+#$DATE:Wed May 16 23:46:38 2007
+#$PATH:C:\Archive\JP1\NEW IMAGES\9960\
+#$GIF:urc-9960-aux-main.jpg
+#$FORMAT:ncsa
+#$EOH
+default URC-9960
+poly SETUP 50,465 61,475 87,475 99,465 50,465
+rect INPUT 36,359 59,374
+rect Enter{Skip} 94,359 117,374
+rect EXIT 91,262 116,277
+rect MENU 34,262 60,277
+rect INFO 91,193 116,208
+rect Guide 34,193 59,214
+rect Page-{Subtitle} 62,273 87,290
+rect Page+{Audio} 62,179 87,196
+rect PVR-VOD{Preset} 59,138 90,157
+rect FAV 99,116 125,130
+rect SCROLL 61,125 88,135
+rect POWER 53,104 96,118
+rect AUX 49,90 69,104
+rect PVR 89,90 108,104
+rect CBL 34,70 58,91
+rect VCR 96,74 116,91
+rect AUDIO 94,55 114,72
+rect TV 54,37 73,54
+circle DVD  88,44 99,55
+circle CD  44,57 55,68
+circle VOL+  44,140 53,149
+circle VOL-  44,162 53,171
+circle CH+  106,140 115,149
+circle CH-  106,161 115,170
+circle MUTE  44,179 52,187
+circle LAST{RAND}  105,179 113,187
+circle UP  74,210 84,220
+circle DOWN  74,257 84,267
+circle LEFT  51,234 61,244
+circle RIGHT  98,234 108,244
+circle OK  75,233 91,248
+circle 1  51,301 61,306
+circle 2  76,301 86,306
+circle 3  100,301 110,306
+circle 4  51,321 61,326
+circle 5  76,321 86,326
+circle 6  100,321 110,326
+circle 7  51,341 61,346
+circle 8  76,341 86,346
+circle 9  100,341 110,346
+circle 0  76,362 86,367
+circle MACRO1  39,384 46,391
+circle MACRO2  59,384 66,391
+circle MACRO3  91,384 98,391
+circle MACRO4  110,384 117,391
+circle HT  75,74 92,91

@@ -1,0 +1,170 @@
+[General]
+Name=One For All URC-8204 Kameleon 2nd Generation
+EepromSize=$1000
+AdvCodeAddr=$019..$3FF
+UpgradeAddr=$400..$7FF
+LearnedAddr=$800..$FFF
+Processor=HCS08
+BaseAddr=$EC00
+RAMAddr=$FF00
+RDFSync=3
+WAVUpgrade=1
+AdvCodeFormat=EFC
+AdvCodeBindFormat=LONG
+SectionTerminator=$FF
+LearnedDevBtnSwapped=Yes
+EFCDigits=5
+
+[Settings]
+EL Activation Type=$012.4.1.0.0 (Key Press;Remote Touch)
+Light Sensor Status=$012.5.1.0.0 (Off;On)
+VPT Status=$012.2.1.0.0 (Off;On)
+VPT Device=$014.7.8.1.0 DeviceButtons
+SAT VPT=$015.0.1.1.0 (Off;On)
+TV  VPT=$015.1.1.1.0 (Off;On)
+VCR VPT=$015.2.1.1.0 (Off;On)
+DVD VPT=$015.3.1.0.0 (Off;On)
+CH +/- Status=$012.1.1.0.0 (Use Native;Simulate)
+CH +/- Device=$016.7.8.1.0 DeviceButtons
+Light On Time=$018.3.4.2.0 (17min;4sec;8sec;12sec;16sec;20sec)
+
+[Checksums]
+^$008:$00A..$018
+
+[DeviceTypes]
+SAT/CBL = 0
+TV      = 1
+VCR     = 2
+DVD     = 3
+
+[DeviceTypeImageMaps]
+SAT/CBL = (URC-8204-SAT.MAP,URC-8204-SAT-MENU.MAP)
+TV      = (URC-8204-TV.MAP,URC-8204-TV-MENU.MAP)
+VCR     = (URC-8204-VCR.MAP,URC-8204-VCR-MENU.MAP)
+DVD     = (URC-8204-DVD.MAP)
+
+[DeviceTypeAliases]
+SAT/CBL = Cable,SAT,Video Acc
+TV      = TV
+VCR     = VCR,Tape,DAT
+DVD     = DVD,Laserdisc
+
+[DeviceButtons]
+SAT/CBL = $00A $00B
+TV      = $00C $00D
+VCR     = $00E $00F
+DVD     = $010 $011
+
+[Buttons]
+TV=$01, 
+"setup":Magic=$02, 
+power=$03, 
+"vol up":vol+=$04, 
+"vol down":vol-=$05, 
+"channel up":ch+=$06, 
+"channel down":ch-=$07, 
+mute=$08, 
+vcr=$0A, 
+red=$0B, 
+green=$0C, 
+blue=$0D, 
+yellow=$0E, 
+exit=$10, 
+sat=$11, 
+AV=$12, 
+aspect:16-9=$13,
+menu=$14, 
+1=$15, 
+2=$16, 
+3=$17,
+TV/VCR=$18,
+4=$19, 
+5=$1A, 
+6=$1B, 
+7=$1C, 
+8=$1D, 
+9=$1E, 
+0=$1F,
++10=$20,
+dvd=$21, 
+"prev track":skip-=$23, 
+"next track":skip+=$24, 
+guide=$25, 
+PVR=$26,
+"fav/scan":fav=$28, 
+"up arrow":up=$29, 
+"down arrow":down=$2A, 
+"left arrow":left=$2B, 
+"right arrow":right=$2C, 
+A=$2D, 
+B=$2E, 
+C=$2F, 
+Scroll=$30,
+pp=$31,
+"display":info=$32, 
+"rewind":rew=$33, 
+play=$34, 
+"fast fwd":ff=$35, 
+stop=$36, 
+pause=$37, 
+"record":rec=$38, 
+audio=$39, 
+subt=$3A, 
+OK=$3B, 
+prog=$53, 
+TV/SAT=$58,
+TV/DVD\tuner-4=$59,
+"+10":-/--=$60, 
+eject=$66,
+sp/lp=$68,
+timer=$72,
+random=$71, 
+back\txt-expand=$73, 
+txt-on=$74, 
+txt-hold/stop=$75, 
+txt-index=$76, 
+txt-mix=$77, 
+txt-off=$78
+sleep=$83,
+color+=$84,
+color-=$85,
+bright+=$86,
+bright-=$87
+
+[ButtonMaps]
+0 = ($1F, $15, $16, $17, $19, $1A, $1B, $1C, $1D, $1E), ($04, $05, $08), ($06, $07),
+    $03, $14, $29, $2A, $2B, $2C, $3B, $32, $58, $25, $28, $0B, $0C, $0E, $0D, $74,
+    $22, $10, $20, $34, $37, $33, $35, $36, $38, $78, $24, $23, $09, $12, $2D, $2E,
+    $2F
+1 = ($1F, $15, $16, $17, $19, $1A, $1B, $1C, $1D, $1E), ($04, $05, $08), ($06, $07),
+    $03, $12, $74, $78, $20, $77, $76, $0B, $0C, $0E, $0D, $86, $87, $84, $85, $83,
+    $14, $29, $2A, $2B, $2C, $31, $3B, $10, $13, $73, $75
+2 = ($1F, $15, $16, $17, $19, $1A, $1B, $1C, $1D, $1E), ($04, $05, $08), ($06, $07),
+    $03, $34, $37, $33, $35, $36, $38, $66, $14, $53, $29, $2A, $2B, $2C, $10, $3B,
+    $18, $68, $12, $20, $72, $0B, $0C, $0E, $0D
+3 = ($1F, $15, $16, $17, $19, $1A, $1B, $1C, $1D, $1E), ($04, $05, $08), ($06, $07),
+    $03, $14, $29, $2A, $2B, $2C, $34, $37, $33, $35, $36, $38, $66, $22, $24, $23,
+    $10, $3B, $09, $60, $59, $32, $71, $53, $25
+
+[DigitMaps]
+03 53 92 74 25 94 140 32 01 34 183 184 64 139 66 42 38 14 46 187 188 43 37 95 51
+19 16 166 167 168 191 86 125 384 179 185 385 176 177 211 189 381 173 217 218 87 386
+348 112 181 182 127 29 12 75 11 07 89 21 71 33 85 26 59 30 313 22 91 169 60 02 204
+194 124 192 193 206 207 331 195 196 235 236 80 275 276 308 309 199 200 283 284 261
+262 263 264 225 226 316 317 93 129 270 271 39 13 31 09 175 209 210 145 170 141 131
+216 128 178 69 202 205 198 180 213 208 190 203 197 215 212 174 214 243 312 229 227
+228 186 259 260 257 258 219 220 280 274 245 246 322 294
+
+[Protocols]
+0000, 0001, 0002, 0006, 000B, 000D, 000F, 0010, 0011, 0013,
+0014, 0018, 001C, 001D, 001F, 0020, 0022, 0027, 002A, 002C,
+002D, 0034, 0039, 003D, 0041, 0045, 0046, 004A, 004B, 0051,
+0056, 0058, 005A, 005B, 005C, 005D, 005E, 0064, 0065, 0066,
+0067, 0068, 006C, 0073, 0075, 007E, 0080, 0082, 0087, 008C,
+008E, 0090, 0095, 0098, 009C, 009D, 009E, 00A1, 00A5, 00A6,
+00A8, 00AA, 00AB, 00AF, 00B0, 00B2, 00B6, 00B9, 00BA, 00BD,
+00C4, 00C9, 00CA, 00CC, 00CD, 00D1, 00D4, 00D5, 00D9, 00DE,
+00E2, 00E5, 00E8, 00EB, 00ED, 00EF, 00F0, 00F3, 00F4, 00F8,
+00F9, 00FE, 0109, 0111, 0112, 0114, 0117, 011A, 011B, 011E,
+0125, 012A, 012B, 013A, 015E, 0160, 0161, 016A, 016C, 0173,
+0176, 017D, 017E, 0182, 0187, 018A, 018C

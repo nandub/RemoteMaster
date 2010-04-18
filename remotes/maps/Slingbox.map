@@ -1,0 +1,47 @@
+#$MTIMFH
+#$-:Image Map file created by Map THIS!
+#$-:Map THIS! free image map editor by Todd C. Wilson
+#$-:Please do not edit lines starting with "#$"
+#$VERSION:1.30
+#$TITLE:Atlas4
+#$DATE:Thu Aug 18 10:28:19 2005
+#$PATH:C:\rm\km\images\
+#$GIF:Slingbox.jpg
+#$FORMAT:ncsa
+#$EOH
+default Slingbox
+circle Power  140,16 151,27
+circle CH+  77,221 91,234
+rect num_1 5,271 48,290
+rect num_2 55,271 99,290
+rect num_3 106,271 150,290
+circle CH-  78,251 92,264
+rect num_4 5,300 48,319
+rect num_5 56,301 99,320
+rect num_6 107,301 150,320
+rect num_7 5,330 48,349
+rect num_8 56,330 99,349
+rect num_9 107,331 150,350
+rect num_0 56,360 99,379
+rect Last_ch 5,360 48,379
+rect Enter 107,359 150,378
+circle Play  75,425 107,456
+rect Skip- 4,464 52,489
+rect Skip+ 55,464 103,489
+rect rewind 4,493 52,518
+rect ffwd 55,494 103,519
+rect Stop 4,522 52,547
+rect Pause 55,523 103,548
+rect Record 4,552 52,577
+rect Live 102,552 150,577
+circle Select  77,64 106,94
+poly up_arrow 65,31 77,9 91,32 65,31
+poly right_arrow 110,50 135,64 110,76 110,50
+poly down_arrow 64,97 90,97 78,120 64,97
+poly left_arrow 22,63 46,49 45,78 22,63
+rect Guide 4,134 52,157
+rect Menu 4,163 52,186
+rect Exit 55,134 98,157
+rect Info 56,163 99,186
+circle Page+  140,144 152,156
+circle Page-  140,175 152,187

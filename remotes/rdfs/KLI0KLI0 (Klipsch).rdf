@@ -1,0 +1,121 @@
+[General]
+Name=Klipsch
+EepromSize=$800
+AdvCodeAddr=$016..$0FF
+UpgradeAddr=$100..$7FD
+LearnedAddr=$400..$7FD
+Processor=S3C80
+RAMAddr=$FF00
+RDFSync=3
+DevComb=,$132F,$0D0A,,$6DBF,$0D6F,$100
+AdvCodeFormat=EFC 
+ImageMap=Klipsch.map
+
+[Settings]
+VPT Status=$012.2.1.0.0 (Off;On)
+VPT Device=$013.7.8.1.0 DeviceButtons
+CBL/SAT VPT=$014.0.1.1.0 (Off;On)
+TV VPT=$014.1.1.1.0 (Off;On)
+VCR VPT=$014.2.1.1.0 (Off;On)
+Klipsch VPT=$014.3.1.0.0 (Off;On)
+
+[Checksums]
+^$000:$002..$7FD
+
+[FixedData]
+$015 = $04
+
+[DeviceTypes]
+CBL/SAT = 0
+TV      = 1
+VCR/DVD = 2
+AUD     = 2
+
+[DeviceTypeAliases]
+CBL/SAT = Cable, SAT, Video Acc
+TV      = TV
+VCR/DVD = VCR, DVD, Tape, Laserdisc, DAT, PVR
+AUD     = CD, Home Auto, Phono, Tuner, Misc Audio, Amp
+
+
+[DeviceButtons]
+CBL/SAT	= $00A $00B
+TV	= $00C $00D
+VCR	= $00E $00F
+Klipsch	= $010 $011
+
+
+[Buttons]
+"setup":SET[Setup]=$01, 
+VCR=$02, 
+TV=$03, 
+CBL/SAT=$04, 
+Klipsch=$05, 
+power=$06, 
+"channel up":CH+=$07, 
+"channel down":CH-=$08, 
+"vol up":Vol+=$09, 
+"vol down":Vol-=$0A, 
+mute=$0B, 
+"prev ch":Last=$0C, 
+setup=$0D, 
+tv/vcr=$0E, 
+1=$0F, 
+2=$10, 
+3=$11, 
+4=$12, 
+5=$13, 
+6=$14, 
+7=$15, 
+8=$16, 
+9=$17, 
+0=$18, 
+input:mono/stereo=$19, 
++10=$1A, 
+menu=$1B, 
+display:Info=$1C, 
+guide=$1D, 
+exit=$1E, 
+"up arrow":Up=$1F, 
+"down arrow":Down=$20, 
+"left arrow":Left=$21, 
+"right arrow":Right=$22, 
+select=$23, 
+rewind=$24, 
+play=$25, 
+"fast fwd":fwd=$26,
+record=$27, 
+stop=$28, 
+pause=$29, 
+input_dvd=$2A, 
+input_tuner=$2B, 
+input_aux=$2C, 
+input_vcr=$2D, 
+input_tv=$2E, 
+input_video=$2F, 
+Phantom1=$3D, Phantom2=$3E, Phantom3=$3F, Phantom4=$40
+
+[ButtonMaps]
+0 = ($18, $0F, $10, $11, $12, $13, $14, $15, $16, $17), ($09, $0A, $0B), ($07, $08),
+     $06, $0C, $0E, $19, $1A, $1B, $1C, $1D, $1E, $1F, $20, $21, $22, $23, $24, $25, $26, $27, $28, $29
+1 = ($18, $0F, $10, $11, $12, $13, $14, $15, $16, $17), ($09, $0A, $0B), ($07, $08),
+     $06, $0C, $0E, $19, $1A, $1B, $1C, $1D, $1E, $1F, $20, $21, $22, $23, $24, $25, $26, $28, $29
+2 = ($18, $0F, $10, $11, $12, $13, $14, $15, $16, $17), ($09, $0A, $0B), ($07, $08),
+     $06, $0C, $0E, $19, $1A, $1B, $1C, $1D, $1E, $1F, $20, $21, $22, $23, $24, $25, $26, $27, $28, $29
+3 = ($18, $0F, $10, $11, $12, $13, $14, $15, $16, $17), ($09, $0A, $0B), ($07, $08),
+     $06, $0C, $0D, $0E, $19, $1A, $1B, $1C, $1D, $1E, $1F, $20, $21, $22, $23, $24, $25, $26, $27, $28, $29, $2A, $2B, $2C, $2E, $2D, $2F
+
+[DigitMaps]
+03 53 92 48 72 94 44 90 46 01 11 126 81 16 23 127
+29 21 32 33 34 86 83 75 30 03 61 85 80 91 64 17
+131 
+
+[Protocols]
+0000, 0002, 0006, 0007, 000A, 000C, 000D, 0013, 0014, 0015, 
+0018, 001A, 001C, 001D, 001F, 0022, 0027, 0029, 002A, 002D, 
+002F, 0032, 0034, 0039, 003A, 003D, 0045, 0053, 0056, 0058, 
+005A, 005C, 005D, 005E, 0060, 0065, 0067, 006E, 0073, 007E, 
+0083, 0092, 0093, 009C, 00A4, 00AF, 00C4, 00C9, 00CA, 00DE, 
+00E2, 00E3, 00E8, 00F5, 00F8, 010F, 0111, 0114, 0117, 011A, 
+011B, 0125, 0162, 0184
+

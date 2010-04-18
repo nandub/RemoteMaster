@@ -1,0 +1,71 @@
+#$MTIMFH
+#$-:Image Map file created by Map THIS!
+#$-:Map THIS! free image map editor by Todd C. Wilson
+#$-:Please do not edit lines starting with "#$"
+#$VERSION:1.30
+#$TITLE:15-2107
+#$DATE:Wed Feb 16 12:16:31 2005
+#$PATH:C:\Backups\JP1\Images\
+#$GIF:15-2107.JPG
+#$FORMAT:ncsa
+#$EOH
+default Generic
+circle guide_random  121,71 132,78
+circle info  70,122 82,129
+circle menu  70,71 82,78
+circle exit  120,122 131,129
+circle vol+  34,305 44,315
+circle ch+  149,305 159,315
+circle vol-  34,330 42,339
+circle ch-  148,330 156,338
+circle mute  52,355 61,364
+circle right  120,97 128,105
+circle down  95,123 103,131
+circle up  95,72 103,80
+circle left  69,97 77,105
+circle select  96,97 107,108
+circle 0  94,219 102,227
+circle 1  69,143 77,151
+circle 9  120,194 128,202
+circle 7  70,195 78,203
+circle 3  120,143 128,151
+circle 2  95,143 103,151
+circle 5  94,170 102,178
+circle 8  94,195 102,203
+circle 4  68,170 76,178
+circle 6  120,169 128,177
+circle tv/vcr  145,71 156,78
+circle power  93,300 108,306
+rect stop 138,166 152,180
+rect pause_wide 138,191 152,205
+circle P[SETUP]  91,351 97,357
+circle macro1  68,329 74,335
+circle macro2  93,329 99,335
+circle macro3  117,329 123,335
+rect home_theater 61,238 77,245
+rect TV 61,246 77,253
+rect AUX1 61,254 77,261
+rect VCR/DVD 86,246 102,253
+rect CAB/SAT 112,246 128,253
+rect RCVR 136,246 152,253
+rect last 38,220 54,227
+rect FAV_+100 61,220 77,227
+rect enter_disc 112,219 128,226
+rect AUX3 112,254 128,261
+rect AUX4 136,254 152,261
+rect AUX2 86,254 102,261
+rect rew_swap 138,115 152,129
+rect play_move 138,139 152,153
+rect record 138,217 152,231
+rect MODE_SHIFT 38,242 52,256
+circle scan  131,355 140,364
+rect EXT_BAND 38,64 52,78
+rect ADJ+_Page+_TITLE 38,91 52,105
+rect ADJ-_Page-_SUBTITLE 38,117 52,131
+rect SURR_RECENT_LANG 38,140 52,154
+rect ANALOG_CC_REPLAY 38,164 52,178
+rect DIGITAL_SAP_LIVE 38,190 52,204
+rect FFWD_PIP 138,88 152,102
+rect set1 86,237 102,244
+rect set3 136,238 152,245
+rect set2 112,238 128,245

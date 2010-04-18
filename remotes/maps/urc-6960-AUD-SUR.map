@@ -1,0 +1,43 @@
+#$MTIMFH
+#$-:Image Map file created by Map THIS!
+#$-:Map THIS! free image map editor by Todd C. Wilson
+#$-:Please do not edit lines starting with "#$"
+#$VERSION:1.30
+#$TITLE:URC-6960
+#$AUTHOR:KUPAKAI
+#$DATE:Mon May 28 08:13:54 2007
+#$PATH:C:\Archive\JP1\NEW IMAGES\6960\
+#$GIF:urc-6960-AUD-SUR.jpg
+#$FORMAT:ncsa
+#$EOH
+default URC-6960
+rect SETUP 56,497 93,508
+rect PRESET 58,143 91,163
+rect SCROLL 61,128 88,138
+rect GUIDE 32,210 57,230
+rect MENU 32,282 58,296
+rect EXIT 92,282 117,296
+rect INFO 91,210 117,224
+rect POWER 52,107 97,121
+poly CBL 61,101 37,101 37,78 52,78 61,90 61,101 61,101
+rect AUDIO 94,57 115,82
+rect VCR 34,57 55,74
+rect PVR 92,85 113,102
+rect TV 47,38 68,55
+circle DVD  92,46 103,57
+circle VOL+  40,149 50,158
+circle VOL-  42,173 52,182
+circle CH+  108,149 118,158
+circle CH-  106,172 116,181
+circle MUTE  43,192 53,201
+circle LAST{RAND}  105,192 115,201
+circle HT  74,77 93,96
+circle FRONT  75,226 85,236
+circle REAR  75,277 85,287
+circle CENTER  50,253 60,263
+circle TEST  99,253 109,263
+circle SURROUND  75,252 91,268
+circle MACRO1  39,411 46,418
+circle MACRO2  59,410 66,417
+circle MACRO3  91,410 98,417
+circle MACRO4  110,410 117,417

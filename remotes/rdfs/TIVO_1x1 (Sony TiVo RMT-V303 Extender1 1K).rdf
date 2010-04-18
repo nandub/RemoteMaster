@@ -1,0 +1,126 @@
+[General]
+Name=Sony TiVo RMT-V303 Extender 1 (1K)
+EepromSize=$400
+AdvCodeAddr=$014..$0AD
+UpgradeAddr=$100..$331
+PowerButtons=$01,$02
+Processor=S3C80
+RAMAddr=$8000
+DevComb=$74,$E2A,$8A6,,$81EF,$903
+RDFSync=3
+OmitDigitMapByte=1
+ImageMap=SonyTiVoRMT-V303.map
+
+[SpecialProtocols]
+LDKP=01F9
+Multiplex=01FE
+
+[Extender] 
+DeviceSetup=SAT/1800,ToadTog
+DeviceSetup=TV/1106,LDKP
+DeviceSetup=TV/1104,Pause
+DeviceSetup=TV/1103,DSM
+DeviceSetup=TV/1101,Multiplexer
+
+[Settings]
+Shift Button Keycode=$00EC.7.8.2.0
+
+[Checksums]
+^$000:$002..$3FC
+
+[FixedData]
+
+[DeviceTypes]
+TV	= 0
+RCVR	= 0
+VCR	= 1
+
+[DeviceTypeAliases]
+TV   = TV
+RCVR = Tuner,Amp
+VCR  = Cable,VCR,CD,DVD,SAT,Tape,Laserdisc,DAT,Home Auto,Misc Audio,Phono,Video Acc,OEM Mode
+
+[DeviceButtons]
+TV	= $3E8 $3E9
+TiVo	= $3EA $3EB
+CBL	= $3EC $3ED
+VCR	= $3EE $3EF
+CD	= $3F0 $3F1
+DVD	= $3F2 $3F3
+AUX1	= $3F4 $3F5
+AUX2	= $3F6 $3F7
+AUX3	= $3F8 $3F9
+AUX4	= $3FA $3FB
+AUX5	= $3FC $3FD
+AUX6	= $3FE $3FF
+
+[Buttons]
+TV_Power=$01,
+Power=$02,
+"shift-left":Guide{LiveTV}=$03,
+"vol up":Vol+=$04,
+"vol down":Vol-=$05,
+"channel up":Ch+{Page+}=$06,
+"channel down":Ch-{Page-}=$07,
+guide:List=$08,
+menu:TiVoMenu=$09,
+mute:Muting=$0A,
+rewind:Back=$0B,
+Play=$0C,
+"fast fwd":Fwd=$0D,
+Slow=$0E,
+Pause=$0F,
+record:Rec_On/Off=$10,
+exit:Clear=$11,
+enter:Enter{Jump}=$12,
+"slow+":ThumbsUp=$13,
+"slow-":ThumbsDown=$14,
+1=$15,
+2=$16,
+3=$17,
+4=$19,
+5=$1A,
+6=$1B,
+7=$1C,
+8=$1D,
+9=$1E,
+0=$1F,
+"next track":Advance=$18,
+"prev track":Replay=$20,
+"up arrow":Up=$21,
+"down arrow":Down=$22,
+"left arrow":Left=$23,
+"right arrow":Right=$24,
+Select=$25
+Select=$25
+Phantom1=$3A, Phantom2=$3B, Phantom3=$3C, Phantom4=$3D, DiscreteON=$3E, DiscreteOFF=$3F
+X_TV=$5B:AllBind,V_TV,O_TV,
+X_TIVO,V_TIVO,O_TIVO,
+X_CBL,V_CBL,O_CBL,
+X_VCR,V_VCR,O_VCR,
+X_CD,V_CD,O_CD,
+X_DVD,V_DVD,O_DVD,
+X_AUX,V_AUX,O_AUX,
+X_AUX2,V_AUX2,O_AUX2,
+X_AUX3,V_AUX3,O_AUX3,
+X_AUX4,V_AUX4,O_AUX4,
+X_AUX5,V_AUX5,O_AUX5,
+X_AUX6,V_AUX6,O_AUX6,
+X_Cancel
+
+[ButtonMaps]
+0 = ($1F, $15, $16, $17, $19, $1A, $1B, $1C, $1D, $1E), ($04, $05, $0A),
+    ($06, $07), $01
+1 = ($1F, $15, $16, $17, $19, $1A, $1B, $1C, $1D, $1E), ($04, $05, $0A),
+    ($06, $07), $02, $09, $03, $13, $14, $21, $22, $23, $24, $25, $10, $0C,
+    $0F, $0D, $0B, $0E, $20, $18, $12, $11, $08
+
+[DigitMaps]
+
+[Protocols]
+0000, 0007, 000A, 000C, 000D, 000E, 0010, 0013, 0014, 0015, 
+0016, 0018, 001A, 001B, 001C, 0022, 002A, 002D, 0032, 0034, 
+0039, 003D, 0042, 0043, 0045, 0051, 0053, 0056, 005A, 005C, 
+005D, 005E, 005F, 0061, 0065, 0067, 006A, 006E, 0073, 0083, 
+0087, 0093, 009C, 009E, 00A5, 00BB, 00C2, 00C9, 00CA, 00CD, 
+00D5, 00DB, 00DE, 00E2, 00E8, 00F2, 00F8

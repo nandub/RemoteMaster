@@ -1,0 +1,63 @@
+#$MTIMFH
+#$-:Image Map file created by Map THIS!
+#$-:Map THIS! free image map editor by Todd C. Wilson
+#$-:Please do not edit lines starting with "#$"
+#$VERSION:1.30
+#$TITLE:URC-7555
+#$AUTHOR:aldaweb
+#$DATE:Fri Sep 01 12:18:25 2006
+#$PATH:J:\Program Files\JP1\JP1.2 pictures\
+#$GIF:urc-7555.JPG
+#$FORMAT:ncsa
+#$EOH
+default 7555
+circle $02:Magic  80,40 80,47
+circle $03:Power  126,41 126,48
+rect $01:TV 72,59 90,68
+rect $09:VCR 95,59 112,69
+rect $0a:DVD 117,59 135,69
+rect $11:SAT 83,74 101,83
+rect $12:AMP 106,74 124,83
+circle $15:1  78,100 78,107
+circle $16:2  104,100 104,107
+circle $17:3  126,100 126,107
+circle $19:4  79,119 79,126
+circle $1A:5  102,120 102,127
+circle $1B:6  127,119 127,126
+circle $1C:7  79,137 79,144
+circle $1D:8  102,137 102,144
+circle $1E:9  126,137 126,144
+circle $18:-/--  78,155 78,161
+circle $1F:0  103,156 103,163
+circle $21:AV  127,155 127,162
+circle $08:Mute  102,180 102,187
+circle $04:VOL+  77,191 77,200
+circle $05:VOL-  77,213 77,222
+circle $06:CH+  129,192 129,201
+circle $07:CH-  128,213 128,221
+circle $22:Menu  102,208 102,215
+poly $31:Up 98,238 109,238 104,228 98,238 98,238
+poly $32:Down 96,271 107,271 102,281 96,271 96,271
+poly $33:Left 85,249 85,260 75,254 85,249 85,249
+poly $34:Right 121,249 121,258 130,253 121,249 121,249
+circle $35:OK  102,255 102,265
+circle $0b:Rewind  72,313 72,321
+circle $0c:Play  92,313 92,321
+circle $0F:Pause  113,314 113,321
+circle $0D:Fast_Forward  132,314 132,322
+circle $13:Skip-  72,333 72,341
+circle $0e:Stop  93,334 93,341
+circle $10:Record  111,333 111,340
+circle $14:Skip+  132,333 132,341
+circle $25:Red  73,356 73,363
+circle $26:Green  93,357 93,364
+circle $27:Yellow  112,356 112,364
+circle $28:Blue  131,356 131,364
+circle $2d:Guide  72,379 72,387
+circle $29:Info  92,379 92,387
+circle $2a:?  112,379 112,387
+circle $2b:Back  131,379 131,387
+circle $2c:PPV  73,399 73,407
+circle $20:Subt  93,399 93,407
+circle $23:Radio  112,399 112,407
+circle $24:Fav  132,400 132,407

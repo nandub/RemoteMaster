@@ -1,0 +1,72 @@
+#$MTIMFH
+#$-:Image Map file created by Map THIS!
+#$-:Map THIS! free image map editor by Todd C. Wilson
+#$-:Please do not edit lines starting with "#$"
+#$VERSION:1.30
+#$TITLE:HT Pro
+#$DATE:Thu Feb 10 12:27:10 2005
+#$PATH:C:\Backups\JP1\Images\
+#$GIF:HTPro.jpg
+#$FORMAT:ncsa
+#$EOH
+default 9910
+circle $01:TV  24,82 31,89
+circle $09:VCR  44,84 51,91
+circle $24:home_theater  65,87 72,94
+circle $21:DVD  85,84 92,91
+circle $23:AUX  106,82 113,89
+circle $11:SAT  36,102 43,109
+circle $12:CBL  54,104 61,111
+circle $22:RCVR/AMP  75,104 82,111
+circle $0A:CD  94,101 101,108
+circle $36:guide  32,132 39,139
+circle $14:menu  21,115 27,121
+circle $13:info  108,115 114,121
+circle $37:exit  98,130 105,137
+circle $03:POWER  65,120 84,126
+circle $35:SELECT  65,152 77,158
+circle $08:MUTE  28,204 34,210
+circle $38:PREV  102,204 108,210
+circle $04:VOL+  29,179 37,192
+circle $05:VOL-  47,196 54,206
+circle $06:CH+  101,179 109,192
+circle $07:CH-  84,195 91,205
+circle $15:1  34,222 44,229
+circle $16:2  66,223 76,230
+circle $17:3  98,221 108,228
+circle $19:4  34,240 44,247
+circle $1A:5  66,240 76,247
+circle $1B:6  98,240 108,247
+circle $1C:7  34,258 44,265
+circle $1D:8  66,257 76,264
+circle $1E:9  98,257 108,264
+circle $1F:0  66,275 76,282
+circle $2C:fav  65,200 71,206
+circle $3A:PIP  35,371 43,376
+circle $3C:Swap  78,371 86,376
+circle $3B:Move  57,371 65,376
+circle $2B:Com/Skip  98,371 106,376
+circle $18:ENTER  34,275 44,282
+circle $0B:rew  34,294 43,301
+circle $29:f.rew  34,326 43,333
+circle $0C:PLAY  66,294 75,301
+circle $0D:fwd  98,293 107,300
+circle $2A:f.fwd  99,326 108,333
+circle $20:TV/VID  98,275 108,282
+circle $30:sleep  34,342 42,347
+circle $2D:m1  56,340 64,345
+circle $2E:m2  77,340 85,345
+circle $2F:m3  98,341 106,346
+circle $25:l1  35,356 43,361
+circle $26:l2  56,357 64,362
+circle $27:l3  78,356 86,361
+circle $28:l4  99,356 107,361
+circle $0F:PAUSE  82,310 91,317
+circle $10:rec  50,310 59,317
+circle $02:SET[Setup]  99,386 107,391
+circle $39:{LIGHT}  35,388 43,393
+circle $0E:stop  66,325 76,332
+circle $33:left  42,152 48,161
+circle $34:right  87,152 93,161
+circle $31:up  65,136 77,142
+circle $32:down  65,168 77,174

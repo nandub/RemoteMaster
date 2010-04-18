@@ -1,0 +1,69 @@
+#$MTIMFH
+#$-:Image Map file created by Map THIS!
+#$-:Map THIS! free image map editor by Todd C. Wilson
+#$-:Please do not edit lines starting with "#$"
+#$VERSION:1.30
+#$TITLE:Arcam CR80
+#$DATE:Sun Jan 22 16:37:41 2006
+#$PATH:C:\Program Files\JP1\RemoteMaster\images\
+#$GIF:ArcamCR80.jpg
+#$FORMAT:ncsa
+#$EOH
+default Arcam
+circle POWER  87,33 94,40
+circle CBL  20,52 25,57
+circle DVD  48,52 48,57
+circle VCR  69,52 69,57
+circle TV  92,52 92,57
+circle SAT  25,69 25,74
+circle CD  47,69 47,74
+circle AMP  70,70 70,75
+circle AUX  91,69 91,73
+circle 1  32,87 39,92
+circle 2  60,87 67,92
+circle 3  87,86 94,91
+circle 4  32,104 39,109
+circle 5  59,103 66,108
+circle 6  87,104 94,109
+circle 7  32,120 39,125
+circle 8  60,121 67,126
+circle 9  87,121 94,126
+circle MUTE  32,137 39,141
+circle 0  60,138 67,143
+circle RETURN  87,137 94,142
+circle LAST  59,158 66,163
+circle SLEEP  59,173 66,178
+circle A-B  59,189 66,194
+circle GUIDE  29,210 34,215
+circle EXIT  90,210 95,215
+poly VOL+ 32,151 23,158 24,159 23,169 41,169 40,158 32,151 32,151
+poly VOL- 23,178 24,188 32,196 40,188 41,178 23,178 23,178
+poly CH+ 78,169 79,159 87,150 95,159 97,169 78,169 78,169
+poly CH- 78,178 79,188 87,196 95,188 96,178 78,178 78,178
+circle OK  60,238 69,244
+circle INFO  29,266 33,271
+circle MENU  90,266 95,271
+poly REW 28,280 35,281 39,284 35,288 27,288 24,286 24,284 28,280 28,280
+poly PLAY 56,281 63,281 68,284 64,288 56,288 53,286 53,284 57,280 56,281 56,281
+poly FFWD 84,281 91,281 96,284 92,288 84,288 81,286 81,284 85,280 84,281 84,281
+poly REC 28,299 35,299 40,302 36,306 28,306 25,304 25,302 29,298 28,299 28,299
+poly STOP 56,299 63,299 68,302 64,306 56,306 53,304 53,302 57,298 56,299 56,299
+poly PAUSE 84,300 91,300 96,303 92,307 84,307 81,305 81,303 85,299 84,300 84,300
+circle p.mode  31,323 35,327
+circle subt  49,323 53,327
+circle title  69,322 73,326
+circle menu  69,322 73,326
+circle zoom  30,340 34,344
+circle audio  49,341 53,346
+circle mem  69,340 73,344
+circle return-slp  69,340 73,344
+circle angle  31,358 35,362
+circle setup  49,358 53,362
+circle status  69,358 73,362
+circle search  88,358 92,362
+circle menu-fav  88,322 92,326
+circle return-slp  88,340 92,344
+poly UP 41,220 49,215 70,215 78,219 72,226 66,225 53,225 48,227 41,221 41,220 41,220
+poly LEFT 32,225 41,232 39,235 39,241 41,244 32,252 26,246 24,238 25,232 31,225 32,225 32,225
+poly RIGHT 79,232 88,225 94,230 95,234 95,242 92,247 88,251 79,244 81,242 81,236 79,232 79,232
+poly DOWN 49,250 41,256 49,260 57,261 64,261 71,260 79,257 73,249 65,251 56,251 49,250 49,250

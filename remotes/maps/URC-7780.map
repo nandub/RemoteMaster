@@ -1,0 +1,57 @@
+#$MTIMFH
+#$-:Image Map file created by Map THIS!
+#$-:Map THIS! free image map editor by Todd C. Wilson
+#$-:Please do not edit lines starting with "#$"
+#$VERSION:1.30
+#$TITLE:URC-7780 
+#$AUTHOR:aldaweb
+#$DATE:Mon Sep 25 23:06:39 2006
+#$PATH:J:\Program Files\JP1\JP1.2 pictures\
+#$GIF:URC-7780.JPG
+#$FORMAT:ncsa
+#$EOH
+default 7780
+circle $02:Magic  72,31 72,38
+circle $03:Power  95,30 95,37
+circle $15:1  70,119 70,126
+circle $16:2  96,120 96,127
+circle $17:3  119,119 119,125
+circle $19:4  71,139 71,146
+circle $1A:5  95,139 95,146
+circle $1B:6  118,139 118,145
+circle $1C:7  71,157 71,164
+circle $1D:8  95,157 95,164
+circle $1E:9  118,157 118,164
+circle $20:-/--  71,176 71,183
+circle $1F:0  95,176 95,183
+circle $22:AV  119,176 119,183
+circle $06:Ch+  68,203 68,212
+circle $07:Ch-  68,227 68,235
+circle $04:Vol+  120,204 120,212
+circle $05:Vol-  121,228 121,236
+circle $28:Mute  95,197 95,204
+circle $08:Menu  94,225 94,231
+circle $14:Ok  93,268 93,277
+poly $24:Up 95,242 88,251 100,251 95,242
+poly $25:Down 93,294 100,286 88,285 94,294 93,294
+poly $26:Left 68,268 78,261 78,273 68,268
+poly $27:Right 123,267 111,260 111,271 122,267 123,267
+circle $21:Guide  64,307 64,314
+circle $23:Exit  94,312 94,318
+circle $18:16:9  124,307 124,313
+circle $0B:Rew  66,332 66,339
+circle $09:Play  85,332 85,339
+circle $0F:Pause  105,332 105,339
+circle $0D:Ffw  124,333 124,340
+circle $00:Skip-  65,352 65,358
+circle $0E:Stop  85,352 85,359
+circle $10:Rec  104,352 104,358
+circle $00:Skip+  124,352 124,358
+circle $29:Red  65,374 65,381
+circle $2A:Green  85,374 85,381
+circle $2B:Yellow  105,373 105,379
+circle $2c:Blue  124,374 124,381
+circle $2D:A  64,394 64,400
+circle $2E:B  85,394 85,400
+circle $2F:C  104,394 104,400
+circle $30:D  124,394 124,400

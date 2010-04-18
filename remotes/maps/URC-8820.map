@@ -1,0 +1,66 @@
+#$MTIMFH
+#$-:Image Map file created by Map THIS!
+#$-:Map THIS! free image map editor by Todd C. Wilson
+#$-:Please do not edit lines starting with "#$"
+#$VERSION:1.30
+#$TITLE:URC-8820
+#$DATE:Wed Feb 21 12:25:58 2007
+#$PATH:C:\JP1\Images\
+#$GIF:URC-8820.jpg
+#$FORMAT:ncsa
+#$EOH
+circle Power  70,33 79,42
+circle DVD  32,61 42,71
+circle VCR  57,58 67,68
+circle CBL  83,57 93,67
+circle TV  109,61 119,71
+circle CD  32,83 42,92
+circle PVR  57,80 66,90
+circle AUD  83,80 92,89
+circle AUX1  108,82 118,92
+rect RWD 23,100 46,114
+rect Play 56,99 84,116
+rect FWD 94,100 117,114
+rect Rec 23,120 45,134
+rect Pause 58,120 82,134
+rect Stop 94,119 117,134
+rect f.rew 22,141 46,156
+rect f.fwd 92,141 118,155
+circle Guide  32,179 42,189
+circle Menu  55,167 65,177
+circle Info  85,167 95,177
+circle Exit  110,180 120,190
+poly Up 50,195 63,189 77,189 90,196 79,207 73,203 65,203 59,206 50,195 50,195
+poly Left 55,213 51,219 51,226 57,234 44,243 36,228 37,214 43,201 55,213 55,213
+circle OK  69,222 81,234
+poly Right 96,201 104,215 103,230 96,243 85,232 87,224 87,217 85,212 96,201 96,201
+poly Down 67,240 74,240 80,237 92,249 76,256 63,256 49,248 59,237 67,240 67,240
+circle CC  31,266 40,274
+circle Prev  109,266 118,275
+circle Vol+  37,292 48,303
+circle Vol-  37,324 47,335
+rect Mute 58,314 81,327
+circle CH+  103,292 114,302
+circle CH-  104,324 115,335
+circle Format  70,280 79,289
+rect Fav 58,295 82,309
+rect 1 24,340 49,355
+rect 2 57,341 83,355
+rect 3 90,340 115,355
+rect 4 24,360 50,375
+rect 5 57,361 82,375
+rect 6 90,361 115,375
+rect 7 24,381 49,395
+rect 8 58,381 82,396
+rect 9 91,381 115,395
+rect Input 24,401 50,416
+rect 0 57,401 82,415
+rect Enter 90,401 116,416
+circle Sleep  34,432 44,441
+circle M1  56,434 65,443
+circle M2  82,434 91,443
+circle +100  105,433 115,442
+circle Move  33,457 43,466
+circle PiP  57,459 67,469
+circle Swap  82,459 92,469
+circle Setup  106,456 116,466

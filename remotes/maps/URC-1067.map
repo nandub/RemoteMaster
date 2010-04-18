@@ -1,0 +1,67 @@
+#$MTIMFH
+#$-:Image Map file created by Map THIS!
+#$-:Map THIS! free image map editor by Todd C. Wilson
+#$-:Please do not edit lines starting with "#$"
+#$VERSION:1.30
+#$TITLE:CS301009
+#$DATE:Mon Dec 03 15:38:10 2007
+#$PATH:C:\JP1\Images\
+#$GIF:URC-1067.jpg
+#$FORMAT:ncsa
+#$EOH
+default URC-1067
+circle Aux  31,38 37,46
+circle TV  45,24 51,31
+circle Cable  66,20 72,27
+circle Power  85,25 91,33
+circle Setup  100,38 106,46
+circle All_On  66,38 79,45
+rect On_Demand 45,50 87,62
+circle Rew  34,72 45,78
+circle Play  65,74 77,80
+circle FF  96,72 107,78
+circle Rec  97,91 105,99
+rect Pause 53,85 79,97
+rect Stop 27,85 41,97
+rect My_DVR 53,103 79,115
+circle Replay  36,108 47,115
+circle Live  96,109 107,115
+circle A{Lock}  41,132 49,139
+circle B{Day-}  65,132 73,139
+circle C{Day+}  88,131 96,138
+circle Page_Up  25,146 32,156
+circle Page_Down  107,145 114,155
+poly Up 44,150 53,158 76,158 85,149 76,144 54,144 44,150 44,150
+poly Right 82,163 82,174 92,183 98,172 98,165 92,154 82,163 82,163
+poly Down 52,181 78,181 85,188 75,194 55,194 44,190 51,181 52,181 52,181
+poly Left 47,164 47,176 37,184 31,173 31,164 37,155 47,164 47,164
+circle OK/Select  65,169 78,175
+circle Guide  29,193 38,202
+circle Info  65,210 77,218
+circle Menu  103,193 112,202
+circle Exit  31,221 42,230
+circle Last  101,220 112,229
+circle Help  66,232 78,239
+circle Vol+  31,243 40,251
+circle Ch+  100,243 109,251
+circle Ch-  98,264 107,272
+circle Vol-  33,264 42,272
+circle Mute  55,265 62,273
+circle Fav  77,265 84,272
+circle 1  39,288 50,294
+circle 2  66,287 77,294
+circle 3  94,287 105,294
+circle 4  39,307 50,314
+circle 5  67,307 79,314
+circle 6  94,307 105,313
+circle 7  38,327 50,333
+circle 8  67,327 78,333
+circle 9  94,327 106,334
+circle 0  67,346 79,353
+circle TV/VCR{Input}  39,346 46,354
+circle HD_Zoom{Enter}  94,346 101,353
+circle PIP_On/Off  39,372 46,378
+circle PIP_Swap  58,372 65,378
+circle PIP_Move  76,371 83,377
+circle PIP_Ch+  94,371 101,377
+circle PIP_Ch-  89,390 96,396

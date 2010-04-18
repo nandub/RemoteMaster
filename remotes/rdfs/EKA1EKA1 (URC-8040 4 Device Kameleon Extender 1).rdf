@@ -1,0 +1,161 @@
+[General]
+Name=One For All URC-8040 Kameleon Extender 1 (4 device)
+EepromSize=$800
+AdvCodeAddr=$401..$71F
+UpgradeAddr=$100..$3FF
+Processor=S3C80
+RAMAddr=$FF00
+RDFSync=3
+\\ImageMap=URC-8040.map
+XShift=$C0
+WAVUpgrade=1
+
+[SpecialProtocols]
+DSM=01FC
+LDKP=01F9
+Multiplex=01FE
+Pause=01FB
+ToadTog=0181
+
+[Settings]
+T Device=$07FA.7.8.1.0 DeviceButtons
+V Device=$07FB.7.8.1.0 DeviceButtons
+C Device=$07FC.7.8.1.0 DeviceButtons
+M Device=$07FD.7.8.1.0 DeviceButtons
+P Device=$07FE.7.8.1.0 DeviceButtons
+O Device=$07FF.7.8.1.0 DeviceButtons
+Shift Button Keycode=$07A1.7.8.2.0
+Alt Shift Button Keycode=$07A6.7.8.2.0
+Alt Shift=$07AB.6.1.0.1 (Xshift;Ordinary)
+Backlight Timer=$0748.7.8.0.0
+Backlight Off Button Action=$016.7.8.1.0 (Ignore;Use)
+Backlight Motion Action=$017.7.8.1.0 (Ignore;Use)
+
+[Checksums]
+^$000:$002..$7FD
+
+[FixedData]
+$015 = $04
+
+[DeviceTypes]
+CBL/SAT	= 1
+TV	= 0
+VCR	= 2
+DVD	= 3
+
+[DeviceTypeImageMaps]
+CBL/SAT = (urc-8040-cbl-main.map,urc-8040-cbl-PVR.map)
+TV      = (urc-8040-tv-main.map,urc-8040-tv-menu.map)
+VCR     = (urc-8040-vcr-main.map,urc-8040-vcr-menu.map)
+DVD     = (urc-8040-dvd.map)
+
+[DeviceTypeAliases]
+CBL/SAT = Cable,SAT,Video Acc,CD,Home Auto,Phono,Tuner,Misc Audio,Amp
+TV      = TV
+VCR     = VCR,Tape,DAT
+DVD     = DVD,Laserdisc
+
+[DeviceButtons]
+CBL/SAT	= $00A $00B
+TV	= $00C $00D
+VCR	= $00E $00F
+DVD	= $010 $011
+
+[Buttons]
+TV=$01
+SAT=$11
+VCR=$0A
+DVD=$21
+setup:Magic[Setup]=$02
+Power=$03
+Screen=$09
+"channel up":CH+=$06
+"channel down":CH-=$07
+"vol up":VOL+=$04
+"vol down":VOL-=$05
+Mute=$08
+Red=$26
+Green=$27
+Blue=$2E
+Yellow=$28
+aspect:16_9=$32
+Menu=$14
+TV/VCR=$13
+TV/DVD=$33
+TV/SAT=$34
+1=$15
+2=$16
+3=$17
+4=$19
+5=$1A
+6=$1B
+7=$1C
+8=$1D
+9=$1E
+0=$1F
+-/--=$38
+SP/LP=$30
+"up arrow":Up=$29
+"down arrow":Down=$2A
+"right arrow":Right=$2B
+"left arrow":Left=$2C
+Guide=$0E
+Exit=$12
+"display":Info=$37
+"select":OK=$2D
+"macro1":Macro=$0D
+Timer=$2F
+"fast fwd":Fast_Fwd=$22
+Rewind=$18
+"next track":Next-Track=$10
+"prev track":Prev-Track=$0F
+Record=$24
+Play=$20
+Pause=$23
+Stop=$25
+Subtitle=$31
+Audio=$36
+AV=$0C
+>10=$0B
+PVR=$52
+Back=$4B
+"fav/scan":Fav=$35
+Teletext-hold/Stop=$62
+Teletext-mix=$63
+Teletext=$60
+Teletext-off=$64
+Teletext-expand=$58
+Teletext-index=$65
+Sleep=$43,Brightness+=$44,Brightness-=$45,Colour+=$46,Colour-=$47,
+Phantom1=$3A, Phantom2=$3B, Phantom3=$3C, Phantom4=$3D, DiscreteON=$3E, DiscreteOFF=$3F,
+X_SAT=$63:AllBind,T_SAT,V_SAT,C_SAT,M_SAT,P_SAT,O_SAT,
+X_TV,T_TV,V_TV,C_TV,M_TV,P_TV,O_TV,
+X_VCR,T_VCR,V_VCR,C_VCR,M_VCR,P_VCR,O_VCR,
+X_DVD,T_DVD,V_DVD,C_DVD,M_DVD,P_DVD,O_DVD,
+X_Cancel
+
+
+[ButtonMaps]
+0 = ($1F, $15, $16, $17, $19, $1A, $1B, $1C, $1D, $1E), ($04, $05, $08), ($06, $07),
+     $03, $0c, $60, $64, $38, $63, $65, $26, $27, $28, $2e, $46, $47, $44, $45, $43, $14, $29, $2a, $2c, $2b, $2d, $12, $32, $58, $62
+1 = ($1F, $15, $16, $17, $19, $1A, $1B, $1C, $1D, $1E), ($04, $05, $08), ($06, $07),
+     $03, $14, $29, $2a, $2c, $2b, $2d, $37, $34, $4b, $0e, $35, $26, $27, $28, $2e, $60, $31, $12, $43, $38, $20, $23, $18, $22, $25, $24, $64, $10, $0F
+2 = ($1F, $15, $16, $17, $19, $1A, $1B, $1C, $1D, $1E), ($04, $05, $08), ($06, $07),
+     $03, $20, $23, $18, $22, $25, $24, $14, $29, $2a, $2c, $2b, $12, $2d, $13, $30, $0c, $38, $2f
+3 = ($1F, $15, $16, $17, $19, $1A, $1B, $1C, $1D, $1E), ($04, $05, $08), ($06, $07),
+     $03, $14, $29, $2a, $2c, $2b, $20, $23, $18, $22, $25, $24, $31, $10, $0f, $12, $2d, $36, $0b, $33
+
+[DigitMaps]
+003 092 074 094 032 034 001 038 014 043 095 037 064 166 168 140
+086 087 029 075 089 021 071 033 026 059 053 169 046 080 039 031
+009 170 141
+
+[Protocols]
+0002:5, 0006, 000B, 000D, 0011, 0013, 0014, 0018, 001C, 001D, 
+001F:8, 0020, 0027:new, 002A, 002C, 0034, 003D, 0045, 004A, 004B:7, 
+0058, 005A, 005C, 005D, 005E:2, 0064, 0065, 0066, 0068, 0073, 
+0075, 007E:2, 0087, 008C, 0095, 0098, 009C, 00A1, 00A5, 00A6,
+00A8, 00AA, 00AB, 00AF, 00B0, 00BD, 00C4, 00C9, 00CA, 00CC, 
+00CD:2, 00D5, 00DE, 00E2, 00E5, 00E8, 00EB, 00ED, 00EF, 00F0, 
+00F3, 00F4, 00F8:3, 00FE, 0111:2byte, 0112, 011B, 011E, 015E, 016A, 
+016C, 0173, 0176, 017E, 0182

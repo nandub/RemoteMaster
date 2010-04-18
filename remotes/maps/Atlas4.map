@@ -1,0 +1,63 @@
+#$MTIMFH
+#$-:Image Map file created by Map THIS!
+#$-:Map THIS! free image map editor by Todd C. Wilson
+#$-:Please do not edit lines starting with "#$"
+#$VERSION:1.30
+#$TITLE:Atlas4
+#$DATE:Fri Jun 11 18:15:26 2004
+#$PATH:C:\Backups\JP1\Images\
+#$GIF:Atlas4.jpg
+#$FORMAT:ncsa
+#$EOH
+default Atlas
+circle $0A:VCR  53,42 60,49
+circle $01:TV  73,42 80,49
+circle $33:Mute  63,200 72,207
+circle $03:POWER  87,24 94,31
+circle $23:PageUp  104,91 110,97
+circle $02:Setup  35,26 40,31
+circle $24:PageDown  106,115 112,121
+circle $2E:Menu  63,61 72,68
+circle $13:Info  95,71 104,77
+circle $21:Guide  30,72 39,78
+circle $2D:Select  63,105 72,114
+circle $12:Fav  73,183 80,190
+circle $04:VOL+  33,188 40,195
+circle $05:VOL-  38,210 45,217
+circle $06:CH+  94,185 101,192
+circle $07:CH-  88,211 95,218
+circle $15:1  33,237 40,244
+circle $16:2  63,236 70,243
+circle $17:3  93,236 101,243
+circle $19:4  33,259 40,266
+circle $1A:5  63,258 70,265
+circle $1B:6  93,258 100,265
+circle $1C:7  33,282 40,289
+circle $1D:8  63,281 70,288
+circle $1E:9  93,280 100,287
+circle $1F:0  63,303 70,310
+circle $08:Last  53,184 60,191
+circle $0C:Play  64,328 77,335
+circle $0D:FFwd  92,328 103,334
+circle $10:Rec  92,346 98,352
+circle $09:CBL  92,48 99,55
+poly $25:A 40,139 48,151 32,151 40,139 40,139
+rect $26:B 57,143 69,155
+circle $27:C  85,144 91,150
+circle $0B:Rew  35,328 46,334
+circle $22:Macro  23,136 30,143
+circle $28:[*]  33,304 44,310
+circle $2F:menu  20,103 27,121
+circle $11:AUD  34,49 41,56
+circle $14:Exit  102,134 108,140
+rect $0F:Pause 28,342 41,353
+rect $0E:Stop 58,342 69,353
+circle $20:bypass  45,365 55,372
+circle $30:tv/vcr  83,365 95,372
+poly $2B:Left 39,86 48,95 46,101 46,109 47,115 38,125 34,118 32,111 32,105 32,99 34,94 36,90 39,86 39,86
+poly $2C:Right 77,95 87,86 91,94 93,102 93,106 93,111 92,115 90,119 89,121 86,124 77,115 78,111 79,107 79,103 78,101 76,96 77,95 77,95
+poly $29:Up 44,83 49,80 54,78 59,77 63,77 67,77 71,78 74,79 77,80 81,83 72,92 67,90 65,90 63,90 61,90 58,91 54,92 44,83 44,83
+poly $2A:Down 53,118 57,120 61,121 65,121 69,120 72,118 81,128 78,130 72,133 69,133 66,134 62,134 57,134 54,133 49,131 44,128 53,118 53,118
+circle day-  46,167 56,172
+circle day+  81,166 91,171
+circle $18:ENTER  93,303 104,309

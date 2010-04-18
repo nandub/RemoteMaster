@@ -1,0 +1,136 @@
+[General]
+Name=One For All URC-8203 Kameleon 2nd Generation
+EepromSize=$1200
+AdvCodeAddr=$016..$3FF
+UpgradeAddr=$400..$7FF
+LearnedAddr=$800..$11FF
+Processor=HCS08
+BaseAddr=$EA00
+RAMAddr=$FF00
+RDFSync=3
+WAVUpgrade=1
+AdvCodeFormat=EFC
+AdvCodeBindFormat=LONG
+SectionTerminator=$FF
+EFCDigits=5
+LearnedDevBtnSwapped=Yes
+
+[Settings]
+EL Activation Type=$010.4.1.0.0 (Key Press;Remote Touch)
+Light Sensor Status=$010.5.1.0.0 (Off;On)
+VPT Status=$010.2.1.0.0 (Off;On) 
+VPT Device=$012.7.8.1.0 DeviceButtons
+TV VPT=$013.0.1.1.0 (Off;On)
+VCR  VPT=$013.1.1.1.0 (Off;On)
+DVD VPT=$013.2.1.1.0 (Off;On)
+CH +/- Status=$010.1.1.0.0 (Use Native;Simulate)
+CH +/- Device=$014.7.8.1.0 DeviceButtons
+Light On Time=$015.3.4.2.0 (17min;4sec;8sec;12sec;16sec;20sec) 
+
+[Checksums]
+^$008:$00A..$015
+
+[FixedData]
+$000 = $31
+
+[DeviceTypes]
+TV      = 0
+VCR     = 1
+DVD     = 2
+
+[DeviceTypeImageMaps]
+TV      = (urc-8203_tv.map,urc-8203_tv_text.map)
+VCR     = (urc-8203_vcr.map,urc-8203_vcr_digits.map)
+DVD     = (urc-8203_dvd.map,urc-8203_dvd_digits.map)
+
+[DeviceTypeAliases]
+TV      = TV
+VCR     = VCR,Tape,DAT
+DVD     = DVD,Laserdisc,Cable,SAT,Video Acc,CD,Home Auto,Phono,Tuner,Misc Audio,Amp
+
+[DeviceButtons]
+TV	= $00A $00B
+VCR	= $00C $00D
+DVD	= $00E $00F
+
+[Buttons]
+TV=$01, 
+VCR=$0A, 
+DVD=$14, 
+"setup":magic=$02, 
+scroll=$18, 
+0=$1F, 
+1=$15, 
+2=$16, 
+3=$17, 
+4=$19, 
+5=$1A, 
+6=$1B, 
+7=$1C, 
+8=$1D, 
+9=$1E, 
++10=$20, 
+power=$03, 
+"vol up":vol+=$04, 
+"vol down":vol-=$05, 
+mute=$08, 
+"channel up":ch+=$06, 
+"channel down":ch-=$07, 
+menu=$0F, 
+"up arrow":up=$21, 
+"down arrow":down=$22, 
+"left arrow":left=$23, 
+"right arrow":right=$24, 
+select:ok=$F2, 
+"next track":skip+=$57, 
+"prev track":skip-=$55, 
+play=$56, 
+pause=$5A, 
+rewind=$59, 
+"fast fwd":fwd=$5B, 
+stop=$5D, 
+record=$5F, 
+"tv/vcr":sp/lp=$5C, 
+auto=$5e, 
+input:av=$09, 
+text=$49, 
+text_off=$60, 
+subtitle_16/9=$10, 
+hold=$50, 
+red=$0B, 
+green=$0C, 
+yellow=$0E, 
+blue=$0D 
+
+[ButtonMaps]
+0 = ($1F, $15, $16, $17, $19, $1A, $1B, $1C, $1D, $1E), ($04, $05, $08), ($06, $07),
+    $03, $09, $60, $49, $20, $11, $12, $0B, $0C, $0E, $0D, $86, $87, $84, $85, $83, $0F, $21, $22, $23, $24, $F2, $10, $13, $50
+1 = ($1F, $15, $16, $17, $19, $1A, $1B, $1C, $1D, $1E), ($04, $05, $08), ($06, $07),
+    $03, $56, $5A, $59, $5B, $5D, $5F, $5E, $0F, $21, $22, $23, $24, $F2, $5C, $09, $20, $0B, $0C, $0E, $0D
+2 = ($1F, $15, $16, $17, $19, $1A, $1B, $1C, $1D, $1E), ($04, $05, $08), ($06, $07),
+    $03, $0F, $21, $22, $23, $24, $56, $5A, $59, $5B, $5D, $5F, $10, $57, $55, $F2, $20, $09, $0B, $0C, $0E, $0D
+
+[Protocols] 
+0001, 0002:5, 0006, 000B, 000D, 0010, 0011, 0013, 0014, 0018, 001C, 
+001F:8, 0020, 0027:new, 002A, 002C, 002D, 002F, 0034, 0039, 003A, 
+003D, 0041, 0045, 0046, 004A, 004B:7, 0051, 0053, 0056, 0058:2, 
+005A, 005B, 005C, 005D, 005E:2, 0064, 0065:2, 0066, 0067, 0068, 
+006C, 0071, 0072, 0073, 0075, 0076, 0077, 007A, 007C, 007E:3, 0080, 
+0082, 0087, 008C, 008E, 008F, 0090, 0098:2, 009C, 009D, 009E, 00A1, 
+00A5, 00A6, 00A8, 00AA, 00AB, 00AF, 00B0, 00B2, 00B6, 00BA, 00BD, 
+00C6, 00C9, 00CA, 00CD:2, 00D1, 00D4, 00D5, 00D9, 00DE, 00DF, 00E2, 
+00E5, 00E8, 00EB, 00ED, 00EF, 00F3, 00F4, 00F6, 00F8:3, 00F9, 0102, 
+0108, 0109, 0111, 0112, 0114:2, 0117, 011A:2, 011B, 011C, 011E, 
+012A, 0160, 0161, 016C, 016D, 0173:1, 017D, 017E, 0180, 0185, 0187, 
+0188, 018A, 018C, 0197, 019B
+
+[DigitMaps] 
+094 046 029 086 012 064 092 075 011 006 034 065 038 161 095 007 
+162 089 310 021 071 037 033 074 085 026 059 030 112 327 313 079 
+032 164 053 022 306 307 057 084 332 091 304 073 169 060 329 003 
+002 321 001 140 217 314 204 124 194 325 295 192 141 206 331 195 
+235 080 275 308 199 283 261 263 225 316 093 129 296 270 013 039 
+017 031 009 088 323 168 277 243 175 209 145 170 087 125 131 328 
+311 216 128 178 069 202 205 198 180 213 208 190 330 203 197 215 
+212 174 214 312 229 289 227 273 305 326 186 318 320 259 257 219 
+280 274 245 322 294 319

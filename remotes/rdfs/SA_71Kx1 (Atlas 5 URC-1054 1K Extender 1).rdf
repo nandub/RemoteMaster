@@ -1,0 +1,148 @@
+[General]
+Name=Atlas 5-Device URC-1054 JP1 1K Extender 1
+EepromSize=$400
+AdvCodeAddr=$210..$37D
+UpgradeAddr=$100..$20F
+Processor=S3C80
+RAMAddr=$FF00
+DevComb=,$15E7,$F65,,$77BF,$5CA,$100
+RDFSync=3
+ImageMap=Atlas DVR-PVR.map
+XShift=$C0
+
+[Extender] 
+DeviceSetup=VCR/1800,ToadTog
+DeviceSetup=TV/1106,LDKP
+DeviceSetup=TV/1104,Pause
+DeviceSetup=TV/1103,DSM
+DeviceSetup=TV/1101,Multiplexer
+
+[SpecialProtocols]
+ToadTog=0181
+LDKP=01F9
+Pause=01FB
+DSM=01FC
+Multiplex=01FE
+
+[Settings]
+T Device=$382.7.8.1.0 DeviceButtons
+V Device=$385.7.8.1.0 DeviceButtons
+O Device=$386.7.8.1.0 DeviceButtons
+Shift Button Keycode=$03C3.7.8.2.0
+Alt Shift Button Keycode=$03C8.7.8.2.0
+Alt Shift=$03CD.6.1.0.1 (Xshift;Ordinary)
+
+[FixedData]
+$01C=$03
+
+[Checksums]
+^$000:$002..$3FC
+
+[DeviceTypes]
+TV       = 0
+VCR/DVD  = 1
+Cable    = 2
+CD/Audio = 3
+VCR/DVD  = 1,1
+
+[DeviceTypeAliases]
+Cable    = Cable,SAT,PVR,Video Acc
+TV       = TV
+VCR/DVD  = VCR,DVD,Tape,Laserdisc,DAT
+CD/Audio = CD,Tuner,Home Auto,Misc Audio,Phono,Amp
+
+[DeviceButtons]
+TV  = $00A $00B
+DVD = $00C $00D
+CBL = $00E $00F
+AUD = $010 $011
+AUX = $012 $013
+
+[Buttons]
+Setup=$01,
+Power=$02,
+TV=$03,
+CBL=$04,
+DVD=$09,
+AUD=$0A,
+AUX=$0B,
+"vol up":Vol+=$23,
+"vol down":Vol-=$24,
+Mute=$0C,
+"channel up":Ch+=$29,
+"channel down":Ch-=$2A,
+1=$11, 2=$12, 3=$13, 4=$14, 5=$19, 6=$1A, 7=$1B, 8=$1C, 9=$21, 0=$22,
+sleep:"[*]"=$27,
+enter:"[#] / Enter"=$28,
+"prev ch":Last=$2B,
+"fav/scan":Fav=$2C,
+"up arrow":Up=$05,
+"down arrow":Down=$06,
+"left arrow":Left=$07,
+"right arrow":Right=$08,
+Select=$0D,
+"device button":Settings=$18,
+Guide=$10,
+Menu=$17,
+display:Info=$0F,
+Exit=$0E,
+"next track":"Page Up"=$15,
+"prev track":"Page Down"=$16,
+surround:A=$1D,
+input:B=$1E,
+"+100":C=$1F,
+macro1:F1=$20,
+macro2:F2=$25,
+macro3:F3=$26,
+"shift-right":Replay=$2D,
+"pip freeze":List=$2E,
+"shift-left":Live=$2F,
+rewind:Rew=$31,
+Play=$32,
+"fast fwd":FFWD=$33,
+Stop=$39,
+Pause=$34,
+record:Rec=$3A,
+"tv/vcr":"Video Source"=$30,
+"pip on/off":"PIP On/Off"=$35,
+"pip swap":"PIP Swap"=$36,
+"slow+":"PIP Ch+"=$37,
+"slow-":"PIP Ch-"=$38,
+"pip move":"PIP Move"=$3B,
+Phantom1=$3C,
+Phantom2=$3D,
+phantom3:DiscreteON=$3E,
+phantom4:DiscreteOFF=$3F,
+X_TV=$5F,T_TV,V_TV,O_TV,
+X_DVD=$63,T_DVD,V_DVD,O_DVD,
+X_CBL=$67,T_CBL,V_CBL,O_CBL,
+X_AUD=$6B,T_AUD,V_AUD,O_AUD,
+X_AUX=$6F,T_AUX,V_AUX,O_AUX,
+X_Cancel=$7F
+
+[ButtonMaps]
+0 = ($22,$11,$12,$13,$14,$19,$1A,$1B,$1C,$21), ($23,$24,$0C), ($29,$2A),
+    $02,$06,$0E,$10,$07,$17,$08,$0D,$05,$30,$27,$0F,$2C,$35,$3B,$36,$37,
+    $38,$2B,$28
+1 = ($22,$11,$12,$13,$14,$19,$1A,$1B,$1C,$21), ($23,$24,$0C), ($29,$2A),
+    $02,$06,$0E,$33,$10,$07,$17,$34,$32,$3A,$31,$08,$0D,$39,$05,$18,$30,
+    $15,$16,$2F,$2D,$2B,$28
+2 = ($22,$11,$12,$13,$14,$19,$1A,$1B,$1C,$21), ($23,$24,$0C), ($29,$2A),
+    $02,$06,$0E,$33,$10,$07,$17,$34,$32,$3A,$31,$08,$0D,$39,$05,$1D,$1E,
+    $1F,$18,$30,$27,$0F,$2C,$2E,$15,$16,$35,$3B,$36,$37,$38,$2F,$2D,$2B,
+    $28
+3 = ($22,$11,$12,$13,$14,$19,$1A,$1B,$1C,$21), ($23,$24,$0C), ($29,$2A),
+    $02,$33,$34,$32,$3A,$31,$39,$30,$0F
+
+[DigitMaps]
+53 69 125 94 92 32 11 59 46 29 64 21 33 34 86 83 
+75 30 124 03 61 80 91 13 17 93 18 131 130 
+
+[Protocols]
+0000, 0007, 000A, 000C, 000D, 0010, 0013, 0014, 0015, 001A,
+001B, 001C, 001F:8, 0022, 0027:new, 002A, 002D, 002F, 0032, 0034,
+0039, 0045, 0053, 0056, 0058, 005A, 005B, 005C, 005D, 005E:2,
+005F, 0061, 0065:2, 0067, 006A, 006E, 0073, 007E:3, 0083, 0087,
+0092, 0098:2, 009C, 009E, 00A4, 00AF, 00B6, 00C4, 00C9, 00CA,
+00CD:2, 00DB, 00DE, 00E2, 00E8, 00F2, 00F5, 00F8:3, 0111, 0114:2,
+0117, 011A, 011B, 0162, 016B, 016D

@@ -1,0 +1,27 @@
+#$MTIMFH
+#$-:Image Map file created by Map THIS!
+#$-:Map THIS! free image map editor by Todd C. Wilson
+#$-:Please do not edit lines starting with "#$"
+#$VERSION:1.30
+#$TITLE:cricket
+#$DATE:Thu Jan 10 07:20:56 2008
+#$PATH:C:\Documents and Settings\harold\My Documents\JP1\Misc\comcast\final\
+#$GIF:cricket.jpg
+#$FORMAT:ncsa
+#$EOH
+circle power  74,136 90,147
+circle vol+  48,166 59,177
+circle vol-  48,198 59,209
+circle mute  74,183 90,193
+circle ch+  101,166 112,177
+circle ch-  101,198 112,209
+circle 1  38,136 49,147
+circle 2  110,136 121,147
+circle 3  52,229 67,244
+circle 4  97,229 112,244
+circle 5  52,264 67,279
+circle 6  97,264 112,279
+circle 7  52,299 67,314
+circle 8  97,299 112,314
+circle 9  52,334 67,349
+circle 0  97,334 112,349

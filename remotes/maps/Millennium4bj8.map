@@ -1,0 +1,65 @@
+#$MTIMFH
+#$-:Image Map file created by Map THIS!
+#$-:Map THIS! free image map editor by Todd C. Wilson
+#$-:Please do not edit lines starting with "#$"
+#$VERSION:1.30
+#$TITLE:Millennium4c
+#$DATE:Wed Oct 08 17:18:42 2003
+#$PATH:C:\Backups\IR\Images\
+#$GIF:Millennium4.jpg
+#$FORMAT:ncsa
+#$EOH
+default 1994
+circle $09:CBL  105,44 111,50
+circle $01:TV  79,42 85,48
+circle $0A:VCR  54,40 60,46
+circle $11:AUDIO  30,41 36,47
+poly $02:Setup 26,22 36,14 45,21 36,29 26,22 26,22
+circle $03:Power  95,24 103,32
+circle $04:Vol+  38,144 47,153
+circle $05:Vol-  38,171 47,180
+circle $08:Mute  38,121 49,127
+circle $06:Ch+  99,147 108,156
+circle $07:Ch-  100,172 109,181
+circle $15:1  34,62 43,71
+circle $16:2  68,62 77,71
+circle $17:3  102,63 111,72
+circle $19:4  37,82 46,91
+circle $1A:5  68,81 77,91
+circle $1B:6  99,84 108,93
+circle $1C:7  39,101 48,110
+circle $1D:8  68,101 77,110
+circle $1E:9  97,103 106,112
+circle $1F:0  68,122 77,131
+poly $12:Enter/Music 88,117 107,118 107,130 88,129 88,117 88,117
+circle $13:Last  69,147 79,153
+circle $21:Fav  69,169 79,175
+circle $31:Up  69,209 90,216
+circle $32:Down  69,246 91,253
+circle $33:Left  37,226 47,242
+circle $34:Right  100,227 109,242
+circle $14:OK  69,228 83,236
+poly $24:Lock 58,183 80,183 80,196 58,196 58,183
+poly $23:Exit 90,195 110,195 110,212 90,195 90,195
+poly $2C:Guide 27,210 27,194 50,194 27,210 27,210
+poly $20:Info 27,246 50,259 27,260 27,246
+poly $27:Menu 90,259 110,259 110,246 90,259
+poly $25:Page+ 46,264 64,280 26,280 46,264 46,264
+poly $26:Page- 76,266 112,266 94,281 77,267 76,267 76,266
+circle $29:Macro_A  40,300 50,306
+circle $2A:Macro_B  70,302 80,308
+circle $2B:Macro_C  100,299 110,305
+circle $0B:Rew  40,332 51,339
+circle $0C:Play  70,331 81,338
+circle $0D:FF  99,332 110,339
+circle $10:Rec  40,351 52,358
+rect $0E:Stop 61,346 80,357
+circle $0F:Pause  100,350 111,357
+circle $18:TV/VCR  104,370 112,378
+circle $28:Help/*  35,371 43,379
+circle $2E:Day-  58,371 66,379
+circle $2F:Day+  81,371 89,378
+circle $2D:Bypass  36,392 44,400
+circle $30:A  58,392 66,400
+circle $35:B  82,392 90,400
+circle $36:C  104,392 112,400

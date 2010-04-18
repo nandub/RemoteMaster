@@ -1,0 +1,180 @@
+[General]
+Name=URC-8060 Kameleon Extender 1 (4K eeprom)
+EepromSize=$1000
+AdvCodeAddr=$801..$F2F
+UpgradeAddr=$2F4..$7FF
+Processor=S3C80
+RAMAddr=$FF00
+DevComb=$69,$10BD,$30DE,,$96BF,$3143,$2F4
+RDFSync=3
+WAVUpgrade=1
+XShift=$C0
+
+[SpecialProtocols]
+DSM=01FC
+LDKP=01F9
+Multiplex=01FE
+Pause=01FB
+ToadTog=0181
+
+[Settings]
+T Device=$0FF9.7.8.1.0 DeviceButtons
+V Device=$0FFA.7.8.1.0 DeviceButtons
+C Device=$0FFB.7.8.1.0 DeviceButtons
+M Device=$0FFC.7.8.1.0 DeviceButtons
+P Device=$0FFD.7.8.1.0 DeviceButtons
+O Device=$0FFE.7.8.1.0 DeviceButtons
+Shift Button Keycode=$0F9C.7.8.2.0
+Alt Shift Button Keycode=$0FA1.7.8.2.0
+Alt Shift=$0FA6.6.1.0.1 (Xshift;Ordinary)
+Default SAT/CBL Screen=$027C.7.8.0.0
+Default TV Screen=$0284.7.8.0.0
+Default VCR Screen=$028C.7.8.0.0
+Backlight Timer=$0F43.7.8.0.0
+Backlight Off Button Action=$017.7.8.1.0 (Ignore;Use)
+Backlight Motion Action=$016.7.8.1.0 (Ignore;Use)
+
+[Checksums]
+^$000:$002..$FFD
+
+[FixedData]
+$019 = $15
+
+[DeviceTypes]
+SAT/CBL = 1
+TV      = 0
+VCR     = 3
+DVD     = 2
+CD      = 5
+AUD     = 4
+
+[DeviceTypeImageMaps]
+SAT/CBL = (urc-8060-sat-main.map,urc-8060-sat-menu.map,urc-8060-sat-PVR.map)
+TV      = (urc-8060-tv-main.map,urc-8060-tv-text.map,urc-8060-tv-menu.map)
+VCR     = (urc-8060-vcr-main.map,urc-8060-vcr-menu.map)
+DVD     = (urc-8060-dvd.map)
+CD      = (urc-8060-cd.map)
+AUD     = (urc-8060-aud.map)
+
+[DeviceTypeAliases]
+SAT/CBL	= Cable,SAT,Video Acc
+TV	= TV
+VCR	= VCR,Tape,DAT
+DVD	= DVD,Laserdisc
+CD	= CD,Home Auto,Phono
+AUD	= Tuner,Misc Audio,Amp
+
+[DeviceButtons]
+SAT/CBL = $00A $00B
+TV      = $00C $00D
+VCR     = $00E $00F
+DVD     = $010 $011
+CD      = $012 $013
+AUD     = $014 $015
+
+[Buttons]
+SAT=$11
+TV=$01
+VCR=$0A
+DVD=$21
+CD=$09
+AUD=$22
+1=$15
+2=$16
+3=$17
+4=$19
+5=$1A
+6=$1B
+7=$1C
+8=$1D
+9=$1E
+0=$1F
+setup:Magic[Setup]=$02
+Power=$03
+"channel up":CH+=$06
+"channel down":CH-=$07
+"+10":-/--=$20
+"prev ch":PP=$34
+"vol up":VOL+=$04
+"vol down":VOL-=$05
+MUTE=$08
+TV/VCR=$18
+SP/LP=$28
+Play=$31
+Pause=$10
+Rewind=$33
+Stop=$35
+"fast fwd":Fast_Fwd=$0F
+"next track":Next-Track=$23
+"prev track":Prev-Track=$24
+Record=$32
+AV{input-select}=$12
+SURROUND_16-9=$13
+Menu=$14
+Guide=$25
+display:Info=$52
+Exit=$26
+select:OK=$27
+"up arrow":Up=$29
+"down arrow":Down=$2a
+"right arrow":Right=$2b
+"left arrow":Left=$2c
+"shift-left":Red=$0B
+"shift-right":Green=$0C
+"pip freeze":Blue=$0D
+slow:Yellow=$0E
+macro1:M1=$2d
+macro2:M2=$2e
+macro3:M3=$2f
+macro4:M4=$30
+Scroll=$36:AllBind
+Sleep=$43
+"slow+":S-Vol+=$44
+"slow-":S-Vol-=$45
+x2:S-CH+=$46
+center:S-CH-=$47
+rear:Teletext-hold=$4F
+phantom1:Teletext-mix=$50
+Input-select=$53
+Random=$54
+phantom6:Phantom1=$3A,
+phantom7:Phantom2=$3B,
+phantom8:Phantom3=$3C,
+phantom9:Phantom4=$3D,
+phantom10:DiscreteON=$3E,
+DiscreteOFF=$3F
+X_SAT=$55:AllBind,T_SAT,V_SAT,C_SAT,M_SAT,P_SAT,O_SAT,
+X_TV,T_TV,V_TV,C_TV,M_TV,P_TV,O_TV,
+X_VCR,T_VCR,V_VCR,C_VCR,M_VCR,P_VCR,O_VCR,
+X_DVD,T_DVD,V_DVD,C_DVD,M_DVD,P_DVD,O_DVD,
+X_CD,T_CD,V_CD,C_CD,M_CD,P_CD,O_CD,
+X_AUD,T_AUD,V_AUD,C_AUD,M_AUD,P_AUD,O_AUD,
+X_Cancel
+
+[ButtonMaps]
+0 = ($1F, $15, $16, $17, $19, $1A, $1B, $1C, $1D, $1E), ($04, $05, $08), ($06, $07),
+     $03, $12, $71, $72, $20, $50, $75, $0b, $0c, $0e, $0d, $46, $47, $44, $45, $43, $14, $29, $2a, $2c, $2b, $34, $27, $26, $13, $73, $4f, $2d, $2e, $2f, $30
+1 = ($1F, $15, $16, $17, $19, $1A, $1B, $1C, $1D, $1E), ($04, $05, $08), ($06, $07),
+     $03, $14, $29, $2a, $2c, $2b, $27, $52, $59, $60, $25, $68, $34, $0b, $0c, $0e, $0d, $71, $55, $26, $43, $20, $31, $10, $33, $0f, $35, $32, $72, $23, $24, $2d, $2e, $2f, $30
+2 = ($1F, $15, $16, $17, $19, $1A, $1B, $1C, $1D, $1E), ($04, $05, $08), ($06, $07),
+     $03, $14, $29, $2a, $2c, $2b, $31, $10, $33, $0f, $35, $32, $55, $23, $24, $26, $27, $65, $61, $58, $2d, $2e, $2f, $30
+3 = ($1F, $15, $16, $17, $19, $1A, $1B, $1C, $1D, $1E), ($04, $05, $08), ($06, $07),
+     $03, $31, $10, $33, $0f, $35, $32, $14, $29, $2a, $2c, $2b, $26, $27, $18, $28, $12, $20, $2d, $2e, $2f, $30
+4 = ($1F, $15, $16, $17, $19, $20, $1A, $1B, $1C, $1D, $1E), ($04, $05, $08), ($06, $07),
+     $03, $31, $10, $33, $0f, $35, $32, $43, $67, $76, $53, $23, $24, $69, $6a, $6c, $6b, $61, $54, $2d, $2e, $2f, $30
+5 = ($1F, $15, $16, $17, $19, $1A, $1B, $1C, $1D, $1E), ($04, $05, $08), ($06, $07),
+     $03, $31, $10, $33, $0f, $35, $32, $23, $24, $76, $61, $54, $43, $2d, $2e, $2f, $30
+
+[DigitMaps]
+003 092 074 094 086 021 087 029 069 034 064 001 139 042 038 014
+032 043 095 019 037 140 033 026 059 071 053 046 075 031 009 141
+
+[Protocols]
+0002:5, 0006, 000B, 000D, 0013, 0014, 0018, 001C, 001F, 0020,
+0027, 002A, 002C, 0034, 003D, 003F, 0045, 004A, 004B:7, 0058,
+005A, 005C, 005D, 005E:2, 005F, 0064, 0065, 0066, 0068, 006A,
+0073, 0075, 0079, 007E, 0087, 008C, 0095, 0098, 009C, 009E,
+00A1, 00A5, 00A6, 00AA, 00AB, 00AF, 00B0, 00B2, 00B6, 00B9,
+00BD, 00C4, 00C9, 00CA, 00CC, 00CD:2, 00D5, 00DE, 00E2, 00E5,
+00E8, 00EB, 00ED, 00F0, 00F3, 00F8, 0111:2byte, 0112, 0114, 0129,
+015E, 0173, 0176, 0182

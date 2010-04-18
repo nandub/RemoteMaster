@@ -1,0 +1,66 @@
+#$MTIMFH
+#$-:Image Map file created by Map THIS!
+#$-:Map THIS! free image map editor by Todd C. Wilson
+#$-:Please do not edit lines starting with "#$"
+#$VERSION:1.30
+#$TITLE:15-2133
+#$DATE:Mon Feb 14 16:25:42 2005
+#$PATH:C:\Backups\JP1\Images\
+#$GIF:15-2133.JPG
+#$FORMAT:ncsa
+#$EOH
+default Generic
+circle TV  57,38 65,46
+circle VCR  77,38 85,46
+circle SAT  58,58 66,66
+circle aud  78,58 86,66
+circle DVD  97,38 105,46
+circle CD  97,58 105,66
+circle guide  99,249 109,259
+circle menu  44,249 54,260
+circle exit  39,310 49,321
+circle vol+  38,194 46,203
+circle ch+  106,194 114,202
+circle vol-  38,221 46,229
+circle ch-  105,222 113,230
+circle mute  71,208 82,217
+circle A/B_TV/VCR  98,399 110,407
+circle PIP_Instant-Replay  43,377 51,385
+circle right  94,278 102,286
+circle down  71,306 79,314
+circle up  71,255 79,263
+circle left  49,278 57,286
+circle select  71,280 82,291
+circle 0  71,164 79,172
+circle 1  46,108 54,116
+circle 9  97,143 105,151
+circle 7  45,144 53,152
+circle 3  96,107 104,115
+circle 2  71,108 79,116
+circle 5  71,127 79,135
+circle 8  71,145 79,153
+circle 4  46,127 54,135
+circle 6  97,127 105,135
+circle enter  95,164 107,171
+circle power  96,83 107,91
+poly rewind 31,334 50,327 50,340 32,334 31,334 31,334
+poly fast_fwd 89,340 89,327 109,333 89,340 89,340
+circle record  42,358 53,365
+rect pause 63,350 77,364
+circle slow  72,400 79,407
+circle SURROUND_Sleep  43,400 55,407
+circle +10_+100  46,164 58,171
+circle screen  72,84 83,90
+circle SWAP_Slow  101,376 109,384
+circle setup  45,84 50,89
+circle m1  39,416 45,422
+circle m2  60,416 66,422
+circle m3  81,416 87,422
+circle m4  102,416 108,422
+circle fav{scan}  71,228 82,237
+circle MOVE_Advance  62,377 70,385
+circle FREEZE_LiveTV  82,376 90,384
+circle last  71,187 82,196
+circle info  102,309 112,320
+circle stop  98,357 109,364
+circle play  70,333 80,343

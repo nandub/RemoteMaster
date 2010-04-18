@@ -1,0 +1,169 @@
+[General]
+Name=One For All URC-9960 B01 Kameleon (4K eeprom)
+EepromSize=$1000
+FavKey=$28, $021, 15, 5
+AdvCodeAddr=$023..$0FF
+UpgradeAddr=$100..$3FE
+LearnedAddr=$400..$FFD
+Processor=S3C80
+RAMAddr=$FF00
+RDFSync=3
+WAVUpgrade=1
+AdvCodeFormat=EFC
+AdvCodeBindFormat=LONG
+SectionTerminator=$FF
+EFCDigits=5
+DevComb=$7E,$1776,$365F,,$83BF,$36C4,$100
+
+[SpecialProtocols]
+Multiplex=01FE
+
+[Settings]
+VPT Status=$01a.2.1.0.0 (Off;On)
+VPT Device=$01b.7.8.1.0 DeviceButtons
+CBL VPT=$01c.0.1.1.0 (Off;On)
+TV VPT=$01c.1.1.1.0 (Off;On)
+VCR VPT=$01c.2.1.1.0 (Off;On)
+DVD VPT=$01c.3.1.0.0 (Off;On)
+CD VPT=$01c.4.1.1.0 (Off;On)
+PVR VPT=$01c.5.1.0.0 (Off;On)
+AUDIO VPT=$01c.5.1.0.0 (Off;On)
+AUX VPT=$01c.5.1.0.0 (Off;On)
+HT transport device=$01d.7.8.1.0 DeviceButtons
+HT volume device=$01e.7.8.1.0 DeviceButtons
+HT channel device=$01f.7.8.1.0 DeviceButtons
+HT menu device=$020.7.8.1.0 DeviceButtons
+
+[Checksums]
+^$000:$002..$FFD
+
+[FixedData]
+
+[DeviceTypes]
+CBL 	= 3
+TV      = 0
+VCR     = 1
+DVD     = 2
+CD      = 4
+PVR     = 1
+AUDIO   = 5
+other	= 3
+
+[DeviceTypeImageMaps]
+CBL     = (urc-9960-cbl-main.map,urc-9960-cbl-menu.map)
+TV      = (urc-9960-tv-main.map,urc-9960-tv-menu.map,urc-9960-tv-pip.map)
+VCR     = (urc-9960-vcr-main.map,urc-9960-vcr-menu.map)
+DVD     = (urc-9960-dvd-main.map)
+CD      = (urc-9960-cd-main.map)
+PVR     = (urc-9960-pvr-main.map)
+AUDIO   = (urc-9960-aud-main.map,urc-9960-aud-sur.map,urc-9960-aud-menu.map,urc-9960-aud-preset.map)
+
+[DeviceTypeAliases]
+CBL	= Cable,SAT,Video Acc
+TV	= TV
+VCR	= VCR,Tape,DAT
+DVD	= DVD,Laserdisc
+CD	= CD,Home Auto,Phono
+AUDIO	= Tuner,Misc Audio,Amp
+PVR	= PVR
+
+[DeviceButtons]
+CBL	= $00A $00B
+TV	= $00C $00D
+VCR	= $00E $00F
+DVD	= $010 $011
+CD	= $012 $013
+PVR	= $014 $015
+AUDIO	= $016 $017
+AUX	= $018 $019
+
+[Buttons]
+TV=$01, VCR=$0A, DVD=$21, CBL=$11, AUD:AUDIO=$22, CD=$09, PVR=$26, AUX=$23, "theater":HT=$12
+0=$1F, 1=$15, 2=$16, 3=$17, 4=$19, 5=$1A, 6=$1B, 7=$1C, 8=$1D, 9=$1E
+"vol up":VOL+=$04, "vol down":VOL-=$05, MUTE=$08
+"channel up":CH+=$06, "channel down":CH-=$07
+Setup=$02, Scroll=$18
+Power=$03
+"Prev Ch":Last{Rand}=$24
+replay:Format{Replay}=$3A
+Guide=$25
+"display":Info=$31
+Menu=$14
+Exit=$32
+"up arrow":Up=$29
+"down arrow":Down=$2A
+"left arrow":Left=$2C
+"right arrow":Right=$2B
+"select":OK=$27
+"tv/vcr":Input=$33
+"enter":Enter{Skip}=$39
+"rewind":Rewind{pip-on/off}=$0B
+"play":Play{pip-swap}=$0C
+"fast fwd":Fwd{pip-size}=$0D
+Record=$10
+Stop=$0E
+Pause=$0F
+live:LiveTV{pip-main}=$34
+"prev track":Skipback{pip-freeze}=$37
+"next track":Skipfwd{pip-move}=$38
+"fav/scan":FAV=$28
+PVR-VOD{Preset}=$20
+pvr:PVR-Menu=$54
+"page up":Page+{Audio}=$35
+"page down":Page-{Subtitle}=$36
+tuner_1=$55
+tuner_2=$56
+tuner_3=$57
+tuner_4=$59
+tuner_5=$5A
+tuner_6=$5B
+tuner_7=$5C
+tuner_8=$5D
+tuner_9=$5E
+tuner_0=$5F
+front=$69
+Rear=$6A
+Center=$6C
+Test=$6B
+"macro1":Macro1=$2D
+"macro2":Macro2=$2E
+"macro3":Macro3=$2F
+"macro4":Macro4=$30
+Surround=$67
+Phantom1=$3B
+Phantom2=$3C
+Phantom3=$3D
+DiscreteOn=$3E
+DiscreteOff=$3F
+
+[ButtonMaps]
+0 = ($1F, $15, $16, $17, $19, $1A, $1B, $1C, $1D, $1E), ($04, $05, $08), ($06, $07),
+    $03, $33, $14, $29, $2A, $2C, $2B, $24, $31, $27, $32, $34, $0B, $37, $0C, $38,
+    $0D, $3A, $39, $25
+1 = ($1F, $15, $16, $17, $19, $1A, $1B, $1C, $1D, $1E), ($04, $05, $08), ($06, $07),
+    $03, $0C, $0E, $0B, $0D, $0F, $10, $14, $29, $2A, $2C, $2B, $39, $27, $32, $25,
+    $31, $24, $33, $37, $38, $34, $3A
+2 = ($1F, $15, $16, $17, $19, $1A, $1B, $1C, $1D, $1E), ($04, $05, $08), ($06, $07),
+    $03, $0C, $0F, $0B, $0D, $0E, $10, $14, $29, $2A, $2C, $2B, $27, $39, $37, $38,
+    $25, $32, $31, $24, $33, $36, $35, $3A
+3 = ($1F, $15, $16, $17, $19, $1A, $1B, $1C, $1D, $1E), ($04, $05, $08), ($06, $07),
+    $03, $14, $29, $2A, $2C, $2B, $32, $31, $25, $24, $27, $35, $36, $33, $39, $0C,
+    $0F, $0B, $0D, $0E, $10, $37, $34, $38, $3A, $54
+4 = ($1F, $15, $16, $17, $19, $1A, $1B, $1C, $1D, $1E), ($04, $05, $08), ($06, $07),
+    $03, $0C, $0E, $0B, $0D, $10, $0F, $24, $32, $31, $14, $29, $2A, $2C, $2B, $33,
+    $25, $27, $39, $38, $37
+5 = ($1F, $15, $16, $17, $19, $1A, $1B, $1C, $1D, $1E), ($04, $05, $08), ($06, $07),
+    $03, $0C, $0F, $0B, $0D, $0E, $10, $33, $25, $27, $24, $67, $29, $2A, $2C, $2B,
+    $69, $6A, $6C, $6B, $32, $31, $14, $39, $38, $37, $36, $5F, $55, $56, $57, $59,
+    $5A, $5B, $5C, $5D, $5E
+
+[DigitMaps]
+72 48 53 94 92 03 99 99 90 44 46 86 87 10 99 99 58 83 147 11 126 23 81 16 01
+127 34 32 21 75 33 30 29 99 99 64 13 91
+
+[Protocols]
+0000, 0002, 0006, 0014, 0015, 001C, 001F, 0022, 0027, 0029,
+002D, 002F, 0034, 003F, 0045, 0046, 0058, 005A, 005C, 005D,
+005E, 0060, 0065, 006A, 0073, 007E:3, 0092, 0098, 009C, 009E,
+00A4, 00AF, 00B6, 00C4, 00C9, 00CA, 00CD, 00DE, 00E2, 00E3,
+00E8, 00F8, 010F, 0111, 0114, 0117, 011A, 011B, 016D, 0184

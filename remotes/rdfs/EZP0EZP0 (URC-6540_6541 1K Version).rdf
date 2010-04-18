@@ -1,0 +1,123 @@
+[General]
+Name=One For All URC-6540/6541 - 1K Version
+# 
+# This remote doesn't have numeric buttons, so you perform the 
+# normal 9xx tasks using the volume and channel buttons: 
+# 
+# 975: ch-, vol-, vol+ (learning)
+# 976: ch-, vol-, vol- (delete learning)
+# 980: ch-, vol+, vol- (ops reset)
+# 981: ch-, vol+, vol+ (mfr reset) 
+# 990: ch-, ch-, ch+   (blink back setup code)
+# 991: ch-, ch-, ch-   (search for setup code)
+# 992: ch-, ch-, vol+  (mode map)
+# 993: ch-, ch+, vol+  (sets the VPT) 
+# 993: ch-, ch-, vol-  (turns VPT off) 
+# 994: ch-, ch+, ch-   (locks a code to a button)
+# F:   ch-, ch+, vol-  (locks/unlocks the F button)
+#
+# Use released version of IR v6.00 or later with this remote ("release candidate 3" is o.k.).
+#
+# IR shows 4-digit decimal Device Setup Codes (as for "normal" remote with numeric keypad),
+# 6-digit codes in OFA manual are for punching in using four buttons.  They match the decimal
+# ones but converted to base 4, then each digit incremented by 1 (so 1 to 4, not 0 to 3).
+# So decimal 1234 is 1 00 11 01 00 10 in binary, 103102 in base 4, 214213 in "OFA base 4".
+#
+# Assigning code to "F" key but to no "Input-n" key causes "F" button to issue that single code.
+#
+# Assigning codes to multiple "Input-n" keys, but not the "F" causes "F" to issue a different code at each press (stepping
+# through the "Input" codes), to allow F key to choose source where original remote has multiple source select buttons.
+#
+# With "F" and "Input-n" keys both assigned, the "F lock" feature decides which of the two above effects you get.
+#
+# Bytes $018 to $01B also may be part of the "F" button scheme, not clear what yet - maybe irrelevant with JP1 anyway.  Seem to
+# have little function at any value.  Remote tends to push then back to zero, which is probably the safest place to leave them !
+#
+EepromSize=$400
+AdvCodeAddr=$01D..$0FF
+UpgradeAddr=$100..$1FD
+LearnedAddr=$1FE..$3FC
+Processor=S3C80
+RAMAddr=$8000
+DevComb=,$9D3,$15A9,,$8AEF,$160B
+RDFSync=3
+MacroSupport=0
+OmitDigitMapByte=1
+ImageMap=URC-6541.map
+
+[SpecialProtocols]
+Multiplex=01FE
+
+[Settings]
+Byte $018 TUN =$018.7.8.1.0 
+Byte $019 CD  =$019.7.8.1.0 
+Byte $01A TAPE=$01a.7.8.1.0 
+Byte $01B MD  =$01b.7.8.1.0 
+F Lock TUN =$017.0.1.1.0 (On;Off)
+F Lock CD  =$017.1.1.1.0 (On;Off)
+F Lock Tape=$017.2.1.1.0 (On;Off)
+F Lock MD  =$017.3.1.1.0 (On;Off)
+VPT Status=$01c.2.1.0.0 (Off;On)
+VPT Device=$014.7.8.1.0 DeviceButtons
+TUN VPT=$015.0.1.1.0 (Off;On)
+CD VPT=$015.1.1.1.0 (Off;On)
+TAPE VPT=$015.2.1.1.0 (Off;On)
+MD VPT=$015.3.1.0.0 (Off;On)
+
+[Checksums]
+^$000:$002..$3FC
+
+[FixedData]
+$016 = $13
+
+[DeviceTypes] 
+Audio	= 0 
+Tape  	= 1 
+Alt	= 2 
+
+[DeviceTypeAliases] 
+Audio = CD, Home Auto, Phono, Tuner, Misc Audio, Amp, TV, Cable, SAT, Video Acc, VCR, DVD, Laserdisc, DAT, PVR
+Tape = Tape
+Alt = OEM
+
+[DeviceButtons]
+TUN	= $00A $00B
+CD	= $00C $00D
+TAPE	= $00E $00F
+MD	= $010 $011
+
+[Buttons]
+Power=$03,
+"vol up":Vol+=$04, "vol down":Vol-=$05, Mute=$08,
+"channel up":Prog+=$06, "channel down":Prog-=$07,
+"Rewind":REW=$0B, Play=$0C, "Fast Fwd":FF=$0D,
+"input":F=$10, Pause=$0F, Stop=$0E,
+Input-0=$40,
+Input-1=$41,
+Input-2=$42,
+Input-3=$43,
+Input-4=$44,
+Input-5=$45,
+Input-6=$46,
+Input-7=$47,
+Input-8=$48,
+Input-9=$49,
+TUN=$01, CD=$11, TAPE=$0A, MD=$09, 
+"setup":P[Setup]=$02, 
+Numbers=$4A
+
+[ButtonMaps]
+0 = $4A, ($04, $05, $08), ($06, $07), $03, $0c, $0f, $0b, $0d, $0e, $8c, $86, $87, $10, 
+    $40,  $41, $42, $43,   $44, $45,  $46, $47, $48, $49
+1 = $4A, ($04, $05, $08), ($06, $07), $03, $0c, $0f, $0b, $0d, $0e, $8c
+2 = $4A, ($04, $05, $08), ($06, $07), $03, $10, $0c, $0E, $0B, $0d, $0F
+
+[DigitMaps]
+
+[Protocols]
+0000, 0006, 000D, 0010, 0013, 0018, 001A, 001B, 001C, 0027, 
+002A, 002C, 0034, 003D, 0043, 0058, 005A, 005C, 005E, 005F,
+0061, 0065, 006A, 0073, 0078, 007A, 0087, 008E, 009A, 009C,
+009D, 009E, 00A0, 00A1, 00A5, 00A9, 00B6, 00B7, 00BB, 00BC,
+00BE, 00C2, 00C9, 00CA, 00CD, 00CE, 00D6, 00E2, 00E8, 00EB,
+00F2, 00F3, 00F4

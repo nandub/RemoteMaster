@@ -1,0 +1,143 @@
+[General]
+Name=Anthem (Catalyst 48)
+EepromSize=$800
+AdvCodeAddr=$027..$0FF
+UpgradeAddr=$100..$3FC
+LearnedAddr=$3FF..$7FD
+Processor=S3C80
+RAMAddr=$8000
+RDFSync=3
+ImageMap=Anthem.map
+
+[SpecialProtocols]
+Multiplex=01FE
+
+[Settings]
+Main VPT Device=$01F.7.8.0.0 DeviceButtons
+CD VPT Device=$020.7.8.1.0 DeviceButtons
+Z3 VPT Device=$021.7.8.2.0 DeviceButtons
+Z2 VPT Device=$022.7.8.3.0 DeviceButtons
+TV VPT Device=$023.7.8.4.0 DeviceButtons
+VCR VPT Device=$024.7.8.5.0 DeviceButtons
+SAT VPT Device=$025.7.8.6.0 DeviceButtons
+DVD VPT Device=$026.7.8.7.0 DeviceButtons
+Main Lock=$01d.0.1.1.0 (On;Off)
+CD Lock=$01d.1.1.1.0 (On;Off)
+Z3 Lock=$01d.2.1.1.0 (On;Off)
+Z2 Lock=$01d.3.1.0.0 (On;Off)
+TV Lock=$01d.4.1.1.0 (On;Off)
+VCR Lock=$01d.5.1.1.0 (On;Off)
+SAT Lock=$01d.6.1.1.0 (On;Off)
+DVD Lock=$01d.7.1.0.0 (On;Off)
+
+[Checksums]
+^$000:$002..$7FD
+
+[DeviceTypes]
+CBL/SAT	= 0, $00
+TV	= 0, $01
+VCR/DVD	= 0, $02
+AUDIO	= 1, $03
+OEM	= 2, $04
+
+[DeviceTypeAliases]
+CBL/SAT	= Cable,SAT,Video Acc
+TV 	= TV
+VCR/DVD	= VCR,DVD,Tape,Laserdisc
+AUDIO	= CD,Tuner,DAT,Home Auto,Misc Audio,Phono,Amp
+OEM	= OEM Mode
+
+[DeviceButtons]
+Main = $00A $00B
+CD   = $00C $00D
+Z3   = $00E $00F
+Z2   = $010 $011
+TV   = $012 $013
+VCR  = $014 $015
+SAT  = $016 $017
+DVD  = $018 $019
+
+[Buttons]
+MAIN=$11,
+Z2=$09,
+Z3=$0A,
+CD=$01,
+DVD=$22,
+TV=$21,
+SAT=$29,
+VCR=$2A,
+"1":1{Preset_1}=$15,
+"2":2{Preset_2}=$16,
+"3":3{Preset_3}=$17,
+"4":4{Preset_4}=$19,
+"5":5{Preset_5}=$1A,
+"6":6{Preset_6}=$1B,
+"7":7{On_Screen}=$1C,
+"8":8{Display}=$1D,
+"9":9{Tone_Bypass}=$1E,
+"0":0{Dolby_Dynamics}=$1F,
+Power=$03,
+"vol up":Vol+=$04,
+"vol down":Vol-=$05,
+Mute=$08,
+"channel up":Ch+=$06,
+"channel down":Ch-=$07,
+"up arrow":UP{Tune+}=$31,
+"down arrow":DOWN{Tune-}=$32,
+"left arrow":LEFT{Seek-}=$33,
+"right arrow":RIGHT{Seek+}=$34,
+"select":Select{Status}=$14,
+"play":Play=$0C,
+"pause":Pause{Balance}=$0F,
+"stop":Stop{Treble}=$0E,
+"rewind":Rew=$0B,
+"fast fwd":Fwd=$0D,
+"record":Record1{Bass}=$10,
+Input{THX}=$18,
+"Enter":Enter{Mode}=$12,
+"prev ch":Last{AVM_Off}=$13,
+"display":Info{SURR_R}=$20,
+"exit":Back{CTR}=$23,
+"pip on/off":PIP{Copy}=$24,
+"pip swap":Swap{2-Ch}=$25,
+"pip move":Move{6-Ch}=$26,
+"menu":Setup{Sub_LFE}=$27,
+"Sleep":SLEEP{Timers}=$28,
+Record2{AVM_Path}=$2B,
+"guide":GUIDE{FRT}=$2C,
+cd-input=$2D,
+aux-input=$2E,
+tape-input=$2F,
+FM/AM=$30,
+dvd-input=$35,
+tv-input=$36,
+sat-input=$37,
+vcr-input=$38,
+"Setup":Learn=$02,
+Phantom1=$39,
+Phantom2=$3A,
+Phantom3=$3B,
+Phantom4=$3C,
+Phantom5=$3D
+
+
+[ButtonMaps]
+0 = (31, 21, 22, 23, 25, 26, 27, 28, 29, 30), (4, 5, 8), (6, 7),
+    $03, $12, $13, $28, $27, $31, $32, $33, $34, $23, $14, $20, $2c, $18, $2b, $24, $25, $26, $0c, $0f, $0b, $0d, $0e, $10
+1 = (31, 21, 22, 23, 25, 26, 27, 28, 29, 30), (4, 5, 8), (6, 7),
+    $03, $12, $13, $28, $27, $31, $32, $33, $34, $2b, $23, $14, $20, $2c, $18, $0c, $0f, $0b, $0d, $0e, $10
+2 = (31, 21, 22, 23, 25, 26, 27, 28, 29, 30), (4, 5, 8), (6, 7),
+    $03, $12, $13, $28, $27, $31, $32, $33, $34, $23, $14, $20, $2c, $18, $0c, $0b, $0d, $0f, $0e, $10, $24, $25, $26, $2b, $2d, $2e, $2f, $30, $35, $36, $37, $38, $39, $3a, $3b, $3c
+
+[DigitMaps]
+72 48 53 54 86 94 03 81 90 21 11 92 46 32 29 50
+83 01 76 82 23 34 75 33 30 64 17 00 91 88
+
+[Protocols]
+0000, 0002, 0006, 000C, 000D, 0013, 0014, 0015, 001A, 001B,
+001C, 001D, 001E, 001F, 0021, 0022, 0029, 002A, 002D, 0034,
+0039, 003A, 003F, 0056, 0058, 005A, 005C, 005D, 005E, 005F,
+0060, 0061, 0065, 0068, 006A, 0078, 007E, 0087, 008D, 00A4,
+00AF, 00C4, 00C9, 00CA, 00CE, 00D0, 00D7, 00DB, 00DE, 00E2,
+00E7, 00E8, 00F2, 00F5, 00F8
+

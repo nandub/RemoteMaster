@@ -1,0 +1,68 @@
+#$MTIMFH
+#$-:Image Map file created by Map THIS!
+#$-:Map THIS! free image map editor by Todd C. Wilson
+#$-:Please do not edit lines starting with "#$"
+#$VERSION:1.30
+#$TITLE:15-1994
+#$DATE:Tue Feb 14 20:22:05 2006
+#$PATH:C:\rm\km\images\
+#$GIF:Outlaw990.jpg
+#$FORMAT:ncsa
+#$EOH
+default 1994
+circle CBL  31,55 37,61
+circle AUX  57,55 63,61
+circle VCR  82,55 88,61
+circle TV  107,54 113,60
+circle SAT  33,73 39,79
+circle CD  56,72 62,78
+circle AMP  83,73 89,79
+circle vid2  57,337 63,343
+circle vid3  81,338 87,344
+circle vid4  102,338 108,344
+circle cd_in  36,355 42,361
+circle SLEEP  68,181 76,186
+circle MENU{mono}  103,277 109,284
+circle GUIDE{test}  34,218 40,224
+circle exit{spkr}  104,218 110,224
+circle tone  69,197 77,202
+circle POWER  101,34 108,41
+circle UP  69,228 89,235
+circle LEFT  37,247 47,262
+circle RIGHT  100,247 109,262
+circle DOWN  69,266 90,273
+circle SELECT  69,246 83,253
+circle MUTE  38,144 48,151
+circle VOL+  38,167 48,178
+circle VOL-  37,193 46,201
+circle CH+  100,168 110,176
+circle CH-  100,194 110,202
+circle 1  36,89 46,96
+circle 2  68,89 78,96
+circle 3  100,88 110,95
+circle 4  38,108 48,115
+circle 5  69,108 79,115
+circle 6  100,109 110,116
+circle 7  38,125 48,132
+circle 8  68,127 78,134
+circle 9  100,126 110,133
+circle 0  68,144 78,151
+circle LAST{x_Over}  68,165 76,170
+circle vid1  36,338 42,344
+circle REW{preset_down}  34,297 45,304
+circle PLAY{PScan}  70,297 81,303
+circle FWD{preset_up}  102,297 113,303
+circle PAUSE{memory}  102,317 113,323
+circle REC{delay}  36,316 47,322
+circle SETUP  35,33 40,38
+circle info{mode}  34,278 40,284
+circle TNR  107,73 113,79
+circle aux_in  57,355 63,361
+circle TAPE  81,355 87,361
+circle DVD  103,355 109,361
+circle dolby_modes  37,374 43,380
+circle dts_modes  58,373 64,379
+circle stereo_modes  81,373 87,379
+circle bypass  101,372 107,378
+circle enter  100,143 110,150
+circle stop{am/fm}  70,316 81,322

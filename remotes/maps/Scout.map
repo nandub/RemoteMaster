@@ -1,0 +1,50 @@
+#$MTIMFH
+#$-:Image Map file created by Map THIS!
+#$-:Map THIS! free image map editor by Todd C. Wilson
+#$-:Please do not edit lines starting with "#$"
+#$VERSION:1.30
+#$TITLE:Intuiive
+#$DATE:Tue Jul 19 15:19:44 2005
+#$PATH:C:\JP1\Images\
+#$GIF:Scout.jpg
+#$FORMAT:ncsa
+#$EOH
+default Scout
+circle UP  63,235 71,245
+circle LEFT  27,256 37,264
+circle RIGHT  100,257 110,265
+circle DOWN  63,278 71,289
+circle MUTE  28,142 39,147
+circle VOL+  30,170 38,179
+circle VOL-  30,202 38,211
+circle CH+  98,171 106,180
+circle CH-  98,204 106,213
+circle 1  32,61 43,72
+circle 2  66,62 77,73
+circle 3  100,62 111,73
+circle 4  33,89 44,100
+circle 5  65,90 76,101
+circle 6  102,90 113,101
+circle 7  29,118 40,129
+circle 8  65,118 76,129
+circle 9  100,118 111,129
+circle 0  65,147 76,158
+circle a  101,142 112,147
+circle FAV  64,196 73,202
+circle INFO  30,288 44,294
+circle LAST  65,175 74,181
+rect SELECT 52,252 75,261
+circle pageup  62,309 73,317
+circle fwd  91,326 102,334
+circle back  34,325 45,333
+circle pagedown  62,342 73,350
+rect PPV 51,358 74,366
+poly bypass 80,357 98,345 103,352 85,364 80,357
+poly a 25,343 44,357 38,364 19,350 25,343
+circle c  95,288 109,294
+circle GUIDE  28,230 36,238
+circle MENU  99,231 107,239
+rect pause 50,375 74,384
+poly cbl 23,35 46,26 46,45 23,35
+rect SETUP 55,35 78,44
+poly TV 87,26 110,37 87,45 87,26

@@ -1,0 +1,113 @@
+[General]
+Name=Scout 0.5K
+Identification=UEI Scout remote with 512 byte EEPROM
+EepromSize=$200
+AdvCodeAddr=$00E..$0FB
+UpgradeAddr=$100..$1FD
+PowerButtons=$09,$01
+Processor=6805
+ProcessorVersion=RC16/18
+MaxProtocolLength=128
+DevComb=,$DFA,$F2E,$DDD,,$66,$100
+MacroSupport=0
+RDFSync=3
+ImageMap=Generic.map
+
+[SpecialProtocols]
+Multiplex=01FE
+
+[Settings]
+VPT Device=  $00D.7.8.1.0 DeviceButtons
+
+[Checksums]
+^$000:$002..$1FD
+
+# 128-byte EEPROM has $80 at $006
+# 256-byte EEPROM has $01 at $006
+# 512-byte EEPROM has $12 at $006
+# 1K-byte  EEPROM has $13 at $006
+# 2K-byte  EEPROM has $14 at $006
+# second signature "SCO0" at $0FC
+[FixedData]
+$006 = $12
+$0FC = $53 $43 $4F $30
+
+[DeviceTypes]
+CBL = 0
+TV  = 1
+
+[DeviceTypeAliases]
+CBL = Cable,SAT,Video Acc, VCR,DVD,Tape,Laserdisc,DAT,CD,Home Auto,Phono,Tuner,Misc Audio, Amp
+TV  = TV
+
+[DeviceButtons] 
+CBL = $009 $007 $00B
+TV  = $00A $008 $00C
+
+[Buttons]
+TV=$01,
+CBL=$09,
+"vol up":Vol+=$04,
+"vol down":Vol-=$05,
+Mute=$08,
+"channel up":Ch+=$06,
+"channel down":Ch-=$07,
+1=$15
+2=$16,
+3=$17,
+4=$19,
+5=$1A,
+6=$1B,
+7=$1C,
+8=$1D,
+9=$1E,
+0=$1F,
+"prev ch":Last=$13,
+"pip freeze":PPV=$10,
+"fav/scan":Fav=$03,
+Guide=$0C,
+display:Info=$0D,
+Menu=$0A,
+"up arrow":Up=$29,
+"down arrow":Down=$2A,
+"left arrow":Left=$2B,
+"right arrow":Right=$2C,
+Select=$0B,
+x2:Bypass=$11,
+"fast fwd":Fwd=$26,
+rewind:Back=$27,
+"next track":PageUp=$24,
+"prev track":PageDown=$25,
+Pause=$14,
+surround:A=$0E,
+input:B=$0F,
+"+100":C=$12,
+Setup=$02,
+Phantom1=$20,
+Phantom2=$21,
+Phantom3=$22,
+Phantom4=$23,
+Phantom5=$18,
+Phantom6=$28
+
+[ButtonMaps]
+0 = ($1F, $15, $16, $17, $19, $1A, $1B, $1C, $1D, $1E), ($04, $05, $08), ($06, $07),
+    $09, $21, $22, $23, $13, $03, $0A, $0B, $0C, $24, $25, $29, $2A, $2B, $2C, $12,
+    $0D, $0E, $0F, $26, $27, $10, $11, $14
+1 = ($1F, $15, $16, $17, $19, $1A, $1B, $1C, $1D, $1E), ($04, $05, $08), ($06, $07),
+    $01
+
+[DigitMaps]
+72 48 53 171 107 172 54 96 38 97 94 111 47 86 108 98 110 112 83 113 03 81 90 11 82
+23
+
+[Protocols]
+0000, 0002, 0004, 0006, 0007, 0008, 000A, 000C, 000D, 000E,
+0010, 0011, 0013, 0014, 0015, 0016, 0017, 0018, 001A, 001B,
+001C, 001D, 001E, 0021, 0022, 0024, 0026, 0029, 002A, 002D,
+0032, 0034, 0037, 0038, 0039, 003A, 003B, 003D, 0042, 0043,
+0045, 0051, 0052, 0053, 0056, 005A, 005C, 005D, 005E, 0060,
+0064, 0065, 0067, 006E, 0071, 0072, 0083, 0085, 0087, 008A,
+008F, 0091, 0093, 009D, 00A1, 00A4, 00A5, 00A7, 00C2, 00C4,
+00C5, 00C7, 00C9, 00CA, 00D0, 00D5, 00D7, 00D9, 00E2, 00E3,
+00E8, 00EF

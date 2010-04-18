@@ -1,0 +1,173 @@
+[General]
+Name=Cox URC-7820B JP1.3
+EepromSize=$1400
+AdvCodeAddr=$0026..$01FF
+UpgradeAddr=$0402..$0BFF
+LearnedAddr=$0C00..$13FF
+Processor=S3F80
+BaseAddr=$0600
+RAMAddr=$FF00
+RDFSync=3
+AdvCodeBindFormat=LONG
+SectionTerminator=$FF
+LearnedDevBtnSwapped=Yes
+EFCDigits=5
+ImageMap=URC-7820.map
+DevComb=,$35A3,$42ED,,$4EEF,$43E1
+2BytePid=Yes
+
+[SpecialProtocols]
+Multiplex=01FE
+
+[Checksums]
+^$008:$00A..$025
+^$200:$202..$3FF
+^$400:$402..$BFF
+
+[Settings]
+VPT Device=$016.7.8.0.0 DeviceButtons
+VPT Status=$015.2.1.1.0 (Off;On)
+CBL uses VPT=$017.0.1.1.0 (No;Yes)
+TV  uses VPT=$017.1.1.1.0 (No;Yes)
+DVD uses VPT=$017.2.1.1.0 (No;Yes)
+AUX uses VPT=$017.3.1.1.0 (No;Yes)
+dev5 uses VPT=$017.4.1.1.0 (No;Yes)
+CBL Channel Control Lock=$015.3.1.1.0 (Off;On)
+CBL Setup Code Lock=$014.0.1.1.0 (Off;On)
+TV  Setup Code Lock=$014.1.1.1.0 (Off;On)
+DVD Setup Code Lock=$014.2.1.1.0 (Off;On)
+AUX Setup Code Lock=$014.3.1.1.0 (Off;On)
+dev5 Setup Code Lock=$014.4.1.1.0 (Off;On)
+
+# DeviceTypes
+# The order matches up with default type on DeviceButtons
+# The names match up with DeviceTypeAliases
+
+[DeviceTypes]
+Cable    = 0
+TV       = 1
+VCR/DVD  = 2
+AUX 	 = 3
+VCR/DVD  = 2,2
+
+[DeviceTypeAliases]
+Cable    = Cable,SAT,Video Acc
+TV       = TV
+VCR/DVD  = VCR,DVD,Tape,Laserdisc,DAT
+AUX      = CD,Tuner,Home Auto,Misc Audio,Phono,Amp
+
+[DeviceButtons]
+CABLE = $00A $00B
+TV  = $00C $00D
+DVD = $00E $00F
+AUX = $010 $011
+dev5 = $012 $013
+
+[Buttons]
+TV=$01,
+SETUP=$02,
+POWER=$03,
+"vol up":VOL+=$04,
+"vol down":VOL-=$05,
+"channel up":CH+=$06,
+"channel down":CH-=$07,
+"prev ch":LAST=$08,
+CABLE=$09,
+DVD=$0A,
+rewind:REWIND=$0B,
+PLAY=$0C,
+"fast fwd":FFWD=$0D,
+STOP=$0E,
+PAUSE=$0F,
+record:RECORD=$10,
+AUX=$11,
+dev5=$12,
+display:INFO=$13,
+EXIT=$14,
+1=$15,2=$16,3=$17,4=$19,5=$1A,6=$1B,7=$1C,8=$1D,9=$1E,0=$1F,
+"aspect":HD_ZOOM=$18,
+ENTER=$20,
+GUIDE=$21,
+"fav/scan":FAV=$22,
+"next track":PAGEUP=$23,
+"prev track":PAGEDOWN=$24,
+A=$25,
+B=$26,
+C=$27,
+pvr:LIST=$28,
+"up arrow":UP=$29,
+"down arrow":DOWN=$2A,
+"left arrow":LEFT=$2B,
+"right arrow":RIGHT=$2C,
+SELECT=$2D,
+MENU=$2E,
+LIVE=$2F,
+"tv/vcr":INPUT=$30,
+shift-right:DAY+=$31,
+shift-left:DAY-=$32,
+MUTE=$33,
+macro1:ONDEMAND=$34,
+macro2:TuneIn2=$35,
+macro3:TuneIn3=$36,
+REPLAY=$37,
+"PIP On/Off":PIP_ON/OFF=$38
+"PIP Swap":PIP_SWAP=$39
+"PIP Move":PIP_MOVE=$3A
+"pip ch+":PIP_CH+=$3B
+"pip ch-":PIP_CH-=$3C
+x2:phantomA=$3D,
+SETTINGS=$3F,
+phantom1=$40,
+phantom2=$41,
+phantom3=$42,
+phantom10=$F1
+
+[MultiMacros]
+ONDEMAND=$018
+TuneIn2=$019
+TuneIn3=$01A
+
+[ButtonMaps]
+0 = ($1F, $15, $16, $17, $19, $1A, $1B, $1C, $1D, $1E), ($04, $05, $33), ($06, $07),
+     $03, $2E, $2D, $29, $2A, $2B, $2C, $14, $08, $13, $21, $30, $22, $23, $24, $0C, 
+     $0F, $0B, $0D, $0E, $10, $3F, $28, $37, $2F, $20, $18, $31, $32, $25, $26, $27, 
+     $3D, $38, $39, $3A, $3B, $3C, $40, $F1, $34, $35, $36, $09, $01, $0A, $11, $12
+1 = ($1F, $15, $16, $17, $19, $1A, $1B, $1C, $1D, $1E), ($04, $05, $33), ($06, $07),
+     $03, $2E, $30, $29, $2A, $2B, $2C, $2D, $08, $14, $38, $39, $3A, $3B, $3C, $0C, 
+     $0F, $0B, $0D, $0E, $10, $28, $37, $2F, $22, $13, $21, $23, $24, $25, $26, $27, 
+     $31, $32, $20, $18, $3D, $3F, $09, $01, $0A, $11, $12
+2 = ($1F, $15, $16, $17, $19, $1A, $1B, $1C, $1D, $1E), ($04, $05, $33), ($06, $07),
+     $03, $0C, $0F, $0B, $0D, $0E, $10, $30, $2E, $29, $2A, $2B, $2C, $2D, $13, $14,
+     $08, $37, $28, $2F, $25, $26, $27, $22, $21, $23, $24, $31, $32, $20, $18, $38, 
+     $39, $3A, $3B, $3C, $3D, $3F, $09, $01, $0A, $11, $12
+3 = ($1F, $15, $16, $17, $19, $1A, $1B, $1C, $1D, $1E), ($04, $05, $33), ($06, $07),
+     $03, $0C, $0F, $0B, $0D, $0E, $10, $30, $13, $2E, $29, $2A, $2B, $2C, $2D, $14, 
+     $08, $25, $26, $27, $31, $32, $20, $18, $37, $28, $2F, $22, $21, $23, $24, $38, 
+     $39, $3A, $3B, $3C, $3F, $09, $01, $0A, $11, $12
+
+[Protocols]
+0000, 0002:5, 0006, 0007, 000A, 000C, 000D, 000E, 0013, 0014, 
+0015, 0016, 0018, 001A, 001B, 001C, 001D, 001F:8, 0022, 0024, 
+0025, 0026, 0027:new, 0029, 002A, 002C, 002D, 002F, 0032, 0034, 
+0035, 0039, 003A, 003B, 003D, 0042, 0043, 0045, 0046, 0051, 
+0052, 0053, 0056, 0057, 0058:2, 005A, 005B, 005C, 005D, 005E:2, 
+005F, 0060, 0064, 0065:2, 0067, 006A, 006E, 0071, 0072, 0073, 
+0074, 007E:3, 0083, 0087, 008A, 0090, 0091, 0092:3, 0093, 0098:2, 
+009C, 009D, 009E, 00A1, 00A4, 00A5, 00AF, 00B6, 00C2, 00C4, 
+00C5, 00C7, 00C8, 00C9, 00CA, 00CB, 00CD:2, 00D5, 00DB, 00DE, 
+00E1, 00E2, 00E3, 00E8, 00EF, 00F2, 00F5, 00F8:3, 0109, 010C, 
+010F, 0111, 0114:2, 0115, 0117, 0118, 0119, 011A:2, 011B, 011E, 
+0125, 012A:2, 0161, 0162, 016C, 017E, 0184:2, 018B, 019A, 019C, 
+01A4, 01A5, 01A7, 01BA, 01C4, 01C6
+
+[DigitMaps]
+72 48 53 94 92 03 01 90 44 46 223 224 365 366 126 21
+32 29 27 369 69 93 370 227 228 125 219 220 294 205 208 299
+289 263 264 199 200 141 336 337 278 279 257 258 64 290 237 238
+86 11 23 81 16 179 127 168 34 136 83 84 101 150 75 61
+137 33 85 138 59 30 74 105 139 26 217 218 297 298 124 325
+295 387 291 206 207 192 193 251 252 247 248 244 388 58 373 20
+371 346 357 372 374 375 389 377 378 253 254 270 271 241 242 286
+230 231 376 379 13 18 80 39 17 31 91 103 277 209 210 170
+87 130 131 267 367 129 174 197 312 380 243 215 305 229 341
+

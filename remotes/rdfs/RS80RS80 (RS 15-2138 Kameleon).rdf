@@ -1,0 +1,174 @@
+[General]
+Name=Radio Shack 15-2138 Kameleon
+EepromSize=$800
+FavKey=$30, $022, 15, 5
+AdvCodeAddr=$026..$0FF
+UpgradeAddr=$100..$3FE
+LearnedAddr=$400..$7FD
+Processor=S3C80
+RAMAddr=$FF00
+DevComb=$74,$15C4,$361D,,$9FBF,$3682,$0100
+RDFSync=3
+
+[SpecialProtocols]
+Multiplex=01FE
+
+[Settings]
+My System Transport Device=$01d.7.8.1.0 DeviceButtons
+My System Volume Device=$01e.7.8.1.0 DeviceButtons
+My System Channel Device=$01f.7.8.1.0 DeviceButtons
+My System Menu Device=$020.7.8.1.0 DeviceButtons
+VPT Status=$01a.2.1.0.0 (Off;On)
+VPT Device=$01b.7.8.1.0 DeviceButtons
+CBL VPT=$01c.0.1.1.0 (Off;On)
+TV  VPT=$01c.1.1.1.0 (Off;On)
+VCR VPT=$01c.2.1.1.0 (Off;On)
+DVD VPT=$01c.3.1.0.0 (Off;On)
+CD  VPT=$01c.4.1.1.0 (Off;On)
+SAT VPT=$01c.5.1.0.0 (Off;On)
+AUD VPT=$01c.6.1.0.0 (Off;On)
+AUX VPT=$01c.7.1.0.0 (Off;On)
+Tilt Switch=$024.0.1.0.0 (Off;On)
+Finder Switch=$01a.5.1.0.0 (Off;On)
+Unknown=$025.7.8.1.0 DeviceButtons
+
+[Checksums]
+^$000:$002..$7FD
+
+[FixedData]
+$023 = $04
+
+[DeviceTypes]
+CBL	= 3
+TV	= 0
+VCR	= 1
+DVD	= 2
+CD	= 4
+SAT	= 3
+Aud	= 5
+
+[DeviceTypeImageMaps]
+CBL     = (RS15-2138-CBL.map)
+TV      = (RS15-2138-TV-MAIN.map,RS15-2138-TV.map)
+VCR     = (RS15-2138-VCR.map)
+DVD     = (RS15-2138-DVD.map)
+CD      = (RS15-2138-CD-MAIN.map,RS15-2138-CD.map)
+SAT     = (RS15-2138-CBL.map)
+Aud     = (RS15-2138-AUD-MAIN.map,RS15-2138-AUD.map)
+
+[DeviceTypeAliases]
+CBL	= Cable,Video Acc
+SAT	= SAT
+TV	= TV
+VCR	= VCR,Tape,DAT
+DVD	= DVD,Laserdisc
+CD	= CD,Home Auto,Phono
+Aud	= Tuner,Misc Audio,Amp
+
+[DeviceButtons]
+CBL	= $00A $00B
+TV	= $00C $00D
+VCR	= $00E $00F
+DVD	= $010 $011
+CD	= $012 $013
+SAT	= $014 $015
+AUD	= $016 $017
+AUX	= $018 $019
+
+[Buttons]
+TV=$01
+SAT=$26
+CBL=$11
+DVD=$21
+theater:My_System=$12
+CD=$09
+AUD=$22
+VCR=$0A
+AUX=$23
+0=$1F
+1=$15
+2=$16
+3=$17
+4=$19
+5=$1A
+6=$1B
+7=$1C
+8=$1D
+9=$1E
+"vol up":VOL+=$06
+"vol down":VOL-=$07
+MUTE=$08
+"channel up":CH+=$04
+"channel down":CH-=$05
+power=$03
++10:+100=$20
+enter=$39
+sleep=$3B
+"tv/vcr":TV/VCR{A/B}=$33
+center:com-mute=$38
+x2:screen=$18
+"up arrow":up=$29
+"down arrow":down=$2A
+"left arrow":left=$2C
+"right arrow":right=$2B
+select:OK=$27
+menu=$14
+guide=$25
+exit=$32
+display:info=$31
+"prev ch":last=$24
+fav/scan=$28
+"shift-left":page+=$35
+"shift-right":page-=$36
+rear:com-skip=$37
+rewind:rew=$0B
+play=$0C
+"fast fwd":fwd=$0D
+record=$10
+stop=$0E
+pause=$0F
+"prev track":replay=$34
+"next track":advance=$3D
+live:liveTV=$3E
+slow=$3A
+surround:"s.sound"=$3C
+macro1:M1=$2D
+macro2:M2=$2E
+macro3:M3=$2F
+macro4:M4=$30
+Setup:P(setup)=$02
+Phantom1=$3F,
+Phantom2=$40,
+Phantom3=$41,
+Phantom4=$42,
+phantom5:DiscreteON=$43,
+phantom6:DiscreteOFF=$44
+
+[MultiMacros]
+com-mute=$21
+
+[ButtonMaps]
+0 = ($1F, $15, $16, $17, $19, $1A, $1B, $1C, $1D, $1E), ($06, $07, $08), ($04, $05),
+     $03, $33, $14, $24, $31, $29, $2a, $2c, $2b, $3b, $27, $20, $32, $25, $34, $3e, $3a, $3d, $39
+1 = ($1F, $15, $16, $17, $19, $1A, $1B, $1C, $1D, $1E), ($06, $07, $08), ($04, $05),
+     $03, $0c, $0e, $0b, $0d, $10, $0f, $14, $29, $2a, $2c, $2b, $32, $25, $33, $27, $31, $24, $39, $3a, $3b, $34, $3e, $3d, $37
+2 = ($1F, $15, $16, $17, $19, $1A, $1B, $1C, $1D, $1E), ($06, $07, $08), ($04, $05),
+     $03, $0c, $0e, $0b, $0d, $0f, $10, $14, $29, $2a, $2c, $2b, $27, $39, $25, $32, $3a, $31, $24, $20, $33, $3d
+3 = ($1F, $15, $16, $17, $19, $1A, $1B, $1C, $1D, $1E), ($06, $07, $08), ($04, $05),
+     $03, $14, $29, $2a, $2c, $2b, $32, $31, $25, $24, $27, $35, $36, $33, $39, $0c, $0e, $0b, $0d, $0f, $10, $3d, $34, $3e, $3a, $3b, $37
+4 = ($1F, $15, $16, $17, $19, $1A, $1B, $1C, $1D, $1E), ($06, $07, $08), ($04, $05),
+     $03, $0c, $0e, $0b, $0d, $10, $0f, $24, $32, $20, $31, $25, $14, $29, $2a, $2c, $2b, $27, $3d
+5 = ($1F, $15, $16, $17, $19, $1A, $1B, $1C, $1D, $1E), ($06, $07, $08), ($04, $05),
+     $03, $0c, $0e, $0b, $0d, $10, $0f, $24, $33, $3c, $25, $29, $2a, $2c, $2b, $20, $32, $31, $14, $27, $39, $3d
+
+[DigitMaps]
+072 048 053 094 092 003 090 044 046 086 087 010 058 083 034 011
+126 023 081 016 001 127 032 021 075 033 030 029 064 013 091 131
+141
+
+[Protocols]
+0000, 0002:5, 0006, 0014, 0015, 001C, 001F:8, 0022, 0027:new, 0029, 
+002D, 0034, 003F, 0045, 0046, 0058, 005A, 005C, 005D, 005E:2,
+0060, 0065, 006A, 0073, 007E:3, 0092, 0098, 009C, 009E, 00A4,
+00AF, 00B6, 00C4, 00C9, 00CA, 00CD, 00DE, 00E2, 00E3, 00E8, 
+00F2, 00F8:3, 010C, 010F, 0111, 0114, 0117, 011A, 011B:2, 0184

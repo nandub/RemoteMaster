@@ -1,0 +1,156 @@
+[General]
+Name=One For All URC-6960/6962 Kameleon (2K eeprom)
+EepromSize=$800
+FavKey=$28, $01D, 15, 5
+AdvCodeAddr=$020..$0FF
+UpgradeAddr=$100..$3FE
+LearnedAddr=$400..$7FD
+SectionTerminator=$FF
+AdvCodeFormat=EFC
+AdvCodeBindFormat=LONG
+Processor=S3C80
+RAMAddr=$FF00
+RDFSync=3
+WAVUpgrade=Yes
+
+[SpecialProtocols]
+Multiplex=01FE
+
+[Settings]
+VPT Status=$016.2.1.0.0 (Off;On)
+VPT Device=$017.7.8.1.0 DeviceButtons
+CBL VPT=$018.0.1.1.0 (Off;On)
+TV VPT=$018.1.1.1.0 (Off;On)
+VCR VPT=$018.2.1.1.0 (Off;On)
+DVD VPT=$018.3.1.0.0 (Off;On)
+CD VPT=$018.4.1.1.0 (Off;On)
+PVR VPT=$018.5.1.0.0 (Off;On)
+HT transport device=$019.7.8.1.0 DeviceButtons
+HT volume device=$01a.7.8.1.0 DeviceButtons
+HT channel device=$01b.7.8.1.0 DeviceButtons
+HT menu device=$01c.7.8.1.0 DeviceButtons
+
+[Checksums]
+^$000:$002..$7FD
+
+[FixedData]
+
+[DeviceTypes]
+CBL 	= 3
+TV      = 0
+VCR     = 1
+DVD     = 2
+AUDIO   = 4
+PVR     = 1
+
+[DeviceTypeImageMaps]
+CBL     = (urc-6960-cbl-main.map,urc-6960-cbl-menu.map)
+TV      = (urc-6960-tv-main.map,urc-6960-tv-menu.map,urc-6960-tv-pip.map)
+VCR     = (urc-6960-vcr-main.map,urc-6960-vcr-menu.map)
+DVD     = (urc-6960-dvd.map)
+PVR     = (urc-6960-pvr.map)
+AUDIO   = (urc-6960-aud-main.map,urc-6960-aud-sur.map,urc-6960-aud-menu.map,urc-6960-aud-preset.map)
+
+[DeviceTypeAliases]
+CBL	= Cable, SAT, Video Acc
+TV	= TV
+VCR	= VCR, Tape, DAT
+DVD	= DVD, Laserdisc
+AUDIO	= CD, Home Auto, Phono, Tuner, Misc Audio, Amp
+PVR	= PVR
+
+[DeviceButtons]
+CBL	= $00A $00B
+TV	= $00C $00D
+VCR	= $00E $00F
+DVD	= $010 $011
+Audio	= $012 $013
+PVR	= $014 $015
+
+[Buttons]
+TV=$01, VCR=$0A, DVD=$21, CBL=$11, AUDIO=$22, PVR=$26, "theater":HT=$12
+0=$1F, 1=$15, 2=$16, 3=$17, 4=$19, 5=$1A, 6=$1B, 7=$1C, 8=$1D, 9=$1E
+"vol up":VOL+=$04, "vol down":VOL-=$05, MUTE=$08
+"channel up":CH+=$06, "channel down":CH-=$07
+Setup=$02
+Scroll=$18
+Power=$03
+"prev ch":Last{Rand}=$24
+aspect:Format{Replay}=$23
+Guide=$25
+"display":Info=$31
+Menu=$14
+Exit=$32
+"up arrow":Up=$29
+"down arrow":Down=$2A
+"left arrow":Left=$2C
+"right arrow":Right=$2B
+"select":OK=$27
+tv/vcr:Input=$33
+"enter":Enter{Skip}=$09
+"rewind":Rewind{pip-on/off}=$0B
+"play":Play{pip-swap}=$0C
+"fast fwd":Fwd{pip-size}=$0D
+Record=$10
+Stop=$0E
+Pause=$0F
+live:LiveTV{pip-main}=$34
+"prev track":Skipback{pip-freeze}=$37
+"next track":Skipfwd{pip-move}=$38
+"fav/scan":FAV=$28
+PVR-VOD{Preset}=$20
+pvr:PVR-Menu=$54
+"page up":Page+{Audio}=$35
+"page down":Page-{Subtitle}=$36
+tuner_1=$55
+tuner_2=$56
+tuner_3=$57
+tuner_4=$59
+tuner_5=$5A
+tuner_6=$5B
+tuner_7=$5C
+tuner_8=$5D
+tuner_9=$5E
+tuner_0=$5F
+front=$69
+Rear=$6A
+Center=$6C
+Test=$6B
+"macro1":Macro1=$2D
+"macro2":Macro2=$2E
+"macro3":Macro3=$2F
+"macro4":Macro4=$30
+SURROUND=$67
+Phantom1=$3B
+Phantom2=$3C
+Phantom3=$3D
+Phantom4=$3E
+DiscreteOn=$39
+DiscreteOff=$3F
+
+[ButtonMaps]
+0 = ($1F, $15, $16, $17, $19, $1A, $1B, $1C, $1D, $1E), ($04, $05, $08), ($06, $07),
+     $03, $33, $14, $29, $2A, $2C, $2B, $24, $31, $27, $32, $34, $0B, $37, $0C, $38, $0D, $23, $09, $25
+1 = ($1F, $15, $16, $17, $19, $1A, $1B, $1C, $1D, $1E), ($04, $05, $08), ($06, $07),
+     $03, $0c, $0E, $0B, $0D, $0F, $10, $14, $29, $2A, $2C, $2B, $09, $27, $32, $25, $31, $24, $33, $37, $38, $34, $20
+2 = ($1F, $15, $16, $17, $19, $1A, $1B, $1C, $1D, $1E), ($04, $05, $08), ($06, $07),
+     $03, $0C, $0F, $0B, $0D, $0E, $10, $14, $29, $2A, $2C, $2B, $27, $09, $37, $38, $25, $32, $31, $24, $33, $36, $35
+3 = ($1F, $15, $16, $17, $19, $1A, $1B, $1C, $1D, $1E), ($04, $05, $08), ($06, $07),
+     $03, $14, $29, $2A, $2C, $2B, $32, $31, $25, $24, $27, $35, $36, $33, $09, $0C, $0F, $0B, $0D, $0E, $10, $37, $34, $38, $54 
+4 = ($1F, $15, $16, $17, $19, $1A, $1B, $1C, $1D, $1E), ($04, $05, $08), ($06, $07),
+     $03, $0c, $0F, $0B, $0D, $0E, $10, $33, $25, $27, $24, $67, $29, $2A, $2C, $2B, $69, $6A, $6C, $6B, $32, $31, $14, $09, $38, $37, $36, $5F, $55, $56, $57, $59, $5A, $5B, $5C, $5D, $5E
+
+
+[DigitMaps]
+72 48 53 94 92 03 01 90 44 46 86 87 10 187 188 58
+83 11 126 23 81 16 127 34 32 21 75 33 30 29 295 301
+64 13 91 270 271 199 200 209 210 145 170 131 93 141 208 212
+278 
+
+
+[Protocols]
+0000, 0002:5, 0006, 0014, 0015, 001C, 001F:8, 0022, 0027:new, 0029,
+002D, 002F, 0034, 003F, 0045, 0046, 0058:2, 005A, 005C, 005D, 005E:2,
+0060, 0065:2, 006A, 0073, 007E:3, 0092:3, 0098:2, 009C, 009E, 00A4,
+00AF, 00B6, 00C4, 00C9, 00CA, 00CD:2, 00DE, 00E2, 00E3, 00E8, 00F8:3,
+010F, 0111, 0114:2, 0117, 011A:2, 011B, 0162, 016D

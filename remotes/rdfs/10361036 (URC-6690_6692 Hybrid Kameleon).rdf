@@ -1,0 +1,160 @@
+[General]
+Name=One For All URC-6690/6692 (Kameleon Hybrid)
+EepromSize=$1400
+AdvCodeAddr=$001B..$03FF
+UpgradeAddr=$0402..$07FF
+LearnedAddr=$0800..$13FF
+Processor=HCS08
+BaseAddr=$E800
+RAMAddr=$FF00
+RDFSync=3
+AdvCodeBindFormat=LONG
+SectionTerminator=$FF
+EFCDigits=5
+DevComb=,$0846,$0D7B,,$19D9
+LearnedDevBtnSwapped=Yes
+FavKey=$1F,$00,10,5
+
+[SpecialProtocols]
+Multiplex=01FE
+
+[Settings]
+VPT Status=$016.2.1.0.0 (Off;On)
+VPT Device=$018.7.8.1.0 DeviceButtons
+CBL uses VPT=$019.0.1.1.0 (No;Yes)
+TV uses VPT=$019.1.1.1.0 (No;Yes)
+VCR uses VPT=$019.2.1.1.0 (No;Yes)
+DVD uses VPT=$019.3.1.0.0 (No;Yes)
+CD uses VPT=$019.4.1.1.0 (No;Yes)
+PVR uses VPT=$019.5.1.0.0 (No;Yes)
+Light On Time=$01A.3.4.2.0 (17min;4sec;8sec;12sec;16sec;20sec)
+KeyMap=$017.5.1.0.0 (Standard;Alternate)
+
+[Checksums]
+^$0008:$000A..$001A
+^$0400:$0402..$07FF
+
+[FixedData]
+
+[DeviceTypes]
+CBL/SAT	= 0
+TV      = 1
+VCR/PVR = 2
+DVD     = 3
+AUDIO   = 4
+AUDIO   = 4,4
+
+[DeviceTypeImageMaps]
+CBL/SAT = (urc-6690_CBL.map)
+TV      = (urc-6690_TV.map)
+VCR/PVR = (urc-6690_VCR.map)
+DVD     = (urc-6690_DVD.map)
+AUDIO   = (urc-6690_AUD.map)
+
+[DeviceTypeAliases]
+CBL/SAT	= Cable,SAT,Video Acc
+TV	= TV
+VCR/PVR	= VCR,Tape,DAT,PVR
+DVD	= DVD,Laserdisc
+AUDIO	= Tuner,Misc Audio,Amp,CD,Home Auto,Phono
+
+[DeviceButtons]
+CBL/SAT	= $00A $00B
+TV	= $00C $00D
+VCR/PVR	= $00E $00F
+DVD	= $010 $011
+AUD	= $012 $013
+AUX	= $014 $015
+
+[Buttons]
+TV=$01,
+setup:Set=$02,
+Power=$03,
+"vol up":VOL+=$04, "vol down":VOL-=$05,
+"channel up":CH+=$06, "channel down":CH-=$07,
+MUTE=$08,
+cbl:CBL/SAT=$09,
+vcr:VCR/PVR=$0A,
+"rewind":Rewind=$0B,
+"play":Play=$0C,
+"fast fwd":Fwd=$0D,
+Record=$0E,
+Pause=$0F,
+Stop=$10,
+DVD=$11,
+1=$12, 2=$13, 3=$14, 4=$15, 5=$16, 6=$17, 7=$18, 8=$19, 9=$1A, 0=$1B,
++100=$1C,
+Enter=$1D,
+Exit=$1E,
+"fav/scan":Fav=$1F,
+"prev ch":Prev=$20,
+Sleep=$21,
+"macro1":M1=$22,
+aud:AUDIO=$23, 
+"prev track":Skipback=$24,
+tv/vcr:Input=$25,
+"next track":Skipfwd=$26,
+CC=$27,
+"aspect":169=$28,
+AUX=$29,
+Menu=$2A,
+Guide=$2B,
+"up arrow":Up{Front}=$2C,
+"down arrow":Down{Rear}=$2D,
+"left arrow":Left{Center}=$2E,
+"right arrow":Right{Test}=$2F,
+"select":OK{Surround}=$30,
+display:Info=$31,
+"shift-left":PG-=$33,
+"shift-right":PG+=$32
+Phantom1=$3B,
+Phantom2=$3C,
+Phantom3=$3D
+"pip on/off":PIP=$4B,
+"pip swap":Swap=$4C,
+"pip move":Move=$4D,
+Replay=$65,
+skip:Q.Skip=$67,
+live:LiveTV{pip-main}=$68
+
+
+[ButtonMaps]
+0 = ($1B, $12, $13, $14, $15, $16, $17, $18, $19, $1A), ($04, $05, $08), ($06, $07),
+    $03, $20, $2C, $2D, $2E, $2F, $30, $2B, $31, $1E, $25, $2A, $32, $33, $0C, $0F,
+    $0B, $0D, $10, $0E, $1D, $67, $65, $68, $1C, $27, $21
+1 = ($1B, $12, $13, $14, $15, $16, $17, $18, $19, $1A), ($04, $05, $08), ($06, $07),
+    $03, $2A, $25, $2C, $2D, $2E, $2F, $31, $20, $30, $21, $27, $1E, $1C, $4B, $4D,
+    $2B, $28, $4C, $1D, $32, $33, $10, $0F, $0E, $26, $24
+2 = ($1B, $12, $13, $14, $15, $16, $17, $18, $19, $1A), ($04, $05, $08), ($06, $07),
+    $03, $0C, $10, $0B, $0D, $0F, $0E, $2A, $2C, $2D, $2E, $2F, $1E, $30, $25, $31,
+    $2B, $67, $65, $20, $1D, $1C, $68, $21, $27, $32, $33
+3 = ($1B, $12, $13, $14, $15, $16, $17, $18, $19, $1A), ($04, $05, $08), ($06, $07),
+    $03, $0C, $0F, $0B, $0D, $10, $0E, $2A, $2C, $2D, $2E, $2F, $30, $26, $24, $31,
+    $27, $20, $2B, $1E, $28, $1D, $25, $21, $1C, $32, $33, $0D, $03, $0C, $0F, $0B,
+    $0D, $10, $0E, $26, $24, $20, $31, $2A, $1C, $25, $1E, $30, $1D, $2C, $2D, $2E,
+    $2F, $21, $28, $2B, $27, $32, $33
+4 = ($1B, $12, $13, $14, $15, $16, $17, $18, $19, $1A), ($04, $05, $08), ($06, $07),
+    $03, $0C, $0F, $0B, $0D, $10, $0E, $26, $24, $20, $31, $2A, $1C, $25, $1E, $30,
+    $1D, $2C, $2D, $2E, $2F, $21, $28, $2B, $27, $32, $33
+
+[DigitMaps]
+106 92 26 72 48 53 54 94 86 113 03 01 81 90 44 46 223 224 05 93 114 21 59 11 87 64
+69 75 58 91 29 50 10 187 188 85 83 239 240 24 34 32 118 273 234 227 228 125 219 220
+280 294 232 233 245 246 255 256 205 287 259 260 249 250 208 299 289 285 292 265 266
+296 272 293 263 264 288 274 221 222 199 200 141 278 279 257 258 268 269 290 237 238
+281 282 126 23 16 179 127 61 33 30 217 218 124 295 291 251 252 247 248 244 195 196
+192 193 270 271 235 236 80 275 276 283 284 261 262 225 226 253 254 129 241 242 286
+230 231 13 17 168 209 210 170 130 131 277 267 174 213 197 229
+
+[Protocols]
+0000, 0002:5, 0006, 0007, 000A, 000C, 000D, 000E, 0011, 0013,
+0014, 0015, 0018, 001A, 001B, 001C, 001D, 001E, 001F:8, 0021,
+0022, 0027:new, 0029, 002A, 002D, 002F, 0032, 0034, 0039, 003A,
+003D, 003F, 0045, 0046, 0056, 0058, 005A, 005B, 005C, 005D,
+005E:2, 005F, 0060, 0061, 0065:2, 0067, 0068, 006A, 006E, 0073,
+0078, 007E:3, 0083, 0087, 008D, 0092:3, 0093, 0098, 009C, 009E,
+00A4, 00AF, 00B6, 00BE, 00C4, 00C9, 00CA, 00CD:2, 00CE, 00D0,
+00D7, 00DB, 00DE, 00E2, 00E3, 00E7, 00E8, 00F2, 00F5, 00F8:3,
+00FC, 0103, 0109, 010C, 010E, 010F, 0111, 0114:2, 0115, 0117,
+0118, 0119, 011A, 011B, 0125, 012A:2, 0161, 016D, 0174, 017E,
+0182, 0186, 018B, 0190, 0194, 01A4

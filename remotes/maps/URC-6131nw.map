@@ -1,0 +1,62 @@
+#$TITLE:URC-6131nw
+#$DATE:Saturday January 7 2:00:00 2006
+#$GIF:URC-6131nw.jpg
+#$FORMAT:ncsa
+#$EOH
+default 6131
+circle $01:TV  68,43 76,51
+circle $0A:PVR  45,43 53,51
+circle $11:DVD  22,46 30,54
+circle $09:CBL/SAT  90,46 98,54
+circle $22:AUD  68,62 76,70
+circle $39:VCR  45,63 53,71
+circle $03:Power  56,23 64,31
+circle $21:Menu  44,138 52,146
+circle $14:Guide  22,149 30,157
+circle $24:Exit  91,149 99,157
+circle $18:Info  71,138 79,146
+poly $31:Up  37,164 46,174 56,172 67,174 76,164 69,159 56,156 44,159
+poly $33:Left  29,175 26,187 29,200 34,207 43,198 41,187 43,177 34,168
+poly $34:Right  86,175 89,187 86,200 80,207 71,198 73,187 71,177 80,168
+poly $32:Down  37,210 46,200 56,202 67,200 76,210 69,215 56,218 44,215
+circle $35:SELECT  57,186 67,196
+rect $08:MUTE  48,268,69,279
+circle $04:VOL+  28,248 36,256
+circle $05:VOL-  28,279 36,287
+circle $06:CH+  87,248 95,256
+circle $07:CH-  87,279 95,287
+rect $23:Prev  48,252,69,263
+circle $27:Replay  23,65 31,73
+circle $2D:Thumbs_Down  22,224 30,232
+circle $36:PVR_Menu  58,237 66,245
+circle $2C:Thumbs_Up  91,224 99,232
+circle $29:Advance  90,65 98,73
+rect $0E:Stop  77,97,98,108
+rect $0C:Play  46,81,67,92
+rect $0B:Rewind  15,81,36,92
+rect $0F:Pause  15,98,36,109
+rect $0D:Fast_forward  77,81,98,92
+rect $2A:Prev_track  15,116,36,127
+rect $2B:Next_track  77,115,98,126
+rect $10:Rec  46,98,67,109
+circle $37:Audio  70,382 78,390
+circle $45:CC{Closed_Caption}  46,381 54,389
+circle $25:Subtitle  90,380 98,388
+circle $26:Angle{Sleep}  24,380 32,388
+rect $2E:Slow  46,116,67,127
+rect $15:1  17,297,38,308
+rect $16:2  47,297,68,308
+rect $17:3  77,297,98,308
+rect $19:4  17,316,38,327
+rect $1A:5  47,316,68,327
+rect $1B:6  77,316,98,327
+rect $1C:7  17,334,38,345
+rect $1D:8  47,334,68,345
+rect $1E:9  77,334,98,345
+rect $12:ENTER  77,352,98,363
+rect $1F:0  47,352,68,363
+rect $13:TV/Vid  17,352,38,363
+circle $2F:PIP  47,403 55,411
+circle $20:Swap  70,403 78,411
+circle $30:Move  25,400 33,408
+circle $02:SET[SETUP]  90,401 98,409

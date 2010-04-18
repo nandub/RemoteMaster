@@ -1,0 +1,50 @@
+#$MTIMFH
+#$-:Image Map file created by Map THIS!
+#$-:Map THIS! free image map editor by Todd C. Wilson
+#$-:Please do not edit lines starting with "#$"
+#$VERSION:1.30
+#$TITLE:URC-8040
+#$AUTHOR:KUPAKAI
+#$DATE:Sun May 27 01:53:29 2007
+#$PATH:C:\Archive\JP1\NEW IMAGES\8040\
+#$GIF:URC-8040-cbl-main.jpg
+#$FORMAT:ncsa
+#$EOH
+default URC-8040
+rect TV/SAT 94,435 128,459
+rect FAV 58,435 93,459
+rect SUBTITLE 22,435 57,459
+rect TELETEXT-OFF 59,385 91,407
+rect TELETEXT 59,359 91,380
+poly GUIDE 59,270 46,265 27,287 34,295 45,280 59,270 59,270
+poly PVR 90,269 107,262 125,281 114,294 104,279 90,269 90,269
+rect MENU 56,241 94,260
+rect MACRO 56,218 94,237
+rect 3 104,98 122,116
+rect 2 66,98 84,116
+rect 1 29,98 47,116
+rect 0 66,168 84,186
+rect INFO 95,163 125,186
+rect -/-- 26,164 57,188
+rect 9 104,143 122,161
+rect 8 66,143 84,161
+rect 7 29,143 47,161
+rect 6 104,121 122,139
+rect 5 66,121 84,139
+rect 4 29,121 47,139
+rect DVD 101,38 124,61
+rect VCR 75,38 99,61
+rect TV 25,38 49,61
+rect SAT 50,38 74,61
+circle MAGIC[SETUP]  41,77 54,90
+circle SCREEN  75,80 89,89
+circle POWER  107,82 120,95
+circle MUTE  75,203 89,212
+circle VOL+  31,209 42,220
+circle VOL-  31,246 42,257
+circle CH-  120,246 131,257
+circle CH+  119,209 130,220
+circle RED  32,419 43,430
+circle GREEN  60,420 71,431
+circle YELLOW  89,420 100,431
+circle BLUE  117,420 128,431

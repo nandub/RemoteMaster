@@ -1,0 +1,50 @@
+#$MTIMFH
+#$-:Image Map file created by Map THIS!
+#$-:Map THIS! free image map editor by Todd C. Wilson
+#$-:Please do not edit lines starting with "#$"
+#$VERSION:1.30
+#$TITLE:Scout1K
+#$DATE:Fri Jan 27 00:57:41 2006
+#$PATH:E:\My Documents E drive\N2 files\Remotes\
+#$GIF:Scout1K.jpg
+#$FORMAT:ncsa
+#$EOH
+default Scout1K
+rect TV 85,32 106,44
+rect Setup 55,38 75,45
+rect CBL 23,31 46,43
+rect PPV 89,141 111,150
+rect Mute 15,139 38,149
+rect Last 53,172 74,183
+rect Fav 52,191 74,204
+rect Select 51,257 75,265
+rect Info 12,288 42,300
+rect Bypass 81,289 110,300
+rect Pause 49,366 74,376
+rect C 48,383 75,394
+circle A  30,360 43,373
+circle B  93,362 105,374
+circle Back  60,349 69,358
+circle Fwd  60,313 70,323
+circle PageUp  90,331 101,342
+circle PageDown  32,331 43,342
+circle Up  62,238 74,250
+circle Down  61,282 74,295
+circle Left  27,259 37,269
+circle Menu  98,234 107,243
+circle Guide  25,233 35,243
+circle Right  97,262 108,273
+circle Vol-  26,201 38,213
+circle Vol+  29,171 41,183
+circle Ch+  97,174 109,186
+circle Ch-  96,204 108,216
+circle 1  31,62 43,74
+circle 2  64,63 77,76
+circle 3  99,63 112,76
+circle 4  31,91 43,103
+circle 5  64,92 76,104
+circle 6  100,92 112,104
+circle 7  28,120 40,132
+circle 8  64,121 76,133
+circle 9  99,120 111,132
+circle 0  64,150 76,162

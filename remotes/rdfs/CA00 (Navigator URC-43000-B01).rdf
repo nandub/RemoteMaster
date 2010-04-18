@@ -1,0 +1,127 @@
+[General]
+Name=Navigator URC-43000B01 UniWand
+OldRemoteID=21
+EepromSize=$400
+AdvCodeAddr=$021..$0FF
+UpgradeAddr=$100..$3FC
+Processor=6805
+ProcessorVersion=C9
+MaxProtocolLength=121
+DevComb=,$FDB,$1108,$FBE,,$66,$107
+RDFSync=3
+ImageMap=URC-43000B01.map
+
+[SpecialProtocols]
+Multiplex=01FE
+
+[Checksums]
+^$000:$002..$3FC
+
+# MultiMacros compliant with IR v6 or above.
+# The second MultiMacro byte in this remote is not stored in the EEPROM.
+# This RDF tells IR to use byte $3FF for the second byte as a workaround
+# in order to get the correct value written to the first byte.
+# Byte $3FF is outside the checksum range, and the remote will ignore its value.
+# Remote has SETUP-993 for VPT device select, but its not stored in EEPROM.
+# Special SETUPs accepted: 975,980,981,990,991,992,993,994,995.
+# The usage of bytes $016, $017 & $018 has not been determined.
+# Byte $015 is the scrambled-keymap byte.
+[FixedData]
+$015 = $00
+
+[DeviceTypes]
+Cable = 0
+TV    = 1
+VCR   = 2
+CD    = 2
+OEM   = 2
+
+[DeviceTypeAliases]
+Cable = Cable,SAT,Video Acc
+TV    = TV
+VCR   = VCR,DVD,Tape,Laserdisc,PVR
+CD    = CD,Tuner,DAT,Home Auto,Misc Audio,Phono,Amp
+OEM   = OEM Mode
+
+[DeviceButtons]
+Cable = $00B $006 $010
+TV    = $00C $007 $011
+VCR   = $00D $008 $012
+Audio = $00E $009 $013
+OEM   = $00F $00A $014
+
+[Buttons]
+VCR=$01,Cable=$02,TV=$03,Audio=$09,OEM=$0A,
+Setup=$10,
+Power=$04,
+0=$16,
+1=$31,2=$32,3=$33,
+4=$05,5=$06,6=$07,
+7=$0D,8=$0E,9=$0F,
+"vol up":Vol+=$34,"vol down":Vol-=$08,Mute=$14,
+"channel up":Ch+=$18,"channel down":Ch-=$20,
+record:Rec=$19,
+stop:"Stop & Guide"=$1B,
+play:"Play & Menu"=$1C,
+rewind:"Rew & Day-"=$21,
+"fast fwd":"FFwd & Day+"=$24,
+pause:"Pause (VCR)"=$15,
+Macro1=$11,
+Macro2=$12,
+Macro3=$13,
+TV/VCR=$1A,
+enter:"Enter/Music"=$17,
+"slow+":"Page Up"=$36,
+"slow-":"Page Down"=$37,
+"left arrow":Left=$29,
+"up arrow":Up=$2A,
+"down arrow":Down=$2B,
+"right arrow":Right=$2C,
+Select=$1E,
+"prev ch":Last=$1F,
+display:Info=$23,
+"shift-left":Help=$2D,
+"fav/scan":Fav=$2E,
+Exit=$38,
+x2:Switch=$25,
+slow:"Pause (Cable)"=$26,
+"pip freeze":PPV=$30,
+eject:Diamond=$35,
+center:P=$2F,
+phantom6:"Discrete ON"=$27,
+phantom7:"Discrete OFF"=$40,
+Phantom1=$0B,
+Phantom2=$0C,
+Phantom3=$1D,
+Phantom4=$22,
+Phantom5=$28,
+rear:Shift-Enter=$97
+
+[MultiMacros]
+Macro1=$019,$3FF
+Macro2=$01A,$3FF
+Macro3=$01B,$3FF
+
+[ButtonMaps]
+0 = ($16, $31, $32, $33, $05, $06, $07, $0D, $0E, $0F), ($34, $08, $14), ($18, $20),
+    $04, $17, $1F, $1E, $2D, $35, $2E, $36, $2F, $37, $30, $38, $25,
+    $26, $27, $40, $2A, $2B, $29, $2C, $1C, $1B, $23, $21, $24, $97
+1 = ($16, $31, $32, $33, $05, $06, $07, $0D, $0E, $0F), ($34, $08, $14), ($18, $20),
+    $04, $17, $1F, $97
+2 = ($16, $31, $32, $33, $05, $06, $07, $0D, $0E, $0F), ($34, $08, $14), ($18, $20),
+    $04, $17, $1F, $1C, $21, $24, $19, $15, $1B, $1A, $97
+
+[DigitMaps]
+072 048 053 107 054 096 097 094 092 086 109 112 113 046 077 114
+064 021 032 075 149 029 136 083 084 027 011 150 034 061 137 033
+151 152 013 018 059 039 017 031 153 103
+
+[Protocols]
+0000, 0004, 0006, 0007, 0008, 000A, 000C, 000D, 000E, 0011,
+0013, 0014, 0015, 0016, 0018, 0019, 001A, 001B, 001C, 001D,
+001E, 0021, 0022, 0024, 0025, 0026, 0029, 002A, 002D, 0030,
+0032, 0034, 0035, 0039, 003A, 003B, 003C, 003D, 003F, 0042,
+0045, 0051, 0055, 0056, 005A, 005B, 005C, 005D, 0060, 0065,
+0067, 006E, 0071, 0072, 0078, 0083, 0087, 008A, 008D, 008F,
+0091, 0093, 009D, 00A4, 00C4, 00C7, 00C9, 00CA, 00CE, 00D5,
+00D7, 00E2, 00E3, 00E8, 00F5

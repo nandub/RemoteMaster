@@ -1,0 +1,68 @@
+#$MTIMFH
+#$-:Image Map file created by Map THIS!
+#$-:Map THIS! free image map editor by Todd C. Wilson
+#$-:Please do not edit lines starting with "#$"
+#$VERSION:1.30
+#$TITLE:15-1994
+#$DATE:Wed Feb 22 10:13:31 2006
+#$PATH:C:\Documents and Settings\Mike.MINE-EA34897DCD\My Documents\My Pictures\
+#$GIF:Outlaw new.jpg
+#$FORMAT:ncsa
+#$EOH
+default 1994
+circle CBL  30,54 36,60
+circle AUX  55,53 61,59
+circle VCR  79,55 85,61
+circle TV  105,53 111,59
+circle SAT  33,72 39,78
+circle CD  55,70 61,76
+circle AMP  81,70 87,76
+circle vid2  55,335 61,341
+circle vid3  80,336 86,342
+circle vid4  101,336 107,342
+circle cd1  33,351 39,357
+circle SLEEP  68,179 76,184
+circle MENU{mono}  103,277 109,284
+circle GUIDE{test}  34,218 40,224
+circle exit{spkr}  103,217 109,223
+circle tone  69,197 77,202
+circle POWER  101,34 108,41
+circle UP  69,228 89,235
+circle LEFT  36,248 43,264
+circle RIGHT  102,248 109,264
+circle DOWN  69,264 90,271
+circle SELECT  69,246 83,253
+circle MUTE  38,145 48,152
+circle VOL+  36,168 44,176
+circle VOL-  38,193 46,201
+circle CH+  100,168 108,176
+circle CH-  101,195 109,203
+circle 1  36,89 46,96
+circle 2  68,89 78,96
+circle 3  100,88 110,95
+circle 4  38,108 48,115
+circle 5  69,108 79,115
+circle 6  100,109 110,116
+circle 7  38,125 48,132
+circle 8  68,127 78,134
+circle 9  100,126 110,133
+circle 0  69,144 79,151
+circle LAST{x_Over}  68,164 76,169
+circle vid1  35,335 41,341
+circle REW{preset_down}  34,297 45,304
+circle PLAY{DIRECT}  68,295 79,301
+circle FWD{preset_up}  100,296 111,302
+circle PAUSE{memory}  101,317 112,323
+circle REC{delay}  34,316 45,322
+circle SETUP  35,32 40,37
+circle info{mode}  34,278 40,284
+circle TNR  106,69 112,75
+circle aux1  57,351 63,357
+circle tape  82,351 88,357
+circle dvd  103,355 109,361
+circle dolby_modes  38,369 44,375
+circle dts_modes  57,367 63,373
+circle stereo_modes  81,368 87,374
+circle bypass  103,368 109,374
+circle enter  99,144 109,151
+circle stop{am/fm}  69,315 80,321
