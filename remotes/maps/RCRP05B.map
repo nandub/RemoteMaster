@@ -1,0 +1,73 @@
+#$MTIMFH
+#$-:Image Map file created by Map THIS!
+#$-:Map THIS! free image map editor by Todd C. Wilson
+#$-:Please do not edit lines starting with "#$"
+#$VERSION:1.30
+#$TITLE:RCRP05B
+#$DATE:Sat Aug 22 19:30:05 2009
+#$PATH:C:\Home\Apps\Remote\Rdf\images\
+#$GIF:RCRP05B.jpg
+#$FORMAT:ncsa
+#$EOH
+circle TV  31,41 38,48
+circle DVR  41,26 48,33
+circle CBL  59,21 66,28
+circle DVD  77,26 84,33
+circle AUD  88,41 95,48
+poly Power 45,47 45,42 49,37 69,37 73,42 73,47 45,47 45,47
+circle Setup  28,60 34,66
+circle Live  89,60 95,66
+circle Skip_Back  40,75 48,83
+circle List  59,68 67,76
+circle Skip_Fwd  78,75 86,83
+poly Rewind 45,86 30,86 27,88 25,91 25,95 27,98 31,100 45,100 45,86 45,86
+circle Play  59,93 70,104
+poly Fast_Fwd 72,85 87,85 91,88 92,93 90,98 87,99 72,99 72,85 72,85
+circle Stop  40,112 48,120
+circle Pause  59,118 67,126
+circle Record  78,112 86,120
+circle Menu  26,132 35,141
+circle Info  92,132 101,141
+poly Left 35,182 30,175 28,164 30,153 35,146 45,155 42,162 42,168 45,175 35,182 35,182
+poly Right 82,182 87,175 89,164 87,153 82,146 72,155 75,162 75,168 72,175 82,182 82,182
+poly Up 48,150 40,141 47,136 58,135 69,136 77,141 69,150 62,147 53,147 48,150 48,150
+poly Down 48,178 40,187 47,192 58,193 69,192 77,187 69,178 62,181 53,181 48,178 48,178
+circle Ok  58,164 70,176
+circle Guide  24,197 33,206
+circle Exit  93,197 102,206
+poly Page+ 53,212 52,204 55,201 58,200 62,201 65,204 64,212 62,215 55,215 53,212 53,212
+poly Page- 55,222 53,225 52,232 54,235 58,236 63,235 65,232 64,225 62,222 55,222 55,222
+circle Day-  43,218 50,225
+circle Day+  75,218 82,225
+poly A[yellow] 25,229 18,241 31,241 26,231 25,229 25,229
+rect B[blue] 41,245 52,256
+circle C[red]  71,250 78,257
+poly D[green] 93,229 85,237 93,245 100,237 93,229 93,229
+poly Vol+ 17,277 17,261 19,257 23,255 29,255 32,257 34,261 34,277 17,277 17,277
+poly Vol- 17,277 17,293 19,297 23,299 29,299 32,297 34,293 34,277 17,277 17,277
+circle Mute  25,311 33,319
+circle OnDemand  58,292 75,298
+circle Fav  58,311 71,319
+poly Ch+ 84,277 84,261 86,257 90,255 96,255 99,257 101,261 101,277 84,277 84,277
+poly Ch- 84,277 84,293 86,297 90,299 96,299 99,297 101,293 101,277 84,277 84,277
+circle Last  92,311 100,319
+circle 1  28,330 39,336
+circle 2  58,330 69,336
+circle 3  88,330 99,336
+circle 4  28,348 39,354
+circle 5  58,348 69,354
+circle 6  88,348 99,354
+circle 7  28,366 39,372
+circle 8  58,366 69,372
+circle 9  88,366 99,372
+circle 0  58,384 69,390
+circle Dash  28,384 39,390
+circle Aspect  88,384 99,390
+circle PIP_On/Off  25,406 35,412
+circle PIP_Swap  47,406 57,412
+circle PIP_Move  69,406 79,412
+circle PIP_Ch+  91,406 101,412
+circle PIP_Ch-  91,421 101,427
+circle Input  25,421 35,427
+circle Macro1  47,421 57,427
+circle Macro2  69,421 79,427
