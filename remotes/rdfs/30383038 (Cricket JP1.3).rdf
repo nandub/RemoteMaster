@@ -10,8 +10,7 @@ RDFSync=3
 AdvCodeBindFormat=LONG
 SectionTerminator=$FF
 EFCDigits=5
-DevComb=,$16ED,$22E5,,$4EEF,$23D9
-ImageMap=cricket.map
+DevComb=,$16F8,$22E5,,$4EAF,$23D9
 
 [SpecialProtocols]
 Multiplex=01FE
