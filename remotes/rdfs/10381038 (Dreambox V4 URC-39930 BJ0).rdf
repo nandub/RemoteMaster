@@ -15,10 +15,7 @@ AdvCodeBindFormat=LONG
 SectionTerminator=$FF
 LearnedDevBtnSwapped=Yes
 EFCDigits=5
-ImageMap=DreamboxV2.map
-
-[SpecialProtocols]
-Multiplex=01FE
+ImageMap=DreamboxV4.map
 
 [Settings]
 VPT Device=$012.7.8.0.0 DeviceButtons
@@ -32,9 +29,6 @@ DREAM Setup Code Lock=$011.2.1.0.0 (Off;On)
 
 [Checksums]
 ^$008:$00A..$013
-
-[FixedData]
-$0200=$4B,$4E,$53,$01,$05,$04,$07,$FF,$FF,$FF,$02,$2C,$10,$51,$20,$01,$00,$04,$00,$07
 
 [DeviceTypes]
 TV        = 0
