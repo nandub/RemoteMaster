@@ -13,7 +13,7 @@ SectionTerminator=$FF
 LearnedDevBtnSwapped=Yes
 EFCDigits=5
 ImageMap=Atlas-5-PVR-Day.map
-DevComb=,$34FF,$41FD,,$4EEF,$42FA
+DevComb=,$350A,$41FD,,$4EAF,$42FA
 
 [SpecialProtocols]
 Multiplex=01FE
@@ -45,14 +45,14 @@ AUX Setup Code Lock=$014.4.1.1.0 (Off;On)
 [DeviceTypes]
 Cable    = 0
 TV       = 1
-DVD  = 2
+VCR/DVD  = 2
 CD/Audio = 3
-VCR  = 2,2
+VCR/DVD  = 2,2
 
 [DeviceTypeAliases]
 Cable    = Cable,SAT,Video Acc
 TV       = TV
-DVD 	 = VCR,DVD,Tape,Laserdisc,DAT
+VCR/DVD  = VCR,DVD,Tape,Laserdisc,DAT
 CD/Audio = CD,Tuner,Home Auto,Misc Audio,Phono,Amp
 
 [DeviceButtons]
