@@ -8,6 +8,7 @@ Processor=HCS08
 BaseAddr=$EA00
 RAMAddr=$FF00
 RDFSync=3
+DevComb=,$2981,$237B,,$19D2
 WAVUpgrade=1
 AdvCodeFormat=EFC
 AdvCodeBindFormat=LONG
