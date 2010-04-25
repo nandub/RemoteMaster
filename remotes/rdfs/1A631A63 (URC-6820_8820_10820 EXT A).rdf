@@ -33,6 +33,7 @@ T_ Device=$00F6.7.8.2.0 DeviceButtons
 V_ Device=$00F7.7.8.2.0 DeviceButtons
 P_ Device=$00F8.7.8.2.0 DeviceButtons
 0_ Device=$00F9.7.8.2.0 DeviceButtons
+KeyMap=$01F.5.1.1.0 (Standard;Alternate)
 VPT Status=$01E.2.1.0.0 (Off;On)
 VPT Device=$0020.7.8.2.0 DeviceButtons
 CBL  VPT=$0021.0.1.0.0 (Off;On)
@@ -103,7 +104,7 @@ Sleep=$28,
 macro1:M1=$3c,macro2:M2=$3d,macro3:M3=$3e,
 learn1:L1=$23,learn2:L2=$24,learn3:L3=$25,
 Phantom1=$3b,Phantom2=$3f,
-Phantom3=$40:Allbind, DiscreteOn,DiscreteOff
+Phantom3=$40:ShiftBind, DiscreteOn,DiscreteOff
 C_CBL=$43:AllBind, T_CBL, V_CBL, P_CBL, O_CBL, X_CBL,
 C_SAT=$49:AllBind, T_SAT, V_SAT, P_SAT, O_SAT, X_SAT,
 C_TV=$4F:AllBind, T_TV, V_TV, P_TV, O_TV, X_TV,
@@ -114,7 +115,7 @@ C_PVR=$67:AllBind, T_PVR, V_PVR, P_PVR, O_PVR,X_PVR,
 C_AUD=$6D:AllBind, T_AUD, V_AUD, P_AUD, O_AUD,X_AUD,
 C_AUX=$73:AllBind, T_AUX, V_AUX, P_AUX, O_AUX, X_AUX,
 C_AUX2=$79:AllBind, T_AUX2, V_AUX2, P_AUX2, O_AUX2, X_AUX2,
-X_CANCEL=$7F
+X_CANCEL=$7F:AllBind
 
 
 [ButtonMaps]
