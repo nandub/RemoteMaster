@@ -34,6 +34,7 @@ PVR  VPT=$0021.6.1.1.0 (Off;On)
 AUD  VPT=$0021.7.1.0.0 (Off;On)
 AUX1 VPT=$0022.0.1.0.0 (Off;On)
 AUX2 VPT=$0022.1.1.0.0 (Off;On)
+KeyMap=$01F.5.1.0.0 (Standard;Alternate)
 
 [Checksums]
 ^$0008:$000A..$0022
