@@ -40,7 +40,7 @@ TV = $00C $009
 AUX = $00D $00A
 
 [Buttons]
-CBL:CABLE=$08
+CABLE=$08
 TV=$20
 AUX=$28
 setup=$18
@@ -84,9 +84,9 @@ C:"C{Day+}"=$24
 Play=$1f
 Pause=$2f
 Stop=$2e
-Rewind=$27
-"fast fwd":FFWD=$17
-Record=$2c
+rewind:Rew=$27
+"fast fwd":FF=$17
+record:Rec=$2c
 Replay=$31
 list:My_DVR=$32
 Live=$33
