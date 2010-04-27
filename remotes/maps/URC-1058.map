@@ -3,8 +3,8 @@
 #$-:Map THIS! free image map editor by Todd C. Wilson
 #$-:Please do not edit lines starting with "#$"
 #$VERSION:1.30
-#$DATE:Thu Jan 03 00:20:09 2008
-#$PATH:C:\Documents and Settings\harold\My Documents\JP1\Misc\comcast\final\
+#$DATE:Tue Jan 29 15:38:24 2008
+#$PATH:C:\Documents and Settings\steve\My Documents\JP1\RemoteMaster\images\
 #$GIF:URC-1058.jpg
 #$FORMAT:ncsa
 #$EOH
@@ -16,12 +16,12 @@ circle POWER  98,51 106,59
 circle SETUP  114,68 122,76
 circle ALL_ON  74,66 87,74
 rect ON_DEMAND 51,79 100,95
-rect REWIND 31,98 52,113
+rect REW 31,98 52,113
 circle PLAY  74,106 87,114
-rect FFWD 97,98 118,113
+rect FF 97,98 118,113
 rect STOP 37,119 54,135
 rect PAUSE 66,119 83,135
-circle RECORD  104,127 113,136
+circle REC  104,127 113,136
 circle A{Lock}  45,152 54,161
 circle B{Day-}  74,152 83,161
 circle C{Day+}  104,153 113,162

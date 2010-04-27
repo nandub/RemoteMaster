@@ -3,25 +3,25 @@
 #$-:Map THIS! free image map editor by Todd C. Wilson
 #$-:Please do not edit lines starting with "#$"
 #$VERSION:1.30
-#$DATE:Thu Dec 27 05:23:47 2007
-#$PATH:C:\Documents and Settings\harold\My Documents\JP1\Misc\comcast\final\
+#$DATE:Tue Jan 29 15:33:29 2008
+#$PATH:C:\Documents and Settings\steve\My Documents\JP1\RemoteMaster\images\
 #$GIF:URC-1067BX3.jpg
 #$FORMAT:ncsa
 #$EOH
 default URC-1067
 circle AUX  35,45 43,53
 circle TV  51,29 59,37
-circle CBL  74,23 82,31
+circle CABLE  74,23 82,31
 circle POWER  97,30 105,38
 circle SETUP  114,46 122,54
 circle ALL_ON  74,48 86,56
 rect ON_DEMAND 50,61 99,77
-rect REWIND 27,79 50,94
+rect REW 27,79 50,94
 circle PLAY  75,90 88,98
-rect FFWD 98,79 121,94
+rect FF 98,79 121,94
 rect STOP 31,102 48,118
 rect PAUSE 59,102 90,118
-circle RECORD  109,110 118,119
+circle REC  109,110 118,119
 circle REPLAY  42,131 55,139
 rect MY_DVR 59,123 89,139
 circle LIVE  106,130 120,139
