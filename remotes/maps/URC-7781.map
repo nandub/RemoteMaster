@@ -1,0 +1,59 @@
+#$MTIMFH
+#$-:Image Map file created by Map THIS!
+#$-:Map THIS! free image map editor by Todd C. Wilson
+#$-:Please do not edit lines starting with "#$"
+#$VERSION:1.30
+#$TITLE:URC-7781 
+#$AUTHOR:mathdon
+#$DATE:Wed Apr 08 13:33:33 2009
+#$PATH:E:\JP1\URC7781\Map\
+#$GIF:URC-7781.JPG
+#$FORMAT:ncsa
+#$EOH
+default 7781
+circle $01:Light/ESC  120,32 120,39
+circle $02:Magic  72,33 72,40
+circle $03:Power  95,30 95,37
+circle $15:1  71,119 71,126
+circle $16:2  96,120 96,127
+circle $17:3  119,120 119,127
+circle $19:4  71,139 71,146
+circle $1A:5  95,139 95,146
+circle $1B:6  119,139 119,146
+circle $1C:7  71,157 71,164
+circle $1D:8  95,157 95,164
+circle $1E:9  119,157 119,164
+circle $20:-/--  70,177 70,184
+circle $1F:0  95,177 95,184
+circle $22:AV  119,177 119,184
+circle $06:Ch+  69,206 69,215
+circle $08:Mute  95,197 95,204
+circle $04:Vol+  121,205 121,214
+circle $07:Ch-  68,228 68,237
+circle $28:Menu  94,225 94,232
+circle $05:Vol-  120,228 120,237
+circle $14:Ok  94,268 94,277
+poly $24:Up 95,242 88,251 100,251 95,242 95,242
+poly $25:Down 93,296 100,288 88,287 94,296 93,296 93,296
+poly $26:Left 68,268 78,261 78,273 68,268 68,268
+poly $27:Right 121,269 109,262 109,273 120,269 121,269 121,269
+circle $21:Guide  64,308 64,315
+circle $23:Exit  94,313 94,320
+circle $09:Previous  65,332 65,339
+circle $0C:Play  84,333 84,340
+circle $0F:Pause  104,333 104,340
+circle $0A:Next  123,334 123,341
+circle $0B:Rew  65,352 65,359
+circle $0E:Stop  85,353 85,360
+circle $10:Rec  103,352 103,359
+circle $0D:Ffw  123,353 123,360
+circle $29:Red  64,373 64,380
+circle $2A:Green  85,375 85,382
+circle $2B:Yellow  103,374 103,381
+circle $2C:Blue  123,373 123,380
+circle $2E:B  83,394 83,401
+circle $2F:C  103,395 103,402
+circle $2D:A  64,392 64,399
+circle $30:D  122,393 122,400
+circle $18:16/9  123,307 123,314
+rect $13:LCDEnter 87,91 103,100
