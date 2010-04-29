@@ -1,0 +1,58 @@
+#$MTIMFH
+#$-:Image Map file created by Map THIS!
+#$-:Map THIS! free image map editor by Todd C. Wilson
+#$-:Please do not edit lines starting with "#$"
+#$VERSION:1.30
+#$TITLE:URC-7556
+#$AUTHOR:czo
+#$DATE:Fri Apr 18 15:25:31 2008
+#$PATH:C:\Documents and Settings\Administrateur\Bureau\OFAnew\rm\images\
+#$GIF:URC-7556.jpg
+#$FORMAT:ncsa
+#$EOH
+default 7556
+circle $02:Magic  49,30 49,37
+circle $03:Power  111,29 111,36
+circle $15:1  47,105 47,112
+circle $16:2  79,104 79,111
+circle $17:3  110,105 110,111
+circle $19:4  47,128 47,135
+circle $1A:5  78,128 78,135
+circle $1B:6  109,128 109,134
+circle $1C:7  46,151 46,158
+circle $1D:8  78,151 78,158
+circle $1E:9  110,152 110,159
+circle $18:-/--  46,175 46,182
+circle $1F:0  78,174 78,181
+circle $21:AV  111,175 111,182
+circle $06:Ch+  42,220 42,229
+circle $07:Ch-  43,249 43,257
+circle $04:Vol+  111,217 111,225
+circle $05:Vol-  114,252 114,260
+circle $08:Mute  78,204 78,211
+circle $22:Menu  77,239 77,245
+circle $35:Ok  77,304 77,313
+poly $31:Up 67,283 89,283 79,266 67,283
+poly $32:Down 88,324 67,324 77,340 88,324
+poly $33:Left 41,303 56,293 56,313 41,303 41,303
+poly $34:Right 99,294 99,314 114,304 99,294
+circle $2D:Guide  36,470 36,477
+circle $24:Fav  117,499 117,505
+circle $13:Start  37,381 37,388
+circle $0C:Play  63,380 63,387
+circle $0F:Pause  90,381 90,388
+circle $14:End  116,381 116,388
+circle $0B:Rwd  37,408 37,414
+circle $0E:Stop  64,408 64,415
+circle $10:Rec  91,407 91,413
+circle $0D:Fwd  117,408 117,414
+circle $25:Red  36,439 36,446
+circle $26:Green  63,439 63,446
+circle $27:Yellow  91,440 91,446
+circle $28:Blue  117,441 117,448
+circle $20:Subt  62,498 62,504
+circle $23:Radio  90,498 90,504
+circle $29:Info  64,471 64,477
+circle $2A:?  90,471 90,477
+circle $2B:Back  117,471 117,477
+circle $2C:PPV  35,498 35,504
