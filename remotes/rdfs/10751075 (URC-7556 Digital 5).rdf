@@ -1,0 +1,170 @@
+[General]
+# Czo!
+# 2008-04-18
+Name=One For All URC-7556 Digital 5
+EepromSize=$1000
+AdvCodeAddr=$0019..$03FF
+UpgradeAddr=$0402..$07FF
+LearnedAddr=$0800..$0FFF
+Processor=HCS08
+BaseAddr=$EC00
+RAMAddr=$FF00
+RDFSync=3
+DevComb=,$0846,$0D7B,,$19DF
+AdvCodeBindFormat=LONG
+SectionTerminator=$FF
+LearnedDevBtnSwapped=Yes
+EFCDigits=5
+ImageMap=URC-7556.map
+
+[SpecialProtocols]
+Multiplex=01FE
+DSM=01FC
+Pause=01FB
+
+[Settings]
+VPT Status=$014.2.1.0.0 (Off;On)
+VPT Device=$016.3.4.1.0 DeviceButtons
+TV  VPT=$0017.0.1.1.0 (Off;On)
+VCR VPT=$0017.1.1.1.0 (Off;On)
+DVD VPT=$0017.2.1.1.0 (Off;On)
+SAT VPT=$0017.3.1.1.0 (Off;On)
+AMP VPT=$0017.4.1.0.0 (Off;On)
+KeyMap=$015.5.1.0.0 (Standard;Alternate)
+
+[Checksums]
+^$0008:$000A..$0018
+^$0400:$0402..$07FF
+
+# DeviceTypes
+# The order matches up with default type on DeviceButtons
+# The names match up with DeviceTypeAliases
+
+[DeviceTypes]
+TV      = 0
+VCR/DVD = 1
+VCR/DVD = 1,1
+SAT     = 2
+AUD     = 3
+
+[DeviceTypeAliases]
+TV      = TV
+VCR/DVD = VCR,Tape,DAT,DVD,Laserdisc
+SAT     = Cable,SAT,Video Acc
+AUD     = Tuner,Misc Audio,Amp
+
+[DeviceButtons]
+TV      = $000A $000B
+VCR     = $000C $000D
+DVD     = $000E $000F
+SAT     = $0010 $0011
+AMP     = $0012 $0013
+
+[Buttons]
+TV=$01
+Magic=$02
+Power=$03
+Vol+=$04
+Vol-=$05
+Ch+=$06
+Ch-=$07
+Mute=$08
+VCR=$09
+DVD=$0a
+Rwd=$0b
+Play=$0c
+Fwd=$0d
+Stop=$0e
+Pause=$0F
+Rec=$10
+SAT=$11
+AMP=$12
+Start=$13
+End=$14
+1=$15
+2=$16
+3=$17
+-/--=$18
+4=$19
+5=$1A
+6=$1B
+7=$1C
+8=$1D
+9=$1E
+0=$1F
+Subt=$20
+AV=$21
+Menu=$22
+Radio=$23
+Fav=$24
+Red=$25
+Green=$26
+Yellow=$27
+Blue=$28
+Info=$29
+?=$2a
+Back=$2b
+PPV=$2c
+Guide=$2d
+Up=$31
+Down=$32
+Left=$33
+Right=$34
+OK=$35
+Colour+=$84
+Colour-=$85
+Bright+=$86
+Bright-=$87 
+Phantom1=$2e
+Phantom2=$2f
+Phantom3=$30
+Phantom4=$36
+Phantom5=$37
+Phantom6=$38
+Phantom7=$39
+Phantom8=$3A
+Phantom9=$3B
+Phantom10=$3C
+Phantom11=$3D
+Phantom12=$3E
+Phantom13=$3F
+Phantom14=$40
+Phantom15=$41
+
+[ButtonMaps]
+0 = ($1F, $15, $16, $17, $19, $1A, $1B, $1C, $1D, $1E), ($04, $05, $08), ($06, $07),
+    $03, $18, $21, $22, $31, $32, $33, $34, $35, $0B, $0C, $0F, $0D, $13, $0E, $10,
+    $14, $25, $26, $27, $28, $2D, $29, $2B, $20, $24, $84, $85, $86, $87
+1 = ($1F, $15, $16, $17, $19, $1A, $1B, $1C, $1D, $1E), ($04, $05, $08), ($06, $07),
+    $03, $18, $21, $22, $31, $32, $33, $34, $35, $0B, $0C, $0F, $0D, $13, $0E, $10,
+    $14, $25, $26, $27, $28, $2D, $2B, $20, $24
+2 = ($1F, $15, $16, $17, $19, $1A, $1B, $1C, $1D, $1E), ($04, $05, $08), ($06, $07),
+    $03, $18, $21, $22, $31, $32, $33, $34, $35, $0B, $0C, $0F, $0D, $13, $0E, $10,
+    $14, $25, $26, $27, $28, $2D, $29, $2A, $2B, $2C, $20, $23, $24
+3 = ($1F, $15, $16, $17, $19, $1A, $1B, $1C, $1D, $1E), ($04, $05, $08), ($06, $07),
+    $03, $21, $22, $31, $32, $33, $34, $35, $0B, $0C, $0F, $0D, $13, $0E, $10, $14,
+    $20, $24
+
+[Protocols]
+0000, 0002:5, 0006, 000D, 0010, 0011, 0013, 0014, 0018, 001C,
+001F:8, 0020, 0027:new, 002A, 002C, 0034, 003D, 0045, 004A, 004B:7,
+0051, 0057, 0058:2, 005A, 005C, 005D, 005E:2, 005F, 0064, 0065:2,
+0066, 0068, 006A, 006C, 0073, 0075, 007E:3, 0082, 0087, 008C,
+008E, 0095, 0098, 009C, 009E, 00A0, 00A1, 00A5, 00A6, 00A8,
+00AA, 00AB, 00AF, 00B0, 00B2, 00B6, 00BD, 00C4, 00C9, 00CA,
+00CD:2, 00D1, 00D5, 00DE, 00E2, 00E5, 00E8, 00EB, 00ED, 00EF,
+00F0, 00F3, 00F4, 00F8:3, 0108, 0109, 010C, 0111, 0112, 0114:2,
+011A:2, 011B, 011E, 0125, 012A:2, 012B, 0156, 015E, 0160, 0161,
+016A, 016C, 0173, 0176, 017E, 0182:2, 0184:2, 018C, 019A, 01C4 
+
+[DigitMaps]
+026 003 074 092 053 094 140 001 032 359 034 021 027 086 334 011
+206 207 358 125 343 344 322 219 220 180 280 294 274 205 355 356
+208 299 289 349 350 227 228 186 178 064 312 336 337 093 114 209
+210 257 258 345 318 065 139 042 038 014 046 187 188 095 043 019
+168 338 191 126 179 185 176 177 211 340 189 173 217 218 087 069
+141 348 181 182 342 029 075 007 071 037 033 085 059 084 169 060
+297 298 194 091 325 192 193 357 346 331 195 196 030 080 270 271
+013 031 009 323 324 175 170 251 252 131 202 213 290 197 215 214
+174 351 229 353 247 248 305 339 320 326 243 354 335 352 347 341
+333
