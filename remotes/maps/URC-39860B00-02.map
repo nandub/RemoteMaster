@@ -1,0 +1,55 @@
+#$MTIMFH
+#$-:Image Map file created by Map THIS!
+#$-:Map THIS! free image map editor by Todd C. Wilson
+#$-:Please do not edit lines starting with "#$"
+#$VERSION:1.30
+#$DATE:Thu Jun 18 15:42:09 2009
+#$PATH:C:\Documents and Settings\Dave\My Documents\Download\Remote\RemoteMaster\Images\
+#$GIF:URC-39860B00-02.jpg
+#$FORMAT:ncsa
+#$EOH
+circle TV  45,24 61,33
+circle DVD  107,24 123,33
+circle STB  76,36 92,45
+circle AV  48,51 64,60
+circle APP  106,51 122,60
+circle POWER  77,76 91,84
+circle 1  41,95 55,103
+circle 2  78,99 92,107
+circle 3  114,95 128,103
+circle 6  117,116 131,124
+circle 5  79,119 93,127
+circle 4  41,117 55,125
+circle 7  40,138 54,146
+circle 8  80,139 94,147
+circle 9  118,138 132,146
+circle Mute  40,160 54,168
+circle 0  80,160 94,168
+circle Config  120,159 134,167
+circle Options  80,184 94,192
+circle Menu  81,210 94,220
+circle EPG  36,259 49,272
+circle List  82,239 95,252
+circle Info  127,256 140,269
+circle Back  38,336 51,349
+circle Exit  128,333 141,346
+circle Red  38,367 51,380
+circle Green  69,369 82,382
+circle Yellow  99,368 112,381
+circle Blue  128,364 141,377
+circle Rew  38,404 51,417
+circle Play  70,405 83,418
+circle Pause  99,404 112,417
+circle Fwd  130,400 143,413
+circle Stop  42,432 55,445
+circle Rec  127,429 140,442
+circle OK  83,296 101,310
+poly Up 55,268 67,281 81,276 97,280 110,267 97,260 86,259 76,258 64,262 56,269 55,268 55,268
+poly Down 67,314 55,326 70,335 81,336 90,336 101,332 111,325 99,312 87,316 81,316 74,315 67,314 67,314
+poly Right 104,284 115,272 126,290 126,301 117,320 103,307 107,297 107,292 102,283 104,284 104,284
+poly Left 63,286 50,273 39,291 40,306 50,323 63,308 59,301 58,295 62,287 63,286 63,286
+circle Vol+  40,195 58,207
+circle Ch+  121,194 139,206
+circle Vol-  36,223 51,234
+circle Ch-  125,222 140,233
+poly Setup 131,59 111,65 109,69 112,72 132,75 131,60 131,59 131,59
