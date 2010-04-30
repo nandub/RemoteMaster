@@ -1,0 +1,153 @@
+[General]
+Name=URC-1060
+EepromSize=$0C00
+AdvCodeAddr=$0022..$01FF
+UpgradeAddr=$0402..$0BFF
+Processor=S3F80
+BaseAddr=$0600
+RAMAddr=$FF00
+RDFSync=3
+AdvCodeBindFormat=LONG
+SectionTerminator=$FF
+LearnedDevBtnSwapped=Yes
+EFCDigits=5
+ImageMap=URC-1060.map
+DevComb=,$1CA5,$297F,,$4EAF,$2A73
+2BytePid=Yes
+
+[SpecialProtocols]
+Multiplex=01FE
+
+[Checksums]
+^$008:$00A..$021
+^$200:$202..$3FF
+^$400:$402..$BFF
+
+# [FixedData]
+# $0200=$FB,$04,$53,$52
+
+[Settings]
+VPT Device=$014.7.8.0.0 DeviceButtons
+VPT Status=$013.2.1.1.0 (Off;On)
+CBL uses VPT=$015.0.1.1.0 (No;Yes)
+TV  uses VPT=$015.1.1.1.0 (No;Yes)
+DVD uses VPT=$015.2.1.1.0 (No;Yes)
+AUX uses VPT=$015.3.1.1.0 (No;Yes)
+CBL Channel Control Lock=$013.3.1.1.0 (Off;On)
+CBL Setup Code Lock=$012.0.1.1.0 (Off;On)
+TV  Setup Code Lock=$012.1.1.1.0 (Off;On)
+DVD Setup Code Lock=$012.2.1.1.0 (Off;On)
+AUX Setup Code Lock=$012.3.1.1.0 (Off;On)
+
+# DeviceTypes
+# The order matches up with default type on DeviceButtons
+# The names match up with DeviceTypeAliases
+
+[DeviceTypes]
+Cable    = 0
+TV       = 1
+DVD  = 2
+CD/AUdio = 3
+
+[DeviceTypeAliases]
+Cable    = Cable,SAT,Video Acc
+TV       = TV
+DVD  = VCR,DVD,Tape,Laserdisc,DAT
+CD/AUdio = CD,Tuner,Home Auto,Misc AUdio,Phono,Amp
+
+[DeviceButtons]
+CBL = $00A $00B
+TV  = $00C $00D
+DVD = $00E $00F
+AUX = $010 $011
+
+[Buttons]
+AUX=$12,
+DVD=$0A,
+TV=$01,
+CBL=$09,
+Sys_OnOff=$36,
+SETUP=$02,
+POWER=$03,
+"up arrow":UP=$29,
+"down arrow":DOWN=$2A,
+"left arrow":LEFT=$2B,
+"right arrow":RIGHT=$2C,
+SELECT=$2D,
+"next track":PageUp=$23,
+"prev track":PageDown=$24,
+"vol up":VOL+=$04,
+"vol down":VOL-=$05,
+"channel up":CH+=$06,
+"channel down":CH-=$07,
+"prev ch":LAST=$08,
+GUIDE=$21,
+MENU=$2E,
+display:INFO=$13,
+EXIT=$14,
+surround:A[yellow]=$25,
+input:B[blue]=$26,
+"+100":C[red]=$27,
+x2:D[green]=$35,
+center:DAY+=$31,
+rear:DAY-=$32,
+macro1:OnDemand=$34,
+MUTE=$33,
+FAV=$22,
+"shift-right":Replay=$37,
+"pip freeze":DVR=$28,
+"shift-left":LIVE=$2F,
+rewind:REW=$0B,
+PLAY=$0C,
+"fast fwd":FFWD=$0D,
+STOP=$0E,
+PAUSE=$0F,
+record:REC=$10,
+1=$15,2=$16,3=$17,4=$19,5=$1A,6=$1B,7=$1C,8=$1D,9=$1E,0=$1F,
+enter:[#]/Aspect=$18,
+sleep:[TV/VCR]/Input=$20,
+"PIP On/Off"=$38,
+"PIP Swap"=$39,
+"PIP Move"=$3A,
+"slow+":"PIP Ch+"=$3B,
+"slow-":"PIP Ch-"=$3C,
+"tv/vcr":SOURCE=$30,
+phantom1=$40,
+phantom2=$3E,
+phantom3=$71
+
+[MultiMacros]
+OnDemand=$016
+
+[ButtonMaps]
+0 =  ($1F, $15, $16, $17, $19, $1A, $1B, $1C, $1D, $1E), ($04, $05, $33), ($06, $07),
+     $03, $2E, $2D, $29, $2A, $2B, $2C, $14, $08, $13, $21, $20, $22, $23, $24, $0C, 
+     $0F, $0B, $0D, $0E, $10, $28, $37, $2F, $30, $18, $31, $32, $25, $26, $27, $35, 
+     $38, $39, $3A, $3B, $3C, $34, $09, $01, $0A, $12
+1 =  ($1F, $15, $16, $17, $19, $1A, $1B, $1C, $1D, $1E), ($04, $05, $33), ($06, $07),
+     $03, $2E, $20, $29, $2A, $2B, $2C, $2D, $08, $14, $38, $39, $3A, $3B, $3C, $0C, 
+     $0F, $0B, $0D, $0E, $10, $28, $37, $2F, $22, $13, $21, $23, $24, $25, $26, $27, 
+     $31, $32, $18, $35, $09, $01, $0A, $12
+2 =  ($1F, $15, $16, $17, $19, $1A, $1B, $1C, $1D, $1E), ($04, $05, $33), ($06, $07),  
+     $03, $0C, $0F, $0B, $0D, $0E, $10, $20, $2E, $29, $2A, $2B, $2C, $2D, $13, $14, 
+     $08, $37, $28, $2F, $25, $26, $27, $22, $21, $23, $24, $31, $32, $18, $38, $39, 
+     $3A, $3B, $3C, $35, $09, $01, $0A, $12
+3 =  ($1F, $15, $16, $17, $19, $1A, $1B, $1C, $1D, $1E), ($04, $05, $33), ($06, $07),
+     $03, $0C, $0F, $0B, $0D, $0E, $10, $20, $13, $2E, $29, $2A, $2B, $2C, $2D, $14, 
+     $08, $25, $26, $27, $31, $32, $18, $37, $28, $2F, $22, $21, $23, $24, $38, $39, 
+     $3A, $3B, $3C, $35, $09, $01, $0A, $12
+
+[DigitMaps]
+72 53 94 92 03 01 90 44 46 176 177 223 224 21 93 125
+11 126 81 16 179 127 34 64 86 75 32 33 30 29 217 218
+295 244 58 278 279 374 377 378 192 193 199 200 69 13 91 270
+271 277 209 210 390 170 87 251 252 131 141 267 312 241 242 227
+228 229 208 341 
+
+[Protocols]
+0000, 0002:5, 0006, 000A, 0013, 0014, 0015, 001C, 001F:2, 0022, 
+0027:new, 0029, 002F, 0034, 0039, 0045, 0057, 0058:2, 005A, 005C, 
+005D, 005E:2, 0060, 0065:2, 006A, 0073, 007E:3, 0083, 0092:3, 009C, 
+00A4, 00AF, 00B6, 00C4, 00C9, 00CA, 00CD:2, 00DE, 00E2, 00E3, 
+00E8, 00F5, 00F8:3, 010F, 0111, 0114:2, 0117, 011A:2, 011B, 011E, 
+012A, 0162, 016C, 017E, 0184:2, 019A, 01A4, 01A5, 01B5, 01BA
