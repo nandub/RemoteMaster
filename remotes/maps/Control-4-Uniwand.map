@@ -1,0 +1,51 @@
+#$MTIMFH
+#$-:Image Map file created by Map THIS!
+#$-:Map THIS! free image map editor by Todd C. Wilson
+#$-:Please do not edit lines starting with "#$"
+#$VERSION:1.30
+#$DATE:Wed Jan 07 03:16:06 2009
+#$PATH:F:\My Documents F\FTA\Remotes\0 Control 4 uniwand\
+#$GIF:Control-4-Uniwand.jpg
+#$FORMAT:ncsa
+#$EOH
+circle $04:power  92,37 101,46
+circle $10:setup  60,35 70,41
+circle $09:AUX  32,40 43,45
+circle $01:VCR  31,56 41,62
+circle $03:TV  61,53 71,59
+circle $02:Cable  92,56 102,62
+circle $18:ch+  61,72 88,80
+poly $08:vol- 29,76 20,85 18,95 19,103 23,109 29,115 41,107 41,83 29,76
+rect $14:mute 47,84 76,105
+poly $34:vol+ 94,75 82,83 82,106 94,113 99,110 104,104 106,95 106,91 103,85 100,81 94,75
+circle $20:ch-  62,117 89,124
+circle $31:1  27,139 37,148
+circle $32:2  62,137 71,146
+circle $33:3  96,137 105,146
+circle $05:4  28,162 35,172
+circle $06:5  62,161 69,170
+circle $07:6  96,161 103,170
+circle $0D:7  27,186 36,195
+circle $0E:8  62,185 69,194
+circle $0F:9  97,185 103,194
+circle $16:0  62,208 68,217
+circle $17:ent  27,209 35,216
+circle $1F:last  97,208 104,215
+circle $21:rew  32,236 41,242
+circle $24:ff  57,237 67,242
+circle $1C:play  96,236 103,242
+circle $19:rec  27,259 36,268
+circle $1B:stop  62,260 69,267
+circle $15:pause  96,258 103,265
+circle $37:A  33,285 43,290
+circle $38:B  62,285 72,290
+circle $1A:C-TV/VCR  91,285 101,290
+circle $30:D  33,304 43,309
+circle $35:E  62,304 72,310
+circle $36:F  91,304 101,309
+circle $2D:G  33,323 43,328
+circle $2E:H  63,323 73,328
+circle $2F:I  92,322 102,327
+circle $25:J  34,342 44,348
+circle $26:K  64,342 74,347
+circle $27:L  93,342 103,347
