@@ -1,0 +1,73 @@
+#$MTIMFH
+#$-:Image Map file created by Map THIS!
+#$-:Map THIS! free image map editor by Todd C. Wilson
+#$-:Please do not edit lines starting with "#$"
+#$VERSION:1.30
+#$TITLE:URC-8308
+#$DESCRIPTION:AUD-Settings
+#$AUTHOR:Gup
+#$DATE:Sun Sep 06 04:47:57 2009
+#$PATH:D:\remote\MapThis\
+#$GIF:urc-8308-AUD.jpg
+#$FORMAT:ncsa
+#$EOH
+rect TV 33,52 51,67
+rect SAT 55,52 73,67
+rect DVD 76,52 94,67
+rect VCR 98,52 116,67
+rect PVR 33,70 51,85
+rect CD 55,70 73,85
+rect AUD 76,70 94,85
+rect LIGHT 98,70 116,85
+rect MAGIC 31,91 51,101
+rect SCROLL 53,91 73,101
+rect POWER 98,90 118,100
+rect RAND 31,103 51,120
+rect PRESET 53,104 73,121
+rect PROG 76,104 96,121
+rect -- 98,104 118,121
+rect AUDIO 31,122 51,139
+rect CLEAR 53,122 73,139
+rect EDIT 76,122 96,139
+rect SUBT 98,122 118,139
+rect MENU 31,142 52,161
+rect -- 54,142 73,161
+rect DSP 76,142 96,161
+rect MUTE 97,142 118,161
+rect CH+ 35,171 47,183
+rect CH- 35,193 47,205
+rect VOL- 101,194 113,206
+rect VOL+ 101,171 113,183
+rect UP 69,169 78,179
+rect RIGHT 83,182 93,194
+rect LEFT 54,182 64,194
+rect OK 69,182 78,194
+rect DOWN 69,197 78,207
+rect 1 35,218 57,233
+rect 2 64,218 86,233
+rect 3 91,218 113,233
+rect 4 35,238 57,253
+rect 5 64,238 86,253
+rect 6 91,238 113,253
+rect 7 35,258 57,273
+rect 8 64,258 86,273
+rect 9 91,258 113,273
+rect -/-- 35,278 57,293
+rect 0 64,278 86,293
+rect AV 91,278 113,293
+rect PLAY 60,319 88,335
+rect REC 60,339 88,355
+rect I 36,360 44,376
+rect II 55,360 69,376
+rect III 77,360 91,376
+rect IV 100,360 115,376
+rect RED 31,386 43,411
+rect GREEN 54,386 66,411
+rect YELLOW 79,386 91,411
+rect BLUE 103,386 115,411
+rect REW 30,319 58,335
+rect PAUSE 30,339 58,355
+rect FF 90,319 118,335
+rect STOP 90,339 118,355
+rect PREV 30,300 58,315
+rect NEXT 90,300 118,315
