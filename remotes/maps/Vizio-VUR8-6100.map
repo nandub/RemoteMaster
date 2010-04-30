@@ -1,0 +1,60 @@
+#$MTIMFH
+#$-:Image Map file created by Map THIS!
+#$-:Map THIS! free image map editor by Todd C. Wilson
+#$-:Please do not edit lines starting with "#$"
+#$VERSION:1.30
+#$TITLE:vizio-vur8-6100
+#$DATE:Sun Dec 09 12:02:07 2007
+#$GIF:Vizio-VUR8-6100.jpg
+#$FORMAT:ncsa
+#$EOH
+default 6100
+circle SET  42,32 42,44
+circle Power  135,31 135,43
+circle Menu  33,233 33,245
+circle Guide  146,232 146,244
+circle Guide  33,346 33,358
+circle Exit  147,345 147,357
+circle Last  90,385 90,397
+circle Mute  90,429 90,441
+circle 1  41,95 41,106
+circle 2  89,94 89,105
+circle 3  137,94 137,105
+circle 4  42,128 42,139
+circle 5  90,126 90,137
+circle 6  137,126 137,137
+circle 7  41,161 41,172
+circle 8  89,160 89,171
+circle 9  137,160 137,171
+circle Input  41,195 41,206
+circle 0  89,194 89,205
+circle Enter{-}  138,194 138,205
+circle Mode{Skip-}  44,582 44,591
+circle Wide{Record}  43,550 43,559
+circle Sleep{Pause}  75,551 75,560
+circle MTS{Play}  108,550 108,559
+circle CC{Stop}  140,550 140,559
+circle Freeze{Rewind}  76,582 76,591
+circle Audio{Fwd}  108,583 108,592
+circle Swap{Skip+}  140,582 140,591
+circle Ch+  139,388 139,400
+circle Vol+  42,388 42,400
+circle Vol-  42,426 42,438
+circle Ch-  140,427 140,439
+circle OK  89,287 89,302
+rect B{Blue} 67,460 82,476
+circle C{Red}  107,468 107,477
+poly A{Yellow} 53,475 32,475 42,458 53,475 53,475
+poly D{Green} 129,467 139,456 151,468 140,479 129,467 129,467
+poly HDMI 132,512 132,506 135,503 154,503 157,506 157,512 153,515 135,515 132,512 132,512
+poly InputTV 25,512 25,506 28,503 47,503 50,506 50,512 46,515 28,515 25,512 25,512
+poly Component 96,513 96,507 99,504 118,504 121,507 121,513 117,516 99,516 96,513 96,513
+poly AV 60,512 60,506 63,503 82,503 85,506 85,512 81,515 63,515 60,512 60,512
+poly DVD 29,65 29,59 33,56 46,56 49,60 49,65 46,68 31,68 29,65 29,65
+poly AUDIO 62,64 62,58 66,55 79,55 82,59 82,64 79,67 64,67 62,64 62,64
+poly CABLE 96,64 96,58 100,55 113,55 116,59 116,64 113,67 98,67 96,64 96,64
+poly TV 129,64 129,58 133,55 146,55 149,59 149,64 146,67 131,67 129,64 129,64
+circle Right  131,287 131,305
+circle Up  89,247 89,265
+circle Left  49,286 49,304
+circle Down  88,327 88,345
