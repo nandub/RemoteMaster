@@ -1,0 +1,50 @@
+#$MTIMFH
+#$-:Image Map file created by Map THIS!
+#$-:Map THIS! free image map editor by Todd C. Wilson
+#$-:Please do not edit lines starting with "#$"
+#$VERSION:1.30
+#$TITLE:URC-3450.map
+#$DATE:Sun Feb 01 19:05:15 2009
+#$PATH:D:\Sateliti\Jp1\3450\100_FUJI\
+#$GIF:URC-3450.jpg
+#$FORMAT:ncsa
+#$EOH
+circle Menu  33,32 42,41
+circle MAGIC  65,32 78,40
+circle Power  96,32 105,41
+circle TV  40,56 53,64
+circle SAT  89,56 102,64
+circle DVD  40,79 53,87
+circle VCR  90,79 103,87
+circle 1  32,106 41,115
+circle 2  64,106 73,115
+circle 3  97,106 106,115
+circle 4  32,133 41,142
+circle 5  65,133 74,142
+circle 6  97,133 106,142
+circle 7  32,160 41,169
+circle 8  65,160 74,169
+circle 9  98,161 107,170
+circle -/--  32,188 41,197
+circle 0  65,188 74,197
+circle AV  98,188 107,197
+circle VOL+  32,220 41,229
+circle VOL-  32,249 41,258
+circle MUTE  65,221 74,230
+circle CH+  98,221 107,230
+circle CH-  98,249 107,258
+circle OK  65,256 78,269
+circle UP  64,286 71,293
+circle LEFT  31,317 38,324
+circle RIGHT  98,318 105,325
+circle DOWN  64,351 71,358
+circle RED  27,375 34,382
+circle GREEN  52,376 59,383
+circle YELLOW  77,376 84,383
+circle BLUE  102,376 109,383
+circle REW{TextOn}  39,404 52,413
+circle FFWD{Expand}  91,404 104,413
+circle PAUSE{Hold}  39,429 52,438
+circle PLAY{TextOff}  91,429 104,438
+circle $22:REC{16:9}  39,454 52,463
+circle STOP  91,454 104,463
