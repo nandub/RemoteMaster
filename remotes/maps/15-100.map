@@ -1,0 +1,74 @@
+#$MTIMFH
+#$-:Image Map file created by Map THIS!
+#$-:Map THIS! free image map editor by Todd C. Wilson
+#$-:Please do not edit lines starting with "#$"
+#$VERSION:1.30
+#$TITLE:15-100.map
+#$DESCRIPTION:Radio Shack 15-100 8-in-1 LCD Remote
+#$AUTHOR:Rob Crowe
+#$DATE:Sun Aug 03 20:19:49 2008
+#$PATH:C:\Documents and Settings\Dave\My Documents\Remotes\RemoteMaster\Images\
+#$GIF:15-100.jpg
+#$FORMAT:ncsa
+#$EOH
+default 15-100
+circle P  32,72 32,78
+circle VCR  31,91 31,99
+circle DVD  52,91 52,99
+circle SAT/CBL  104,90 104,98
+circle TV  124,92 124,100
+circle AUX  32,111 32,119
+circle AUD  55,111 55,119
+circle CD  101,111 101,119
+circle PVR  123,113 123,121
+circle Sleep  46,184 46,192
+circle Last  109,184 109,192
+circle PVR[Menu]  78,250 78,258
+circle Uncheck  41,269 41,277
+circle 1  46,353 46,363
+circle 2  77,353 77,363
+circle 3  107,355 107,365
+circle 4  47,379 47,389
+circle 5  78,379 78,389
+circle 6  108,379 108,389
+circle 7  47,404 47,414
+circle 8  77,404 77,414
+circle 9  107,404 107,414
+circle 0  77,430 77,440
+circle TV/VCR[A/B]  47,429 47,439
+circle Enter  108,429 108,439
+circle M1  51,451 51,459
+circle M2  78,451 78,459
+circle M3  104,451 104,459
+circle Rec  48,330 48,340
+circle Pause  77,330 77,340
+circle Stop  107,331 107,342
+circle Rew  49,309 49,319
+circle Play  78,310 78,321
+circle Fwd  107,310 107,320
+circle F.Rew[Move]  52,288 52,299
+circle Live_TV[PIP]  77,277 77,286
+circle F.Fwd[Swap]  101,289 101,300
+circle Check  113,269 113,278
+circle Instant_Replay  50,249 50,259
+circle Skip_Advance  105,250 105,260
+circle Mute  78,229 78,240
+circle Scan[Fav]  77,207 77,218
+poly VOL+ 40,218 57,218 56,205 48,198 41,204 40,208 40,212 40,216 40,219 40,218 40,218
+poly VOL- 40,219 41,231 43,236 45,239 47,240 52,238 55,234 55,230 56,226 56,222 57,219 40,219 40,219
+poly CH+ 98,219 116,219 116,213 114,210 113,208 113,204 111,203 109,201 107,199 106,199 104,200 102,201 102,203 101,205 100,207 99,209 99,211 99,213 98,216 98,219 98,219
+poly CH- 98,220 116,220 116,224 115,228 115,233 113,235 111,237 110,239 107,240 105,240 102,238 101,235 100,232 99,229 99,225 99,223 98,220 98,220
+poly Page- 67,177 88,177 81,189 73,189 67,177 67,177
+poly Page+ 69,116 87,116 82,106 75,106 68,116 69,116 69,116
+circle Left  48,146 48,155
+circle Up  79,130 79,140
+circle Down  78,166 78,176
+circle Guide  113,129 113,137
+circle Info  46,164 46,171
+circle Exit  109,164 109,172
+circle Menu  45,128 45,137
+circle OK  78,148 78,158
+circle Right  107,148 107,157
+circle My_System  78,92 78,102
+circle Power  78,71 78,82
+circle Light  123,73 123,79
