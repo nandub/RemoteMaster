@@ -1,0 +1,60 @@
+#$MTIMFH
+#$-:Image Map file created by Map THIS!
+#$-:Map THIS! free image map editor by Todd C. Wilson
+#$-:Please do not edit lines starting with "#$"
+#$VERSION:1.30
+#$TITLE:URC-60260
+#$DATE:Sun Jan 11 11:09:18 2009
+#$PATH:C:\Documents and Settings\harold\My Documents\JP1\Misc\AccessHD remote\
+#$GIF:URC-60260.jpg
+#$FORMAT:ncsa
+#$EOH
+default URC-60260
+rect Stop 57,230 95,246
+poly Paly 58,248 65,263 71,267 82,267 89,262 96,248 58,248 58,248
+poly FF 117,219 117,242 106,256 100,260 97,257 100,245 100,227 117,219 117,219
+poly Rew 35,218 35,236 45,254 54,259 56,256 53,245 53,227 35,218 35,218
+poly Down 57,187 78,204 96,185 91,181 77,187 62,182 57,187 57,187
+poly Right 101,145 116,163 101,181 96,176 99,162 96,150 101,145 101,145
+poly Left 54,146 35,163 54,183 59,179 53,165 58,150 54,146 54,146
+poly Up 77,124 59,140 63,146 77,141 91,146 96,140 77,124 77,124
+poly Ch+ 125,122 109,136 119,158 137,158 135,141 125,122 125,122
+poly Ch- 120,165 118,178 111,190 121,199 132,182 137,165 120,165 120,165
+poly vol- 17,165 21,184 32,198 43,189 34,178 34,165 17,165 17,165
+poly vol+ 27,122 18,139 16,158 34,158 44,136 27,122 27,122
+circle 0  76,405 87,416
+circle Input  45,406 56,417
+circle Enter  106,405 117,416
+circle 8  76,379 87,390
+circle 7  45,380 56,391
+circle 9  106,379 117,390
+circle 5  76,354 87,365
+circle 4  45,355 56,366
+circle 6  106,354 117,365
+circle 3  106,328 117,339
+circle 2  76,328 87,339
+circle 1  45,329 56,340
+circle Aspect  61,306 72,317
+circle Caption  91,306 102,317
+circle Audio  121,303 132,314
+circle Signal  31,304 42,315
+circle Skip-  61,281 72,292
+circle Skip+  91,281 102,292
+circle REC  120,278 131,289
+circle Pause  32,278 43,289
+circle Recall  132,222 143,233
+circle PIP  20,222 31,233
+circle OK  76,164 91,179
+circle Menu  76,110 87,121
+circle Exit  104,118 115,129
+circle Replay  49,118 60,129
+circle TV/STB  94,79 105,90
+circle Guide  59,80 70,91
+circle Info  124,90 135,101
+circle Macro  30,90 41,101
+circle STB  76,58 86,68
+circle AUX  120,64 130,74
+circle TV  33,64 43,74
+rect SETUP 63,18 89,39
+circle Power  113,36 124,47
+circle Mute  38,36 49,47
