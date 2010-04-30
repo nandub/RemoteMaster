@@ -1,0 +1,68 @@
+#$MTIMFH
+#$-:Image Map file created by Map THIS!
+#$-:Map THIS! free image map editor by Todd C. Wilson
+#$-:Please do not edit lines starting with "#$"
+#$VERSION:1.30
+#$TITLE:15-134
+#$DATE:Sat Nov 08 21:54:45 2008
+#$PATH:C:\Documents and Settings\Dave\My Documents\Remotes\Files\134\
+#$GIF:15-134.jpg
+#$FORMAT:ncsa
+#$EOH
+rect P[Setup] 24,22 42,33
+rect Power 92,22 110,33
+circle TV  31,47 31,55
+circle DVR  79,46 79,54
+circle SAT  55,47 55,55
+circle DVD  103,46 103,54
+circle AUX  31,66 31,74
+circle ViewTV  103,65 103,73
+rect Input 23,80 42,90
+rect Page- 46,80 65,90
+rect Page+ 69,80 88,90
+rect Format 92,80 111,90
+rect Up 50,95 85,106
+rect Down 50,129 85,140
+rect Left 32,107 45,130
+rect Right 90,106 103,129
+rect Select 50,112 85,123
+rect Guide 23,146 42,156
+rect Menu 46,146 65,156
+rect Info 69,146 88,156
+rect Cancel 92,146 111,156
+circle VOL+  37,173 37,181
+circle VOL-  37,199 37,208
+rect Last 57,165 77,175
+rect Fav 57,181 77,191
+rect Mute 57,198 77,208
+circle CH+  97,173 97,182
+circle CH-  97,198 97,207
+rect Rew 23,213 50,227
+rect Play 53,213 81,227
+rect Fwd 84,213 111,227
+rect Rec 23,232 50,246
+rect Pause 53,232 81,246
+rect Stop 84,232 111,246
+rect F.Rew 23,252 50,266
+rect DVR[List] 53,252 81,266
+rect F.Fwd 84,252 111,266
+circle Red  31,280 31,288
+circle Green  55,280 55,288
+circle Yellow  80,280 80,288
+circle Blue  103,280 103,288
+circle 1  35,300 35,308
+circle 2  67,300 67,308
+circle 3  99,301 99,309
+circle 4  35,323 35,331
+circle 5  67,323 67,331
+circle 6  99,322 99,330
+circle 7  35,346 35,354
+circle 8  67,345 67,353
+circle 9  99,345 99,353
+circle Dash  35,368 35,376
+circle 0  67,368 67,376
+circle Enter  99,368 99,376
+rect PIP 24,382 42,392
+rect Swap 46,382 65,392
+rect Move 69,382 88,392
+rect Freeze 92,382 111,392

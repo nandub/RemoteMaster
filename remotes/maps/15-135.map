@@ -1,0 +1,74 @@
+#$MTIMFH
+#$-:Image Map file created by Map THIS!
+#$-:Map THIS! free image map editor by Todd C. Wilson
+#$-:Please do not edit lines starting with "#$"
+#$VERSION:1.30
+#$TITLE:15-135
+#$DATE:Sat Nov 08 21:58:12 2008
+#$PATH:C:\Documents and Settings\Dave\My Documents\Remotes\RemoteMaster\Images\
+#$GIF:15-135.jpg
+#$FORMAT:ncsa
+#$EOH
+rect P[Setup] 19,21 37,32
+rect Power 88,21 106,32
+circle TV  25,44 25,52
+circle CBL/SAT  49,45 49,53
+circle DVD  75,44 75,52
+circle DVR  99,44 99,52
+circle MS  26,65 26,73
+circle AV1  50,64 50,72
+circle AV2  76,65 76,73
+circle VCR  100,64 100,72
+rect Audio 18,80 37,90
+rect Surround 41,80 60,90
+rect Center 66,80 85,90
+rect Rear 89,80 108,90
+rect Up 46,96 81,107
+rect Down 46,131 81,142
+rect Left 27,108 40,131
+rect Right 86,107 99,130
+rect OK 46,114 81,125
+rect Guide 18,148 37,158
+rect Menu 41,148 60,158
+rect Info 66,148 85,158
+rect Exit 89,148 108,158
+circle VOL+  32,177 32,185
+circle VOL-  32,202 32,210
+rect Last 54,167 73,177
+rect HD[Fav] 54,184 73,194
+rect Mute 54,201 73,211
+circle CH+  94,177 94,185
+circle CH-  94,202 94,210
+rect Rew 20,217 45,230
+rect Play 51,217 76,230
+rect Fwd 82,217 107,230
+rect Rec 20,236 45,249
+rect Pause 52,236 77,249
+rect Stop 83,236 108,249
+rect F.Rew 20,256 45,269
+rect DVR[List] 51,255 76,268
+rect F.Fwd 83,256 108,269
+circle TV_In  27,283 27,291
+circle AV_In  51,284 51,292
+circle COMP_In  77,283 77,291
+circle HDMI_In  100,285 100,293
+circle 1  31,305 31,313
+circle 2  63,306 63,314
+circle 3  97,306 97,314
+circle 4  31,329 31,337
+circle 5  63,328 63,336
+circle 6  97,328 97,336
+circle 7  31,351 31,359
+circle 8  63,351 63,359
+circle 9  96,351 96,359
+circle Input  32,373 32,381
+circle 0  64,373 64,381
+circle Enter  97,373 97,381
+rect PIP 20,387 38,397
+rect Swap 43,388 62,398
+rect Move 68,387 87,397
+rect Freeze 90,388 109,398
+rect Mode 20,404 39,414
+rect Aspect 43,404 62,414
+rect CC 68,404 87,414
+rect Dash 90,404 109,414
