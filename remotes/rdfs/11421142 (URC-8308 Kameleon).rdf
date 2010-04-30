@@ -1,0 +1,211 @@
+[General]
+Name=One For All URC-8308R01 Kameleon 3rd Generation
+EepromSize=$1000
+AdvCodeAddr=$022..$3FF
+UpgradeAddr=$402..$7FF
+LearnedAddr=$800..$FFF
+Processor=HCS08
+BaseAddr=$EC00
+RAMAddr=$FF00
+RDFSync=3
+DevComb=,$0846,$0E25,,$19E0
+WAVUpgrade=1
+AdvCodeFormat=HEX
+AdvCodeBindFormat=LONG
+SectionTerminator=$FF
+LearnedDevBtnSwapped=Yes
+EFCDigits=5
+2BytePid=Yes
+
+[Settings]
+EL Activation Type=$01A.4.1.0.0 (Key Press;Remote Touch)
+Light Sensor Status=$01A.5.1.0.0 (Off;On)
+VPT Status=$01A.2.1.0.0 (Off;On)
+VPT Device=$01C.7.8.1.0 DeviceButtons
+SAT VPT=$01D.0.1.1.0 (Off;On)
+TV VPT=$01D.1.1.1.0 (Off;On)
+VCR VPT=$01D.2.1.1.0 (Off;On)
+DVD VPT=$01D.3.1.1.0 (Off;On)
+CD VPT=$01D.4.1.1.0 (Off;On)
+PVR VPT=$01D.5.1.1.0 (Off;On)
+AUD VPT=$01D.6.1.1.0 (Off;On)
+LIGHT VPT=$01D.7.1.1.0 (Off;On)
+CH +/- Status=$01A.1.1.0.0 (Use Native;Simulate)
+CH +/- Device=$01E.7.8.1.0 DeviceButtons
+Light On Time=$01F.3.4.2.0 (17min;4sec;8sec;12sec;16sec;20sec)
+KeyMap=$01B.5.1.0.0 (Standard;Alternate)
+
+
+[Checksums]
+^$008:$00A..$021
+^$400:$402..$7FF
+
+[DeviceTypes]
+SAT = 0
+TV = 1
+VCR = 2
+DVD = 3
+CD = 4
+PVR = 5
+AUD = 6
+LIGHT = 7
+
+[DeviceTypeImageMaps]
+SAT     = (URC-8308-SAT.map,URC-8308-SAT-SCROLL.map)
+TV      = (URC-8308-TV.map,URC-8308-TV-SCROLL.map)
+VCR     = (URC-8308-VCR.map)
+DVD     = (URC-8308-DVD.map)
+CD      = (URC-8308-CD.map)
+PVR     = (URC-8308-PVR.map)
+AUD     = (URC-8308-AUD.map,URC-8308-AUD-SCROLL.map)
+LIGHT   = (URC-8308-LIGHT.map)
+
+[DeviceTypeAliases]
+SAT = SAT,Cable,Video Acc
+TV = TV
+VCR = VCR,Tape
+DVD = DVD,DAT,Laserdisc
+CD = CD, Phono, Home Auto
+PVR = PVR
+AUD = Tuner,Amp,Misc Audio
+LIGHT = OEM mode
+
+[DeviceButtons]
+SAT = $00A $00B
+TV = $00C $00D
+VCR = $00E $00F
+DVD = $010 $011
+CD = $012 $013
+PVR = $014 $015
+AUD = $016 $017
+LIGHT = $018 $019
+
+[Buttons]
+TV=$01,
+MAGIC=$02,
+POWER=$03,
+VOL+=$04,
+VOL-=$05,
+CH+=$06,
+CH-=$07,
+MUTE=$08,
+CD=$09,
+VCR=$0A,
+RED=$0B,
+GREEN=$0C,
+YELLOW=$0D,
+BLUE=$0E,
+EXIT=$10,
+SAT=$11,
+AV=$12,
+16-9=$13,
+MENU=$14,
+1=$15,
+2=$16,
+3=$17,
+TV/VCR=$18,
+4=$19,
+5=$1A,
+6=$1B,
+7=$1C,
+8=$1D,
+9=$1E,
+0=$1F,
+-/--=$20,
+DVD=$21,
+AUD=$22,
+PREV=$23,
+NEXT=$24,
+GUIDE=$25,
+PRESET=$26,
+PVR=$27,
+FAV\EDIT=$28,
+UP=$29,
+DOWN=$2A,
+LEFT=$2B,
+RIGHT=$2C,
+LIGHT=$2D,
+SCROLL=$30,
+PP=$31,
+INFO=$32,
+REW=$33,
+PLAY=$34,
+FF=$35,
+STOP=$36,
+PAUSE=$37,
+REC=$38,
+AUDIO=$39,
+SUBT=$3A,
+OK=$3B,
+I=$3C,
+II=$3D,
+III=$3E,
+IV=$3F,
+HELP=$52,
+PROG=$53,
+TV/SAT=$58,
+TV/DVD=$59,
+PPV=$60,
+DSP=$65,
+BACK=$66,
+EDIT=$68,
+SP/LP=$69,
+RAND=$6E,
+CLEAR=$72,
+TIMER=$71,
+TXT-EXPAND=$73,
+TXT-ON=$74,
+TXT-HOLD=$75,
+TXT-INDEX=$76,
+TXT-MIX=$77,
+TXT-OFF=$78
+-TUNE=$79,
+TUNE+=$7a
+
+[ButtonMaps]
+0 = ($1F, $15, $16, $17, $19, $1A, $1B, $1C, $1D, $1E), ($04, $05, $08), ($06, $07),
+    $03, $29, $2A, $2B, $2C, $14, $3B, $10, $32, $25, $0B, $0C, $0D, $0E, $39, $74,
+    $31, $28, $58, $12, $66, $3A, $78, $34, $37, $33, $35, $36, $38, $52, $83, $60,
+    $20, $24, $23
+1 = ($1F, $15, $16, $17, $19, $1A, $1B, $1C, $1D, $1E), ($04, $05, $08), ($06, $07),
+    $03, $12, $74, $75, $86, $87, $20, $73, $29, $2A, $2B, $2C, $77, $78, $14, $10,
+    $76, $0B, $0C, $0D, $0E, $31, $84, $85, $3B, $83, $13, $25
+2 = ($1F, $15, $16, $17, $19, $1A, $1B, $1C, $1D, $1E), ($04, $05, $08), ($06, $07),
+    $03, $34, $37, $33, $35, $38, $36, $71, $18, $29, $2A, $2B, $2C, $10, $3B, $14,
+    $12, $69, $25, $53, $20, $0B, $0C, $0D, $0E, $83
+3 = ($1F, $15, $16, $17, $19, $1A, $1B, $1C, $1D, $1E), ($04, $05, $08), ($06, $07),
+    $03, $29, $2A, $2B, $2C, $3B, $23, $24, $34, $37, $33, $35, $36, $38, $14, $3A,
+    $10, $72, $53, $20, $12, $59, $71, $83, $68, $25, $39, $0B, $0C, $0D, $0E
+4 = ($1F, $15, $16, $17, $19, $1A, $1B, $1C, $1D, $1E), ($04, $05, $08), ($06, $07),
+    $03, $34, $37, $33, $35, $36, $38, $23, $24, $6E, $53, $72, $20, $10, $3B, $14,
+    $29, $2A, $2B, $2C, $68, $83
+5 = ($1F, $15, $16, $17, $19, $1A, $1B, $1C, $1D, $1E), ($04, $05, $08), ($06, $07),
+    $03, $29, $2A, $2B, $2C, $14, $3B, $10, $32, $25, $0B, $0C, $0D, $0E, $39, $28,
+    $66, $3A, $34, $37, $33, $35, $36, $38, $52, $83, $60, $24, $23
+6 = ($1F, $15, $16, $17, $19, $1A, $1B, $1C, $1D, $1E), ($04, $05, $08), ($06, $07),
+    $03, $5F, $55, $56, $57, $59, $5A, $5B, $5C, $5D, $5E, $7B, $34, $37, $33, $35,
+    $36, $38, $29, $2A, $2B, $2C, $24, $23, $3B, $12, $6E, $83, $7A, $79, $14, $20,
+    $61, $53, $10, $72, $3A, $70, $6A, $6C, $6B, $65, $39, $68, $0B, $0C, $0D, $0E
+7 = ($1F, $15, $16, $17, $19, $1A, $1B, $1C, $1D, $1E), ($04, $05, $08), ($06, $07)
+
+[DigitMaps]
+003 074 053 092 094 140 032 176 177 404 001 034 179 086 087 029
+046 201 407 408 402 403 038 014 187 188 043 095 360 168 191 139
+385 125 340 189 211 173 126 064 386 069 141 348 468 181 182 342
+361 127 007 021 037 033 026 059 075 071 169 060 194 091 297 298
+192 193 357 346 058 206 207 331 469 195 196 093 080 013 031 009
+175 209 210 390 170 251 252 335 131 178 202 205 213 290 208 197
+229 247 248 227 228 318 320 336 337 219 220
+
+
+[Protocols]
+0000, 0002:5, 0011, 0013, 0014, 0018, 001C, 001F:8, 0020, 0027:new,
+002A, 002C, 0034, 003D, 003F, 0045, 004A, 004B, 0051, 0057,
+0058:2, 005A, 005C, 005D, 005E:2, 005F, 0064, 0065:2, 0066, 0068,
+006A, 006C, 0072, 0073, 0075, 007E:3, 0082, 0087, 008C, 008E,
+0095, 0098, 009C, 009E, 00A1, 00A5, 00A6, 00AB, 00AF, 00B0,
+00B2, 00B6, 00B9, 00BD, 00C4, 00C9, 00CA, 00CD:2, 00D1, 00D5,
+00DE, 00E2, 00E5, 00E8, 00EB, 00ED, 00F0, 00F3, 00F4, 00F8:3,
+00FD, 0109, 0111, 0112, 0114:2, 011A:2, 011B, 011E, 0125, 012A:2,
+0156, 015E, 0160, 0161, 016A, 016C, 0171, 0173:1, 0176, 017E,
+0182:2, 0184, 018C, 019A, 019B, 01B5, 01B9, 01C4
