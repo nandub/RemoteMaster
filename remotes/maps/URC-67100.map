@@ -1,0 +1,64 @@
+#$MTIMFH
+#$-:Image Map file created by Map THIS!
+#$-:Map THIS! free image map editor by Todd C. Wilson
+#$-:Please do not edit lines starting with "#$"
+#$VERSION:1.30
+#$DATE:Mon Jan 25 18:39:20 2010
+#$PATH:C:\Documents and Settings\Dave\My Documents\Remotes\RemoteMaster\Images\
+#$GIF:URC-67100.JPG
+#$FORMAT:ncsa
+#$EOH
+circle Setup  25,23 25,29
+circle Power  104,22 104,30
+circle Menu  27,64 27,74
+circle Info  108,62 108,72
+circle Guide  26,122 26,132
+circle Exit  108,121 108,131
+circle Stop  25,170 25,180
+circle OK  67,92 67,106
+circle Skip  99,226 99,236
+circle Replay  36,227 36,237
+circle Pause  67,235 67,245
+circle Rec  109,168 109,178
+circle Play  68,197 68,211
+circle Fav  29,412 29,421
+circle SAP  56,412 56,421
+circle P-Lock/Game  83,412 83,421
+circle CCD  110,411 110,420
+circle Sleep  30,438 30,447
+circle Pict  84,439 84,448
+circle Zoom  110,438 110,447
+rect TV 16,37 37,48
+rect DVD 43,35 64,46
+rect STB 71,35 92,46
+rect AUX 98,35 119,46
+rect Red 15,140 36,154
+rect Green 43,138 64,152
+rect Yellow 71,137 92,151
+rect Blue 100,137 121,151
+rect Recall 54,262 82,279
+rect Mute 54,286 82,303
+rect 1 18,315 46,332
+rect 2 55,315 83,332
+rect 3 91,315 119,332
+rect 4 19,336 47,353
+circle Vol+  33,269 33,280
+rect 0 55,377 83,394
+rect 8 56,357 84,374
+rect 7 19,356 47,373
+rect Input 19,376 47,393
+rect Dash 93,377 121,394
+rect 6 92,336 120,353
+rect 5 55,336 83,353
+rect 9 92,357 120,374
+poly Up 55,77 46,68 60,59 73,59 88,66 79,77 71,73 63,73 55,78 55,77 55,77
+poly Right 94,71 85,78 88,87 88,92 88,96 84,103 93,111 101,97 101,83 94,71 94,71
+poly Left 50,81 42,73 34,86 34,98 42,112 50,104 47,96 47,89 51,81 50,81 50,81
+poly Down 55,108 46,117 58,124 75,124 88,116 79,109 71,112 62,112 55,108 55,108
+poly Rew 47,187 19,187 14,197 14,204 23,210 48,210 44,202 44,195 48,187 47,187 47,187
+poly FFwd 89,186 111,186 120,192 120,201 114,208 88,208 92,199 91,193 89,186 89,186
+rect PVR 50,156 85,176
+circle Vol-  35,297 35,308
+circle Ch+  104,269 104,280
+circle Ch-  102,296 102,307
+circle Audio/DynVol  57,439 57,449
