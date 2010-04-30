@@ -10,38 +10,42 @@
 #$FORMAT:ncsa
 #$EOH
 default Slingbox
-circle Power  140,16 151,27
-circle CH+  77,221 91,234
-rect num_1 5,271 48,290
-rect num_2 55,271 99,290
-rect num_3 106,271 150,290
-circle CH-  78,251 92,264
-rect num_4 5,300 48,319
-rect num_5 56,301 99,320
-rect num_6 107,301 150,320
-rect num_7 5,330 48,349
-rect num_8 56,330 99,349
-rect num_9 107,331 150,350
-rect num_0 56,360 99,379
-rect Last_ch 5,360 48,379
-rect Enter 107,359 150,378
-circle Play  75,425 107,456
-rect Skip- 4,464 52,489
-rect Skip+ 55,464 103,489
-rect rewind 4,493 52,518
-rect ffwd 55,494 103,519
-rect Stop 4,522 52,547
-rect Pause 55,523 103,548
-rect Record 4,552 52,577
-rect Live 102,552 150,577
-circle Select  77,64 106,94
-poly up_arrow 65,31 77,9 91,32 65,31
-poly right_arrow 110,50 135,64 110,76 110,50
-poly down_arrow 64,97 90,97 78,120 64,97
-poly left_arrow 22,63 46,49 45,78 22,63
-rect Guide 4,134 52,157
-rect Menu 4,163 52,186
-rect Exit 55,134 98,157
-rect Info 56,163 99,186
-circle Page+  140,144 152,156
-circle Page-  140,175 152,187
+circle Power  118,99 130,111
+circle CH+  34,353 47,366
+circle CH-  34,381 47,394
+circle num_1 38,478 50,490
+circle num_2 78,478 90,490
+circle num_3 118,478 130,490
+circle num_4 38,505 50,517
+circle num_5 78,505 90,517
+circle num_6 118,505 130,517
+circle num_7 38,533 50,545
+circle num_8 78,533 90,545
+circle num_9 118,533 130,545
+circle num_0 78,561 90,573
+circle Last_ch 38,561 50,573
+circle Enter 118,561 130,573
+circle Play  78,105 93,120
+circle Skip- 38,177 53,192
+circle Skip+ 118,177 133,192
+circle rewind 38,141 53,154
+circle ffwd 118,141 133,154
+circle Stop 78,141 93,154
+circle Pause 78,177 93,192
+circle Record 78,213 93,228
+circle Red 22,445 31,454
+circle green 50,445,59,454
+circle yellow 78,445,87,454
+circle blue 106,445,115,454
+circle White 134,445,143,454
+circle Select 78,324 90,336
+poly up_arrow 67,312 56,301 78,290 100,301 89,312
+poly down_arrow 67,336 56,347 78,358 100,347 89,336 
+poly right_arrow 90,313 101,302 112,324 101,346 90,335
+poly left_arrow 66,313 55,302 44,324 55,346 66,335 
+rect Guide 18,270 56,284
+rect Menu 58,270 96,284
+rect Exit 58,374 96,388
+rect Info 98,270 136,284
+circle Page+  122,353 135,366
+circle Page-  122,381 135,394
