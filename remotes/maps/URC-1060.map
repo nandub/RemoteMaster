@@ -1,0 +1,70 @@
+#$MTIMFH
+#$-:Image Map file created by Map THIS!
+#$-:Map THIS! free image map editor by Todd C. Wilson
+#$-:Please do not edit lines starting with "#$"
+#$VERSION:1.30
+#$TITLE:URC-1060
+#$DATE:Fri Oct 17 14:21:45 2008
+#$PATH:C:\Documents and Settings\Dave\My Documents\Remotes\RemoteMaster\Images\
+#$GIF:URC-1060.jpg
+#$FORMAT:ncsa
+#$EOH
+rect Sys_OnOff 16,23 46,42
+rect SETUP 61,20 90,34
+rect POWER 106,23 136,42
+circle AUX  28,59 28,69
+circle DVD  59,49 59,59
+circle TV  93,49 93,59
+circle CBL  123,59 123,70
+poly GUIDE 44,64 22,85 34,97 57,74 44,64 44,64
+rect MENU 61,63 90,77
+poly INFO 103,66 92,77 115,99 126,88 103,66 103,66
+circle PageUp  127,122 127,131
+circle PageDown  26,106 26,114
+circle EXIT  29,144 29,153
+circle LAST  122,144 122,153
+rect UP 55,86 96,101
+rect DOWN 53,134 95,149
+rect LEFT 39,100 53,137
+rect RIGHT 98,100 112,137
+circle SELECT  76,118 76,131
+poly A[YELLOW] 44,150 53,165 35,165 44,150 44,150
+rect B[BLUE] 57,161 73,177
+circle C[RED]  86,168 86,176
+poly D[GREEN] 106,150 116,159 107,169 96,160 106,150 106,150
+circle DAY-  56,193 56,202
+circle DAY+  96,193 96,202
+rect OnDemand 57,212 95,233
+rect VOL+ 21,177 41,195
+rect VOL- 22,206 41,224
+rect CH+ 110,177 129,195
+rect CH- 109,206 128,224
+rect MUTE 23,230 53,247
+rect FAV 98,230 128,247
+rect Replay 23,250 53,267
+rect DVR 56,248 94,268
+rect LIVE 98,251 128,268
+rect REW 23,277 53,294
+rect PLAY 57,276 95,293
+rect FFWD 98,276 128,293
+rect STOP 28,302 47,320
+rect PAUSE 65,302 86,320
+circle REC  113,310 113,319
+rect 1 25,328 55,345
+rect 2 61,328 91,345
+rect 3 97,327 127,344
+rect 4 24,351 54,368
+rect 5 60,350 90,367
+rect 6 98,350 128,367
+rect 7 24,372 54,389
+rect 8 61,371 91,388
+rect 9 97,372 127,389
+rect 0 60,395 90,412
+rect [TV/VCR]/Input 25,395 55,412
+rect [#]/Aspect 96,395 126,412
+circle SOURCE  34,453 34,461
+circle $38:PIP_OnOff  34,429 34,437
+circle $39:PIP_Swap  61,429 61,437
+circle $3A:PIP_Move  89,428 89,436
+circle $3B:PIP_Ch+  117,429 117,437
+circle $3C:PIP_Ch-  116,452 116,460
