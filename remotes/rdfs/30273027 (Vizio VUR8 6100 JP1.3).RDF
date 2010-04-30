@@ -1,0 +1,175 @@
+[General]
+Name=Vizio VUR8 6100 JP1.3
+EepromSize=$1400
+AdvCodeAddr=$0029..$03FF
+UpgradeAddr=$0802..$0BFF
+LearnedAddr=$0C00..$13FF
+Processor=S3F80
+BaseAddr=$0600
+RAMAddr=$FF00
+RDFSync=3
+DevComb=,$3B1D,$4850,,$4EEF,$4944
+AdvCodeBindFormat=LONG
+SectionTerminator=$FF
+LearnedDevBtnSwapped=Yes
+EFCDigits=5
+2BytePid=Yes
+ImageMap=Vizio-VUR8-6100.map
+
+[SpecialProtocols]
+Multiplex=01FE
+
+[Settings]
+VPT Device=$01C.7.8.0.0 DeviceButtons
+VPT Status=$01B.2.1.0.0 (Off;On)
+CABLE uses VPT=$01D.0.1.1.0 (No;Yes)
+TV uses VPT=$01D.1.1.1.0 (No;Yes)
+AUDIO uses VPT=$01D.2.1.1.0 (No;Yes)
+dev4 uses VPT=$01D.3.1.1.0 (No;Yes)
+dev5 uses VPT=$01D.4.1.1.0 (No;Yes)
+DVD uses VPT=$01D.5.1.1.0 (No;Yes)
+dev7 uses VPT=$01D.6.1.1.0 (No;Yes)
+dev8 uses VPT=$01D.7.1.1.0 (No;Yes)
+CABLE Setup Code Lock=$01A.0.1.1.0 (Off;On)
+TV  Setup Code Lock=$01A.1.1.1.0 (Off;On)
+AUDIO Setup Code Lock=$01A.2.1.1.0 (Off;On)
+dev4 Setup Code Lock=$01A.3.1.1.0 (Off;On)
+dev5 Setup Code Lock=$01A.4.1.1.0 (Off;On)
+DVD Setup Code Lock=$01A.5.1.1.0 (Off;On)
+dev7 Setup Code Lock=$01A.6.1.1.0 (Off;On)
+dev8 Setup Code Lock=$01A.7.1.1.0 (Off;On)
+Initial Device Mode=$01E.7.8.0.0 DeviceButtons
+
+[Checksums]
+^$008:$00A..$028
+^$800:$802..$BFF
+
+[FixedData]
+$0400=$41,$50,$53
+
+[DeviceTypes]
+CBL/SAT  = 0
+TV       = 1
+VCR/DVD  = 2
+CD       = 3
+CBL/SAT  = 0
+VCR/DVD  = 2,2
+VCR/DVD  = 2,2
+CD       = 3,3
+
+[DeviceTypeAliases]
+TV 	= TV
+CBL/SAT = Cable,SAT,Video Acc
+VCR/DVD = VCR,DVD,Tape,Laserdisc,DAT,PVR
+CD      = CD,Home Auto,Phono
+
+[DeviceButtons]
+CABLE  = $00A $00B
+TV     = $00C $00D
+AUDIO  = $00E $00F
+dev4   = $010 $011
+dev5   = $012 $013
+DVD    = $014 $015
+dev7   = $016 $017
+dev8   = $018 $019
+
+[Buttons]
+SET=$01,
+Power=$02,
+TV=$03,
+CABLE=$04,
+DVD=$05,
+dev5=$06,
+dev8=$07,
+dev4=$08,
+AUDIO=$09,
+dev7=$0A,
+Menu=$0B
+Guide=$0C,
+Up=$0D,
+Down=$0E,
+Left=$0F,
+Right=$10,
+OK=$11
+Vol+=$12,
+Vol-=$13,
+Ch+=$14,
+Ch-=$15,
+Info=$16,
+Exit=$17,
+Mute=$18,
+Last=$19,
+Wide{Record}=$1A,
+CC{Stop}=$1B,
+MTS{Play}=$1C,
+Sleep{Pause}=$1D
+Mode{Skip-}=$1E
+Freeze{Rewind}=$1F
+Audio{Fwd}=$20,
+Swap{Skip+}=$21,
+1=$26,2=$27,3=$28,4=$29,5=$2A
+6=$2B,7=$2C,8=$2D,9=$2E,0=$2F
+Input=$30
+Enter{-}=$31
+Zoom-=$34
+Zoom+=$35
+Freeze=$36
+RGB=$37
+A{Yellow}=$38
+B{Blue}=$39
+C{Red}=$3A
+D{Green}=$3B
+InputTV=$3C
+AV=$3D
+Component=$3E
+HDMI=$3F
+Phantom1=$40
+Phantom2=$41
+Phantom3=$42
+Phantom4=$43
+
+[ButtonMaps]
+0 = ($2F, $26, $27, $28, $29, $2A, $2B, $2C, $2D, $2E), ($12, $13, $18), ($14, $15),
+    $02, $40, $19, $30, $16, $0B, $11, $0D, $0E, $0F, $10, $17, $0C, $1C, $1F, $20, 
+    $1D, $1A, $1B, $31, $24, $25, $22, $1E, $21, $23, $33, $35, $34, $37, $32, $36, 
+    $3F, $38, $39, $3A, $3B, $3C, $3D, $3E, $03, $09, $04, $06, $05, $08, $07, $0A
+1 = ($2F, $26, $27, $28, $29, $2A, $2B, $2C, $2D, $2E), ($12, $13, $18), ($14, $15),
+    $02, $40, $0B, $30, $16, $19, $0D, $0E, $0F, $10, $11, $17, $33, $35, $37, $34,
+    $1C, $1B, $1F, $20, $1D, $1A, $32, $36, $31, $0C, $1E, $21, $24, $22, $25, $23, 
+    $38, $39, $3A, $3B, $3C, $3D, $3E, $3F, $03, $09, $04, $06, $05, $08, $07, $0A
+2 = ($2F, $26, $27, $28, $29, $2A, $2B, $2C, $2D, $2E), ($12, $13, $18), ($14, $15),
+    $02, $40, $1C, $1F, $20, $1B, $1D, $1A, $0B, $16, $0D, $0E, $0F, $10, $11, $17, 
+    $19, $30, $0C, $1E, $21, $31, $24, $25, $22, $23, $33, $34, $35, $37, $32, $36,
+    $38, $39, $3A, $3B, $3C, $3D, $3E, $3F, $03, $09, $04, $06, $05, $08, $07, $0A
+3 = ($2F, $26, $27, $28, $29, $2A, $2B, $2C, $2D, $2E), ($12, $13, $18), ($14, $15),
+    $02, $40, $1C, $1B, $1D, $1E, $21, $1F, $20, $1A, $30, $31, $19, $0B, $16, $17, 
+    $11, $0D, $0E, $0F, $10, $0C, $33, $34, $35, $37, $32, $36, $24, $22, $25, $23, 
+    $38, $39, $3A, $3B, $3C, $3D, $3E, $3F, $03, $09, $04, $06, $05, $08, $07, $0A
+
+[Protocols]
+0000, 0002:5, 0006, 0007, 000A, 000D, 0013, 0014, 0015, 001A, 
+001B, 001C, 001D, 001F:8, 0022, 0027:new, 0029, 002D, 002F, 0034, 
+0039, 003A, 003F, 0045, 0046, 0056, 0057, 0058:2, 005A, 005B, 
+005C, 005D, 005E:2, 005F, 0060, 0061, 0065:2, 006A, 0073, 007E:3, 
+0083, 0090, 0092:3, 0093, 0098:2, 009C, 009E, 00A4, 00A9, 00AD, 
+00AF, 00B6, 00BF, 00C4, 00C9, 00CA, 00CD:2, 00DB, 00DE, 00E2, 
+00E3, 00E7, 00E8, 00F2, 00F5, 00F8:3, 0103, 0109, 010C, 010F, 
+0111, 0114:2, 0115, 0117, 011A:2, 011B, 011E, 0125, 012A:2, 0161, 
+0162, 016C, 016D, 017E, 0184, 0186, 018B, 0190, 01A4, 01BA
+
+
+[DigitMaps]
+072 048 053 094 092 003 001 090 046 223 224 029 059 112 077 114
+086 021 011 087 058 050 032 187 188 146 239 240 126 410 034 030
+291 168 368 369 125 069 093 227 228 219 220 294 205 208 299 289
+263 264 199 200 141 278 279 257 258 064 290 023 081 016 179 127
+075 033 026 217 218 297 298 124 295 192 193 251 252 247 248 244
+357 373 270 271 235 236 275 276 283 284 261 262 225 226 253 254
+241 242 286 230 231 013 080 017 031 091 277 209 210 170 131 267
+312 197 229 341
+
+
+
+
+
+
