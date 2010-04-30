@@ -1,0 +1,63 @@
+#$MTIMFH
+#$-:Image Map file created by Map THIS!
+#$-:Map THIS! free image map editor by Todd C. Wilson
+#$-:Please do not edit lines starting with "#$"
+#$VERSION:1.30
+#$TITLE:urc-7525.map
+#$DATE:Sun Mar 29 12:23:41 2009
+#$PATH:C:\Users\bengt\harc\jp1\myrdf\
+#$GIF:urc-7525.jpg
+#$FORMAT:ncsa
+#$EOH
+default urc-7525.jpg
+circle power  117,24 117,36
+circle magic  41,18 41,29
+poly up 80,317 65,339 92,339 80,317 80,317
+poly left 38,362 55,352 55,375 38,362 38,362
+poly right 107,345 107,377 126,362 107,348 118,355 107,345 107,345
+poly down 65,387 90,386 79,407 67,385 65,387 65,387
+circle ok  79,362 79,376
+rect TeleText 29,50 56,63
+rect TeleTextMix 66,49 93,62
+rect TeleTextOff 103,51 130,64
+rect TeleTextExpand 31,75 58,88
+rect 16/9 67,74 94,87
+rect hold 105,75 132,88
+circle 1  42,119 42,131
+circle 2  80,121 80,133
+circle 3  118,118 118,130
+circle 4  43,150 43,162
+circle 5  79,150 79,162
+circle 6  118,152 118,164
+circle 7  42,179 42,191
+circle 8  80,180 80,192
+circle 9  118,180 118,192
+circle -/--  43,209 43,221
+circle 0  79,208 79,220
+circle AV  118,210 118,222
+circle mute  79,244 79,256
+circle menu  80,288 80,300
+circle vol+  40,262 40,274
+circle vol-  38,298 38,310
+circle ch+  121,262 121,274
+circle ch-  119,299 119,311
+circle rew  33,460 33,472
+circle play  64,461 64,473
+circle pause  96,461 96,473
+circle previous  33,491 33,503
+circle stop  63,491 63,503
+circle record  95,490 95,502
+circle ffw  123,461 123,473
+circle next  123,491 123,503
+circle red  33,527 33,539
+circle green  64,526 64,538
+circle guide  32,566 32,578
+circle blue  124,526 124,538
+circle yellow  94,527 94,540
+circle info  62,566 62,578
+circle help  95,564 95,576
+circle back  124,563 124,575
+circle ppv  29,597 29,609
+circle subtitle  63,597 63,609
+circle radio  95,596 95,608
+circle favorite  124,594 124,606
