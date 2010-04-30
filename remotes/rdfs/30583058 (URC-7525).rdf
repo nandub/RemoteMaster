@@ -1,0 +1,126 @@
+[General]
+Name=URC-7525 JP1.3
+EepromSize=$0400
+AdvCodeAddr=$0019..$00FF
+UpgradeAddr=$0102..$03FF
+Processor=S3F80
+BaseAddr=$0600
+RAMAddr=$FF00
+RDFSync=3
+AdvCodeBindFormat=LONG
+SectionTerminator=$FF
+EFCDigits=5
+2BytePid=Yes
+DevComb=,$1042,$1c27,,$4EEF,$1d1b
+ImageMap=URC-7525.map
+
+[SpecialProtocols]
+Multiplex=01FE
+
+[Checksums]
+^$008:$00A..$014
+^$100:$102..$3FF
+
+[Settings2]
+VPT Status=$010.2.1.1.0 (Off;On)
+CBL Channel Control Lock=$010.3.1.1.0 (Off;On)
+VPT Device=$011.7.8.0.0 DeviceButtons
+CBL uses VPT=$012.0.1.1.0 (No;Yes)
+TV  uses VPT=$012.1.1.1.0 (No;Yes)
+CBL Setup Code Lock=$00F.0.1.1.0 (Off;On)
+TV  Setup Code Lock=$00F.1.1.1.0 (Off;On)
+KeyMap=$00E.5.1.0.0 (Standard;Alternate)
+
+# DeviceTypes
+# The order matches up with default type on DeviceButtons
+# The names match up with DeviceTypeAliases
+
+[DeviceTypes]
+TV       = 0
+Cable    = 1
+
+[DeviceTypeAliases]
+Cable    = Cable,SAT,Video Acc
+TV       = TV
+
+[DeviceButtons]
+TV  = $00A $00B
+SAT = $00C $00D
+
+[Buttons]
+Magic=01
+Power=02
+TeleText=03
+TeleTextMix=04
+TeleTextOff=05
+TeleTextExpand=06
+16/9=07
+Hold=08
+1=09
+2=10
+3=11
+4=12
+5=13
+6=14
+7=15
+8=16
+9=17
+-/--=18
+0=19
+AV=20
+Mute=23
+Menu=26
+Vol+=21
+Vol-=22
+Ch+=24
+Ch-=25
+Up=27
+Left=29
+Right=30
+Down=28
+OK=31
+Rew=32
+Play=33
+Pause=34
+Ffw=35
+Previous=36
+Stop=37
+Record=38
+Next=39
+Red=40
+Green=41
+Yellow=42
+Blue=43
+Guide=44
+Info=45
+Help=46
+Back=47
+PPV=48
+Subtitle=49
+Radio=50
+Favorite=51
+
+[ButtonMaps]
+0 = ($13, $09, $0A, $0B, $0C, $0D, $0E, $0F, $10, $11), ($15, $16, $17), ($18, $19),
+    $02, $1B, $1C, $1A, $2D, $1D, $1E, $28, $29, $2A, $2B, $03, $1F, $14, $2F, $2C, $05,
+    $08, $06, $12, $32, $07, $04, $31, $30, $33, $22, $25, $20, $21, $26, $23, $2E, $24, $27
+1 = ($13, $09, $0A, $0B, $0C, $0D, $0E, $0F, $10, $11), ($15, $16, $17), ($18, $19),
+    $02, $1B, $1C, $1A, $2D, $1D, $1E, $28, $29, $2A, $2B, $03, $1F, $14, $2F, $2C, $05,
+    $08, $06, $12, $32, $07, $04, $31, $30, $33, $22, $25, $20, $21, $26, $23, $2E, $24, $27
+
+[Protocols]
+0000, 0087, 00BD, 0010, 0011, 0014, 0018, 001C, 001F:8, 0027:new,
+002A, 002C, 003D, 0045, 004A, 0051, 0057, 005A, 0058:2, 004B:7, 
+00C4, 005C, 005D, 0068, 006C, 0073, 0075, 0082, 0065:2, 007E:3,
+009C, 00A1, 00A5, 00A6, 00A8, 00B0, 00B2, 00B6, 0002:5, 0098:2,
+00CA, 00D1, 00D5, 00DE, 00E2, 00E5, 00E8, 00EB, 005E:2, 0020:2, 
+00ED, 00F0, 00F3, 0109, 011B, 011E, 0156, 015E, 00F8:3, 012A:2,
+0161, 016A, 016C, 0171, 0176, 018C, 019A, 01B5, 0173:1, 0182:2,
+00C9, 008C, 01BB, 01C3, 01DB
+
+[DigitMaps]
+003 053 179 046 094 092 140 032 176 177 365 366 404 001 034 342
+038 014 187 188 125 297 298 043 168 185 086 340 189 191 173 211
+064 069 141 409 181 182 361 071 029 075 007 021 037 074 026 059
+091 169 060 443 217 218 314 315 194 373 192 193 357 346 206 207
+195 196 093
