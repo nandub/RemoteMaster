@@ -1,0 +1,61 @@
+#$MTIMFH
+#$-:Image Map file created by Map THIS!
+#$-:Map THIS! free image map editor by Todd C. Wilson
+#$-:Please do not edit lines starting with "#$"
+#$VERSION:1.30
+#$DATE:Wed Nov 21 09:23:29 2007
+#$PATH:C:\temp\ofa\kameleon\
+#$GIF:urc-8210-vcr2.jpg
+#$FORMAT:ncsa
+#$EOH
+default URC-8210
+rect TV2 100,20 123,40
+rect AUD1 50,10 71,34
+rect AUD2 75,10 95,34
+rect TV1 22,21 45,41
+rect VCR 21,46 45,63
+rect AUX1 47,58 70,73
+rect AUX2 73,58 104,72
+rect SAT 105,44 124,65
+circle CD  59,45 70,55
+circle DVD  86,46 97,56
+rect HT 53,77 95,96
+rect Magic 25,80 43,102
+circle Power  109,89 119,97
+poly Timer 24,123 28,110 53,105 53,123 24,123 24,123
+poly Prog 95,122 95,104 114,105 123,116 123,123 95,122 95,122
+rect Scroll 57,103 91,123
+rect Eject 57,127 92,146
+rect Menu 19,175 54,190
+rect Mute 96,174 130,190
+poly Ch+ 36,231 18,231 19,221 29,211 41,208 36,231 36,231
+poly Ch- 18,235 37,235 47,260 35,260 23,248 18,235 18,235
+poly Vol+ 117,229 138,230 135,219 124,209 106,205 117,229 117,229
+poly Vol- 117,235 138,235 135,248 122,257 106,258 117,235 117,235
+rect 1 33,284 57,302
+rect 3 98,284 122,302
+rect 2 65,284 89,302
+rect 4 32,310 56,328
+rect 5 64,309 88,327
+rect 6 98,308 122,326
+rect 7 32,336 56,354
+rect 8 64,334 88,352
+rect 9 97,334 121,352
+rect 0 66,362 90,380
+poly -/-- 32,361 55,361 55,379 40,379 33,372 32,361 32,361
+poly A 64,470 78,462 94,468 78,477 64,470 64,470
+poly B 56,477 53,488 75,492 71,482 56,477 56,477
+poly C 84,491 104,487 101,474 86,480 84,491 84,491
+circle Red  42,511 50,520
+circle Green  66,514 74,523
+circle Yellow  92,515 100,524
+circle Blue  116,511 124,520
+rect Sp/Lp 97,128 132,147
+rect TV/VCR 21,128 56,147
+rect AV 99,361 123,379
+rect Exit 63,173 87,187
+circle Ok  76,233 86,243
+poly Up 66,220 86,220 76,204 66,220 66,220
+poly Right 91,240 91,225 104,234 91,240 91,240
+poly Down 67,247 87,247 77,259 67,247 67,247
+poly Left 61,240 61,224 50,235 61,240 61,240

@@ -1,0 +1,70 @@
+#$MTIMFH
+#$-:Image Map file created by Map THIS!
+#$-:Map THIS! free image map editor by Todd C. Wilson
+#$-:Please do not edit lines starting with "#$"
+#$VERSION:1.30
+#$DATE:Tue Nov 20 22:32:10 2007
+#$PATH:C:\temp\ofa\kameleon\
+#$GIF:urc-8210-aud.jpg
+#$FORMAT:ncsa
+#$EOH
+default URC-8210
+rect TV2 100,20 123,40
+rect AUD1 50,10 71,34
+rect AUD2 75,10 95,34
+rect TV1 22,21 45,41
+rect VCR 21,46 45,63
+rect AUX1 47,58 70,73
+rect AUX2 73,58 104,72
+rect SAT 105,44 124,65
+circle CD  59,45 70,55
+circle DVD  86,46 97,56
+rect HT 53,77 95,96
+rect Magic 25,80 43,102
+circle Power  109,89 119,97
+poly Random 24,123 28,110 53,105 53,123 24,123
+poly Prog 95,122 95,104 114,105 123,116 123,123 95,122
+rect Scroll 57,103 91,123
+rect Eject 57,127 92,146
+rect preset 95,128 123,145
+rect Dsp 57,152 92,167
+rect Menu 19,175 54,190
+rect Mute 96,174 130,190
+poly Audio 24,150 52,150 51,167 33,168 25,161 24,150
+poly Subt 97,166 116,166 125,159 125,151 97,151 97,166
+poly Ch+ 36,231 18,231 19,221 29,211 41,208 36,231
+poly Ch- 18,235 37,235 47,260 35,260 23,248 18,235
+poly Vol+ 117,229 138,230 135,219 124,209 106,205 117,229
+poly Vol- 117,235 138,235 135,248 122,257 106,258 117,235
+poly Center- 59,234 54,254 46,234 52,214 59,234
+poly Rear+ 76,217 61,207 77,200 90,207 76,217
+poly Center+ 93,232 97,213 107,231 98,250 93,232
+poly Rear- 75,254 90,258 76,266 60,259 75,254
+circle Surround  75,233 87,243
+rect 1 33,284 57,302
+rect 3 98,284 122,302
+rect 2 65,284 89,302
+rect 4 32,310 56,328
+rect 5 64,309 88,327
+rect 6 98,308 122,326
+rect 7 32,336 56,354
+rect 8 64,334 88,352
+rect 9 97,334 121,352
+rect 0 64,360 88,378
+poly +10 32,361 55,361 55,379 40,379 33,372 32,361
+poly Sel 100,382 111,381 122,374 125,362 111,363 100,371 100,382
+rect skip- 37,390 57,405
+rect skip+ 99,388 120,404
+rect Rew 38,408 60,428
+rect Play 61,406 94,430
+rect FF 96,408 114,424
+rect Rec 67,436 89,452
+poly Pause 41,432 61,433 63,452 48,447 41,432
+poly Stop 94,450 95,432 115,431 111,443 102,449 94,450
+poly A 64,470 78,462 94,468 78,477 64,470
+poly B 56,477 53,488 75,492 71,482 56,477
+poly C 84,491 104,487 101,474 86,480 84,491
+circle Red  42,511 50,520
+circle Green  66,514 74,523
+circle Yellow  92,515 100,524
+circle Blue  116,511 124,520
