@@ -1,0 +1,248 @@
+[General]
+Name=One For All URC-8210 Kameleon 2nd Generation
+EepromSize=$1000
+AdvCodeAddr=$0038..$03FF
+UpgradeAddr=$0400..$07FF
+LearnedAddr=$0800..$0FFF
+Processor=HCS08
+BaseAddr=$EC00
+RDFSync=3
+DevComb=,$0846,$0D7B,,$19F3
+WAVUpgrade=1
+AdvCodeBindFormat=LONG
+SectionTerminator=$FF
+LearnedDevBtnSwapped=Yes
+EFCDigits=5
+//ImageMap=URC-8210.map
+
+[Settings]
+EL Activation Type=$01E.4.1.0.0 (Key Press;Remote Touch)
+Light Sensor Status=$01E.5.1.0.0 (Off;On)
+VPT Status=$01E.2.1.0.0 (Off;On)
+VPT Device=$020.7.8.1.0 DeviceButtons
+SAT  VPT=$021.0.1.1.0 (Off;On)
+TV1  VPT=$021.1.1.1.0 (Off;On)
+TV2  VPT=$021.2.1.1.0 (Off;On)
+VCR  VPT=$021.3.1.0.0 (Off;On)
+DVD  VPT=$021.4.1.1.0 (Off;On)
+CD   VPT=$021.5.1.0.0 (Off;On)
+AUD1 VPT=$0021.6.1.1.0 (Off;On)
+AUD2 VPT=$0021.7.1.0.0 (Off;On)
+AUX1 VPT=$0022.0.1.0.0 (Off;On)
+AUX2 VPT=$0022.1.1.0.0 (Off;On)
+CH +/- Status=$01E.1.1.0.0 (Use Native;Simulate)
+CH +/- Device=$035.7.8.1.0 DeviceButtons
+Light On Time=$037.3.4.2.0 (17min;4sec;8sec;12sec;16sec;20sec)
+G1 HT Power=$023.7.8.1.0 DeviceButtons
+G2 HT Channel=$024.7.8.1.0 DeviceButtons
+G3 HT Volume=$025.7.8.1.0 DeviceButtons
+G4 HT Control=$026.7.8.1.0 DeviceButtons
+G5 HT Number keys=$027.7.8.1.0 DeviceButtons
+G6 HT Audio=$028.7.8.1.0 DeviceButtons
+G7 HT Menu/Arrows=$029.7.8.1.0 DeviceButtons
+G8 HT Guide=$02a.7.8.1.0 DeviceButtons
+G9 HT Txt=$02b.7.8.1.0 DeviceButtons
+G10 HT AV=$02c.7.8.1.0 DeviceButtons
+G11 HT Tune=$02d.7.8.1.0 DeviceButtons
+G12 HT PP=$02e.7.8.1.0 DeviceButtons
+G13 HT 16:9=$02f.7.8.1.0 DeviceButtons
+G14 HT Timer=$030.7.8.1.0 DeviceButtons
+G15 HT Info=$031.7.8.1.0 DeviceButtons
+G16 HT Eject=$032.7.8.1.0 DeviceButtons
+G17 HT Audio/Subt=$033.7.8.1.0 DeviceButtons
+G18 HT ABC=$034.7.8.1.0 DeviceButtons
+KeyMap=$01F.5.1.0.0 (Standard;Alternate)
+
+[Checksums]
+^$008:$00A..$037
+
+# DeviceTypes
+# The order matches up with default type on DeviceButtons
+# The names match up with DeviceTypeAliases
+# Type matches up with Device Index
+# TypeList appends name so you get: CBL/SAT/SAT, AUD/AUD
+
+[DeviceTypes]
+SAT/CBL = 0
+TV      = 1
+TV      = 1,1
+VCR     = 2
+DVD     = 3
+CD      = 4
+AUD     = 5
+AUD     = 5,5
+VCR     = 2,2
+DVD     = 3,3
+
+[DeviceTypeImageMaps]
+TV      = (urc-8210-tv.map,urc-8210-tv2.map,urc-8210-tv3.map)
+SAT/CBL = (urc-8210-sat.map,urc-8210-sat2.map)
+VCR     = (urc-8210-vcr.map,urc-8210-vcr2.map)
+DVD     = (urc-8210-dvd.map)
+CD      = (urc-8210-cd.map,urc-8210-cd2.map)
+AUD     = (urc-8210-aud.map,urc-8210-aud2.map)
+
+[DeviceTypeAliases]
+SAT/CBL = Cable,SAT,Video Acc
+TV      = TV
+VCR     = VCR,Tape,DAT
+DVD     = DVD,Laserdisc
+CD      = CD,Home Auto,Phono
+AUD     = Tuner,Misc Audio,Amp
+
+[DeviceButtons]
+SAT     = $00A $00B
+TV1     = $00C $00D
+TV2     = $00E $00F
+VCR     = $010 $011
+DVD     = $012 $013
+CD      = $014 $015
+AUD1    = $016 $017
+AUD2    = $018 $019
+AUX1    = $01A $01B
+AUX2    = $01C $01D
+
+[Buttons]
+TV1=$01,
+Magic=$02,
+Power=$03,
+Vol+=$04,
+Vol-=$05,
+Ch+=$06,
+Ch-=$07,
+Mute=$08,
+CD=$09,
+VCR=$0A,
+SAT=$11,
+1=$15,
+2=$16,
+3=$17,
+4=$19,
+5=$1A,
+6=$1B,
+7=$1C,
+8=$1D,
+9=$1E,
+0=$1F,
+DVD=$21,
+AUD1=$22,
+PP=$31,
+TV2=$32,
+Rec=$38,
+AUD2=$3B,
+AUX1=$3C,
+AUX2=$3D,
+Random=$72,
+Timer=$71,
+Red=$0B,
+Green=$0C,
+Blue=$0D,
+Yellow=$0E,
+Exit=$10,
+AV=$12,
+16-9=$13,
+Menu=$14,
+TV/VCR=$18,
++10=$20,
+skip-=$23,
+skip+=$24,
+guide=$25,
+PVR=$54,
+Fav=$28,
+Up=$29,
+Down=$2A,
+Left=$2B,
+Right=$2C,
+A=$2D,
+B=$2E,
+C=$2F,
+Scroll=$30,
+Rew=$33,
+Play=$34,
+FF=$35,
+Stop=$36,
+Pause=$37,
+Audio=$39,
+Subt=$3A,
+Info=$26,
+Ok=$3E,
+TV/DVD=$61,
+HT=$43,
+Back=$66,
+Sel=$52,
+Prog=$53,
+tuner-1=$55,
+tuner-2=$56,
+tuner-3=$57,
+TV/SAT=$58,
+tuner-4=$59,
+tuner-5=$5A,
+tuner-6=$5B,
+tuner-7=$5C,
+tuner-8=$5D,
+tuner-9=$5E,
+tuner-0=$5F,
+-/--=$60, 
+Dsp=$65,
+Eject=$67,
+preset=$68,
+Sp/Lp=$69,
+Rear+=$6d,
+Rear-=$6A,
+Center-=$6B,
+Center+=$6C,
+Txt-expand=$73, 
+Txt-on=$74, 
+Txt-hold=$75, 
+Txt-index=$76, 
+Txt-mix=$77, 
+Txt-off=$78
+Tune-=$79,
+Tune+=$7a,
+Surround=$7e,
+Sleep=$83,
+Color+=$84,
+Color-=$85,
+Bright+=$86,
+Bright-=$87
+
+[ButtonMaps]
+0 = ($1F, $15, $16, $17, $19, $1A, $1B, $1C, $1D, $1E), ($04, $05, $08), ($06, $07),
+    $03, $14, $29, $2A, $2B, $2C, $3E, $26, $58, $66, $25, $28, $0B, $0C, $0E, $0D,
+    $74, $3A, $10, $83, $60, $34, $37, $33, $35, $36, $38, $78, $24, $23, $31, $39,
+    $12, $2D, $2E, $2F
+1 = ($1F, $15, $16, $17, $19, $1A, $1B, $1C, $1D, $1E), ($04, $05, $08), ($06, $07),
+    $03, $12, $74, $78, $60, $77, $76, $0B, $0C, $0E, $0D, $86, $87, $84, $85, $83,
+    $14, $29, $2A, $2B, $2C, $31, $3E, $10, $13, $73, $75
+2 = ($1F, $15, $16, $17, $19, $1A, $1B, $1C, $1D, $1E), ($04, $05, $08), ($06, $07),
+    $03, $34, $37, $33, $35, $36, $38, $67, $14, $53, $29, $2A, $2B, $2C, $10, $3E,
+    $18, $69, $12, $60, $71, $0B, $0C, $0E, $0D
+3 = ($1F, $15, $16, $17, $19, $1A, $1B, $1C, $1D, $1E), ($04, $05, $08), ($06, $07),
+    $03, $14, $29, $2A, $2B, $2C, $34, $37, $33, $35, $36, $38, $67, $3A, $24, $23,
+    $10, $3E, $39, $20, $61, $72, $53, $25
+4 = ($1F, $15, $16, $17, $19, $1A, $1B, $1C, $1D, $1E), ($04, $05, $08), ($06, $07),
+    $03, $34, $36, $33, $35, $38, $37, $67, $72, $10, $14, $29, $2A, $2B, $2C, $53,
+    $3E, $20, $24, $23, $83
+5 = ($1F, $15, $16, $17, $19, $1A, $1B, $1C, $1D, $1E), ($04, $05, $08), ($06, $07),
+    $03, $5F, $55, $56, $57, $59, $5A, $5B, $5C, $5D, $5E, $34, $37, $33, $35, $36,
+    $38, $52, $7E, $72, $3E, $29, $2A, $2B, $2C, $6D, $6A, $6B, $6C, $10, $14, $24,
+    $23, $3A, $83, $20, $53, $39, $65, $7A, $79
+
+[DigitMaps]
+03 53 74 92 94 140 32 01 114 86 21 87 58 29 46 69 34 183 184 201 139 66 42 38 14
+187 188 43 95 51 19 125 64 166 167 168 191 179 185 176 177 211 189 173 217 218 141
+348 181 182 75 89 71 37 33 85 26 59 84 169 60 194 91 124 192 193 206 207 331 195
+196 30 80 39 13 31 09 209 210 175 170 131 128 93 202 129 205 213 290 208 190 203
+197 215 174 214 229 318 320
+
+[Protocols]
+0000, 0002:5, 0006, 000B, 000D, 0010, 0011, 0013, 0014, 0018, 001A,
+001C, 001D, 001F:8, 0020:2, 0022, 0027:new, 002A, 002C, 0034, 003D,
+003F, 0045, 0046, 004A, 004B:7, 0051, 0058:2, 005A, 005B, 005C,
+005D, 005E:2, 005F, 0064, 0065:2, 0066, 0068, 006A, 006C, 0073,
+0075, 007E:3, 0082, 0087, 008C, 008E, 0095, 0098:2, 009C, 009E,
+00A1, 00A5, 00A6, 00A8, 00AA, 00AB, 00AF, 00B0, 00B2, 00B6, 00B9,
+00BD, 00C4, 00C9, 00CA, 00CC, 00CD:2, 00D1, 00D5, 00DE, 00E2, 00E5,
+00E8, 00EB, 00ED, 00EF, 00F0, 00F3, 00F4, 00F8:3, 0108, 0109, 0111,
+0112, 0114:2, 011A:2, 011B, 011E, 0125, 012A:2, 012B, 015E, 0160,
+0161, 016A, 016C, 0173:1, 0176, 017E, 0182:2, 018C
