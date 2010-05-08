@@ -12,7 +12,7 @@ SectionTerminator=$FF
 LearnedDevBtnSwapped=Yes
 EFCDigits=5
 XShift=$40
-ImageMap=Atlas-5-PVR-Day.map
+ImageMap=Atlas-5-PVR-DAY.map
 DevComb=,$34FF,$41FD,,$4EEF,$42FA
 SetupValidation=Warn
 

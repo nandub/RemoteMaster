@@ -45,10 +45,10 @@ VCR	= 2
 DVD	= 3
 
 [DeviceTypeImageMaps]
-CBL/SAT = (urc-8040-cbl-main.map,urc-8040-cbl-PVR.map)
-TV      = (urc-8040-tv-main.map,urc-8040-tv-menu.map)
-VCR     = (urc-8040-vcr-main.map,urc-8040-vcr-menu.map)
-DVD     = (urc-8040-dvd.map)
+CBL/SAT = (URC-8040-cbl-main.map,URC-8040-cbl-pvr.map)
+TV      = (URC-8040-tv-main.map,URC-8040-tv-menu.map)
+VCR     = (URC-8040-vcr-main.map,URC-8040-vcr-menu.map)
+DVD     = (URC-8040-dvd.map)
 
 [DeviceTypeAliases]
 CBL/SAT = Cable,SAT,Video Acc,CD,Home Auto,Phono,Tuner,Misc Audio,Amp

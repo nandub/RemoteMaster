@@ -41,9 +41,9 @@ VCR     = 1
 DVD     = 2
 
 [DeviceTypeImageMaps]
-TV      = (urc-8203_tv.map,urc-8203_tv_text.map)
-VCR     = (urc-8203_vcr.map,urc-8203_vcr_digits.map)
-DVD     = (urc-8203_dvd.map,urc-8203_dvd_digits.map)
+TV      = (URC-8203_TV.map,URC-8203_TV_TEXT.map)
+VCR     = (URC-8203_VCR.map,URC-8203_VCR_DIGITS.map)
+DVD     = (URC-8203_DVD.map,URC-8203_DVD_DIGITS.map)
 
 [DeviceTypeAliases]
 TV      = TV

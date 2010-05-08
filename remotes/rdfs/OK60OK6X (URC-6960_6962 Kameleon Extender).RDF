@@ -48,12 +48,12 @@ PVR     = 1
 AUD     = 4
 
 [DeviceTypeImageMaps]
-CBL     = (urc-6960-cbl-main.map,urc-6960-cbl-menu.map)
-TV      = (urc-6960-tv-main.map,urc-6960-tv-menu.map,urc-6960-tv-pip.map)
-VCR     = (urc-6960-vcr-main.map,urc-6960-vcr-menu.map)
-DVD     = (urc-6960-dvd.map)
-PVR     = (urc-6960-pvr.map)
-AUD     = (urc-6960-aud-main.map,urc-6960-aud-sur.map,urc-6960-aud-menu.map,urc-6960-aud-preset.map)
+CBL     = (urc-6960-CBL-MAIN.map,urc-6960-CBL-MENU.map)
+TV      = (urc-6960-TV-MAIN.map,urc-6960-TV-MENU.map,urc-6960-TV-PIP.map)
+VCR     = (urc-6960-VCR-MAIN.map,urc-6960-VCR-MENU.map)
+DVD     = (urc-6960-DVD.map)
+PVR     = (urc-6960-PVR.map)
+AUD     = (urc-6960-AUD-MAIN.map,urc-6960-AUD-SUR.map,urc-6960-AUD-MENU.map,urc-6960-AUD-PRESET.map)
 
 [DeviceTypeAliases]
 CBL	= Cable, SAT, Video Acc

@@ -50,12 +50,12 @@ CD      = 5
 AUD     = 4
 
 [DeviceTypeImageMaps]
-SAT/CBL = (urc-8060-sat-main.map,urc-8060-sat-menu.map,urc-8060-sat-PVR.map)
-TV      = (urc-8060-tv-main.map,urc-8060-tv-text.map,urc-8060-tv-menu.map)
-VCR     = (urc-8060-vcr-main.map,urc-8060-vcr-menu.map)
-DVD     = (urc-8060-dvd.map)
-CD      = (urc-8060-cd.map)
-AUD     = (urc-8060-aud.map)
+SAT/CBL = (URC-8060-sat-main.map,URC-8060-sat-menu.map,URC-8060-sat-pvr.map)
+TV      = (URC-8060-tv-main.map,URC-8060-tv-text.map,URC-8060-tv-menu.map)
+VCR     = (URC-8060-vcr-main.map,URC-8060-vcr-menu.map)
+DVD     = (URC-8060-dvd.map)
+CD      = (URC-8060-cd.map)
+AUD     = (URC-8060-aud.map)
 
 [DeviceTypeAliases]
 SAT/CBL	= Cable,SAT,Video Acc

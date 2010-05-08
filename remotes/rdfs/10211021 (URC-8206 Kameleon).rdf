@@ -46,12 +46,12 @@ AUD     = 5
 
 
 [DeviceTypeImageMaps]
-SAT/CBL = (urc-8206-sat.map,urc-8206-sat-menu.map)
-TV      = (urc-8206-tv.map,urc-8206-tv-text.map,urc-8206-tv-menu.map)
-VCR     = (urc-8206-vcr.map,urc-8206-vcr-menu.map)
-DVD     = (urc-8206-dvd.map)
-CD      = (urc-8206-cd.map,urc-8206-cd-menu.map)
-AUD     = (urc-8206-aud.map,urc-8206-aud-menu.map)
+SAT/CBL = (URC-8206-SAT.map,URC-8206-SAT-MENU.map)
+TV      = (URC-8206-TV.map,URC-8206-TV-TEXT.map,URC-8206-TV-MENU.map)
+VCR     = (URC-8206-VCR.map,URC-8206-VCR-MENU.map)
+DVD     = (URC-8206-DVD.map)
+CD      = (URC-8206-CD.map,URC-8206-CD-MENU.map)
+AUD     = (URC-8206-AUD.map,URC-8206-AUD-MENU.map)
 
 [DeviceTypeAliases]
 SAT/CBL = Cable,SAT,Video Acc

@@ -14,7 +14,7 @@ SectionTerminator=$FF
 LearnedDevBtnSwapped=Yes
 EFCDigits=5
 2BytePid=Yes
-ImageMap=URC-7950.map
+ImageMap=urc-7950.map
 SetupValidation=Warn
 
 [SpecialProtocols]

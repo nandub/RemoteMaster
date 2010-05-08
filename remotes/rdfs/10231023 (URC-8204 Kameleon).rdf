@@ -39,10 +39,10 @@ VCR     = 2
 DVD     = 3
 
 [DeviceTypeImageMaps]
-SAT/CBL = (URC-8204-SAT.MAP,URC-8204-SAT-MENU.MAP)
-TV      = (URC-8204-TV.MAP,URC-8204-TV-MENU.MAP)
-VCR     = (URC-8204-VCR.MAP,URC-8204-VCR-MENU.MAP)
-DVD     = (URC-8204-DVD.MAP)
+SAT/CBL = (URC-8204-SAT.map,URC-8204-SAT-MENU.map)
+TV      = (URC-8204-TV.map,URC-8204-TV-MENU.map)
+VCR     = (URC-8204-VCR.map,urc-8204-VCR-MENU.map)
+DVD     = (URC-8204-DVD.map)
 
 [DeviceTypeAliases]
 SAT/CBL = Cable,SAT,Video Acc
