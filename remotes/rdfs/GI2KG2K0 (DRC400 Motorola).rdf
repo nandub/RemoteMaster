@@ -5,6 +5,7 @@ AdvCodeAddr=$016..$0FF
 UpgradeAddr=$100..$1FC
 Processor=S3C80
 RAMAddr=$8000
+DevComb=$4D,$0663,$143B,,$7BEF,$1498,
 RDFSync=3
 ImageMap=Motorola-DRC400.map
 SetupValidation=Warn

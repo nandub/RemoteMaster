@@ -7,6 +7,7 @@ LearnedAddr=$800..$FFF
 Processor=HCS08
 BaseAddr=$EC00
 RAMAddr=$FF00
+DevComb=,$362D,$3B62,,$19DB,,
 RDFSync=3
 WAVUpgrade=1
 AdvCodeBindFormat=LONG

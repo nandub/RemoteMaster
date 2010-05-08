@@ -10,6 +10,7 @@ AdvCodeFormat=EFC
 AdvCodeBindFormat=LONG
 Processor=S3C80
 RAMAddr=$FF00
+DevComb=,$0ECB,$2FCA,,$80BF,$302F,$0100
 RDFSync=3
 WAVUpgrade=Yes
 SetupValidation=Warn

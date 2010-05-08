@@ -6,6 +6,7 @@ UpgradeAddr=$100..$3FF
 LearnedAddr=$400..$7FD
 Processor=S3C80
 RAMAddr=$FF00
+DevComb=,$14FE,$3453,,$7DBF,$34B8,
 RDFSync=3
 ImageMap=URC-7562.map
 XShift=$C0,Menu

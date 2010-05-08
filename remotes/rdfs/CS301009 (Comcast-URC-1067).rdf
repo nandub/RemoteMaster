@@ -6,6 +6,7 @@ UpgradeAddr=$200..$3FF
 Processor=HCS08
 BaseAddr=$F800
 RAMAddr=$FF00
+DevComb=,$CE8B,$D3B0,,$19CD,,
 RDFSync=3
 SectionTerminator=$FF
 AdvCodeBindFormat=LONG

@@ -7,6 +7,7 @@ UpgradeAddr=$100..$3FE
 LearnedAddr=$3FF..$7FD
 Processor=S3C80
 RAMAddr=$FF00
+DevComb=,$1B3C,$0C0F,,$6BEF,$0C71,
 RDFSync=3
 ImageMap=URC-7550.map,URC-7560.map
 SetupValidation=Warn

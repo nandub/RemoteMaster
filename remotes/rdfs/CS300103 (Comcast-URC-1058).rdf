@@ -6,6 +6,7 @@ UpgradeAddr=$100..$1FF
 Processor=HCS08
 BaseAddr=$FB80
 RAMAddr=$FF00
+DevComb=,$D0A7,$D1E6,$D0A2,$FFE4,$FFE9,
 RDFSync=3
 AdvCodeFormat=EFC
 EFCDigits=5

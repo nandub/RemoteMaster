@@ -7,6 +7,7 @@ LearnedAddr=$0C00..$13FF
 Processor=S3F80
 BaseAddr=$0600
 RAMAddr=$FF00
+DevComb=,$36CB,$4476,,$4EAF,$456A,
 RDFSync=3
 AdvCodeBindFormat=LONG
 SectionTerminator=$FF

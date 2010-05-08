@@ -7,6 +7,7 @@ LearnedAddr=$3FF..$7FD
 DevCodeOffset=30
 Processor=S3C80
 RAMAddr=$8000
+DevComb=,$109A,$2E32,,$A5EF,$2494,
 RDFSync=3
 ImageMap=Force.map
 SetupValidation=Warn
