@@ -15,7 +15,7 @@ EFCDigits=5
 ImageMap=15-100.map
 2BytePid=Yes
 Labels=$200,10
-DevComb=,$5FBF,$7078,,$4EAF,$716C
+DevComb=,$5FBF,$7078,,$4EEF,$716C,$0100
 SetupValidation=Warn
 
 [SpecialProtocols]

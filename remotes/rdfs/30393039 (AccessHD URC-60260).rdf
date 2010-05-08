@@ -12,7 +12,7 @@ SectionTerminator=$FF
 LearnedDevBtnSwapped=Yes
 EFCDigits=5
 ImageMap=URC-60260.map
-DevComb=,$1c9a,$297f,,$4EEF,$2a73
+DevComb=,$1ca5,$297f,,$4EEF,$2a73
 2BytePid=Yes
 SetupValidation=Warn
 
