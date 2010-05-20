@@ -13,6 +13,9 @@ WAVUpgrade=1
 ImageMap=URC-7560.map,URC-7562.map
 SetupValidation=Warn
 
+[Extender]
+OEMSignature=EBV0EBV1
+
 [SpecialProtocols]
 DSM=01FC
 Multiplex=01FE

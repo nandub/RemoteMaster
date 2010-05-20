@@ -10,6 +10,9 @@ RDFSync=3
 DevComb=$74,$15C4,$361D,,$9FBF,$3682,$0100
 \\ImageMap=15-2138.map
 
+[Extender]
+OEMSignature=RS80RS80
+
 [SpecialProtocols]
 DSM=01FC
 LDKP=01F9

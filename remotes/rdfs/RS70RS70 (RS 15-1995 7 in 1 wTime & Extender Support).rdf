@@ -15,6 +15,9 @@ RDFSync=3
 ImageMap=15-1995.map
 SetupValidation=Warn
 
+[Extender]
+OEMSignature=RS70RS70
+
 [SpecialProtocols]
 Multiplex=01FE
 

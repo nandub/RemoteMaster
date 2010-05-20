@@ -18,6 +18,9 @@ DevComb=,$3589,$42C8,,$4EEF,$43BC
 2BytePid=Yes
 SetupValidation=Warn
 
+[Extender]
+OEMSignature=30333033
+
 [SpecialProtocols]
 Multiplex=01FE
 DSM=01FC

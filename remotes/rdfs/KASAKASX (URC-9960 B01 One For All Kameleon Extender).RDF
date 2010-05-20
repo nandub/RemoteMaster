@@ -16,6 +16,9 @@ XShift=$40
 DevComb=$7E,$1776,$365F,,$83BF,$36C4,$100
 SetupValidation=Warn
 
+[Extender]
+OEMSignature=NAK0NAK0
+
 [SpecialProtocols]
 Multiplex=01FE
 DSM=01FC

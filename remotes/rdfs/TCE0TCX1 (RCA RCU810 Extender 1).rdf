@@ -10,6 +10,9 @@ DevComb=$8A,$11B7,$1E1C,,$95EF,$1E79
 RDFSync=3
 ImageMap=RCU-810.map
 
+[Extender]
+OEMSignature=TCE0TCE0
+
 [SpecialProtocols]
 DSM=01FC
 Multiplex=01FE

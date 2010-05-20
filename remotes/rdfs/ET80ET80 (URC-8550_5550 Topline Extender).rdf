@@ -16,6 +16,9 @@ WAVUpgrade=1
 ImageMap=URC-8550.map,URC-5550.map
 SetupValidation=Warn
 
+[Extender]
+OEMSignature=ET80ET80
+
 [SpecialProtocols]
 Multiplex=01FE
 

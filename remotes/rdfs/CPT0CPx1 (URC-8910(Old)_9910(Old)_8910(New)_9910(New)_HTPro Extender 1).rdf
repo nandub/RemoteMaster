@@ -29,6 +29,7 @@ DeviceSetup=MISC/1104,Pause
 DeviceSetup=MISC/1103,DSM
 DeviceSetup=TV/1101,Multiplexer
 DeviceSetup=MISC/1107,ModeName
+OEMSignature=CPT0CPT0
 
 [Settings]
 HT Transport Device=$02b.7.8.1.0 DeviceButtons

@@ -16,6 +16,9 @@ ImageMap=Atlas-5-PVR-DAY.map
 DevComb=,$350A,$41FD,,$4EEF,$42FA
 SetupValidation=Warn
 
+[Extender]
+OEMSignature=30003000
+
 [SpecialProtocols]
 Multiplex=01FE
 DSM=01FC

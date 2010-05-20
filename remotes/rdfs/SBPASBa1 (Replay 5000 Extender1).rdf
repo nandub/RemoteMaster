@@ -9,6 +9,9 @@ RAMAddr=$FF00
 RDFSync=3
 ImageMap=Replay5000.map
 
+[Extender]
+OEMSignature=SBPASBP0
+
 [SpecialProtocols]
 DSM=01FC
 Multiplex=01FE

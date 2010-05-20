@@ -10,6 +10,9 @@ RDFSync=3
 ImageMap=URC-7800.map,URC-6800.map
 SetupValidation=Warn
 
+[Extender]
+OEMSignature=C7L0C7L0
+
 [SpecialProtocols]
 DSM=01FC
 Multiplex=01FE

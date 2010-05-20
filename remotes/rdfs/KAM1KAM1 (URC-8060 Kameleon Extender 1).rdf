@@ -11,6 +11,9 @@ WAVUpgrade=1
 XShift=$C0
 SetupValidation=Warn
 
+[Extender]
+OEMSignature=KAMEKAM0
+
 [SpecialProtocols]
 DSM=01FC
 LDKP=01F9

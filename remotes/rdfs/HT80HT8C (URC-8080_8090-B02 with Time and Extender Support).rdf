@@ -13,6 +13,9 @@ RDFSync=3
 ImageMap=URC-8080.map
 SetupValidation=Warn
 
+[Extender]
+OEMSignature=HT80HT80
+
 [SpecialProtocols]
 Multiplex=01FE
 

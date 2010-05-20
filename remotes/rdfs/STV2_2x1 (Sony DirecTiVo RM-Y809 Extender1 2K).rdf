@@ -22,6 +22,7 @@ DeviceSetup=TV/1106,LDKP
 DeviceSetup=TV/1104,Pause
 DeviceSetup=TV/1103,DSM
 DeviceSetup=TV/1101,Multiplexer
+OEMSignature=STV2TV20
 
 [Settings]
 Shift Button Keycode=$07EC.7.8.2.0

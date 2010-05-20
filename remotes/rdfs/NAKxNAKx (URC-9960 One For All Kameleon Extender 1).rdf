@@ -12,6 +12,9 @@ WAVUpgrade=Yes
 \\ImageMap=URC-9960.map
 XShift=$C0
 
+[Extender]
+OEMSignature=KAMEKAM0
+
 [SpecialProtocols]
 DSM=01FC
 LDKP=01F9

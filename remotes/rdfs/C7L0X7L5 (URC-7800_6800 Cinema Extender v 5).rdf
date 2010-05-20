@@ -11,6 +11,8 @@ Shift=$80, Shift
 XShift=$C0, XShift
 ImageMap=URC-7800.map,URC-6800.map
 
+[Extender]
+OEMSignature=C7L0C7L0
 
 [SpecialProtocols]
 DSM=01FC

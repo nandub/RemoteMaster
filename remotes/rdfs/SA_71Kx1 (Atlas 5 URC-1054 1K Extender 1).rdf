@@ -16,6 +16,7 @@ DeviceSetup=TV/1106,LDKP
 DeviceSetup=TV/1104,Pause
 DeviceSetup=TV/1103,DSM
 DeviceSetup=TV/1101,Multiplexer
+OEMSignature=SA_7SA_7
 
 [SpecialProtocols]
 ToadTog=0181

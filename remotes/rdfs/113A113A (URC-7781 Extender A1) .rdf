@@ -24,6 +24,9 @@ PauseParams=Pause,2/B,1000
 ExtenderVersionAddr=$03,Asc,$B5
 SetupValidation=Warn
 
+[Extender]
+OEMSignature=11311131
+
 [SpecialProtocols+]
 DSM=Internal:0(DSM1)
 DSM=01FC(DSM2)
