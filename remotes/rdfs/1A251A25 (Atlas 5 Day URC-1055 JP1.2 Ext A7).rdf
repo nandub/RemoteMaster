@@ -19,6 +19,9 @@ Shift=$80, Shift
 XShift=$C0, XShift
 SetupValidation=Warn
 
+[Extender]
+OEMSignature=10251025
+
 [SpecialProtocols]
 DSM=01FC
 LDKP=01F9
