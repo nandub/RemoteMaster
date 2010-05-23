@@ -6,6 +6,7 @@ UpgradeAddr=$010..$257
 PowerButtons=$03,$02
 Processor=S3C80
 RAMAddr=$FF00
+DevComb=,$99A,$1582,,$67BF,$15E7,$0010
 RDFSync=3
 ImageMap=Replay5000.map
 SetupValidation=Warn
