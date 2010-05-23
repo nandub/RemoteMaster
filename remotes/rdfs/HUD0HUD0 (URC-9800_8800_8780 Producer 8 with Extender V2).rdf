@@ -14,7 +14,7 @@ ImageMap=URC-9800.map,URC-9800.map,URC-8780.map
 SetupValidation=Warn
 
 [Extender]
-OEMSignature=98009800
+OEMSignature=HUDOHUDO
 
 [SpecialProtocols]
 Multiplex=01FE

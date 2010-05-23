@@ -13,7 +13,7 @@ WAVUpgrade=Yes
 XShift=$C0
 
 [Extender]
-OEMSignature=KAMEKAM0
+OEMSignature=NAK0NAK0
 
 [SpecialProtocols]
 DSM=01FC
