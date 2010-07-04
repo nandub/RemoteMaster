@@ -1,0 +1,126 @@
+[General]
+Name=URC-6820N/8820N/10820N
+EepromSize=$1000
+AdvCodeAddr=$0023..$01FF
+UpgradeAddr=$0200..$03FF
+LearnedAddr=$0400..$0FFF
+Processor=HCS08
+BaseAddr=$EC00
+RAMAddr=$FF00
+RDFSync=3
+DevComb=,$0846,$0D7B,,$19DF
+AdvCodeBindFormat=LONG
+FavKey=$18,$00,10,5
+LearnedDevBtnSwapped=Yes
+SectionTerminator=$FF
+EFCDigits=5
+ImageMap=URC-6820.map,URC-8820.map,URC-10820.map
+2BytePid=Yes
+
+[SpecialProtocols]
+Multiplex=01FE
+DSM=01FC
+Pause=01FB
+
+[Settings]
+VPT Status=$01E.2.1.0.0 (Off;On)
+VPT Device=$020.7.8.2.0 DeviceButtons
+CBL  VPT=$0021.0.1.0.0 (Off;On)
+SAT  VPT=$0021.1.1.0.0 (Off;On)
+TV   VPT=$0021.2.1.1.0 (Off;On)
+VCR  VPT=$0021.3.1.1.0 (Off;On)
+CD   VPT=$0021.4.1.1.0 (Off;On)
+DVD  VPT=$0021.5.1.0.0 (Off;On)
+PVR  VPT=$0021.6.1.1.0 (Off;On)
+AUD  VPT=$0021.7.1.0.0 (Off;On)
+AUX1 VPT=$0022.0.1.0.0 (Off;On)
+AUX2 VPT=$0022.1.1.0.0 (Off;On)
+KeyMap=$01F.5.1.0.0 (Standard;Alternate)
+
+[Checksums]
+^$0008:$000A..$0022
+
+[DeviceTypes]
+SAT/CBL = 0
+TV      = 1
+VCR/DVD = 2
+CD      = 3
+PVR     = 2
+AUD     = 3
+
+[DeviceTypeAliases]
+SAT/CBL = Cable,SAT,Video Acc
+TV      = TV
+VCR/DVD = VCR,Tape,DAT,DVD,Laserdisc
+CD      = CD,Home Auto,Phono
+PVR     = PVR
+AUD     = Tuner,Misc Audio,Amp
+
+[DeviceButtons]
+CBL     = $000A $000B
+SAT     = $000C $000D
+TV      = $000E $000F
+VCR     = $0010 $0011
+CD      = $0012 $0013
+DVD     = $0014 $0015
+PVR     = $0016 $0017
+AUD     = $0018 $0019
+AUX1    = $001A $001B
+AUX2    = $001C $001D
+
+[Buttons]
+TV=$01,CBL=$09,SAT=$22,VCR=$0a,DVD=$29,CD=$21,PVR=$39,AUD=$2a,AUX1=$11,AUX2=$3a,
+0=$1F,1=$15,2=$16,3=$17,4=$19,5=$1A,6=$1B,7=$1C,8=$1D,9=$1E,
+Setup=$02,
+VOL+=$04,VOL-=$05,Mute=$08,
+CH+=$06,CH-=$07,"prev ch":Prev=$13,
+Power=$03,
+Enter=$12,
+display:Info=$26,
+Menu=$27,
+Exit=$2b,
+Guide=$2c,
+Input=$20,
+"pip freeze":Format=$2f,
+surround:CC=$30,
+"up arrow":Up=$31,"down arrow":Down=$32,"left arrow":Left=$33,"right arrow":Right=$34,
+select:OK=$35,
+rewind:RWD=$0b,Play=$0c,"fast fwd":FWD=$0d,Stop=$0e,Pause=$0F,record:REC=$10,"next track":F.FWD=$2d,"prev track":F.REW=$2e,
+"pip on/off":PIP=$36,"pip swap":Swap=$37,"pip move":Move=$14,
++100=$38,
+"fav/scan":Fav=$18,
+Sleep=$28,
+macro1:M1=$3c,macro2:M2=$3d,macro3:M3=$3e,
+learn1:L1=$23,learn2:L2=$24,learn3:L3=$25,
+Phantom1=$3b,Phantom2=$3f,Phantom3=$40,Phantom4=$41
+
+[ButtonMaps]
+0 = ($1F, $15, $16, $17, $19, $1A, $1B, $1C, $1D, $1E), ($04, $05, $08), ($06, $07),
+    $03, $13, $31, $32, $33, $34, $35, $2C, $26, $2B, $20, $27, $0C, $0F, $0B, $0D, $0E, $10, $12, $2D, $2E, $2F, $38, $30, $28, $14, $36, $37
+1 = ($1F, $15, $16, $17, $19, $1A, $1B, $1C, $1D, $1E), ($04, $05, $08), ($06, $07),
+    $03, $27, $20, $31, $32, $33, $34, $26, $13, $35, $28, $30, $2B, $38, $36, $14, $2C, $2F, $37, $12, $0C, $0E, $0B, $0D, $0F, $10, $2D, $2E
+2 = ($1F, $15, $16, $17, $19, $1A, $1B, $1C, $1D, $1E), ($04, $05, $08), ($06, $07),
+    $03, $0C, $0E, $0B, $0D, $0F, $10, $27, $31, $32, $33, $34, $2B, $35, $20, $26, $2C, $2D, $2E, $13, $12, $38, $2F, $30, $28, $14, $36, $37
+3 = ($1F, $15, $16, $17, $19, $1A, $1B, $1C, $1D, $1E), ($04, $05, $08), ($06, $07),
+    $03, $0C, $0F, $0B, $0D, $0E, $10, $2D, $2E, $13, $26, $27, $38, $20, $2B, $35, $12, $31, $32, $33, $34, $28, $2F, $2C, $30, $14, $36, $37
+
+[Protocols]
+0000, 0002:5, 0011, 0014, 001A, 001C, 001F:8, 0022, 0027:new, 002F,
+0034, 003F, 0045, 0046, 0057, 0058:2, 005A, 005C, 005D, 005E:2,
+005F, 0061, 0065:2, 0068, 006A, 006E, 0073, 007E:3, 0083, 0092:3,
+0098, 009C, 009E, 00A4, 00AD, 00AF, 00B6, 00C4, 00C9, 00CA,
+00CD:2, 00DE, 00E2, 00E7, 00E8, 00F0, 00F2, 00F8:3, 0109, 010C,
+010F, 0111, 0114:2, 0115, 0117, 011A:2, 011B, 011E, 0125, 012A:2,
+0161, 0162, 016C, 016D, 0173, 0174, 0177, 017A, 017E, 0184:2,
+0186, 019B, 019C, 01A4, 01A5, 01AC, 01AD, 01B5, 01BA, 01C4,
+01C8, 01D2, 01DF, 01E0, 01E2, 01E8, 01EA, 01ED, 01F2, 01F9,
+01FB
+
+[DigitMaps]
+092 003 053 176 177 001 365 366 094 086 021 011 087 046 058 029
+187 188 149 083 239 240 034 431 030 459 063 081 069 455 462 336
+337 289 126 016 127 072 090 032 075 033 217 218 297 298 295 291
+206 207 192 193 244 064 373 357 278 279 372 460 461 389 314 315
+475 374 325 425 426 270 271 275 276 199 200 283 284 261 262 263
+264 225 226 093 253 254 241 242 286 013 209 210 434 170 251 252
+125 131 141 367 208 312 227 228 197 305 229 341
