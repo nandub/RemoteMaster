@@ -71,18 +71,16 @@ SAT        = 0
 TV         = 0
 VCR        = 2
 CD         = 3
-@AMP       = 4
-@TUNER     = 4
-MISC_AUDIO = 4
-TAPE       = 6, $070D
-VID_ACC    = 0, $0008
-CABLE      = 1, $000C
-PHONO      = 3, $030B
 AMP        = 4, $0604
 TUNER      = 4, $0605
-HOME_CT    = 6, $060A
+MISC_AUDIO = 4, $0606
 LASER      = 5, $0707
+VID_ACC    = 0, $0008
 DVD        = 3, $0709
+HOME_CT    = 6, $060A
+PHONO      = 3, $030B
+CABLE      = 1, $000C
+TAPE       = 6, $070D
 DAT        = 6, $070E
 
 [DeviceTypeAliases] 
