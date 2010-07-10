@@ -41,7 +41,7 @@ OEM      = 2, $04
 CBL/SAT = Cable,SAT,Video Acc
 TV      = TV
 VCR     = VCR,DVD,Tape,Laserdisc
-AUDIO   = CD,AUX,DAT,Home Auto,Misc Audio,Phono,AMP
+AUDIO   = CD,DAT,Home Auto,Misc Audio,Phono,Amp
 OEM	= OEM Mode
 
 [DeviceButtons]

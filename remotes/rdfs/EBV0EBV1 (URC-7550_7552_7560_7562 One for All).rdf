@@ -60,6 +60,9 @@ Sat/Cable = Cable,SAT,Video Acc
 TV        = TV
 VCR/DVD   = VCR,DVD,Tape,Laserdisc
 CD/Audio  = CD,Tuner,DAT,Home Auto,Misc Audio,Phono,Amp
+DevType4  = OEM Mode
+DevType5  = OEM Mode
+
 
 [DeviceButtons]
 SAT = $00A $00B

@@ -67,6 +67,7 @@ DVD	= DVD,Laserdisc
 CD	= CD,Home Auto,Phono
 AUDIO	= Tuner,Misc Audio,Amp
 PVR	= PVR
+other   = OEM Mode
 
 [DeviceButtons]
 CBL	= $00A $00B

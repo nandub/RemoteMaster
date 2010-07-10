@@ -56,12 +56,14 @@ SAT        = SAT
 TV         = TV
 VCR        = VCR
 CD         = CD
-AMP        = Tuner,Amp
+AMP        = Amp
+TUNER      = Tuner
 HOME_AUTO  = Home Auto
 VID_ACC    = Video Acc
-LDP/DVD    = DVD,Laserdisc
+LDP/DVD    = Laserdisc
 TAPE       = Tape
 DAT        = DAT
+DVD        = DVD
 PHONO      = Phono
 MISC_AUDIO = Misc Audio
 

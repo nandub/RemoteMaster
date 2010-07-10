@@ -63,6 +63,7 @@ HOME_CT    = Home Auto
 PHONO      = Phono
 MISC_AUDIO = Misc Audio
 DAT        = DAT
+TUNER      = Tuner
 
 [DeviceButtons]
 CBL/SAT = $026 $01E $02E

@@ -55,7 +55,7 @@ SAT        = SAT
 TV         = TV
 VCR        = VCR
 CD         = CD
-AMP        = Tuner,Amp
+AMP        = Amp
 LDP        = Laserdisc
 VID_ACC    = Video Acc
 DVD        = DVD
@@ -64,6 +64,7 @@ PHONO      = Phono
 MISC_AUDIO = Misc Audio
 TAPE       = Tape
 DAT        = DAT
+TUNER      = Tuner
 
 [DeviceButtons]
 CBL     = $026 $01E $02E

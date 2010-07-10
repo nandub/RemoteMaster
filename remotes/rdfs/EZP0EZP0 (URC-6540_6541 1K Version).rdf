@@ -78,7 +78,7 @@ Alt	= 2
 [DeviceTypeAliases] 
 Audio = CD, Home Auto, Phono, Tuner, Misc Audio, Amp, TV, Cable, SAT, Video Acc, VCR, DVD, Laserdisc, DAT, PVR
 Tape = Tape
-Alt = OEM
+Alt = OEM Mode
 
 [DeviceButtons]
 TUN	= $00A $00B

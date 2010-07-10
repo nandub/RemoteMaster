@@ -53,7 +53,7 @@ CD/AUdio = 3
 Cable    = Cable,SAT,Video Acc
 TV       = TV
 DVD  = VCR,DVD,Tape,Laserdisc,DAT
-CD/AUdio = CD,Tuner,Home Auto,Misc AUdio,Phono,Amp
+CD/AUdio = CD,Tuner,Home Auto,Misc Audio,Phono,Amp
 
 [DeviceButtons]
 CBL = $00A $00B

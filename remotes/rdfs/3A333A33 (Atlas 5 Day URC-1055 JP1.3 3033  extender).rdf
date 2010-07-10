@@ -56,8 +56,9 @@ VCR      = 2,2
 [DeviceTypeAliases]
 Cable    = Cable,SAT,Video Acc
 TV       = TV
-DVD      = VCR,DVD,Tape,Laserdisc,DAT
+DVD      = DVD,Tape,Laserdisc,DAT
 CD/Audio = CD,Tuner,Home Auto,Misc Audio,Phono,Amp
+VCR      = VCR
 
 [DeviceButtons]
 CBL = $00A $00B

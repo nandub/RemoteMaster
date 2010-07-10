@@ -36,7 +36,7 @@ OEM       = 3
 SAT = Cable,SAT,Video Acc
 TV = TV
 VCR/LD/DVD = VCR,DVD,Tape,Laserdisc,DAT,CD,Home Auto,Phono,Tuner,Misc Audio,Amp,PVR
-
+OEM = OEM Mode
 
 [DeviceButtons]
 Dream = $00A $00B

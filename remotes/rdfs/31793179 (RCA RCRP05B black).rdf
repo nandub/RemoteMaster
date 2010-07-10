@@ -59,7 +59,7 @@ Audio    = 3
 [DeviceTypeAliases]
 Cable    = Cable,SAT,Video Acc
 TV       = TV
-DVD      = VCR,DVD,Tape,Laserdisc,DAT,PVR,DVR
+DVD      = VCR,DVD,Tape,Laserdisc,DAT,PVR
 Audio    = CD,Tuner,Home Auto,Misc Audio,Phono,Amp
 
 [DeviceButtons]

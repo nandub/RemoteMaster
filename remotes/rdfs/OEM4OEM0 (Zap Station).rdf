@@ -41,10 +41,10 @@ AUDIO    = 1, $03
 OEM      = 2, $04
 
 [DeviceTypeAliases]
-CBL/SAT = Cable,AUX1,Video Acc
+CBL/SAT = Cable,Video Acc
 TV      = TV
 VCR     = VCR,DVD,Tape,Laserdisc
-AUDIO   = AUX2,AMP,DAT,Home Auto,Misc Audio,Phono,CD
+AUDIO   = Amp,DAT,Home Auto,Misc Audio,Phono,CD
 OEM	= OEM Mode
 
 [DeviceButtons]

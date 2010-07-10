@@ -94,7 +94,7 @@ HOM     = Home Auto
 LDP     = Laserdisc
 VAC     = Video Acc
 PHO     = Phono
-
+HT      = OEM Mode
 
 [DeviceButtons]
 Dev1     = $00A $00B

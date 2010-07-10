@@ -34,6 +34,7 @@ CBL/SAT = Cable,SAT,Video Acc
 TV      = TV
 VCR     = VCR,DVD,Tape,Laserdisc
 AUDIO   = CD,Tuner,DAT,Home Auto,Misc Audio,Phono,Amp
+OEM     = OEM Mode
 
 [DeviceButtons]
 DVD     = $00A $00B

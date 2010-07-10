@@ -69,7 +69,7 @@ DVD = DVD,DAT,Laserdisc
 CD = CD, Phono, Home Auto
 PVR = PVR
 AUD = Tuner,Amp,Misc Audio
-LIGHT = OEM mode
+LIGHT = OEM Mode
 
 [DeviceButtons]
 SAT = $00A $00B

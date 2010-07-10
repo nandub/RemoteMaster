@@ -65,7 +65,7 @@ DVD        = DVD
 TV         = TV
 VCR        = VCR
 CD         = CD
-AMP        = Tuner,Amp
+AMP        = Amp
 TAPE       = Tape
 VID_ACC    = Video Acc
 SAT        = SAT
@@ -74,6 +74,7 @@ HOME_CT    = Home Auto
 PHONO      = Phono
 MISC_AUDIO = Misc Audio
 DAT        = DAT
+TUNER      = Tuner
 
 [DeviceButtons]
 CBL/SAT = $026 $01E $02E

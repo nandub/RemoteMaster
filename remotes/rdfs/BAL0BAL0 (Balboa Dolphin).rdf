@@ -43,7 +43,7 @@ CBL/SAT	= Cable,SAT,Video Acc
 TV	= TV
 VCR/DVD	= VCR,DVD,Tape,Laserdisc,DAT
 AUDIO	= CD,Tuner,Home Auto,Misc Audio,Phono,Amp
-SPA	= OEM
+SPA	= OEM Mode
 
 [DeviceButtons]
 TV	= $00A $00B

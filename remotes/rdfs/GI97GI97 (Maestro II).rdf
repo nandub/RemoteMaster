@@ -62,7 +62,7 @@ HOM_CTL = Home Auto
 DVD     = DVD
 TAPE    = Tape
 DAT     = DAT
-
+MUSIC_CH= OEM Mode
 [DeviceButtons]
 dev0    = $024 $01E $02A
 dev1    = $025 $01F $02B

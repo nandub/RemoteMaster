@@ -40,6 +40,7 @@ xDev      = 3
 SAT        = Cable,SAT,Video Acc
 TV         = TV
 VCR/LD/DVD = VCR,DVD,Tape,Laserdisc,DAT,CD,Home Auto,Phono,Tuner,Misc Audio,Amp
+xDev       = OEM Mode
 
 [DeviceButtons]
 Force = $00A $00B
