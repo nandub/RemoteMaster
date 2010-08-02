@@ -14,6 +14,7 @@ DevComb=,$AD84,$B57B,$BC
 RDFSync=3
 WAVUpgrade=1
 ImageMap=URC-8550.map,URC-5550.map
+StartReadOnlySettings=19
 SetupValidation=Warn
 
 [Extender]
@@ -41,6 +42,9 @@ CD Lock=$038.3.1.0.1 (Off;On)
 @TUNER Lock=$038.5.1.0.1 (Off;On)
 AUX1 Lock=$038.6.1.0.1 (Off;On)
 @AUX2 Lock=$038.7.1.0.1 (Off;On)
+Int1=$036.7.8.9.0
+Int2=$03A.7.8.0.1
+Int3=$03B.7.8.0.1
 
 [Checksums]
 +$000:$002..$03B
@@ -55,6 +59,16 @@ $00A = $3B $00 $FF $00 $FF $04 $FF $06 $CE $07
        $CE $07 $CE $07 $CE $07 $CE $07 $FD $07
 $7D1 = $45 $54 $38 $30 $80 $0B $00 $0C $01
 $7E2 = $08 $A2 $02 $BD $37 $01 $95 $B9 $CA $10 $F8 $A2 $04 $BD $3A $01 $95 $A9 $CA $10 $F8 $20 $0F $88 $28 $4C $64 $88
+
+[DeviceButtons+]
+SAT	 = $026 $01E $02E, $1C7
+TV	 = $027 $01F $02F, $025
+VCR	 = $028 $020 $030, $048
+CD	 = $029 $021 $031, $09D
+@AMP	 = $02A $022 $032, $10D
+@TUNER  = $02B $023 $033, $0BD
+AUX1	 = $02C $024 $034, $00A
+@AUX2	 = $02D $025 $035, $01D
 
 [DeviceButtons]
 SAT	 = $026 $01E $02E
@@ -71,16 +85,18 @@ SAT        = 0
 TV         = 0
 VCR        = 2
 CD         = 3
+AMP        = 4
+TUNER      = 4
+MISC_AUDIO = 4
+TAPE       = 6, $070D
+VID_ACC    = 0, $0008
+CABLE      = 1, $000C
+PHONO      = 3, $030B
 AMP        = 4, $0604
 TUNER      = 4, $0605
-MISC_AUDIO = 4, $0606
-LASER      = 5, $0707
-VID_ACC    = 0, $0008
-DVD        = 3, $0709
 HOME_CT    = 6, $060A
-PHONO      = 3, $030B
-CABLE      = 1, $000C
-TAPE       = 6, $070D
+LASER      = 5, $0707
+DVD        = 3, $0709
 DAT        = 6, $070E
 
 [DeviceTypeAliases] 
@@ -102,6 +118,7 @@ DAT        = DAT
 
 #AUX1 = MISC_AUDIO, TUNER, AMP, HOME_CT
 #AUX2 = TAPE, DAT, LDP, DVD
+
 [Buttons]
 TV=$10, VCR=$20, SAT=$28, AUX1=$18, @AMP=$30, @TUN=$38, CD=$37, @AUX2=$08,
 HT-Power=$42, "power":POWER{Sleep}=$07, SLEEP=$87, "vol up":VOL+=$06, "vol down":VOL-=$03, MUTE=$02, "channel up":CH+=$04, "channel down":CH-=$05,
@@ -186,4 +203,11 @@ Virtual_@AMP=$63:AllBind, Virtual_@TUNER=$6A:AllBind,Virtual_AUX1=$71:AllBind, V
 6 = 0010,0073,0159,0351,0377,0404,0414
 7 = 0059,0064,0194,0201,0388
 8 = 0104,0339,0535
-
+10 = 0167,0451
+11 = 0188
+12 = 0003,0008,0105,0144,0271,0276,0277,0382,0423,0443,0451,0529,0681 
+13 = 0027,0029,0070,0071,0074,0076,0094,0099,0101,0135,0136,0147,0163,0170,0182,0188,
+     0189,0197,0200,0220,0229,0233,0234,0243,0244,0247,0250,0263,0272,0273,0274,0282,
+     0283,0300,0326,0337,0353,0364,0371,0383,0389,0391,0409,0412,0442,0491
+14 = 0031,0093,0158
+ 
