@@ -1,0 +1,60 @@
+[General]
+Name=ReplayTV 2000/3000/Showstopper
+EepromSize=$800
+AdvCodeAddr=$018..$0FF
+UpgradeAddr=$100..$3FE
+Processor=S3C80
+RAMAddr=$8000
+RDFSync=3
+
+
+[Settings]
+
+[Checksums]
+^$000:$002..$7FF
+
+[DeviceTypes]
+Cable    = 0
+Sat      = 0
+
+[DeviceAbbreviations]
+Cable=C,Sat=S
+
+[DeviceTypeAliases]
+Cable    = Cable
+Sat      = SAT
+
+[DeviceButtons]
+Cable = $00A $00B
+SAT   = $00C $00D
+
+[Buttons]
+Power_On=2,
+Power_Off=3,
+"channel up":CH+=4,
+"channel down":CH-=5,
+"vol up":VOL+=6,
+"vol down":VOL-=7,
+Mute=8,
+"1":num_1=9,
+"2":num_2=10,
+"3":num_3=11,
+"4":num_4=12,
+"5":num_5=13,
+"6":num_6=14,
+"7":num_7=15,
+"8":num_8=16,
+"9":num_9=17,
+"0":num_0=18,
+Enter=19,
+
+
+[ButtonMaps]
+0 = (18, 9, 10, 11, 12, 13, 14, 15, 16, 17), (6, 7, 8), (4, 5), 2, 3, 19
+
+[DigitMaps]
+
+[Protocols]
+0000, 0002, 0004, 0006, 0008, 0010, 0011, 0013, 0015, 0021, 
+0022, 0029, 0039, 0058, 0060, 001B, 001D, 002A, 002D, 003A, 
+005A, 00A4, 00C4, 00C9, 00CA, 00D0, 00D7
