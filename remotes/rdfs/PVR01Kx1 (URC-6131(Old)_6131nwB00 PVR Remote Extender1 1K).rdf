@@ -12,11 +12,11 @@ XShift=$C0
 SetupValidation=Warn
 
 [SpecialProtocols]
-DSM=01FC
+DSM=TV/1103:-01FC
 LDKP=01F9
 Multiplex=01FE
 Pause=01FB
-ToadTog=0181
+ToadTog=0181 
 
 [Extender] 
 DeviceSetup=VCR/1800,ToadTog
