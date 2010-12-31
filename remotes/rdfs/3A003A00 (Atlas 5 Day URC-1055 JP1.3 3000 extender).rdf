@@ -1,7 +1,7 @@
 [General]
 Name=Atlas 5-Device PVR Day 3000 JP1.3 extender v0.02
 EepromSize=$1400
-AdvCodeAddr=$0C00..$19FF
+AdvCodeAddr=$0C00..$13FF
 UpgradeAddr=$0402..$0BFF
 Processor=S3F80
 BaseAddr=$0600
