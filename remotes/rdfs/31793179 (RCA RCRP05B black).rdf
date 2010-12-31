@@ -16,6 +16,7 @@ EFCDigits=5
 2BytePid=Yes
 SetupValidation=Enforce
 ImageMap=RCRP05B.map
+StartReadOnlySettings=26 
 
 [SpecialProtocols]
 Multiplex=01FE
@@ -44,17 +45,32 @@ dev4 Chan Dev=$039.7.8.0.0 DeviceButtons
 dev5 Chan Dev=$03A.7.8.0.0 DeviceButtons
 dev6 Chan Dev=$03B.7.8.0.0 DeviceButtons
 DVR Chan Dev=$03C.7.8.0.0 DeviceButtons
-
+CBL  Setup Code Lock= $01A.0.1.0.0 (Off;On)
+TV   Setup Code Lock= $01A.1.1.0.0 (Off;On)
+DVD  Setup Code Lock= $01A.2.1.0.0 (Off;On)
+AUD  Setup Code Lock= $01A.3.1.0.0 (Off;On)
+dev4 Setup Code Lock=$01A.4.1.0.0 (Off;On)
+dev5 Setup Code Lock=$01A.5.1.0.0 (Off;On)
+dev6 Setup Code Lock=$01A.6.1.0.0 (Off;On)
+DVR  Setup Code Lock= $01A.7.1.0.0 (Off;On)
+TV/CBL sends Pwr=$01B.4.1.0.0 (Off;On)
+Byte1B=$01B.3.4.$0C.0 
+Byte22=$022.3.4.$0F.0 
 
 # DeviceTypes
 # The order matches up with default type on DeviceButtons
 # The names match up with DeviceTypeAliases
 
 [DeviceTypes]
-Cable    = 0
-TV       = 1
-DVD      = 2
-Audio    = 3
+Cable    = 0,0
+TV       = 1,1
+DVD      = 2,2
+Audio    = 3,3
+TV       = 1,1
+DVD      = 2,2
+Audio    = 3,3
+DVD      = 2,2
+
 
 [DeviceTypeAliases]
 Cable    = Cable,SAT,Video Acc
