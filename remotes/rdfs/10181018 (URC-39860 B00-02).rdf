@@ -17,6 +17,7 @@ ImageMap=URC-39860B00-02.map
 SetupValidation=Warn
 
 [SpecialProtocols]
+Pause=01FB (Pause)
 Multiplex=01FE
 
 [Settings]

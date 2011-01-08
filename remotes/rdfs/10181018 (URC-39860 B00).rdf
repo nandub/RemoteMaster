@@ -17,6 +17,7 @@ ImageMap=Generic.map
 SetupValidation=Warn
 
 [SpecialProtocols]
+Pause=01FB (Pause)
 Multiplex=01FE
 
 [Settings]

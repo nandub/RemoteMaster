@@ -19,6 +19,7 @@ ImageMap=Atlas-5-PVR-DAY.map
 SetupValidation=Warn
 
 [SpecialProtocols]
+Pause=01FB (Pause)
 Multiplex=01FE
 
 [Checksums]
