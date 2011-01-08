@@ -13,6 +13,7 @@ SetupValidation=Warn
 
 [SpecialProtocols]
 Multiplex=01FE
+Pause=01FB (Pause)
 
 [Settings]
 VPT Device=$015.7.8.0.0 DeviceButtons
