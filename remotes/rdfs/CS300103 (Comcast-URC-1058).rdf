@@ -13,6 +13,9 @@ EFCDigits=5
 ImageMap=URC-1058.map
 SetupValidation=Warn
 
+[SpecialProtocols]
+Pause=01FB (Pause)
+
 [Settings]
 VPT Status=$012.2.1.1.0 (Off;On)
 VPT Device=$00F.7.8.1.0 DeviceButtons
