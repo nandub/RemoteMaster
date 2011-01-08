@@ -15,6 +15,7 @@ SetupValidation=Warn
 [SpecialProtocols]
 UDSM=01FC
 Multiplex=01FE
+Pause=01FB (Pause)
 
 [Settings]
 VPT Status=$016.2.1.0.0 (Off;On)

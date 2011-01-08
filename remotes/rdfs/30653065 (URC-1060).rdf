@@ -17,6 +17,7 @@ DevComb=,$1CA5,$297F,,$4EAF,$2A73
 
 [SpecialProtocols]
 Multiplex=01FE
+Pause=01FB (Pause)
 
 [Checksums]
 ^$008:$00A..$021

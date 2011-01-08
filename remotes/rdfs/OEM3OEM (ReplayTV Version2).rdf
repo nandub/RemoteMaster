@@ -13,6 +13,7 @@ ImageMap=ReplayTV.map
 
 [SpecialProtocols]
 Multiplex=01FE
+Pause=01FB (Pause)
 
 [Settings]
 SAT/CBL VPT Device=$018.7.8.0.0 DeviceButtons

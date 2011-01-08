@@ -12,6 +12,7 @@ ImageMap=ReplayTV.map
 
 [SpecialProtocols]
 Multiplex=01FE
+Pause=01FB (Pause)
 
 [Settings]
 Remote Version=$009.3.4.0.0 (Unknown;Version1;Version2)

@@ -17,6 +17,7 @@ SetupValidation=Warn
 
 [SpecialProtocols]
 Multiplex=01FE
+Pause=01FB (Pause)
 
 # MultiMacros compliant with IR v6 or above
 # This remote will not utilize key moves at all (it ignores them).

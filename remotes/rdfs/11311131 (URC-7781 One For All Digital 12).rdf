@@ -23,6 +23,8 @@ StartReadOnlySettings=27
 SetupValidation=Warn
 ImageMap=URC-7781.map
 
+[SpecialProtocols]
+Pause=01FB (Pause)
 
 [Settings]
 HT Power Dev=$02E.7.8.13.0 DeviceButtons

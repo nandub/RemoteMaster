@@ -16,6 +16,7 @@ SetupValidation=Warn
 [SpecialProtocols]
 UDSM=01FC
 Multiplex=01FE
+Pause=01FB (Pause)
 
 [Settings]
 Sleep Status=$014.0.1.0.0 (Use Native;Simulate)

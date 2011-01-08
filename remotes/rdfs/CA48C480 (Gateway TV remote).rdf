@@ -11,6 +11,7 @@ ImageMap=Outlaw-Audio.map
 
 [SpecialProtocols]
 Multiplex=01FE
+Pause=01FB (Pause)
 
 [Settings]
 VPT Device=$01f.7.4.1.0 DeviceButtons

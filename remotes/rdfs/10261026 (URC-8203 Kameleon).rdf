@@ -17,6 +17,9 @@ EFCDigits=5
 LearnedDevBtnSwapped=Yes
 SetupValidation=Warn
 
+[SpecialProtocols]
+Pause=01FB (Pause)
+
 [Settings]
 EL Activation Type=$010.4.1.0.0 (Key Press;Remote Touch)
 Light Sensor Status=$010.5.1.0.0 (Off;On)

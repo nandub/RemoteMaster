@@ -13,6 +13,7 @@ SetupValidation=Warn
 
 [SpecialProtocols]
 Multiplex=01FE
+Pause=01FB (Pause)
 
 # byte $011 still needs to be documented
 [Settings]

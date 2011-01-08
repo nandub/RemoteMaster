@@ -19,6 +19,7 @@ ImageMap=URC-7541.map,URC-7544.map
 [SpecialProtocols]
 UDSM=01FC
 Multiplex=01FE
+Pause=01FB (Pause)
 
 [Settings]
 VPT Device=$014.7.8.1.0 DeviceButtons

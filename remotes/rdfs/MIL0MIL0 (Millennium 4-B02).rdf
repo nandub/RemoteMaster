@@ -14,6 +14,7 @@ ImageMap=Millennium4b.map
 [SpecialProtocols]
 UDSM=01FC
 Multiplex=01FE
+Pause=01FB (Pause)
 
 [Settings]
 VPT Device=$013.7.8.1.0 DeviceButtons

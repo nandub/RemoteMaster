@@ -11,6 +11,7 @@ ImageMap=Motorola-DCP501R.map
 
 [SpecialProtocols]
 Multiplex=01FE
+Pause=01FB (Pause)
 
 [Settings]
 VPT Status=$014.2.1.0.0 (Off;On)

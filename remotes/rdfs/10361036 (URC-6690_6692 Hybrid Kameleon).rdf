@@ -17,6 +17,7 @@ FavKey=$1F,$00,10,5
 SetupValidation=Warn
 
 [SpecialProtocols]
+Pause=01FB (Pause)
 Multiplex=01FE
 
 [Settings]

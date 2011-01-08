@@ -13,6 +13,7 @@ RDFSync=3
 ImageMap=URC-3450.map
 
 [SpecialProtocols]
+Pause=01FB (Pause)
 
 [Settings]
 VPT Status=$012.2.1.0.0 (Off;On)

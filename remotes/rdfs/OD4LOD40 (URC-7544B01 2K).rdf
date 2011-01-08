@@ -9,6 +9,9 @@ DevComb=,$12A1,$1FA7,,$75BF,$200C
 RDFSync=3
 ImageMap=URC-7544B01.map
 
+[SpecialProtocols]
+Pause=01FB (Pause)
+
 [Checksum]
 ^$000:$002..$7FE
 

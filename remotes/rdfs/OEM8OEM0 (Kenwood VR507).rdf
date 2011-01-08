@@ -11,6 +11,7 @@ ImageMap=KenwoodVR507.map
 
 [SpecialProtocols]
 Multiplex=01FE
+Pause=01FB (Pause)
 
 [Settings]
 SAT/CBL Lock=$01D.0.1.1.0 (On;Off)

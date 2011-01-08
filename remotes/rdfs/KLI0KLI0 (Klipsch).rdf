@@ -11,6 +11,9 @@ DevComb=,$132F,$0D0A,,$6DBF,$0D6F,$100
 AdvCodeFormat=EFC 
 ImageMap=Klipsch.map
 
+[SpecialProtocols]
+Pause=01FB (Pause)
+
 [Settings]
 VPT Status=$012.2.1.0.0 (Off;On)
 VPT Device=$013.7.8.1.0 DeviceButtons

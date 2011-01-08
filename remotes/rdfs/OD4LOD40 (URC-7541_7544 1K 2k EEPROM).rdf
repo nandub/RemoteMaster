@@ -16,6 +16,9 @@ DevComb=$7C,$1655,$AA4,,$8AEF,$B06
 RDFSync=3
 ImageMap=URC-7541.map,URC-7544.map
 
+[SpecialProtocols]
+Pause=01FB (Pause)
+
 [Settings]
 VPT Device=$014.7.8.1.0 DeviceButtons
 VPT Status=$01A.3.1.0.0 (Off;On)

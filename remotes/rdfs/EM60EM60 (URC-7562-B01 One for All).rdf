@@ -16,6 +16,7 @@ SetupValidation=Warn
 
 [SpecialProtocols]
 Multiplex=01FE
+Pause=01FB (Pause)
 
 [Settings]
 VPT Master Status=$016.2.1.0.0 (Off;On)

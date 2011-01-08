@@ -8,6 +8,9 @@ RAMAddr=$8000
 RDFSync=3
 ImageMap=Outlaw990.map
 
+[SpecialProtocols]
+Pause=01FB (Pause)
+
 [Settings]
 VPT Device=$01f.7.4.1.0 DeviceButtons
 VPT Status=$01f.3.1.0.0 (Off;On)

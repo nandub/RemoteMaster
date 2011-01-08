@@ -15,6 +15,8 @@ RDFSync=3
 RAMAddr=$8000
 ImageMap=URC-114282B00.map
 
+[SpecialProtocols]
+Pause=01FB (Pause)
 
 [Settings]
 VPT Status=$01B.2.1.0.0 (Off;On)

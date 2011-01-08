@@ -22,6 +22,9 @@ StartReadOnlySettings=27
 SetupValidation=Enforce
 ImageMap=URC-7780.map
 
+[SpecialProtocols]
+Pause=01FB (Pause)
+
 [Settings]
 HT Power Dev=$02E.7.8.13.0 DeviceButtons
 HT Digits Dev=$02F.7.8.13.0 DeviceButtons

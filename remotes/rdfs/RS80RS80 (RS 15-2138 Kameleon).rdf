@@ -13,6 +13,7 @@ SetupValidation=Warn
 
 [SpecialProtocols]
 Multiplex=01FE
+Pause=01FB (Pause)
 
 [Settings]
 My System Transport Device=$01d.7.8.1.0 DeviceButtons

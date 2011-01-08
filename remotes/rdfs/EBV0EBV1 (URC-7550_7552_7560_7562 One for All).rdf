@@ -16,6 +16,7 @@ ImageMap=URC-7550.map,URC-7552.map,URC-7560.map,URC-7562.map
 [SpecialProtocols]
 UDSM=01FC
 Multiplex=01FE
+Pause=01FB (Pause)
 
 [Settings]
 TV/SAT/VCR/DVD VPT Device=$018.3.4.1.0 DeviceButtons

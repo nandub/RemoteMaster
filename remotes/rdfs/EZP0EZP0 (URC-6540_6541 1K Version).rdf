@@ -47,6 +47,7 @@ ImageMap=URC-6541.map
 
 [SpecialProtocols]
 Multiplex=01FE
+Pause=01FB (Pause)
 
 [Settings]
 Byte $018 TUN =$018.7.8.1.0 

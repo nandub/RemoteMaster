@@ -17,6 +17,9 @@ SectionTerminator=$FF
 DevComb=$7E,$1776,$365F,,$83BF,$36C4,$100
 LearnedDevBtnSwapped=1
 
+[SpecialProtocols]
+Pause=01FB (Pause)
+
 [Settings]
 VPT Status=$019.2.1.0.0 (Off;On)
 VPT Device=$019.7.8.1.0 DeviceButtons

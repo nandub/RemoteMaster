@@ -9,6 +9,9 @@ RAMAddr=$8000
 RDFSync=3
 ImageMap=ArcamCR80.map
 
+[SpecialProtocols]
+Pause=01FB (Pause)
+
 [Settings]
 CBL  VPT Device=$01F.7.8.0.0 DeviceButtons
 TV   VPT Device=$020.7.8.1.0 DeviceButtons

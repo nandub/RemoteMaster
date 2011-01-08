@@ -16,6 +16,9 @@ EFCDigits=5
 //ImageMap=URC-8210.map
 SetupValidation=Warn
 
+[SpecialProtocols]
+Pause=01FB (Pause)
+
 [Settings]
 EL Activation Type=$01E.4.1.0.0 (Key Press;Remote Touch)
 Light Sensor Status=$01E.5.1.0.0 (Off;On)

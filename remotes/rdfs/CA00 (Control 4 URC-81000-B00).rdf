@@ -14,6 +14,7 @@ SetupValidation=Warn
 
 [SpecialProtocols]
 Multiplex=01FE
+Pause=01FB (Pause)
 
 [Checksums]
 ^$000:$002..$3FC

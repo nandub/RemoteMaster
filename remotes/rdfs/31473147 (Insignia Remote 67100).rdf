@@ -19,6 +19,7 @@ SetupValidation=Enforce
 [SpecialProtocols]
 Multiplex=01FE
 DSM=Internal:0
+Pause=01FB (Pause)
 
 [Settings]
 VPT Device=$01C.7.8.0.0 DeviceButtons

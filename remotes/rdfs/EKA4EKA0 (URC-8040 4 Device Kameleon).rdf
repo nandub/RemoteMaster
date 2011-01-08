@@ -13,6 +13,7 @@ SetupValidation=Warn
 
 [SpecialProtocols]
 Multiplex=01FE
+Pause=01FB (Pause)
 
 [Settings]
 Sleep Status=$012.0.1.0.0 (Use Native;Simulate)

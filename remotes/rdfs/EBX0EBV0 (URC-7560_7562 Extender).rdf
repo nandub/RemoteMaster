@@ -19,6 +19,7 @@ OEMSignature=EBV0EBV1
 [SpecialProtocols]
 DSM=01FC
 Multiplex=01FE
+Pause=01FB (Pause)
 
 [Settings]
 VPT Device=$018.3.4.1.0 DeviceButtons

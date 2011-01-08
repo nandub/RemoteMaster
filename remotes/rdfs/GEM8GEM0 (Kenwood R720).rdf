@@ -10,6 +10,7 @@ ImageMap=Kenwood R720.map
 
 [SpecialProtocols]
 Multiplex=01FE
+Pause=01FB (Pause)
 
 [Settings]
 VPT Device=$01B.7.8.1.0 DeviceButtons

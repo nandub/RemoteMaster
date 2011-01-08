@@ -13,6 +13,7 @@ ImageMap=Millennium4bj8.map
 [SpecialProtocols]
 UDSM=01FC
 Multiplex=01FE
+Pause=01FB (Pause)
 
 [Settings]
 VPT Status=$012.2.1.1.0 (Off;On)

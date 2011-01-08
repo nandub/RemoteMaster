@@ -17,6 +17,7 @@ OEMSignature=SBPASBP0
 [SpecialProtocols]
 DSM=01FC
 Multiplex=01FE
+Pause=01FB (Pause)
 
 [Settings]
 Shift Button Keycode=$0334.7.8.3.0

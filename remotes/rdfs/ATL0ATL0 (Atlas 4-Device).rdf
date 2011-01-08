@@ -12,6 +12,7 @@ SetupValidation=Warn
 
 [SpecialProtocols]
 Multiplex=01FE
+Pause=01FB (Pause)
 
 # Remote will only allow entry of macros on the MACRO & POWER keys,
 # but will execute macros defined in IR on other keys.

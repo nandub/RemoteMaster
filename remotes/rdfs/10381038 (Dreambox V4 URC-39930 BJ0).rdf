@@ -18,6 +18,9 @@ EFCDigits=5
 ImageMap=DreamboxV4.map
 SetupValidation=Warn
 
+[SpecialProtocols]
+Pause=01FB (Pause)
+
 [Settings]
 VPT Device=$012.7.8.0.0 DeviceButtons
 VPT Status=$010.2.1.0.0 (Off;On)

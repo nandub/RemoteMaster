@@ -22,6 +22,7 @@ OEMSignature=ET80ET80
 
 [SpecialProtocols]
 Multiplex=01FE
+Pause=01FB (Pause)
 
 [Settings]
 VPT Device=$037.6.7.1.0 DeviceButtons
