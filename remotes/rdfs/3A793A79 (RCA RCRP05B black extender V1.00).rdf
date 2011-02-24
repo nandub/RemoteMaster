@@ -6,7 +6,7 @@ AdvCodeAddr=$0C00..$13FF
 Processor=S3F80
 BaseAddr=$0600
 RAMAddr=$FF00
-FavKey=$22,$1E,15,5
+FavKey=$22,$39,15,5
 DevComb=,$36CB,$4476,,$4EAF,$456A,
 RDFSync=4
 AdvCodeBindFormat=LONG
@@ -122,7 +122,6 @@ OnDemand=$35,
 1=$15,2=$16,3=$17,4=$19,5=$1A,6=$1B,7=$1C,8=$1D,9=$1E,0=$1F,
 "+100":Dash=$20,
 Aspect=$18,
-Guide=$21,
 "PIP On/Off":PIP_On/Off=$38,
 "PIP Swap":PIP_Swap=$39,
 "PIP Move":PIP_Move=$3A,
