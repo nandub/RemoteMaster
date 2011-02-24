@@ -134,7 +134,7 @@ Macro2=$36,
 DiscreteOn=$80:Shift+Xshift,
 DiscreteOff=$C0:Shift+Xshift,
 Phantom1=$67:Shift+Xshift,Phantom2,Phantom3,Phantom4,Phantom5,Phantom6,Phantom7,Phantom8,Phantom9,Phantom10,
-Dev_CBL=$71:Shift+Xshift,Dev_TV,Dev_DVD,Dev_AUD,Dev_dev4,Dev_dev5,Dev_dev6,Dev_DVR,Dev_Cancel,
+Dev_CBL=$71:AllBind,Dev_TV,Dev_DVD,Dev_AUD,Dev_dev4,Dev_dev5,Dev_dev6,Dev_DVR,Dev_Cancel,
 Set_Trans=$7A:AllBind,Set_Vol,Set_Chan,Set_PIP,Set_Menu,Set_Other
 
 
