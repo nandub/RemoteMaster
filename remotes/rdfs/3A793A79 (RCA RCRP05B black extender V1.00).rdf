@@ -39,6 +39,7 @@ $01FE=$01 $00
 Shift Keycode        =$07D.7.8.2.0
 XShift Keycode       =$08D.7.8.2.0
 LEDPatch             =$01B.7.1.0.0 (Default;All)
+Fav Device           =$039.7.1.0.0 DeviceButtons
 Initial Trans Device =$02E.7.8.0.0 DeviceButtons
 Initial Vol Device   =$02F.7.8.0.0 DeviceButtons
 Initial Chan Device  =$030.7.8.0.0 DeviceButtons
