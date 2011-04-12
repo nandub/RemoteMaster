@@ -1,5 +1,5 @@
 [General]
-Name=RCA RCRP05B Black Extender V1.01
+Name=RCA RCRP05B Black Extender V1.02
 EepromSize=$1400
 UpgradeAddr=$0402..$0BFF
 AdvCodeAddr=$0C00..$13FF
@@ -18,6 +18,7 @@ EFCDigits=5
 SetupValidation=Enforce
 ImageMap=RCRP05B.map
 ExtenderVersionAddr=$1FE,Hex,$1FF
+PauseParams=Pause,2/1,10.0
 RDFVersionAddr=$1FD
 
 [SpecialProtocols]
@@ -33,13 +34,14 @@ ToadTog=0181
 ^$400:$402..$BFF
 
 [FixedData]
-$01FE=$01 $01
+$01FE=$01 $02
 
 [Settings]
 Shift Keycode        =$07D.7.8.2.0
 XShift Keycode       =$08D.7.8.2.0
+Macro Delay          =$070.7.8.0.0
 LEDPatch             =$01B.7.1.0.0 (Default;All)
-Fav Device           =$039.7.1.0.0 DeviceButtons
+Fav Device           =$039.7.8.0.0 DeviceButtons
 Initial Trans Device =$02E.7.8.0.0 DeviceButtons
 Initial Vol Device   =$02F.7.8.0.0 DeviceButtons
 Initial Chan Device  =$030.7.8.0.0 DeviceButtons

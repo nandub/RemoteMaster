@@ -1,5 +1,5 @@
 [General]
-Name=Insignia Remote 67100 Extender V0.01
+Name=Insignia Remote 67100 Extender V1.00
 EepromSize=$0C80
 AdvCodeAddr=$0800..$0C7F
 UpgradeAddr=$0402..$07FF
@@ -17,6 +17,7 @@ EFCDigits=5
 ImageMap=URC-67100.map
 SetupValidation=Enforce
 ExtenderVersionAddr=$1FE,Hex,$1FF
+PauseParams=Pause,2/1,10.0
 RDFVersionAddr=$1FD
 
 [SpecialProtocols]
@@ -27,10 +28,16 @@ Pause=01FB (Pause)
 ToadTog=0181
 
 
+[FixedData]
+$01FE=$01 $00
+
+
+
 [Settings]
-Shift Keycode        =$07A.7.8.2.0
-XShift Keycode       =$08A.7.8.2.0
-Fav Device           =$028.7.1.0.0 DeviceButtons
+Shift Keycode        =$072.7.8.2.0
+XShift Keycode       =$082.7.8.2.0
+Macro Delay          =$065.7.8.0.0
+Fav Device           =$028.7.8.0.0 DeviceButtons
 Initial Trans Device =$023.7.8.0.0 DeviceButtons
 Initial Vol Device   =$024.7.8.0.0 DeviceButtons
 Initial Chan Device  =$025.7.8.0.0 DeviceButtons
@@ -91,11 +98,11 @@ rewind:Rew=$1F
 "fast fwd":FFwd=$20
 "next track":Skip=$21
 "prev track":Replay=$1E
+"vol up":Vol+=$12,"vol down":Vol-=$13,Mute=$18
+"channel up":Ch+=$14,"channel down":Ch-=$15,"prev ch":Recall=$19
 1=$26,2=$27,3=$28,4=$29,5=$2A,6=$2B,7=$2C,8=$2D,9=$2E,0=$2F
 "tv/vcr":Input=$30
 +100:Dash=$31
-"vol up":Vol+=$12,"vol down":Vol-=$13,Mute=$18
-"channel up":Ch+=$14,"channel down":Ch-=$15,"prev ch":Recall=$19
 "fav/scan":Fav=$25
 SAP=$22
 P-Lock/Game=$3F
@@ -104,12 +111,12 @@ Sleep=$35
 Audio/DynVol=$34
 Pict=$37
 Zoom=$32
+DiscreteON=$3E
+DiscreteOFF=$40:Shift+XShift,
 phantom1=$02
 phantom2=$33
 phantom3=$36
 phantom4=$3D
-DiscreteON=$3E
-DiscreteOFF=$40:Shift+XShift,
 Phantom5=$6C:Shift+Xshift,Phantom6,Phantom7,Phantom8,Phantom9,Phantom10,
 Dev_dev0=$72:AllBind,Dev_TV,Dev_dev2,Dev_AUX,Dev_STB,Dev_DVD,Dev_dev6,Dev_dev7,Dev_Cancel,
 Set_Trans=$7B:AllBind,Set_Vol,Set_Chan,Set_Menu,Set_Other
