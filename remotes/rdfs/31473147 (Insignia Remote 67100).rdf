@@ -15,6 +15,7 @@ EFCDigits=5
 2BytePid=Yes
 ImageMap=URC-67100.map
 SetupValidation=Enforce
+StartReadOnlySettings=21
 
 [SpecialProtocols]
 Multiplex=01FE
@@ -42,6 +43,9 @@ DVD Setup Code Lock=$01A.5.1.1.0 (Off;On)
 dev7 Setup Code Lock=$01A.6.1.1.0 (Off;On)
 dev8 Setup Code Lock=$01A.7.1.1.0 (Off;On)
 Initial Device Mode=$01E.7.8.0.0 DeviceButtons
+Byte1F=$01F.3.4.$0F.0 
+Byte20=$020.3.4.$0F.0 
+
 
 [Checksums]
 ^$008:$00A..$028
