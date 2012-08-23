@@ -1,5 +1,5 @@
 /*
-	Copyright (C) 2010 Graham Dixon, 2011 Bengt Martensson
+	Copyright (C) 2010 Graham Dixon, 2011,2012 Bengt Martensson
 
 	This program is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -17,20 +17,14 @@
 
 package com.hifiremote.exchangeir;
 
-import java.io.FileNotFoundException;
-import java.io.PrintStream;
 import java.util.ArrayList;
-import org.harctoolbox.IrpMaster.IrSignal;
-import org.harctoolbox.IrpMaster.IrpMasterException;
-import org.harctoolbox.IrpMaster.Pronto;
 
 /**
  * This class is a Java translation of the Analyze function of Graham Dixon's ("mathdon") C++ library ExchangeIR.
+ *
+ * @see RepeatFinder
  */
-public class Analyzer {
-    
-    private static final String debugFilename = "debug.txt";
-    private PrintStream debugFile = null;
+public class Analyzer extends Exchange {
     
     private class Burst {
 
@@ -55,38 +49,34 @@ public class Analyzer {
         int[] cumulative = new int[3];
         short type = -1;
 
-        public Burst() {
+        private Burst() {
         }
 
-        public Burst(int iOn, int iOff) {
-            this();
+        Burst(int iOn, int iOff) {
             times[0] = Math.abs(iOn);
             times[1] = Math.abs(iOff);
         }
         
         public void dump() {
-            if (debug) {
-                dumpIntArray(times);
-                dumpDoubleArray(totals);
-                dumpIntArray(units);
-                dumpShortArray(fracs);
-                debugFile.print(count + "\t");
-                dumpShortArray(sect_counts);
-                dumpIntArray(cumulative);
-                debugFile.println(type);
-            }
+            dumpIntArray(times);
+            dumpDoubleArray(totals);
+            dumpIntArray(units);
+            dumpShortArray(fracs);
+            outputDebugString(count + "\t");
+            dumpShortArray(sect_counts);
+            dumpIntArray(cumulative);
+            outputDebugString(Short.toString(type));
+
         }
     }
     
     private void dumpBursts() {
-        if (debug) {
-            for (int i = 0; i < m_Bursts.size(); i++)
-                m_Bursts.get(i).dump();
-            debugFile.println();
-        }
+        for (int i = 0; i < m_Bursts.size(); i++)
+            m_Bursts.get(i).dump();
+
+        outputDebugString("");
     }
 
-    int m_errlimit;
     int m_unit;
     int m_unit2;
     int[] m_databits = new int[3];
@@ -98,6 +88,7 @@ public class Analyzer {
     int[] m_datacounts = new int[26];
     int m_dataNdx;
     String m_altLeadout;
+    int numberDistinctBursts;
 
      /** number basis for outputs */
     // 0 means: use 16, but with $ instead of 0x as prefix.
@@ -106,46 +97,42 @@ public class Analyzer {
     private ArrayList<Burst> m_Bursts = new ArrayList<Burst>();
     
     private StringBuffer irp = new StringBuffer();
+
     private int[] signal_as_burst_indices = null;
+
+    // Corresponds to Graham's signal_out if bursts == null
+    private int[] cleansed_signal = null;
     
-    private boolean debug = false;
-    private static int default_errlimit = 10;
-    
-    public final static String versionString = "0.0.8";
-    
-    private void dump() {
-        if (!debug)
-            return;
-        
-        debugFile.println("");
-        debugFile.println(m_unit + "\t"
+    private void dump() {     
+        outputDebugString("");
+        outputDebugString(m_unit + "\t"
                 + m_unit2 + "\t"
                 + m_type + "\t"
                 + m_dataNdx + "\t" + m_altLeadout);
         dumpIntArray(m_databits);
         dumpIntArray(m_biphase);
         dumpIntArray(m_RC6);
-        debugFile.println("");
+        outputDebugString("");
         dumpIntArray(m_data);
-        debugFile.println("");
+        outputDebugString("");
         dumpIntArray(m_datacounts);
-        debugFile.println();
-        debugFile.println(m_datacounts[25]);
+        outputDebugString("");
+        outputDebugString(Integer.toString(m_datacounts[25]));
     }
     
     private void dumpIntArray(int[] array) {
-        for(int i : array)
-            debugFile.print(i + "\t");
+        for (int i : array)
+            outputDebugString(i + "\t");
     }
     
     private void dumpShortArray(short[] array) {
-        for(short i : array)
-            debugFile.print(i + "\t");
+        for (short i : array)
+            outputDebugString(i + "\t");
     }
     
     private void dumpDoubleArray(double[] array) {
-        for(double x : array)
-            debugFile.print(x + "\t");
+        for (double x : array)
+            outputDebugString(x + "\t");
     }
 
    /**
@@ -157,11 +144,11 @@ public class Analyzer {
     }
     
     private static int log2(int x) {
-        return (int)(Math.log(x)/Math.log(2)+0.0001);
+        return (int)Math.round(Math.log(x)/Math.log(2));
     }
     
     private static double modf(double x) {
-        return x - (long) x;
+        return x - Math.floor(x);
     }
     
     private static String basisPrefix(int basis) {
@@ -171,60 +158,48 @@ public class Analyzer {
                 : basis == 16 ? "0x"
                 : "$";
     }
-    
-    private void OutputDebugString(String s) {
-        if (debug)
-            System.out.println(s);
+
+    @Override
+    public String toString() {
+        return this.getIrpWithAltLeadout();
     }
-    
-    /**
-     * Construct an Analyzer from the input arguments.
-     * @param irSignal
-     */
-    public Analyzer(IrSignal irSignal) {
-        this(irSignal, default_errlimit, 0, false);
-    }
-    
-    /**
-     * Construct an Analyzer.
-     * @param irSignal
-     * @param debug Turn on debugging, boolean
-     */
-    public Analyzer(IrSignal irSignal, boolean debug) {
-        this(irSignal, default_errlimit, 0, debug);
-    }
-    
-    
+
     // TODO: move base parameter from constructor to getIrp().
     /**
-     * Construct an Analyzer from the input arguments.
-     * 
-     * @param irSignal
-     * @param errlimit 
+     * Construct an Analyzer from the arguments. In this version,
+     * a RepeatFinder is invoked first to split the signal into intro, repeat,
+     * and ending sequence, i.e. to fill in the parameters present in the other
+     * version of the constructor, but missing here.
+     *
+     * @see RepeatFinder
+     *
+     * @param times
+     * @param freq
+     * @param errlimit
      * @param basis
-     * @param debug 
      */
-    public Analyzer(IrSignal irSignal, int errlimit, int basis, boolean debug) {
-        this(irSignal.toIntArray(), irSignal.getIntroLength()/2, irSignal.getRepeatLength()/2,
-                irSignal.getEndingLength()/2, 1, (int)irSignal.getFrequency(), errlimit, basis, debug);
+    public Analyzer(int[] times, int freq, int errlimit, int basis) {
+        super(errlimit);
+        RepeatFinder repeatFinder = new RepeatFinder(times, errlimit);
+        setup(times, repeatFinder.getNoIntroBursts(), repeatFinder.getNoRepeatBursts(),
+                repeatFinder.getNoEndingBursts(), repeatFinder.getNoRepeats(), freq, basis);
     }
-    
+
     /**
      * Input is a signal as a timing list of alternating MARK and SPACE times in 
      * microseconds, together with the burst counts of the single, repeat and extra sections and the 
      * number of copies of the repeat section in the timing list.  The length (in bursts)
      * of the timing list is:
-     *		sngl_count + rpts*rpt_count + extra_count
-     * These counts may, but need not, have been obtained from the timing list by the FindRepeat function.
+     *	<pre>	sngl_count + rpts*rpt_count + extra_count</pre>
      *
      * This function identifies the distinct bursts in the signal and then averages the times in 
-     * bursts so taken to be nominally the same. The 'errlimit' parameter is used in determining whether
+     * bursts so taken to be nominally the same. The <code>errlimit</code> parameter is used in determining whether
      * two times should be considered as nominally equal.  Two times are nominally equal if they are either
-     * within 2.5% of one another or if their difference in microseconds does not exceed 'errlimit'.
-     * The 'errlimit' criterion represents a variation inherent in the signal capture mechanism, the
+     * within 2.5% of one another or if their difference in microseconds does not exceed <code>errlimit</code>.
+     * The <code>errlimit</code> criterion represents a variation inherent in the signal capture mechanism, the
      * percentage criterion represents natural variations in the signal.
      * 
-     * @param times Timing list of alternating MARK and SPACE times in microseconds, together with the burst counts of the single, repeat and extra sections and the number of copies of the repeat section in the timing list.
+     * @param times Timing list of alternating MARK and SPACE times in microseconds.
      * @param sngl_count Number of burst pairs in intro sequence.
      * @param rpt_count Number of burst pairs in repeat sequence.
      * @param extra_count Number of burst pairs in ending sequence.
@@ -232,16 +207,15 @@ public class Analyzer {
      * @param errlimit Is used in determining whether two times should be considered as nominally equal.
      * @param freq Is in Hz and used only to provide the frequency value in the IRP. It should be >= 0, but -1 may be used to signify that the frequency is not needed.
      * @param basis The number base to be used for the data output in the IRP form.
-     * @param debug If true, produce debug messages.
      */
     public Analyzer(int[] times, int sngl_count, int rpt_count, int extra_count,
-            int rpts, int freq, int errlimit, int basis, boolean debug) {
-        if (debug)
-            try {
-                debugFile = new PrintStream(debugFilename);
-            } catch (FileNotFoundException ex) {
-            }
-        this.debug = debug;
+            int rpts, int freq, int errlimit, int basis) {
+        super(errlimit);
+        setup(times, sngl_count, rpt_count, extra_count, rpts, freq, basis);
+    }
+
+    private void setup(int[] times, int sngl_count, int rpt_count, int extra_count,
+            int rpts, int freq, int basis) {
         this.basis = basis;
         int burst_ndx = 0;
         int i = 0;
@@ -250,7 +224,7 @@ public class Analyzer {
         int iEnd = sngl_count + rpts * rpt_count + extra_count;
         int rpt_offset = 0;
         String dbg_str;
-        m_errlimit = errlimit;
+        //this.errlimit = errlimit;
         m_Bursts.clear();
         
         int[] signal_out = new int[2*iEnd];
@@ -288,13 +262,12 @@ public class Analyzer {
             }
             ii++;
         }
-        if (debug) {
-            dumpBursts();    
-            for (int i1 = 0; i1 < iEnd; i1++)
-                debugFile.println(signal_out[i1]);
-        
-            debugFile.println();
-        }
+
+        dumpBursts();
+        for (int i1 = 0; i1 < iEnd; i1++)
+            outputDebugString(Integer.toString(signal_out[i1]));
+
+        outputDebugString("");
 
         ii = 0;
         for (i = 0; i < iEnd; i++) {
@@ -451,22 +424,39 @@ public class Analyzer {
 	if (m_type == 0 && m_Bursts.size() > 3 && seekLeadin(sngl_count, rpt_count, extra_count, signal_out, 1, 104))
             rpt_offset = identify(sngl_count, rpt_count, extra_count, signal_out, freq, irp);
  
-        
         signal_as_burst_indices = new int[sngl_count + rpt_count + extra_count];
         for (i = 0; i < sngl_count + rpt_count + extra_count; i++)
-                signal_as_burst_indices[i] = signal_out[2 * i];
-    
+            signal_as_burst_indices[i] = signal_out[2 * i];
+
+        //signal_as_burst_indices = signal_out;//.clone();// new int[signal2*(sngl_count + rpt_count + extra_count)];
+        cleansed_signal = new int[2*(sngl_count + rpt_count + extra_count)];
+
+        for (i = 0; i < sngl_count + rpt_count + extra_count; i++) {
+            int ndx = signal_out[2*i];
+            for (int z = 0; z < 2; z++)
+                cleansed_signal[2*i+z] = m_Bursts.get(ndx).times[z];// m_Bursts[i]// signal_out[2 * i];
+        }
+
         dumpBursts();
         dump();
+        numberDistinctBursts= freq > -2 ? m_Bursts.size() : rpt_offset;
         //return (freq > -2) ? m_Bursts.size() : rpt_offset;
     }
-    
+
+    public int[] getCleansedSignal() {
+        return cleansed_signal;
+    }
+
+    public int getNumberDistinctBursts() {
+        return this.numberDistinctBursts;
+    }
+
     /**
      * Returns the signal as a sequence of indices in the burst pairs, as can be returned from getBursts().
      * @return integer array of indices into the burst pairs.
      */
     public int[] getSignalAsBurstIndices() {
-        return signal_as_burst_indices.clone();
+        return signal_as_burst_indices;
     }
     
     /**
@@ -521,39 +511,11 @@ public class Analyzer {
     public String getIrpWithAltLeadout() {
         return getIrp() + (m_altLeadout.isEmpty() ? "" : ("; Alt leadout form: " + m_altLeadout)); 
     }
-    
-   /**
-     * Returns version string.
-     * @return Version number as string.
-     */
-    public static String getVersion() {
-        return versionString;
-    }
-
-    private boolean equalTimes(int t1, int t2) {
-        return !(Math.abs(t2) < Math.floor(0.975 * Math.abs(t1)) && Math.abs(t2) < Math.abs(t1) - m_errlimit
-                || Math.abs(t2) > Math.ceil(1.025 * Math.abs(t1)) && Math.abs(t2) > Math.abs(t1) + m_errlimit);
-    }
-
-    private boolean equalTimes(int[] t1, int offset1, int[] t2, int offset2, int duration_count) {
-        for (int i = 0; i < duration_count; i++) {
-            if (!equalTimes(t1[i + offset1], t2[i + offset2])) {
-                if (debug)
-                    System.err.print("F");
-                return false;
-            }
-        }
-        if (debug)
-            System.err.print("T");
-        return true;
-    }
 
     private int calcUnit(int provUnit, int tolerance, Integer unit) {
-        if (debug) {
-            debugFile.println();
+        outputDebugString("");
+        dumpBursts();
         
-           dumpBursts();
-        }
         // provUnit is a minimum value for unit
         double tot = 0;
         double intpart, fracpart;
@@ -562,7 +524,7 @@ public class Analyzer {
             if (m_Bursts.get(i).type == -1) {
                 for (int j = 0; j < 2; j++) {
                     double x = (double) (m_Bursts.get(i).times[j]) / provUnit + 0.5;
-                    fracpart = modf(x) - 0.5;
+                    //fracpart = modf(x) - 0.5;
                     tot += m_Bursts.get(i).times[j];
                     nmax += (int) x;
                 }
@@ -571,8 +533,7 @@ public class Analyzer {
         // Allow extra tolerance for very small units (e.g. pid-002A, where unit is 8u) as a small
         // change in unit is a large percentage change.
         nmin = (int) ((1 - Math.max(((double) tolerance) / 100., Math.min(3. / (double) provUnit, 0.3))) * nmax + 0.5) - 1;
-        String dbg_str = String.format("prov = %d tot=%f nmin=%d nmax=%d", provUnit, tot, nmin, nmax);
-        OutputDebugString(dbg_str);
+        outputDebugString("prov = %d tot=%f nmin=%d nmax=%d", provUnit, tot, nmin, nmax);
         double fracmax = 0, fracminmax = 1.0;
         for (int n = nmax; n >= nmin; n--) {
             fracmax = 0;
@@ -586,8 +547,7 @@ public class Analyzer {
                 }
             }
             if (fracmax < fracminmax) {
-                dbg_str = String.format("n=%d fracminmax=%f fracmax=%f testunit=%d", n, fracminmax, fracmax, testunit);
-                OutputDebugString(dbg_str);
+                outputDebugString("n=%d fracminmax=%f fracmax=%f testunit=%d", n, fracminmax, fracmax, testunit);
                 fracminmax = fracmax;
                 unit = testunit;
             }
@@ -603,8 +563,7 @@ public class Analyzer {
             }
         }
         dumpBursts();
-        dbg_str = String.format("Unit=%d no=%d", unit, no);
-        OutputDebugString(dbg_str);
+        outputDebugString("Unit=%d no=%d", unit, no);
         return no;
     }
 
@@ -713,11 +672,9 @@ public class Analyzer {
             }
         }
 
-        dbg_str = String.format("burst_max=%d burst_min=%d", burst_max, burst_min);
-        OutputDebugString(dbg_str);
-        dbg_str = String.format("non_lead_count=%d onint_max=%d onint_min=%d offint_max=%d offint_min=%d nonint=%d",
+        outputDebugString("burst_max=%d burst_min=%d", burst_max, burst_min);
+        outputDebugString("non_lead_count=%d onint_max=%d onint_min=%d offint_max=%d offint_min=%d nonint=%d",
                 non_lead_count, onint_max, onint_min, offint_max, offint_min, nonint);
-        OutputDebugString(dbg_str);
 
         m_unit2 = 0;
         m_databits[0] = m_databits[1] = m_databits[2] = 0;
@@ -1153,12 +1110,10 @@ public class Analyzer {
                     signal_out[2 * i + 1] = 0;
                 }
             }
-            if (bursts_done) {
-                dbg_str = String.format("RC6=%d %d %d biphase=%d %d %d databits=%d %d %d",
+            if (bursts_done)
+                outputDebugString("RC6=%d %d %d biphase=%d %d %d databits=%d %d %d",
                         m_RC6[0], m_RC6[1], m_RC6[2],
                         m_biphase[0], m_biphase[1], m_biphase[2], m_databits[0], m_databits[1], m_databits[2]);
-                OutputDebugString(dbg_str);
-            }
         }
 
         if (!bursts_done && non_lead_count >= 3 && non_lead_count <= 16 && onint_max <= 2 * onint_min
@@ -1559,9 +1514,7 @@ public class Analyzer {
                             sectstart = i + 1;
                         }
                     }
-                    dbg_str = String.format("i=%d evenOK=%b oddOK=%b eventot=%d finaltot=%d", i, evenOK, oddOK, eventot, finaltot);
-                    OutputDebugString(dbg_str);
-
+                    outputDebugString("i=%d evenOK=%b oddOK=%b eventot=%d finaltot=%d", i, evenOK, oddOK, eventot, finaltot);
                 } // for (i=0; i<sngl_count+rpt_count; i++) 
 
                 if (bursts_done) {
@@ -1594,9 +1547,8 @@ public class Analyzer {
                         if (outvec[i] > 0)
                             outvec[j++] = i;
                     }
-                    dbg_str = String.format("outvec16+ %d %d %d %d specsize %d",
+                    outputDebugString("outvec16+ %d %d %d %d specsize %d",
                             outvec[16], outvec[17], outvec[18], outvec[19], specsize);
-                    OutputDebugString(dbg_str);
 
                     int inserted = -1;
                     if (specsize == 3) {
@@ -1628,8 +1580,7 @@ public class Analyzer {
                             }
                         }
                     }
-                    dbg_str = String.format("inserted = %d", inserted);
-                    OutputDebugString(dbg_str);
+                    outputDebugString("inserted = %d", inserted);
                     for (i = 0; i < 16; i++) {
                         outvec[i] = -1;
                     }
@@ -1757,20 +1708,16 @@ public class Analyzer {
             }
         } // end of a.p. testing
 
-        if (n_best > 0) {
-            dbg_str = String.format("n_best=%d m_unit2=%d y_minmax=%f m_type=%d\n", n_best, m_unit2, y_minmax, m_type);
-            OutputDebugString(dbg_str);
-        }
+        if (n_best > 0)
+            outputDebugString("n_best=%d m_unit2=%d y_minmax=%f m_type=%d\n", n_best, m_unit2, y_minmax, m_type);
 
         /*if (bursts_done)*/ for (i = 0; i < m_Bursts.size(); i++) {
-            dbg_str = String.format("Burst %d: On=%d/%d Off=%d/%d Type=%d s_count=%d r_count=%d e_count=%d", i,
+            outputDebugString("Burst %d: On=%d/%d Off=%d/%d Type=%d s_count=%d r_count=%d e_count=%d", i,
                     m_Bursts.get(i).units[0], m_Bursts.get(i).fracs[0], m_Bursts.get(i).units[1], m_Bursts.get(i).fracs[1],
                     m_Bursts.get(i).type, m_Bursts.get(i).sect_counts[0], m_Bursts.get(i).sect_counts[1], m_Bursts.get(i).sect_counts[2]);
-            OutputDebugString(dbg_str);
             if (m_Bursts.get(i).cumulative[0] + m_Bursts.get(i).cumulative[1] + m_Bursts.get(i).cumulative[2] > 0) {
-                dbg_str = String.format("Cumulations %d %d %d\n", m_Bursts.get(i).cumulative[0],
+                outputDebugString("Cumulations %d %d %d\n", m_Bursts.get(i).cumulative[0],
                         m_Bursts.get(i).cumulative[1], m_Bursts.get(i).cumulative[2]);
-                OutputDebugString(dbg_str);
             }
         }
 
@@ -2035,13 +1982,12 @@ public class Analyzer {
                 if (!( rpt_count > 0 && (m_type < 3 || m_type > 4 && m_type < 7)))
                     m_altLeadout = "";
             }
-            OutputDebugString(new String(irp));
+            outputDebugString(new String(irp));
         }
-        if (debug) {
-            debugFile.println(rpt_offset);
+        outputDebugString("%d", rpt_offset);
 
-            dumpBursts();
-        }
+        dumpBursts();
+        
         return rpt_offset;
     }
     
@@ -2085,67 +2031,7 @@ public class Analyzer {
                 }
             }
         } while (newleadin);
-        String dbg_str = String.format("SeekLeadIn type %d, result=%b", type, found);
-        OutputDebugString(dbg_str);
+        outputDebugString("SeekLeadIn type %d, result=%b", type, found);
         return found;
-    }
-    
-    private static void printArray(int[] array) {
-        for (int i = 0; i < array.length; i++) 
-            System.out.println(i + "\t" + array[i]);
-    }
-    
-    private static void printArray2(int[][] array) {
-        for (int i = 0; i < array.length; i++) 
-            System.out.println(i + "\t" + array[i][0] + "\t" + array[i][1]);
-    }
-    
-    /**
-     * Mainly for debugging. Takes CCF as input arguments.
-     * @param args 
-     */
-    public static void main(String[] args) {
-        IrSignal irSignal = null;
-        Analyzer analyzer = null;
-        if (args.length == 0) {
-            int times[] = {
-               /* +9024, -4512, +564, -1692, +564, -564, +564, -564, +564, -564, +564, -564, +564, -564,
-                +564, -564, +564, -564, +564, -564, +564, -1692, +564, -564, +564, -564, +564, -564, +564, -564,
-                +564, -564, +564, -564, +564, -1692, +564, -1692, +564, -564, +564, -564, +564, -564, +564, -564,
-                +564, -564, +564, -564, +564, -564, +564, -564, +564, -1692, +564, -1692, +564, -1692, +564, -1692,
-                +564, -1692, +564, -1692, +564, -43992,
-                +9024, -2256, +564, -97572*/
-            +895, -895, +895, -2685, +895, -895, +895, -895, +895, -895, +895, -895,
-            +895, -895, +895, -895, +895, -895, +895, -895, +895, -895, +895, -895, +895, -895, +895, -88045
-            };
-            //int begLength = 34;
-            int begLength=0;
-            //int endLength=2;
-            int endLength=14;
-            analyzer = new Analyzer(times, begLength, endLength, 0, 1, 38400, 100, 0, true);
-            //printArray(analyzer.getSignal());
-            //printArray(analyzer.getSignalAsBurstIndices());
-            //printArray2(analyzer.getBursts());
-            //System.out.println(analyzer.getIrp());
-            irSignal = new IrSignal(times, begLength, endLength, 38400);
-
-        } else {
-            int[] ccf = new int[args.length];
-            for (int i = 0; i < args.length; i++) {
-                ccf[i] = Integer.parseInt(args[i], 16);
-            }
-            try {
-                irSignal = Pronto.ccfSignal(ccf);
-            } catch (IrpMasterException ex) {
-                System.err.println(ex.getMessage());
-            }
-        }
-        
-        if (analyzer == null)
-            analyzer = new Analyzer(irSignal, 100, 0, true);
-        printArray(analyzer.getSignal());
-        printArray(analyzer.getSignalAsBurstIndices());
-        printArray2(analyzer.getBursts());
-        System.out.println(analyzer.getIrpWithAltLeadout());
     }
 }
