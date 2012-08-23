@@ -30,6 +30,7 @@ package com.hifiremote.makehex;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Locale;
 
 /**
  * This class consists of John F.&nbsp; Fine's C++ program makehex translated to Java.
@@ -115,7 +116,7 @@ public class Makehex {
         return s;
     }
     
-    private class Value {
+    private static class Value {
         public double m_val;
         public int m_bits;
         
@@ -126,17 +127,17 @@ public class Makehex {
     };
 
     private static String stringify(String[] str, String name) {
-        String res = "";
+        StringBuilder res = new StringBuilder();
         for (int i = 0; i < str.length; i++)
-            res += name + "[" + i + "] = " + str[i] + "; ";
-        return res;
+            res.append(name).append("[").append(i).append("] = ").append(str[i]).append("; ");
+        return res.toString();
     }
     
     private static String stringify(int[] str, String name) {
-        String res = "";
+        StringBuilder res = new StringBuilder();
         for (int i = 0; i < str.length; i++)
-            res += name + "[" + i + "] = " + str[i] + "; ";
-        return res;
+            res.append(name).append("[").append(i).append("] = ").append(str[i]).append("; ");
+        return res.toString();
     }
     
     private void setDigit(int d, String value) {
@@ -433,14 +434,14 @@ public class Makehex {
     // of writing stuff to a file.
     private String prontoString() {
         computeHex();
-        String outString = "";
+        StringBuilder outString = new StringBuilder();
 
         int unit;
         if (m_frequency != 0) {
             unit = (int) (4145146.0 / m_frequency + 0.5);
-            outString = String.format("0000 %04X %04X %04X", unit, sizeIntro, m_hex.size() / 2 - sizeIntro);
+            outString.append(String.format("0000 %04X %04X %04X", unit, sizeIntro, m_hex.size() / 2 - sizeIntro));
             for (int nIndex = 0; nIndex < m_hex.size(); nIndex += 2) {
-                outString += String.format(" %04X %04X", computeCycles(nIndex), computeCycles(nIndex + 1));
+                outString.append(String.format(" %04X %04X", computeCycles(nIndex), computeCycles(nIndex + 1)));
             }
         } else {
             double mn = m_hex.get(0);
@@ -450,11 +451,11 @@ public class Makehex {
             }
             unit = (int) (4.145146 * .125 * mn + 0.5);
             //unit &= -2;
-            outString = String.format("0100 %04X %04X %04X", unit, sizeIntro, m_hex.size() / 2 - sizeIntro);
+            outString.append(String.format("0100 %04X %04X %04X", unit, sizeIntro, m_hex.size() / 2 - sizeIntro));
             for (int nIndex = 0; nIndex < m_hex.size(); nIndex += 2)
-                outString += String.format(" %04X %04X", computeCycles(nIndex, mn), computeCycles(nIndex + 1, mn));
+                outString.append(String.format(" %04X %04X", computeCycles(nIndex, mn), computeCycles(nIndex + 1, mn)));
         }
-        return outString;
+        return outString.toString();
     }
     
     private int computeCycles(int index) {
@@ -546,7 +547,7 @@ public class Makehex {
         else if (keyword.equalsIgnoreCase("FIRSTBIT"))
             m_msb = value.equalsIgnoreCase("msb");
         else if (keyword.equalsIgnoreCase("FORM"))
-            m_form = value.toUpperCase();
+            m_form = value.toUpperCase(Locale.US);
         else if (keyword.regionMatches(true, 0, "DEFINE", 0, 6)
                 || keyword.regionMatches(true, 0, "DEFAULT", 0, 7))
             m_def.put(keyword.charAt(keyword.length() - 1), value);
@@ -569,7 +570,10 @@ public class Makehex {
         filename = irpfile.getName();
         BufferedReader r = null;
         try {
-            r = new BufferedReader(new InputStreamReader(new FileInputStream(irpfile)));
+            r = new BufferedReader(new InputStreamReader(new FileInputStream(irpfile), "US-ASCII"));
+        } catch (UnsupportedEncodingException ex) {
+            // This cannot happen
+            assert false;
         } catch (FileNotFoundException ex) {
             System.err.println("File " + irpfile + " not found.");
             return false;
@@ -590,6 +594,12 @@ public class Makehex {
             }
         } catch (IOException ex) {
             System.err.println(ex.toString());
+        } finally {
+            try {
+                r.close();
+            } catch (IOException ex) {
+                System.err.println(ex.toString());
+            }
         }
 
         // If having a true subdevice, nuke default definition
@@ -635,66 +645,67 @@ public class Makehex {
     
     public static boolean process_irpfile(String filename, String out, int device, int subdevice,
             int function, int endfunction, int toggle) {
+        File f = new File(filename);
+        String basename = f.getName();
+        String dirname = f.getParent();
+        String long_basename = basename.contains(".") ? basename : basename + ".irp";
+        String filename_sans_extension = long_basename.substring(0, long_basename.lastIndexOf('.'));
+        String soutFile;
+        
+        Makehex irp = new Makehex(new File(dirname, long_basename));
+        if (!irp.is_valid())
+            return false;
+
+        PrintStream outStream = null;
+        File outFile = out == null || out.isEmpty() ? new File(dirname, filename_sans_extension + ".hex")
+                : (new File(out)).isDirectory() ? new File(out, filename_sans_extension + ".hex")
+                : out.equals("-") ? null
+                : new File(out);
+
         try {
-            File f = new File(filename);
-            String basename = f.getName();
-            String dirname = f.getParent();
-            String long_basename = basename.contains(".") ? basename : basename + ".irp";
-            String filename_sans_extension = long_basename.substring(0, long_basename.lastIndexOf('.'));
-            String soutFile;
-            
-                
-            PrintStream outStream;
-            File outFile = out == null || out.isEmpty() ? new File(dirname, filename_sans_extension + ".hex")
-                    : (new File(out)).isDirectory() ? new File(out, filename_sans_extension + ".hex")
-                    : out.equals("-") ? null
-                    : new File(out);
-                        
-            outStream = outFile == null ? System.out : new PrintStream(outFile);
-            
-            if (verbose)
-                System.out.println("Processing " + new File(dirname, long_basename)
-                        + ", writing to " + (outFile == null ? "<stdout>" : outFile));
-            
-            Makehex irp = new Makehex(new File(dirname, long_basename));
-            if (!irp.is_valid())
-                return false;
-            
-            if (irp.protocolname == null)
-                irp.protocolname = filename_sans_extension;
-            
-            if (debug_parser)
-                System.out.println(irp);
-            if (function == -1) {
-                function = irp.m_functions[0];
-                endfunction = irp.m_functions[2];
-            }
-            if (device == -1) {
-                device = irp.m_device[0];
-                if (irp.m_form.contains("S"))
-                    subdevice = irp.m_device[1];
-            }
-            if (toggle != -1) {
-                irp.m_value.put('T', toggle);
-            }
-            int end = endfunction == -1 ? function : endfunction;
-            for (int func = function; func <= end; func++) {
-                if (debug_parser)
-                    System.out.println(irp);
-                outStream.println("Device Code: " + device + (subdevice == -1 ? "" : "." + subdevice) + " Function: " + func);
-                String prontostr = irp.prontoString(device, subdevice, func, toggle);
-                if (prontostr != null)
-                    outStream.println(prontostr);
-                else
-                    break;
-            }
-            outStream.close();
-            return true;
-            
+            outStream = outFile == null ? System.out : new PrintStream(outFile, "US-ASCII");
+        } catch (UnsupportedEncodingException ex) {
+            // This cannot happen
+            assert false;
         } catch (FileNotFoundException ex) {
             System.err.println(ex.getMessage());
+            return false;
         }
-        return false;
+            
+        if (verbose)
+            System.out.println("Processing " + new File(dirname, long_basename)
+                    + ", writing to " + (outFile == null ? "<stdout>" : outFile));
+
+        if (irp.protocolname == null)
+            irp.protocolname = filename_sans_extension;
+
+        if (debug_parser)
+            System.out.println(irp);
+        if (function == -1) {
+            function = irp.m_functions[0];
+            endfunction = irp.m_functions[2];
+        }
+        if (device == -1) {
+            device = irp.m_device[0];
+            if (irp.m_form.contains("S"))
+                subdevice = irp.m_device[1];
+        }
+        if (toggle != -1) {
+            irp.m_value.put('T', toggle);
+        }
+        int end = endfunction == -1 ? function : endfunction;
+        for (int func = function; func <= end; func++) {
+            if (debug_parser)
+                System.out.println(irp);
+            outStream.println("Device Code: " + device + (subdevice == -1 ? "" : "." + subdevice) + " Function: " + func);
+            String prontostr = irp.prontoString(device, subdevice, func, toggle);
+            if (prontostr != null)
+                outStream.println(prontostr);
+            else
+                break;
+        }
+        outStream.close();
+        return true;
     }
 
     private static void usage(int exitcode) {
@@ -760,7 +771,7 @@ public class Makehex {
                     usage(1);
             }
         } catch (NumberFormatException e) {
-            System.err.println("NumberFormatException");
+            System.err.println("NumberFormatException: " + e.getMessage());
             usage(1);
         }
         
