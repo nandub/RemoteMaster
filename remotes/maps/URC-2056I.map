@@ -1,0 +1,74 @@
+#$MTIMFH
+#$-:Image Map file created by Map THIS!
+#$-:Map THIS! free image map editor by Todd C. Wilson
+#$-:Please do not edit lines starting with "#$"
+#$VERSION:1.30
+#$TITLE:Titan URC-2056I
+#$DESCRIPTION:RemoteMaster Map for the Titan URC-2056I
+#$AUTHOR:Anthony Patrick
+#$DATE:Sun Feb 19 17:16:36 2012
+#$PATH:.\
+#$GIF:URC-2056I.jpg
+#$FORMAT:ncsa
+#$EOH
+default 311902
+circle $3F:Setup  18,21 22,25
+circle $09:Power  96,21 103,28
+circle $05:AUX  20,51 26,57
+circle $03:DVD  37,37 43,43
+circle $04:AUD  58,32 65,39
+circle $02:TV  79,37 85,43
+circle $01:STB  96,51 102,57
+circle $36:Stop  33,107 39,113
+poly $32:Reverse 34,78 16,78 11,86 16,93 34,93 34,78 34,78
+poly $2F:Replay 37,54 26,66 37,72 43,66 37,54 37,54
+poly $30:List 53,63 63,63 68,48 48,48 53,63 53,63
+poly $31:Live 78,53 90,65 77,72 71,65 78,53 78,53
+poly $34:Forward 80,78 99,78 104,86 97,93 80,93 80,78 80,78
+circle $37:Record  83,107 89,113
+circle $33:Play  57,86 67,96
+circle $35:Pause  58,107 64,113
+circle $18:Guide  20,132 27,139
+circle $20:Menu  45,132 52,139
+circle $11:Info  71,133 78,140
+circle $12:Exit  96,132 103,139
+poly $21:Day+ 12,147 31,147 21,165 12,165 12,147 12,147
+poly $22:Day- 12,195 25,195 20,173 12,173 12,194 12,195
+poly $19:Page+ 102,165 94,165 85,147 103,147 103,165 102,165
+poly $1A:Page- 103,194 89,194 95,172 103,172 103,194 103,194
+circle $13:Up  59,156 75,164
+circle $15:Left  38,175 46,192
+circle $16:Right  78,175 86,191
+circle $14:Down  59,195 76,202
+circle $17:OK  58,176 70,188
+circle $1B:A  26,210 32,216
+circle $1C:B  45,223 52,230
+circle $1D:C  71,222 78,229
+circle $1E:D  90,210 97,217
+poly $0C:Vol+ 31,261 12,261 12,245 22,239 32,245 31,261 31,261
+poly $0D:Vol- 31,282 31,265 12,265 13,283 22,287 31,282 31,282
+circle $1F:On_Demand  58,261 71,274
+poly $0A:CH+ 104,262 104,246 95,240 85,246 85,262 103,262 104,262
+poly $0B:CH- 103,267 103,283 94,288 85,283 85,267 103,267 103,267
+circle $0E:Mute  23,301 30,308
+circle $10:Fav  58,300 71,309
+circle $0F:Last  92,301 99,308
+poly $23:1 35,328 35,316 15,316 10,322 16,328 35,328 35,328
+rect $24:2 46,315 71,326
+poly $25:3 80,328 80,315 100,315 104,321 100,328 80,328 80,328
+poly $26:4 36,335 36,348 15,348 10,342 14,335 36,335 36,335
+rect $27:5 46,335 71,346
+poly $28:6 81,335 103,335 105,341 102,347 81,347 81,333 81,335
+poly $29:7 36,354 36,366 15,366 11,360 14,354 34,354 36,354
+rect $2A:8 46,355 71,366
+poly $2B:9 81,367 81,354 101,354 105,361 101,367 81,367 81,367
+poly $2D:Input 35,375 15,375 11,381 16,387 35,387 35,375 35,375
+rect $2C:0 46,374 71,385
+poly $2E:Aspect 81,374 101,374 105,379 102,386 81,386 81,374 81,374
+circle $3D:Home  23,403 30,410
+circle $38:Phone  47,403 54,410
+circle $3A:WWW  70,402 76,408
+circle $3B:->|  93,401 99,407
+circle $3E:Delete  23,425 29,431
+circle $39:My_Media  58,426 72,434
+circle $3C:CC  92,425 98,431

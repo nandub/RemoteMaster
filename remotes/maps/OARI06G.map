@@ -1,0 +1,56 @@
+#$MTIMFH
+#$GIF:OARI06G.jpg
+#$AUTHOR:eferz
+#$EOH
+rect Setup 32,44 56,56
+rect Format 75,43 102,58
+circle Power  133,51 133,63
+rect DeviceSelectLeft 49,99 87,116
+rect DeviceSelectRight 89,99 127,117
+rect WatchTV 29,142 66,156
+rect WatchMovie 69,141 107,154
+rect ListenToMusic 110,142 147,156
+rect AudioHelp 49,172 87,186
+rect VideoHelp 89,172 128,186
+rect SkipBack 28,209 66,226
+rect Stop 69,209 107,226
+rect SkipFwd 110,209 147,226
+rect Rewind 28,236 66,255
+rect Play 69,236 107,255
+rect FastFwd 110,236 147,255
+rect List 28,264 66,283
+rect Pause 69,264 107,283
+rect Record 109,264 147,283
+rect Vol+ 19,300 40,318
+rect Mute 7,346 32,360
+rect Vol- 20,387 41,405
+poly Up 76,329 65,318 87,307 109,318 98,329 76,329
+poly Left 63,342 52,331 41,353 52,375 63,364 63,342
+circle OK  87,353 87,373
+poly Right 111,342 122,331 133,353 122,375 111,364 111,342
+poly Down 76,377 65,388 87,399 109,388 98,377 76,377
+rect Ch+ 131,302 152,320
+rect Last 142,346 167,360
+rect Ch- 131,387 152,405
+rect Red 26,424 51,438
+rect Green 58,424 83,438
+rect Yellow 91,424 116,438
+rect Blue 123,424 148,438
+rect Info 27,450 65,468
+rect Menu 67,450 106,468
+rect Guide 108,450 147,468
+rect Fav 27,477 65,495
+rect OnDemand 67,477 106,495
+rect Exit 108,477 147,495
+rect 1 25,507 58,524
+rect 2 70,507 103,524
+rect 3 115,507 147,524
+rect 4 25,533 58,549
+rect 5 70,533 103,549
+rect 6 115,533 147,549
+rect 7 25,557 58,575
+rect 8 70,557 103,575
+rect 9 115,557 147,575
+rect Dash 25,583 58,600
+rect 0 70,583 103,600
+rect Input 115,583 147,600

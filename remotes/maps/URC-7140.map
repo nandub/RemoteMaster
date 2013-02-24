@@ -1,0 +1,56 @@
+#$MTIMFH
+#$-:Image Map file created by Map THIS!
+#$-:Map THIS! free image map editor by Todd C. Wilson
+#$-:Please do not edit lines starting with "#$"
+#$VERSION:1.30
+#$DATE:Thu Feb 21 22:52:14 2013
+#$PATH:C:\Remotes\images\MapThis\
+#$GIF:URC-7140.jpg
+#$FORMAT:ncsa
+#$EOH
+default URC-7140
+circle Magic  71,96 71,116
+circle Power  188,95 188,115
+circle 1  72,160 72,180
+circle 8  130,268 130,288
+circle 9  186,268 186,288
+circle 6  185,216 185,236
+circle 3  185,160 185,180
+circle 2  130,160 130,180
+circle 5  128,216 128,236
+circle 4  73,216 73,236
+circle 7  72,268 72,288
+circle -/--  73,325 73,345
+circle 0  130,325 130,345
+circle AV  186,325 186,345
+circle Menu  65,503 65,523
+circle 16x9  194,503 194,523
+circle Exit  195,657 195,677
+circle Info  131,678 131,698
+circle FAV  65,655 65,675
+circle Red  65,721 65,741
+circle Green  107,721 107,741
+circle Yellow  150,721 150,741
+circle Blue  193,721 193,741
+circle Rewind  64,776 64,796
+circle Play  108,776 108,796
+circle Pause  151,776 151,796
+circle FastFwd  195,776 195,796
+circle SkipBack  64,822 64,842
+circle Record  107,822 107,842
+circle Stop  153,822 153,842
+circle SkipFwd  195,822 195,842
+circle Last  130,386 130,406
+circle Mute  131,439 131,459
+poly DeviceSelect 108,68 99,79 102,96 151,95 160,81 149,67 108,68
+poly Guide 110,470 101,481 104,498 153,497 162,483 151,469 110,470
+circle Vol+  73,380 73,400
+circle Vol-  74,440 74,460
+circle Ch+  187,381 187,401
+circle Ch-  188,442 188,462
+circle OK  131,579 131,608
+poly Left 92,564 93,588 73,578 92,564
+poly Up 115,540 142,540 130,519 115,540
+poly Right 168,563 168,592 190,580 168,563
+poly Down 116,613 147,613 130,637 116,613
+rect Combi 107,104 154,128

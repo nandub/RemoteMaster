@@ -1,0 +1,59 @@
+#$MTIMFH
+#$-:Image Map file created by Map THIS!
+#$-:Map THIS! free image map editor by Todd C. Wilson
+#$-:Please do not edit lines starting with "#$"
+#$VERSION:1.30
+#$DATE:Sat Jan 26 18:32:11 2013
+#$PATH:C:\Remotes\images\MapThis\
+#$GIF:XsightPlus.jpg
+#$FORMAT:ncsa
+#$EOH
+default XsightPlus
+circle Power  174,77 174,89
+circle Guide  96,321 96,333
+circle Vol+  100,403 100,415
+circle Info  97,373 97,385
+circle Ch+  183,404 183,416
+circle Menu  185,323 185,335
+circle Exit  186,370 186,382
+circle Vol-  99,446 99,458
+circle Up  141,322 141,334
+circle OK  141,347 141,359
+circle Last  156,425 156,437
+circle Ch-  183,448 183,460
+circle Mute  125,424 125,436
+circle Left  116,347 116,359
+circle Right  168,348 168,360
+circle Down  140,372 140,384
+circle Red  94,473 94,485
+circle Yellow  155,475 155,487
+circle Blue  185,475 185,487
+circle SkipBack  99,501 99,513
+circle Green  125,475 125,487
+circle Pause  140,496 140,508
+circle SkipFwd  180,501 180,513
+circle Rewind  101,529 101,541
+circle FastFwd  179,529 179,541
+circle Play  140,529 140,541
+circle Record  178,555 178,567
+circle Stop  101,555 101,567
+circle List  138,559 138,571
+circle 1  100,583 100,595
+circle 2  139,583 139,595
+circle 3  180,581 180,593
+circle 4  97,606 97,618
+circle 6  182,607 182,619
+circle 7  98,629 98,641
+circle 9  180,631 180,643
+circle 8  139,630 139,642
+circle Input  99,657 99,669
+circle 0  140,659 140,671
+circle Enter  181,660 181,672
+circle 5  140,607 140,619
+rect LCDcancel 99,228 121,276
+rect LCDup 125,229 159,247
+rect LCDdown 123,259 162,278
+rect LCDok 162,228 184,276
+rect Activities 87,286 115,303
+rect Favorites 127,288 155,305
+rect Devices 166,287 194,304

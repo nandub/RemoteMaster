@@ -1,0 +1,56 @@
+#$MTIMFH
+#$AUTHOR:eferz
+#$GIF:URC-7960.jpg
+#$EOH
+rect Magic 30,47 60,64
+rect 16x9 74,47 106,64
+circle power  135,56 135,68
+rect DeviceSelectLeft 50,104 89,119
+rect DeviceSelectRight 91,104 129,119
+rect WatchTV 30,147 68,160
+rect WatchMovie 70,147 110,160
+rect ListenToMusic 112,147 150,160
+rect AudioHelp 50,179 88,193
+rect videoHelp 91,179 130,193
+rect SkipBack 30,215 68,232
+rect Stop 70,215 109,232
+rect SkipFwd 112,215 150,232
+rect Rewind 30,243 68,262
+rect Play 70,243 109,262
+rect FastFwd 111,243 150,262
+rect Record 111,271 150,289
+rect Pause 70,271 109,289
+rect List 30,271 68,289
+rect Vol+ 21,312 46,327
+rect Mute 9,353 34,367
+rect Vol- 23,396 48,410
+poly Up 78,335 67,324 89,313 111,324 100,335 78,335 78,335
+poly Down 78,382 67,393 89,404 111,393 100,382 78,382 78,382
+circle OK  89,359 89,379
+poly Right 112,347 123,336 134,358 123,380 112,369 112,347
+poly Left 66,347 55,336 44,358 55,380 66,369 66,347 66,347
+rect Ch+ 135,312 160,327
+rect Last 146,353 171,367
+rect Ch- 134,396 159,410
+rect Red 28,434 53,446
+rect Green 61,434 86,446
+rect Yellow 94,434 119,446
+rect Blue 127,434 152,446
+rect Info 30,459 68,478
+rect Menu 70,459 109,478
+rect Guide 112,459 151,478
+rect MCE 30,486 68,505
+rect PopUp 70,486 109,505
+rect Back 112,486 151,505
+rect 1 27,517 61,534
+rect 2 73,517 106,534
+rect 3 119,517 152,534
+rect 4 27,543 61,559
+rect 5 73,543 106,559
+rect 6 119,543 152,559
+rect 7 27,570 61,587
+rect 8 73,569 106,587
+rect 9 119,569 152,586
+rect -/-- 27,596 61,613
+rect 0 73,596 106,613
+rect AV 119,596 152,613

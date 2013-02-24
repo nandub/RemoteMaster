@@ -1,0 +1,53 @@
+#$MTIMFH
+#$-:Image Map file created by Map THIS!
+#$-:Map THIS! free image map editor by Todd C. Wilson
+#$-:Please do not edit lines starting with "#$"
+#$VERSION:1.30
+#$TITLE:URC-3920.map
+#$DATE:Tue Feb 15 16:00:00 2011
+#$PATH:G:\me\
+#$GIF:URC-3920.jpg
+#$FORMAT:ncsa
+#$EOH
+rect MUTE  40,172 53,185
+rect YELLOW  50,288 61,299
+rect BLUE  68,288 79,299
+rect GREEN  32,288 43,299
+rect RED  14,288 25,299
+rect LEFT  15,244 31,260
+rect RIGHT  62,242 78,258
+rect DOWN  39,267 55,283
+rect UP  38,219 54,235
+rect CH-  64,192 78,207
+rect CH+  64,171 78,186
+rect VOL-  15,193 29,208
+rect VOL+  15,171 29,186
+rect OK  38,195 56,214
+rect 1  15,81 30,96
+rect 2  39,81 54,96
+rect 3  64,81 79,96
+rect 4  15,102 30,117
+rect 5  39,102 54,117
+rect 6  64,102 79,117
+rect 7  15,124 30,139
+rect 8  39,124 54,139
+rect 9  64,124 79,139
+rect -/--  15,145 30,160
+rect 0  39,145 54,160
+rect AV  64,145 79,160
+rect POWER  64,22 79,37
+rect MENU  15,22 30,37
+rect SAT  59,43 76,55
+rect TV  20,44 37,56
+rect STOP  63,345 80,357
+rect EXIT  38,345 55,357
+rect REC  13,344 30,356
+rect FF  63,308 80,320
+rect GUIDE  38,308 55,320
+rect REW  13,307 30,319
+rect PAUSE  13,325 30,337
+rect PLAY  63,326 80,338
+rect INFO  38,326 55,338
+rect DVD  20,61 37,73
+rect VCR  57,60 74,72
+rect SETUP  38,23 55,35
