@@ -16,7 +16,7 @@ EFCDigits=5
 2BytePid=Yes
 SetupValidation=Enforce
 ImageMap=RCRP05B.map
-StartReadOnlySettings=26 
+StartReadOnlySettings=92
 
 [SpecialProtocols]
 Multiplex=01FE
@@ -54,8 +54,73 @@ dev5 Setup Code Lock=$01A.5.1.0.0 (Off;On)
 dev6 Setup Code Lock=$01A.6.1.0.0 (Off;On)
 DVR  Setup Code Lock= $01A.7.1.0.0 (Off;On)
 TV/CBL sends Pwr=$01B.4.1.0.0 (Off;On)
+Punch Through(PT) Device=$022.3.4.1.0 DeviceButtons
+CBL uses PT=$02B.0.1.0.0 (No;Yes)
+TV uses PT=$02B.1.1.0.0 (No;Yes)
+DVD uses PT=$02B.2.1.0.0 (No;Yes)
+AUD uses PT=$02B.3.1.0.0 (No;Yes)
+dev4 uses PT=$02B.4.1.0.0 (No;Yes)
+dev5 uses PT=$02B.5.1.0.0 (No;Yes)
+dev6 uses PT=$02B.6.1.0.0 (No;Yes)
+DVR uses PT=$02B.7.1.0.0 (No;Yes)
+PT Power=$023.0.1.0.0 (No;Yes)
+PT Ch+=$023.1.1.0.0 (No;Yes)
+PT Ch-=$023.2.1.0.0 (No;Yes)
+PT Vol+=$023.3.1.0.0 (No;Yes)
+PT Vol-=$023.4.1.0.0 (No;Yes)
+PT Mute=$023.5.1.0.0 (No;Yes)
+PT Last=$023.6.1.0.0 (No;Yes)
+PT Fav=$023.7.1.0.0 (No;Yes)
+PT Info=$024.0.1.0.0 (No;Yes)
+PT Exit=$024.1.1.0.0 (No;Yes)
+PT Up=$024.2.1.0.0 (No;Yes)
+PT Down=$024.3.1.0.0 (No;Yes)
+PT Left=$024.4.1.0.0 (No;Yes)
+PT Right=$024.5.1.0.0 (No;Yes)
+PT Ok=$024.6.1.0.0 (No;Yes)
+PT Guide=$024.7.1.0.0 (No;Yes)
+PT Page+=$025.0.1.0.0 (No;Yes)
+PT Page-=$025.1.1.0.0 (No;Yes)
+PT A[yellow]=$025.2.1.0.0 (No;Yes)
+PT B[blue]=$025.3.1.0.0 (No;Yes)
+PT C[red]=$025.4.1.0.0 (No;Yes)
+PT D[green]=$025.5.1.0.0 (No;Yes)
+PT Macro1=$025.6.1.0.0 (No;Yes)
+PT OnDemand=$025.7.1.0.0 (No;Yes)
+PT Macro2=$026.0.1.0.0 (No;Yes)
+PT Menu=$026.1.1.0.0 (No;Yes)
+PT phantom1=$026.2.1.0.0 (No;Yes)
+PT Day+=$026.3.1.0.0 (No;Yes)
+PT Day-=$026.4.1.0.0 (No;Yes)
+PT 1=$026.5.1.0.0 (No;Yes)
+PT 2=$026.6.1.0.0 (No;Yes)
+PT 3=$026.7.1.0.0 (No;Yes)
+PT 4=$027.0.1.0.0 (No;Yes)
+PT 5=$027.1.1.0.0 (No;Yes)
+PT 6=$027.2.1.0.0 (No;Yes)
+PT 7=$027.3.1.0.0 (No;Yes)
+PT 8=$027.4.1.0.0 (No;Yes)
+PT 9=$027.5.1.0.0 (No;Yes)
+PT 0=$027.6.1.0.0 (No;Yes)
+PT Dash=$027.7.1.0.0 (No;Yes)
+PT Aspect=$028.0.1.0.0 (No;Yes)
+PT Skip_Fwd=$028.1.1.0.0 (No;Yes)
+PT Skip_Back=$028.2.1.0.0 (No;Yes)
+PT List=$028.3.1.0.0 (No;Yes)
+PT Live=$028.4.1.0.0 (No;Yes)
+PT Rewind=$028.5.1.0.0 (No;Yes)
+PT Play=$028.6.1.0.0 (No;Yes)
+PT Fast_Fwd=$028.7.1.0.0 (No;Yes)
+PT Pause=$029.0.1.0.0 (No;Yes)
+PT Stop=$029.1.1.0.0 (No;Yes)
+PT Record=$029.2.1.0.0 (No;Yes)
+PT PIP_On/Off=$029.3.1.0.0 (No;Yes)
+PT PIP_Swap=$029.4.1.0.0 (No;Yes)
+PT PIP_Move=$029.5.1.0.0 (No;Yes)
+PT PIP_Ch+=$029.6.1.0.0 (No;Yes)
+PT PIP_Ch-=$029.7.1.0.0 (No;Yes)
+PT Input=$02A.0.1.0.0 (No;Yes)
 Byte1B=$01B.3.4.$0C.0 
-Byte22=$022.3.4.$0F.0 
 
 # DeviceTypes
 # The order matches up with default type on DeviceButtons
@@ -187,7 +252,7 @@ Macro2=$020
 0073, 007E:5, 0092:3, 0098:2, 009C, 009E, 00A4, 00AF, 00B6, 00C4, 
 00C9, 00CA, 00CD:2, 00DE, 00E2, 00E8, 00F0, 00F2, 00F8:3, 010C, 
 010F, 0111, 0114:2, 0115, 0117, 011A:2, 011B, 011E, 012A:2, 0161:5, 
-0162, 016C:2, 0173:1, 017E, 0184:2, 019A, 019C, 01A4, 01A5, 01A7, 
+0162, 016C:2, 0173:1, 017E, 0184:2, 019A, 019C, 01A4:2, 01A5, 01A7, 
 01AC, 01AD, 01B5, 01BA, 01C4, 01C8, 01D2, 01E0, 01E2, 01E8, 
 01EA, 01ED, 01F2, 01F9, 01FB
 
