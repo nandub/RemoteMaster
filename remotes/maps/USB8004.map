@@ -1,0 +1,58 @@
+#$MTIMFH
+#$-:Image Map file created by Map THIS!
+#$-:Map THIS! free image map editor by Todd C. Wilson
+#$-:Please do not edit lines starting with "#$"
+#$VERSION:1.30
+#$DATE:Sat Mar 23 10:16:36 2013
+#$PATH:C:\Users\xnappo\Downloads\
+#$GIF:USB8004.jpg
+#$FORMAT:ncsa
+#$EOH
+default Power
+circle Power  64,20 72,28
+circle 1  34,371 44,375
+circle Pause  64,325 77,338
+circle OK  64,236 73,244
+circle Last  103,235 110,242
+circle Mute  24,235 31,242
+rect Exit 96,191 111,198
+rect Soft1 31,60 60,71
+rect Blue 95,281 109,286
+circle Vol+  32,213 38,219
+circle Ch+  98,213 104,219
+circle Ch-  99,258 105,264
+circle Vol-  30,258 36,264
+circle Up  64,218 71,225
+circle Down  64,253 71,260
+circle Right  82,235 89,242
+circle Left  45,236 52,243
+circle SkipBack  27,303 34,310
+circle Play  64,300 72,308
+circle SkipFwd  99,304 106,311
+circle FastFwd  99,325 106,332
+circle Record  101,347 108,354
+circle Rewind  29,325 36,332
+circle Stop  64,350 72,359
+circle List  28,347 35,354
+rect Soft2 68,60 97,71
+rect Soft3 31,82 60,93
+rect Soft4 68,82 97,93
+rect Soft5 31,103 60,114
+rect Soft6 68,103 97,114
+rect Info 70,191 85,198
+rect Menu 44,191 59,198
+rect Guide 18,191 33,198
+rect Yellow 70,281 84,286
+rect Green 45,281 59,286
+rect Red 20,281 34,286
+circle 2  65,371 75,375
+circle 3  96,371 106,375
+circle 4  34,391 44,395
+circle 5  65,391 75,395
+circle 6  96,391 106,395
+circle 7  34,411 44,415
+circle 8  65,412 75,416
+circle 9  96,411 106,415
+circle AV  34,431 44,435
+circle 0  65,431 75,435
+circle Enter  96,431 106,435

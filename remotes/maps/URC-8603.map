@@ -1,0 +1,58 @@
+#$MTIMFH
+#$-:Image Map file created by Map THIS!
+#$-:Map THIS! free image map editor by Todd C. Wilson
+#$-:Please do not edit lines starting with "#$"
+#$VERSION:1.30
+#$DATE:Sat Mar 23 10:16:36 2013
+#$PATH:C:\Users\xnappo\Downloads\
+#$GIF:URC-8603.jpg
+#$FORMAT:ncsa
+#$EOH
+default Power
+circle Power  65,22 73,30
+rect Soft1 32,64 62,72
+rect Soft2 71,64 101,72
+rect Soft3 32,87 62,95
+rect Soft4 71,87 101,95
+rect Soft5 32,110 62,118
+rect Soft6 71,110 101,118
+rect Guide 18,191 34,198
+rect Menu 44,191 60,198
+rect Info 70,191 86,198
+rect Exit 96,191 112,198
+circle Vol+  32,213 40,221
+circle Ch+  101,213 109,221
+circle OK  65,238 75,248
+circle Last  106,237 113,244
+circle Mute  25,237 32,244
+circle Ch-  101,261 109,269
+circle Vol-  32,261 40,269
+circle Up  65,219 72,226
+circle Down  65,256 72,263
+circle Right  83,238 91,245
+circle Left  47,238 55,245
+rect Red 19,287 35,293
+rect Green 45,287 61,293
+rect Yellow 72,287 88,293
+rect Blue 98,287 114,293
+circle SkipBack  28,312 36,320
+circle Play  66,305 75,314
+circle SkipFwd  104,312 112,320
+circle Rewind  28,333 36,340
+circle Pause  66,332 80,346
+circle FastFwd  104,333 112,340
+circle List  28,356 36,364
+circle Stop  66,361 75,370
+circle Record  104,357 112,365
+circle 1  36,381 46,387
+circle 2  67,381 77,387
+circle 3  98,381 108,387
+circle 4  36,402 46,408
+circle 5  67,402 77,408
+circle 6  98,402 108,408
+circle 7  36,422 46,428
+circle 8  67,422 77,428
+circle 9  98,422 108,428
+circle AV  36,442 46,448
+circle 0  67,442 77,448
+circle Enter  98,442 108,448

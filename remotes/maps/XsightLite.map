@@ -1,0 +1,62 @@
+#$MTIMFH
+#$-:Image Map file created by Map THIS!
+#$-:Map THIS! free image map editor by Todd C. Wilson
+#$-:Please do not edit lines starting with "#$"
+#$VERSION:1.30
+#$DATE:Wed May 29 16:45:31 2013
+#$PATH:C:\Users\djohnson\Desktop\
+#$GIF:XsightLite.jpg
+#$FORMAT:ncsa
+#$EOH
+default XsightLite
+circle Power  174,77 174,87
+circle Vol+  99,402 99,413
+circle Ch+  183,403 183,414
+circle Vol-  97,446 97,457
+circle Up  141,323 141,334
+circle OK  141,348 141,359
+circle Last  156,425 156,436
+circle Ch-  182,447 182,458
+circle Mute  126,425 126,436
+circle Left  117,348 117,359
+circle Right  167,348 167,359
+circle Down  141,373 141,384
+circle SkipBack  101,501 101,513
+circle Pause  140,496 140,508
+circle SkipFwd  181,500 181,512
+circle Rewind  101,529 101,541
+circle FastFwd  181,529 181,541
+circle Play  140,527 140,539
+circle Stop  101,556 101,568
+circle Record  181,556 181,568
+circle List  140,558 140,570
+rect LCDcancel 98,228 120,276
+rect LCDup 121,228 162,247
+rect LCDdown 121,257 162,276
+rect LCDok 162,227 184,276
+rect Activities 86,285 115,303
+rect Favorites 126,287 156,303
+rect Devices 168,287 196,304
+rect Guide 85,314 109,331
+rect Menu 174,314 198,331
+rect Info 86,364 110,381
+rect Exit 173,365 197,382
+rect Blue 173,466 197,483
+rect Yellow 144,466 168,483
+rect Green 114,466 138,483
+rect Red 84,466 108,483
+rect 1 85,573 116,592
+rect 2 125,573 156,592
+rect 3 166,573 197,592
+rect 4 85,597 116,616
+rect 5 125,597 156,616
+rect 6 166,597 197,616
+rect 7 85,621 116,640
+rect 8 125,621 156,640
+rect 9 166,621 197,640
+rect 0 125,645 156,664
+rect Input 85,645 116,664
+rect Enter 166,645 197,664
+rect Soft0 98,118 185,143
+rect Soft1 98,143 185,168
+rect Soft2 98,168 185,193
