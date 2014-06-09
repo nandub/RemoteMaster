@@ -1,11 +1,12 @@
 [General] 
 Notes = To enable keymoves, apply the upgrade at 
 Name=Atlas 1056B03 201009 JP2 
-EepromSize=$0800 
-Processor=MAXQ610 
+EepromSize=$0800
+Processor=S3C80
+Processor+=MAXQ610 
 BaseAddr=$F800 
 RDFSync=5 
-SegmentTypes=$00 $14 $02 $07 $08 $13 $17 $E4 $10 $18 $01 
+SegmentTypes=$00 $14 $02 $13 $17 $E4 $10 $18 $01 
 ImageMap=Atlas 1056B03.map 
 SetupValidation=Warn 
 
@@ -32,14 +33,14 @@ DVD      = DVD,Tape,Laserdisc,DAT,VCR
 CD/Audio = CD,Tuner,Home Auto,Misc Audio,Phono,Amp
 
 [DeviceButtons] 
-CBL = $03
-TV =  $01
-DVD = $02
-AUD = $04
-VCR = $05
-dev6 = $06
-dev41 = $41
-dev49 = $49
+CBL = $03 0
+TV =  $01 0
+DVD = $02 0
+AUD = $04 0
+VCR = $05 0
+dev6 = $06 0
+dev41 = $41 0
+dev49 = $49 0
 
 [Buttons] 
 TV=$01:groupDevice, DVD, CBL, Audio, VCR, dev6,

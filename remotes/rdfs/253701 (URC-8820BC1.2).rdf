@@ -1,5 +1,5 @@
 [General]
-Name=URC-8820BC1
+Name=URC-8820BC1.2
 Processor=S3C80
 Processor+=MAXQ610 
 SegmentTypes=$00 $DA $1A $01 $09 $07 $08 $10

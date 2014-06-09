@@ -1,7 +1,8 @@
 [General] 
 Name=204907 OFA Smart Control Motion URC-7962
 EepromSize=$2400 
-Processor=MAXQ612 
+Processor=S3C80
+Processor+=MAXQ612 
 BaseAddr=$01DC00
 SegmentTypes=$00 $DB $DD $DC $1A $01 $09 $07 $08 $10
 SoftDev=SetupCodesOnly  
@@ -32,12 +33,12 @@ DVD    = DVD,Tape,Laserdisc,DAT,VCR
 AMP    = CD,Tuner,Home Auto,Misc Audio,Phono,Amp
 
 [DeviceButtons] 
-TV  = $39
-STB = $3A
-DVD = $3B
-AMP = $3C
-MP3 = $3D
-MEDIA = $3E
+TV  = $39 0
+STB = $3A 0
+DVD = $3B 0
+AMP = $3C 0
+MP3 = $3D 0
+MEDIA = $3E 0
 
 [Buttons] 
 Magic=$01, 

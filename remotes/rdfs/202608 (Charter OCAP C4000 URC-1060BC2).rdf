@@ -1,6 +1,7 @@
 [General]
 Name=URC-1060BC2
-Processor=MAXQ610 
+Processor=S3C80
+Processor+=MAXQ610 
 SegmentTypes=$00 $1A $01 $02 $09 $07 $08 $10 $17
 #MasterPowerSupport=Y
 EepromSize=$1600
@@ -27,10 +28,10 @@ DVD  = VCR,DVD,Tape,Laserdisc,DAT
 CD/AUdio = CD,Tuner,Home Auto,Misc Audio,Phono,Amp
 
 [DeviceButtons]
-TV   = $01
-CBL  = $09
-DVD  = $0A
-AUX  = $12
+TV   = $01 0
+CBL  = $09 0
+DVD  = $0A 0
+AUX  = $12 0
 
 [Buttons]
 AUX=$12,
