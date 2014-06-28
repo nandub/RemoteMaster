@@ -11,10 +11,11 @@ FavKey=$23,0,0,0
 Labels+= 13,0,,,Brand,Model,<html>Remote<br>Model</html>
 MasterPowerSupport=Y
 RDFSync=5 
-ImageMap=XSightLite.map
+ImageMap=XsightLite.map
 SetupValidation=Warn
 AdvCodeFormat=EFC
 ActivityMapIndex=1
+PunchThru=V
 
 [Checksums]
 ^$0000:$0002..$3FFF

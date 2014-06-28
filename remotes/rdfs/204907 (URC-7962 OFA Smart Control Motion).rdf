@@ -10,6 +10,7 @@ RDFSync=5
 ImageMap=URC-7960.map
 SetupValidation=WARN
 AdvCodeFormat=EFC
+Punchthru=V
 
 [Settings]
 AudioHelp=2.0.1.0.0 (Off, On)
@@ -43,7 +44,7 @@ MEDIA = $3E 0
 [Buttons] 
 Magic=$01, 
 "aspect":"16x9"=$02:group0, 
-Power=$03,
+Power=$03:AllMacroBind,
 DeviceSelectLeft=$04, 
 DeviceSelectRight=$05, 
 WatchTV=$06:groupActivity, WatchMovie, ListenToMusic, 

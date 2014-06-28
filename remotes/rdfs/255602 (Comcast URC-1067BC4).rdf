@@ -11,6 +11,7 @@ SectionTerminator=$FF
 SetupValidation=Warn
 ImageMap=URC-1067BX3.map
 AdvCodeFormat=EFC
+PunchThru=VC
 
 [Checksums]
 ^$0000:$0002..$0BFF

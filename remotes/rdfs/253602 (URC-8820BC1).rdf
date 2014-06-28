@@ -10,6 +10,7 @@ RDFSync=5
 SectionTerminator=$FF 
 SetupValidation=Warn
 ImageMap=URC-8820BC1.map
+PunchThru=VC
 
 [Checksums]
 ^$0000:$0002..$07FF

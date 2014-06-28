@@ -8,7 +8,8 @@ BaseAddr=$F800
 RDFSync=5 
 SegmentTypes=$00 $14 $02 $13 $17 $E4 $10 $18 $01 
 ImageMap=Atlas 1056B03.map 
-SetupValidation=Warn 
+SetupValidation=Warn
+PunchThru=VC
 
 [Checksums]
 ^$0000:$0002..$07FF
