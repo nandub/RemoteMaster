@@ -1,0 +1,11 @@
+hs_err_*.log
+
+/km/.idea/*
+!/km/.idea/codeStyleSettings.xml
+
+/km/RemoteMaster.jar
+/km/RemoteMaster.iml
+/km/RemoteMaster.properties
+/km/rmaster.err
+
+/km/classes/
