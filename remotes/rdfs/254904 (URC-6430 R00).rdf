@@ -1,5 +1,5 @@
 [General] 
-Name=URC-6430 R01
+Name=URC-6430 R00
 EepromSize=$4C00
 Processor=S3C80
 Processor+=MAXQ622 
