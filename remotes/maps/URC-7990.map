@@ -1,0 +1,73 @@
+#$MTIMFH
+#$-:Image Map file created by Map THIS!
+#$-:Map THIS! free image map editor by Todd C. Wilson
+#$-:Please do not edit lines starting with "#$"
+#$VERSION:1.30
+#$TITLE:URC-7990_3.map
+#$AUTHOR:Graham Dixon
+#$DATE:Sat Aug 09 12:58:52 2014
+#$PATH:C:\Documents and Settings\Administrator\My Documents\JP1\URC-7990\
+#$GIF:URC-7990.jpg
+#$FORMAT:ncsa
+#$EOH
+rect AV 22,26 48,40
+circle Power  74,38 74,50
+rect AudioIn 99,26 125,40
+rect WatchMovie 59,52 86,74
+rect WatchTV 23,52 50,74
+rect ListenToMusic 98,52 125,74
+rect Audio 96,81 125,95
+rect DVD 23,101 52,115
+rect STB 59,81 88,95
+rect TV 22,81 51,95
+rect Media 59,101 88,115
+rect MP3 96,101 125,115
+circle 1  29,144 29,154
+circle 2  73,144 73,154
+circle 3  118,144 118,154
+circle 4  29,179 29,189
+circle 5  73,179 73,189
+circle 6  118,179 118,189
+circle 7  28,210 28,220
+circle 8  73,210 73,220
+circle 9  118,210 118,220
+circle 0  73,245 73,255
+rect Back 107,238 129,257
+rect -/-- 18,237 40,256
+rect Guide 19,261 50,275
+rect Info 98,262 129,274
+circle Ch+  73,275 73,285
+circle Ch-  73,315 73,325
+rect Menu 98,309 129,327
+rect Text 98,279 129,297
+rect PrevCh 19,279 50,297
+rect Exit 18,309 51,327
+poly Red 47,330 42,330 39,331 37,332 34,333 32,336 29,342 29,351 29,347 47,347 47,330
+rect Left 29,347 47,396
+poly Blue 29,397 29,400 29,402 30,405 31,406 32,408 33,409 36,411 37,412 39,413 40,413 40,414 47,414 48,397 28,397 29,397
+rect Down 47,397 97,414
+rect Up 47,330 97,347
+poly Green 115,347 98,347 99,330 103,330 104,330 107,331 110,333 111,334 113,336 114,338 115,341 115,347
+poly Yellow 116,397 98,397 98,415 101,414 104,414 106,413 108,412 110,411 111,409 110,411 112,409 113,407 112,409 114,407 115,405 116,402 116,397
+rect Right 99,348 115,396
+rect OK 60,359 87,385
+circle Vol-  29,423 29,433
+circle Vol+  115,423 115,433
+circle Mute  73,428 73,438
+circle Pause  192,183 192,199
+circle Play  233,183 233,199
+circle Stop  192,220 192,236
+circle Record  233,220 233,236
+circle 16x9  194,258 194,271
+circle Subtitle  234,258 234,271
+rect List 179,279 209,299
+rect Swap 219,279 249,299
+rect Internet 179,305 209,325
+rect PIP 219,305 249,325
+rect Rewind 176,132 209,146
+rect SkipBack 176,146 209,160
+rect FastFwd 217,132 250,146
+rect SkipFwd 217,146 250,160
+circle A  164,329 164,336
+circle B  261,332 261,340
+circle Setup  72,125 72,132
