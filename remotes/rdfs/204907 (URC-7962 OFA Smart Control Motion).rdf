@@ -7,7 +7,7 @@ BaseAddr=$01DC00
 SegmentTypes=$00 $DB $DD $DC $1A $01 $09 $07 $08 $10
 SoftDev=SetupCodesOnly  
 RDFSync=5 
-ImageMap=URC-7960.map
+ImageMap=URC-7962.map
 SetupValidation=WARN
 AdvCodeFormat=EFC
 Punchthru=V
@@ -66,7 +66,7 @@ Mute=$17:group1,
 select:OK=$19:group3, 
 Red=$1F:group3, Green, Blue, Yellow,  
 display:Info=$23:group3, Menu, Guide,
-"fav/scan":MCE, PopUp, Back, 
+"fav/scan":MCE, WWW, Back, 
 1=$29:group3, 2, 3, 4, 5, 6, 7, 8, 9, 
 "+100":"-/--", 0, "tv/vcr":AV,
 TV=$39:groupDevice, STB, DVD, AMP, MP3, MEDIA
@@ -97,7 +97,7 @@ ListenToMusic=group0:AMP, group1:TV+AMP, group2:TV, group3:AMP+STB+DVD+MP3+MEDIA
 0000, 0002:5, 0011, 0014, 001C, 001F:8, 0020:2, 0027:new, 002A, 002C, 
 002F, 0034, 0045, 004A, 004B:7, 0051, 0057, 0058:2, 005A, 005C, 005D, 
 005E:2, 005F, 0065:2, 0066, 0068, 006A:4, 0073, 0075, 007E:5, 0087, 
-0095, 0098:2, 009C, 00A5, 00A6, 00AF, 00B0, 00B6, 00B9, 00BB, 00BD, 
+0095, 0098:2, 009C, 00A5, 00A6, 00AF:2, 00B0, 00B6, 00B9, 00BB, 00BD:2, 
 00C4, 00C9, 00CA, 00CD:2, 00D1, 00D5, 00DE, 00E2, 00E5, 00E8, 00EB, 00ED, 
 00F3, 00F8:3, 0109, 010C, 0112, 0114:2, 011A, 011B, 011E, 012A:2, 0155, 015E, 
 0161:5, 016A, 016C:2, 0171, 0173:1, 0174, 0176, 017E, 0182:2, 0184:2, 018C,

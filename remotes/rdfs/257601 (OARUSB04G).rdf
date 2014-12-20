@@ -14,6 +14,9 @@ AdvCodeFormat=EFC
 PunchThru=V
 ActivityMapIndex=4
 
+[SpecialProtocols]
+DSM=Internal:0
+
 [Checksums]
 ^$0000:$0002..$25FF
 
@@ -50,8 +53,9 @@ Mute=$19:group0,
 "prev ch":PrevCh=$1A:group1,
 List=$1B:group2,Record,Stop,"prev track":SkipBack,Pause,"next track":SkipFwd,Play,
 1=$22:group1,2,3,4,5,6,7,8,9,
-AV=$2B:group3,
-0=$2C:group1,Text,
+dash=$2B:group3,
+0=$2C:group1,
+arrow=$2D:group3,
 Rewind=$2F:group2,"fast fwd":FastFwd
 
 [ButtonMaps] 
@@ -76,7 +80,7 @@ Rewind=$2F:group2,"fast fwd":FastFwd
 [Protocols] 
 0000, 0002:5, 0014, 001A, 001C, 001F:8, 0022, 0027:new, 002F, 0034, 
 0045, 0057, 0058:2, 005A, 005C, 005D, 005E:2, 005F, 0065:2, 006A:4, 
-0073, 007E:5, 0098:2, 009C, 00A4, 00AF, 00B6, 00C4, 00C9, 00CA, 
+0073, 007E:5, 0098:2, 009C, 00A4, 00AF:2, 00B6, 00C4, 00C9, 00CA, 
 00CD:2, 00DE, 00E2, 00E8, 00F0, 00F2, 00F8:3, 0109, 010C, 010F, 
 0111, 0114:2, 0117, 011A:2, 011B, 011E, 012A:2, 0161:5, 0162, 016C:2, 
 0173:1, 0174, 0177, 017E, 0182:2, 0184:2, 019A, 019B, 019C, 019D, 
