@@ -43,6 +43,7 @@ TV  Setup Code Lock=$014.1.1.1.0 (Off;On)
 DVD Setup Code Lock=$014.2.1.1.0 (Off;On)
 AUD Setup Code Lock=$014.3.1.1.0 (Off;On)
 VCR Setup Code Lock=$014.4.1.1.0 (Off;On)
+Byte1C=$01C.7.8.$0F.0
 
 # DeviceTypes
 # The order matches up with default type on DeviceButtons
