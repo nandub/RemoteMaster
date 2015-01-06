@@ -4,7 +4,7 @@ EepromSize=$2600
 Processor=S3C80
 Processor+=MAXQ622 
 BaseAddr=$01D800
-SegmentTypes= $DD $00 $0B $04 $DF $10 $09 $01 $07 $08
+SegmentTypes= $DD $00 $0B $04 $DF $10 $09 $01 $07 $08 $11
 MasterPowerSupport=Y
 RDFSync=5 
 ImageMap=URC-6440.map
@@ -55,7 +55,8 @@ List=$1B:group2,Record,Stop,"prev track":SkipBack,Pause,"next track":SkipFwd,Pla
 1=$22:group1,2,3,4,5,6,7,8,9,
 AV=$2B:group3,
 0=$2C:group1,Text,
-Rewind=$2F:group2,"fast fwd":FastFwd
+Rewind=$2F:group2,"fast fwd":FastFwd,
+Shift=$DD
 
 [ButtonMaps] 
 0 = ($2C, $22, $23, $24, $25, $26, $27, $28, $29, $2A), ($0F, $10, $19), ($17, $18),

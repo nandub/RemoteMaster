@@ -14,6 +14,9 @@ AdvCodeFormat=EFC
 PunchThru=V
 ActivityMapIndex=3
 
+[SpecialProtocols]
+DSM=Internal:0
+
 [Checksums]
 ^$0000:$0002..$4BFF
 
