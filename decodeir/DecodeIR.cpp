@@ -17,7 +17,7 @@
 #endif
 
 
-static char const version_cstr[]="2.44";	// Version 2.44 by DAR Aug 2012
+static char const version_cstr[]="2.45";	
 
 Signal::Signal(
 		unsigned int* p_Context,
@@ -972,6 +972,7 @@ void Signal::tryPid13()
 
 	strcpy(pProtocol,"pid-0013");
 	*pOBC = getLsb(1,6);
+	*pHex = ((msb(cBits[0]) >> 1) & 0x3F) | 0x80;
 }
 
 // Lutron uses a 40kHz carrier to send an asynchronous signal with 8 start bits,
@@ -2580,7 +2581,8 @@ no2:            *pDevice = cBits[0];
 							*pDevice = cBits[2]>>4;
 							*pSubDevice = cBits[3]&15;
 							*pOBC = getLsb(28,12);
-							*pHex = msb(255-cBits[4]);
+							pHex[0] = msb(255-cBits[3]); 
+							pHex[1] = msb(255-cBits[4]);
 							return;
 						}
 					}
