@@ -61,9 +61,7 @@
 <A href="#JVC-48">JVC-48</A><BR>
 <A href="#JVC-56">JVC-56</A><BR>
 <A href="#Kaseikyo">Kaseikyo</A><BR>
-<A href="#Kaseikyo-???-???">Kaseikyo-???-???</A><BR>
 <A href="#Kaseikyo56">Kaseikyo56</A><BR>
-<A href="#Kaseikyo56-???-???">Kaseikyo56-???-???</A><BR>
 <A href="#Kathrein">Kathrein</A><BR>
 <A href="#Konka">Konka</A><BR>
 <A href="#Logitech">Logitech</A><BR>
@@ -424,7 +422,7 @@ UEI protocol: 002A
 <p>This is a moderately robust protocol, but <A href="#spurious">spurious decodes</A> are still possible.</p>
 
 <H2><A name="Blaupunkt">Blaupunkt</A></H2>
-IRP notation: {30.3k,528}&lt;-1,1|1,-1&gt;(1,-5,1023:10,-39,1,-5,1:1,F:7,D:2,-230) 
+IRP notation: {30.3k,528}&lt;-1,1|1,-1&gt;(1,-5,1023:10,-39,1,-5,1:1,F:6,D:3,-230) 
 
 <H2><A name="Bose">Bose</A></H2>
 UEI protocol: 010C<br>
@@ -596,7 +594,8 @@ IRP notation: {37.3k,992}&lt;1,-1|1,-3&gt;(5,-2,F:6,D:2,C:4,1,-60)+
 {C= ((#(F&25) + #(D&5))&1) + 2*((#(F&43) + #(D&7))&1) + 4*((#(F&22) + #(D&7))&1) + 8*((#(F&44) + #(D&6))&1)} <br>
 EFC translation: NONE
 <p>This is a moderately robust protocol, but <A href="#spurious">spurious decodes</A> are still possible</p>
-<p>Unit (device) numbers from 0 to 7 are supported.  The check sum C is a Hamming Code, which can correct single bit errors. D:1:2 is encoded in the check sum. <A href="http://www.hifi-remote.com/forums/viewtopic.php?p=103934#103934">D encoding scheme</A> 
+<p>Unit (device) numbers from 0 to 7 are supported.  The check sum C is a Hamming Code, which can correct single bit errors. 
+D:1:2 is encoded in the check sum. <A href="http://www.hifi-remote.com/forums/viewtopic.php?p=103934#103934">D encoding scheme</A> 
 The official (UEI) protocol executor for G.I.4DTV does not support EFC numbers.  If you are creating an
 upgrade in KM or RM you should use OBC numbers, not EFC numbers.  If you need the Hex Cmd for a KeyMove,
 you should use the functions sheet of KM or RM to compute it for you from the OBC and device number.</p>
@@ -659,7 +658,7 @@ DecodeIr has difficulty distinguishing one from the other.  The device number, O
 are all encoded the same way between the two.  So if you have JVC{2}
 decodes that you have reason to suspect should actually be Mitsubishi, you can try using
 them as Mitsubishi without changing the numbers.  However, true Mitsubishi signals will not
-misdecode as JVC, just as JVC{2}.  So if some of the signals for your device decode as JVC
+mis-decode as JVC, just as JVC{2}.  So if some of the signals for your device decode as JVC
 and others as JVC{2}, you should trust all those decodes and not try Mitsubishi.</p>
 
 <H2><A name="JVC-48">JVC-48</A></H2>
@@ -668,47 +667,31 @@ UEI protocol: 001F or 00C9 or 00CD
 IRP notation: {37k,432}&lt;1,-1|1,-3&gt;(8,-4,3:8,1:8,D:8,S:8,F:8,(D^S^F):8,1,-173)+ 
 <br>
 EFC translation: LSB comp
-<p>JVC-48 is the member of the Kaseikyo family with OEM_code1=3 and OEM_code2=1.</p>
+<p>JVC-48 is the member of the Kaseikyo family with M=3 and N=1.</p>
 <p>Panasonic protocol uses the same check byte rules as JVC-48, so you might want use the (more flexible)
-Panasonic entries in KM or RM to produce a JVC-48 upgrade (by changing the OEM_code1 and OEM_code2 values).  For simple
+Panasonic entries in KM or RM to produce a JVC-48 upgrade (by changing the OEM_code1(M) and OEM_code2(N) values).  For simple
 JVC-48 upgrades you get exactly the same results by directly selecting the &quot;JVC-48&quot; protocol.</p>
 
 <H2><A name="JVC-56">JVC-56</A></H2>
-UEI protocol: 001F or 00C9 or 00CD
 IRP notation: {37k,432}&lt;1,-1|1,-3&gt;(8,-4,3:8,1:8,D:8,S:8,X:8,F:8,(D^S^X^F):8,1,-173)+
+<p>JVC-56 is the member of the Kaseikyo56 family with M=3 and N=1.</p>
  
 <H2><A name="Kaseikyo">Kaseikyo</A></H2>
-<p>Kaseikyo is a family of protocols that includes Panasonic, Mitsubishi-K, Fujitsu, Sharp-DVD and Teac-K.  Each
-protocol in the Kaseikyo family is identified by two numbers, known as OEM_code1 and OEM_code2.</p>
-<p>
-  Most members of the family have minor structural differences from the generic 
-  form. In those cases DecodeIR checks for the specific details (based on the 
-  OEM codes) and if they are correct reports the protocol by name (see Panasonic 
-  and Teak-K below). </p>
-<p>In the few cases where the structure exactly fits my understanding of the Kaseikyo spec,
-DecodeIR reports it as Kaseikyo-???-??? replacing the first ??? by the OEM_code1 and the second
-??? by the OEM_code2.</p>
-
-<H2><A name="Kaseikyo-???-???">Kaseikyo-???-???</A></H2>
-IRP notation: {37k,432}&lt;1,-1|1,-3&gt;(8,-4,M:8,N:8,X:4,D:4,S:8,F:8,E:4,C:4,1,-173)+ {X=M:4:0^M:4:4^N:4:0^N:4:4,C=D^S:4:0^S:4:4^F:4:0^F:4:4^E}
+UEI protocol: 00F8 <br>
+IRP notation: {37k,432}&lt;1,-1|1,-3&gt;(8,-4,M:8,N:8,X:4,D:4,S:8,F:8,G:8,1,-173)+ {X=M:4:0^M:4:4^N:4:0^N:4:4}
 <br>
 EFC translation: LSB comp
-<p>This is the nominal form of the Kaseikyo.
-It is most commonly seen with OEM codes 170.90, which
-indicates &quot;Sharp&quot;.  I assume (haven't tested) that the SharpDVD protocol in KM generates these
-Kaseikyo-170-90 signals.  
-We have also seen this protocol with OEM codes 3.32.  I'm not sure what manufacturer that indicates.</p>
-<p>The Kaseikyo protocol in KM seems to be designed to produce this nominal form of Kaseikyo for any
-specified OEM codes and any constant value of E.  That should be the way to reproduce any Kaseikyo-???-???
-decode other than SharpDVD, and might be better than SharpDVD for the Kaseikyo-170-90 signals.</p>
+<p>Kaseikyo is a family of protocols that includes Panasonic, Mitsubishi-K, Fujitsu, JVC-48, Denon-K, Sharp-DVD and Teac-K.  
+Each manufacturer is assigned a pair of identifiers, here identified as M and N.  If an IR signal matches a known pair of OEM 
+identifiers and has the correct checksum behavior, it will be decoded with appropriate protocol name.  Otherwise it will 
+be decoded as Kaseikyo.</p>
+<p>
 
 <H2><A name="Kaseikyo56">Kaseikyo56</A></H2>
-Kaseikyo56 is a lengthened version of the Kaseikyo family of protocols.  It has the same OEM codes indicating 
-the same manufacturers as Kaseikyo, and it has the same variation (by manufacturer) in check byte and other 
-details as Kaseikyo.
-
-<H2><A name="Kaseikyo56-???-???">Kaseikyo56-???-???</A></H2>
-IRP notation: {37k,432}&lt;1,-1|1,-3&gt;(8,-4,M:8,N:8,H:4,D:4,S:8,X:8,F:8,E:4,C:4,1,-173)+ 
+IRP notation: {37k,432}&lt;1,-1|1,-3&gt;(8,-4,M:8,N:8,X:4,D:4,S:8,E:8,F:8,G:8,1,-173)+ {X=M:4:0^M:4:4^N:4:0^N:4:4}
+Like Kaseikyo, each manufacturer is assigned a pair of identifiers identified as M and N.  If an IR signal matches a known pair of OEM 
+identifiers and has the correct checksum behavior, it will be decoded with appropriate protocol name.  Otherwise it will 
+be decoded as Kaseikyo56.</p>
 
 <H2><A name="Kathrein">Kathrein</A></H2>
 UEI protocol: 0066

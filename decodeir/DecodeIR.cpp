@@ -2533,9 +2533,9 @@ no2:            *pDevice = cBits[0];
 			//  C = D ^ S:4:0 ^ S:4:4 ^ F:4:0 ^ F:4:4 ^ E
 			//  T = D + S:4:0 + S:4:4 + F:4:0 + F:4:4
 			//
-			// Fujitsu  {38k,400}<1,-1|1,-3>(8,-4,20:8,99:8,X:4,E:4,D:8,S:8,F:8,1,-110)+
-			// Kaseikyo {37k,432}<1,-1,1,-3>(8,-4,M:8,N:8,X:4,D:4,S:8,F:8,E:4,C:4,1,-173)+
-			// SharpDVD {38k,400}<1,-1|1,-3>(8,-4,170:8,90:8,D:8,S:8,F:8,E:4,C:4,1,-48)+
+			// Fujitsu  {38k,400}<1,-1|1,-3>(8,-4,20:8,99:8, X:4,E:4,D:8,S:8,F:8,1,-110)+
+			// Kaseikyo {37k,432}<1,-1,1,-3>(8,-4,M:8,N:8,   X:4,D:4,S:8,G:8,F:8,1,-173)+
+			// SharpDVD {38k,400}<1,-1|1,-3>(8,-4,170:8,90:8,X:4,D:4,S:8,F:8,E:4,C:4,1,-48)+
 			// 00F8
 			//
 			// Panasonic {37k,432}<1,-1,1,-3>(8,-4, 2:8,32:8,D:8,S:8,F:8,(D^S^F):8,1,-173)+
@@ -2594,7 +2594,8 @@ no2:            *pDevice = cBits[0];
 						if ( cBits[4] != cBits[3] )
 							*pSubDevice = cBits[4];
 						*pOBC = cBits[5];
-						*pHex = msb(255-cBits[5]);
+						pHex[0] = msb(255-cBits[4]); 
+						pHex[1] = msb(255-cBits[5]);
 						if (x2)
 							sprintf(pMisc,"E=%d",x2);
 						return;
@@ -2605,6 +2606,8 @@ no2:            *pDevice = cBits[0];
 						*pDevice = x2;
 						*pSubDevice = cBits[3];
 						*pOBC = cBits[4];
+						pHex[0] = msb(255-cBits[4]); 
+						pHex[1] = msb(255-cBits[5]);
 						int x5 = cBits[5]&0xF;
 						sprintf(pMisc,"E=%d",x5);
 						return;
@@ -2651,6 +2654,7 @@ no2:            *pDevice = cBits[0];
 							return;
 						}
 					}
+					/*  removed Jan 2015 DAR
 					if ( ( ( (xor2>>4) ^ xor2 ^ x2 ) & 15 ) == 0 )
 					{
 						sprintf(pProtocol, "Kaseikyo-%d.%d", cBits[0], cBits[1] );
@@ -2661,19 +2665,18 @@ no2:            *pDevice = cBits[0];
 						sprintf(pMisc,"E=%d", cBits[5]&15 );
 						return;
 					}
+					*/
 
-			// ??Kaseikyo {37k,432}<1,-1,1,-3>(8,-4,M:8,N:8,X:4,D:4,S:8,G:8,F:8,1,-173)+
-			// Catch-all Kaseikyo variant, checksum unknown
-					if ( true )        // GD 2009
-					{
-						sprintf(pProtocol, "??Kaseikyo-%d.%d", cBits[0], cBits[1] );
-						*pDevice = cBits[2]>>4;
-						*pSubDevice = cBits[3];
-						*pOBC = cBits[5];
-						*pHex = cBits[5];
-						sprintf(pMisc,"G=%d", cBits[4] );
-						return;
-					}
+			// Kaseikyo {37k,432}<1,-1,1,-3>(8,-4,M:8,N:8,X:4,D:4,S:8,F:8,G:8,1,-173)+
+			// General Kaseikyo, checksum or OEM unknown    Promoted to main Kaseikyo decode Jan 2015 DAR
+					sprintf(pProtocol, "Kaseikyo");
+					*pDevice = cBits[2]>>4;
+					*pSubDevice = cBits[3];
+					*pOBC = cBits[4];
+					pHex[0] = msb(255-cBits[4]);
+					pHex[1] = msb(255-cBits[5]);
+					sprintf(pMisc,"M=%d N=%d G=%d", cBits[0], cBits[1], cBits[5] );
+					return;
 				}
 			}
 		}
@@ -2724,16 +2727,14 @@ no2:            *pDevice = cBits[0];
 							sprintf(pMisc+strlen(pMisc)," E=%d",x2);
 						return;
 					}
-					if ( ( ( (xor2>>4) ^ xor2 ^ x2 ) & 15 ) == 0 )
-					{
-						sprintf(pProtocol, "Kaseikyo56-%d.%d", cBits[0], cBits[1] );
-						*pDevice = cBits[2]>>4;
-						*pSubDevice = cBits[3];
-						*pOBC = cBits[5];
-						*pHex = msb(255-cBits[5]);
-						sprintf(pMisc,"X=%d E=%d", cBits[4], cBits[6]&15 );
-						return;
-					}
+					//Kaseikyo56 {37k,432}<1,-1,1,-3>(8,-4,M:8,N:8,X:4,D:4,S:8,E:8,F:8,G:8,1,-173)+ Revised DAR Jan 2015
+					sprintf(pProtocol, "Kaseikyo56");
+					*pDevice = cBits[2]>>4;
+					*pSubDevice = cBits[3];
+					*pOBC = cBits[5];
+					//*pHex = msb(255-cBits[5]);
+					sprintf(pMisc,"M=%d N=%d E=%d G=%d", cBits[0], cBits[1], cBits[4], cBits[6] );
+					return;
 				}
 			}
 		}
@@ -5142,8 +5143,8 @@ void Signal::tryXX()	// {500}<-1,1|1,-1>((1,-5, 1:1,
 			if (command>=0 && command != 511)
 			{
 				int cmds = 0;
-				obc = getLsb(0,7);
-				device = getLsb(7,2);
+				obc = getLsb(0,6);
+				device = getLsb(6,3);
 				int nextCommand;
 				do
 				{
