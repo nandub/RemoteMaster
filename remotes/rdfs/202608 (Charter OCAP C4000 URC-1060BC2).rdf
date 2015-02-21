@@ -2,7 +2,7 @@
 Name=URC-1060BC2
 Processor=S3C80
 Processor+=MAXQ610 
-SegmentTypes=$00 $1A $01 $02 $09 $07 $08 $0E $17
+SegmentTypes=$00 $1A $01 $02 $09 $07 $08 $0E $0F $17
 #MasterPowerSupport=Y
 EepromSize=$1600
 BaseAddr=$EA00
