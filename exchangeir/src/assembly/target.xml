@@ -1,0 +1,24 @@
+<assembly>
+  <id>deliverables</id>
+  <formats>
+    <format>tar.gz</format>
+    <format>tar.bz2</format>
+    <format>zip</format>
+  </formats>
+
+  <fileSets>
+    <fileSet>
+      <includes>
+        <include>COPYING.txt</include>
+      </includes>
+      <lineEnding>unix</lineEnding>
+    </fileSet>
+    <fileSet>
+      <directory>target</directory>
+      <outputDirectory>bin</outputDirectory>
+      <includes>
+        <include>*.jar</include>
+      </includes>
+    </fileSet>
+  </fileSets>
+</assembly>
