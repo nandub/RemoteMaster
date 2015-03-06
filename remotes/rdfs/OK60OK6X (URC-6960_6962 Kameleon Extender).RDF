@@ -12,7 +12,7 @@ RAMAddr=$FF00
 RDFSync=3
 DevComb=,$0ECB,$2FCA,,$80BF,$302F,$100
 EFCDigits=5
-XShift=$40
+XShift=$C0
 
 [Extender]
 OEMSignature=0K600K60

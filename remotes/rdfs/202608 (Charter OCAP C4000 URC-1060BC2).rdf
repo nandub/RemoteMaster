@@ -1,5 +1,5 @@
 [General]
-Name=URC-1060BC2
+Name=Charter OCAP C4000 URC-1060BC2 and URC-1060BC3
 Processor=S3C80
 Processor+=MAXQ610 
 SegmentTypes=$00 $1A $01 $02 $09 $07 $08 $0E $0F $17
