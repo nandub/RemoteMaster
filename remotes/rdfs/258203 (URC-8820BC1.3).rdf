@@ -1,5 +1,5 @@
 [General]
-Name=URC-8820BC1.2
+Name=URC-8820BC1.3
 Processor=S3C80
 Processor+=MAXQ610 
 SegmentTypes=$00 $DA $1A $01 $09 $07 $08 $10
@@ -11,6 +11,9 @@ SectionTerminator=$FF
 SetupValidation=Warn
 ImageMap=URC-8820BC1.map
 PunchThru=VC
+
+[SpecialProtocols] 
+DSM=Internal:0
 
 [Checksums]
 ^$0000:$0002..$05FF
