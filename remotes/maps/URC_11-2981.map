@@ -1,0 +1,58 @@
+#$MTIMFH
+#$-:Image Map file created by Map THIS!
+#$-:Map THIS! free image map editor by Todd C. Wilson
+#$-:Please do not edit lines starting with "#$"
+#$VERSION:1.30
+#$TITLE:URC_11-2981
+#$DATE:Tue Jun 11 19:36:39 2013
+#$PATH:C:\Remotes\images\MapThis\
+#$GIF:URC_11-2981.jpg
+#$FORMAT:ncsa
+#$EOH
+# URC_11-2981_R00
+circle Magic  74,41 74,56
+circle TV  31,71 31,82
+circle VCR  59,66 59,77
+circle DVD  87,65 87,76
+circle SAT  114,71 114,82
+circle AUX  113,95 113,106
+circle DVB-T  85,89 85,100
+circle HI-FI  59,90 59,101
+circle AMP  32,95 32,106
+circle Guide  33,123 33,136
+circle Menu  113,122 113,135
+circle OK  71,165 71,179
+poly Up 60,152 62,125 83,125 86,151 75,146 68,146 59,152 60,152 60,152
+poly Right 89,156 119,158 119,176 88,176 91,169 90,162 88,155 89,156 89,156
+poly Left 24,157 54,155 55,160 53,164 53,169 55,171 55,176 24,174 23,156 24,157 24,157
+poly Down 58,184 69,187 78,187 86,182 83,210 61,211 58,185 58,184 58,184
+circle Power  105,46 105,56
+circle Vol+  33,213 33,227
+circle Ch+  110,214 110,228
+circle Vol-  38,239 38,252
+circle Ch-  103,239 103,252
+circle Mute  70,236 70,246
+circle Red  29,265 29,275
+circle Green  58,267 58,277
+circle Yellow  83,268 83,278
+circle Blue  112,265 112,276
+circle Prev  28,294 28,305
+circle Stop  54,291 54,302
+circle Rec  86,293 86,304
+circle Next  113,297 113,307
+circle Rewind  31,318 31,328
+circle Play  56,315 56,326
+circle Pause  85,315 85,326
+circle Ffwd  113,319 113,329
+circle 1  35,349 35,363
+circle 2  70,344 70,358
+circle 3  104,348 104,362
+circle 4  38,376 38,390
+circle 5  70,369 70,382
+circle 6  104,375 104,389
+circle 7  39,400 39,414
+circle 8  71,394 71,408
+circle 9  101,400 101,414
+circle -/--  41,426 41,438
+circle 0  69,419 69,433
+circle AV  98,426 98,438
