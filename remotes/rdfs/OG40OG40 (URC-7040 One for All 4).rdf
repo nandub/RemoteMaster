@@ -1,0 +1,99 @@
+[General]
+Name=URC-7040 One For All 4
+EepromSize=$400
+AdvCodeAddr=$021..$0FF
+UpgradeAddr=$100..$3FC
+MacroSupport=0
+Processor=S3C80
+RAMAddr=$8000
+RDFSync=3
+ImageMap=URC-7040.map
+
+[SpecialProtocols]
+Multiplex=01FE
+
+[Settings]
+VPT Device=$012.7.8.1.0 DeviceButtons
+VPT Status=$015.3.1.0.0 (Off;On)
+Sleep Status=$015.0.1.0.0 (Use Native;Simulate)
+CH +/- Status=$015.1.1.0.0 (Use Native;Simulate)
+SAT Locked=$014.0.1.0.1 (Off;On)
+TV Locked=$014.1.1.0.1 (Off;On)
+VCR Locked=$014.2.1.0.1 (Off;On)
+AUX Locked=$014.3.1.0.1 (Off;On)
+
+[Checksums]
+^$000:$002..$3FC
+
+[DeviceTypes]
+SAT = 0
+TV  = 1
+VCR = 2
+
+[DeviceTypeAliases]
+SAT = Cable,SAT,Video Acc
+TV  = TV
+VCR = VCR,DVD,Tape,Laserdisc,DAT,CD,Home Auto,Phono,Tuner,Misc Audio,Amp
+
+[DeviceButtons]
+SAT = $00A $00B
+TV  = $00C $00D
+VCR = $00E $00F
+DVD = $010 $011
+
+[Buttons]
+Power=$03,
+VCR=$0A,
+TV=$01,
+DVD=$11,
+SAT=$09,
+1=$15, 2=$16, 3=$17, 4=$19, 5=$1A, 6=$1B, 7=$1C, 8=$1D, 9=$1E, 0=$1F,
+"+100":10{-/--}=$18,
+input:AV{20}=$12,
+Menu=$20,
+"setup":Magic[Setup]=$02,
+Exit=$13,
+"up arrow":Up=$29,
+"left arrow":Left=$2A,
+"down arrow":Down=$2B,
+"right arrow":Right=$2C,
+select:OK=$2D,
+"vol up":Vol+=$04,
+"vol down":Vol-=$05,
+"channel up":Ch+=$06,
+"channel down":Ch-=$07,
+Mute=$08,
+Recall=$14,
+"rewind":Rewind{TTX_Hold}=$0B,
+"play":Play{TTX_On}=$0C,
+"fast fwd":FastFwd{TTX_Size}=$0D,
+"pause":Pause{TTX_Mix}=$0F, 
+"stop":Stop{TTX_Off}=$0E,
+"record":Record{16x9}=$10,
+Red=$22,
+Green=$23,
+Yellow=$24,
+Blue=$25
+
+
+[ButtonMaps]
+0 = ($1F, $15, $16, $17, $19, $1A, $1B, $1C, $1D, $1E), ($04, $05, $08), ($06, $07),
+    03,$12,$18,$20,$13,$29,$2A,$2B,$2C,$2D,$14,$0B,$0C,$0D,$0F,$0E,$10,$22,$23,$24,$25
+1 = ($1F, $15, $16, $17, $19, $1A, $1B, $1C, $1D, $1E), ($04, $05, $08), ($06, $07),
+    03,$12,$18,$20,$13,$29,$2A,$2B,$2C,$2D,$14,$0B,$0C,$0D,$0F,$0E,$10,$22,$23,$24,$25
+2 = ($1F, $15, $16, $17, $19, $1A, $1B, $1C, $1D, $1E), ($04, $05, $08), ($06, $07),
+    03,$12,$18,$20,$13,$29,$2A,$2B,$2C,$2D,$14,$0B,$0C,$0D,$0F,$0E,$10,$22,$23,$24,$25
+
+[DigitMaps]
+
+[Protocols]
+0000, 0001, 0003, 0006, 000B, 000D, 0010, 0011, 0013, 0014, 
+0018, 001A, 001C, 0022, 002A, 002B, 002C, 0034, 0035, 003D, 
+003F, 0041, 0045, 004A, 004B, 0051, 0053, 0056, 005A, 005B, 
+005C, 005E, 0060, 0064, 0065, 0066, 0067, 0068, 006F, 0070, 
+0071, 0072, 0075, 0077, 0079, 007A, 0080, 0082, 0087, 008C, 
+008E, 0090, 0095, 0098, 009D, 00A0, 00A1, 00A5, 00A6, 00A8, 
+00AA, 00AB, 00B0, 00B2, 00B7, 00B9, 00BA, 00BD, 00C4, 00C5, 
+00C9, 00CA, 00CC, 00D0, 00D1, 00D4, 00D5, 00D9, 00DC, 00DF, 
+00E2, 00E5, 00E8, 00EB, 00EE, 00F3, 00F4, 00FE, 00FF
+
