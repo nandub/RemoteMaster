@@ -14,6 +14,7 @@ DevCodeOffset=23
 RDFSync=3
 RAMAddr=$8000
 ImageMap=URC-114282B00.map
+LearnedDevBtnSwapped=Yes
 
 [SpecialProtocols]
 Pause=01FB (Pause)

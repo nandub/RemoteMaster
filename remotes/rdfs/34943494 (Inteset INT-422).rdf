@@ -3,11 +3,11 @@ Name=Inteset INT-422
 EepromSize=$0F00
 AdvCodeAddr=$0029..$01FF
 UpgradeAddr=$0402..$07FF
-LearnedAddr=$0800..$0DFF
+LearnedAddr=$0800..$0EFF
 BaseAddr=$0A00
 Processor=S3F80
 RDFSync=3
-#DevComb=,$31C1,$3F23,,$4EAF,$4017
+DevComb=,$3B83,$46FD,,$4EAF,$47F1
 AdvCodeBindFormat=LONG
 SectionTerminator=$FF
 LearnedDevBtnSwapped=Yes
@@ -25,20 +25,20 @@ Pause=01FB (Pause)
 VPT Device=$01C.7.8.0.0 DeviceButtons
 VPT Status=$01B.2.1.0.0 (Off;On)
 dev1 uses VPT=$01D.0.1.1.0 (No;Yes)
-A/APLTV uses VPT=$01D.1.1.1.0 (No;Yes)
+A uses VPT=$01D.1.1.1.0 (No;Yes)
 dev3 uses VPT=$01D.2.1.1.0 (No;Yes)
-D/ROKU uses VPT=$01D.3.1.1.0 (No;Yes)
-C/WMC uses VPT=$01D.4.1.1.0 (No;Yes)
-B/XBOX uses VPT=$01D.5.1.1.0 (No;Yes)
+D uses VPT=$01D.3.1.1.0 (No;Yes)
+C uses VPT=$01D.4.1.1.0 (No;Yes)
+B uses VPT=$01D.5.1.1.0 (No;Yes)
 dev7 uses VPT=$01D.6.1.1.0 (No;Yes)
 dev8 uses VPT=$01D.7.1.1.0 (No;Yes)
 Channel Lock=$01B.3.1.0.0 (Off;On)
 dev1 Setup Code Lock=$01A.0.1.1.0 (Off;On)
-A/APLTV  Setup Code Lock=$01A.1.1.1.0 (Off;On)
+A  Setup Code Lock=$01A.1.1.1.0 (Off;On)
 dev3 Setup Code Lock=$01A.2.1.1.0 (Off;On)
-D/ROKU Setup Code Lock=$01A.3.1.1.0 (Off;On)
-C/WMC Setup Code Lock=$01A.4.1.1.0 (Off;On)
-B/XBOX Setup Code Lock=$01A.5.1.1.0 (Off;On)
+D Setup Code Lock=$01A.3.1.1.0 (Off;On)
+C Setup Code Lock=$01A.4.1.1.0 (Off;On)
+B Setup Code Lock=$01A.5.1.1.0 (Off;On)
 dev7 Setup Code Lock=$01A.6.1.1.0 (Off;On)
 dev8 Setup Code Lock=$01A.7.1.1.0 (Off;On)
 Initial Device Mode=$01E.7.8.0.0 DeviceButtons
@@ -70,35 +70,33 @@ Audio   = CD,Tuner,Home Auto,Misc Audio,Phono,Amp
 
 [DeviceButtons]
 dev1   = $00A $00B
-A/APLTV     = $00C $00D
+A     = $00C $00D
 dev3   = $00E $00F
-D/ROKU    = $010 $011
-C/WMC    = $012 $013
-B/XBOX    = $014 $015
+D    = $010 $011
+C    = $012 $013
+B    = $014 $015
 dev7   = $016 $017
 dev8   = $018 $019
 
 [Buttons]
 Setup=$01,
-phantom1=$02,	
-A/APLTV=$03,     
+Power=$3C,
+A=$03,     
+B=$05,      
+C=$06,    
+D=$08,
 dev1=$04,
-B/XBOX=$05,      
-C/WMC=$06,    
-dev8=$07,
-D/ROKU=$08,
 dev3=$09,
 dev7=$0A,
+dev8=$07,
 Menu=$0B,
+display:Info=$16,
 Guide=$0C,
+"exit":Back=$17,
 "up arrow":Up=$0D,"down arrow":Down=$0E,"left arrow":Left=$0F,"right arrow":Right=$10,
 select:OK=$11,
-"vol up":Vol+=$12,"vol down":Vol-=$13,
-"channel up":Ch+=$14,"channel down":Ch-=$15,
-display:Info=$16,
-"exit":Back=$17,
-Mute=$18,
-"prev ch":Last=$19,
+Red=$38,Green=$39,Yellow=$3A,Blue=$3B,
+Display=$24,
 record:Rec=$1A,
 Stop=$1B,
 Play=$1C,
@@ -107,25 +105,27 @@ Pause=$1D,
 rewind:Rew=$1F,
 "fast fwd":FFwd=$20,
 "next track":Skip=$21,
-PIP-Frs=$22,
-Live=$23,
-Display=$24,
-PIP-On/Off=$25,
+"vol up":Vol+=$12,"vol down":Vol-=$13,
+Mute=$18,
+"channel up":Ch+=$14,"channel down":Ch-=$15,
+"prev ch":Last=$19,
 1=$26,2=$27,3=$28,4=$29,5=$2A,6=$2B,7=$2C,8=$2D,9=$2E,0=$2F,
 "tv/vcr":Input=$30,
 +100:Enter=$31,
-Zoom=$32,
-phantom2=$33,
+PIP-On/Off=$25,
+PIP-Frs=$22,
 PIP-Move=$34,
 PIP-Swap=$35,
-phantom3=$36,
-PIP-Ch-=$37,
-"red":Red/B/TV=$38,"green":Green/A/Music=$39,"yellow":Yellow/Y/Pics=$3A,"blue":Blue/X/Movs=$3B,
-Power=$3C,
-phantom4=$3D,
-DiscreteON=$3E,
 PIP-Ch+=$3F,
-DiscreteOFF=$40	
+PIP-Ch-=$37,
+Live=$23,
+Zoom=$32,
+DiscreteON=$3E,
+DiscreteOFF=$40,	
+phantom1=$02,	
+phantom2=$33,
+phantom3=$36,
+phantom4=$3D
 
 [ButtonMaps]
 0 = ($2F, $26, $27, $28, $29, $2A, $2B, $2C, $2D, $2E), ($12, $13, $18), ($14, $15),

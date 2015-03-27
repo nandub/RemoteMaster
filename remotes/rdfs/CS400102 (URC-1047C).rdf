@@ -1,0 +1,117 @@
+[General]
+Name=URC-1047C
+EepromSize=$400
+AdvCodeAddr=$016..$0FF
+UpgradeAddr=$100..$3FF
+#Actually uses a SST processor, but the following works with RMIR
+Processor=6805
+ProcessorVersion=RC16/18
+BaseAddr=$F980
+RAMAddr=$FF00
+RDFSync=3
+AdvCodeFormat=HEX
+EFCDigits=3
+ImageMap=URC-1047.map
+SetupValidation=Warn
+
+[Settings]
+VPT Status=$014.2.1.1.0 (Off;On)
+VPT Device=$011.7.8.1.0 DeviceButtons
+CBL  VPT=$012.0.1.1.0 (Off;On)
+TV   VPT=$012.1.1.1.0 (Off;On)
+VCR  VPT=$012.2.1.1.0 (Off;On)
+AUD  VPT=$012.3.1.1.0 (Off;On)
+Channel Lock=$014.3.1.1.0 (Off;On)
+CBL Setup Code Lock=$013.0.1.0.1 (Off;On)
+
+[DeviceTypes]
+CBL     = 0
+TV      = 1
+VCR/DVD = 2
+AUD     = 3
+
+[DeviceTypeAliases]
+CBL     = Cable,SAT,Video Acc
+TV      = TV
+VCR/DVD = VCR,Tape,DAT,DVD,Laserdisc
+AUD     = CD,Home Auto,Phono,Tuner,Misc Audio,Amp
+
+[DeviceButtons]
+CBL = $00C $008
+TV  = $00D $009
+VCR = $00E $00A
+AUD = $00F $00B
+
+[Buttons]
+TV=$01
+Setup=$02
+Power=$03
+Vol+=$04
+Vol-=$05
+Ch+=$06
+Ch-=$07
+Last=$08
+CABLE=$09
+VCR=$0A
+Rew=$0B
+Play=$0C
+FF=$0D
+Stop=$0E
+Pause=$0F
+Rec=$10
+AUD=$11
+Fav=$12
+Info=$13
+Exit=$14
+1=$15
+2=$16
+3=$17
+"enter/#"=$18
+4=$19
+5=$1A
+6=$1B
+7=$1C
+8=$1D
+9=$1E
+0=$1F
+Bypass=$20
+Guide=$21
+OnDemand/Macro=$22
+"next track":PageUp=$23,
+"prev track":PageDown=$24,
+A=$25,
+B=$26,
+C=$27,
+PPV/Lock=$28,
+Up=$29,
+Down=$2A,
+Left=$2B
+Right=$2C
+Select=$2D
+Menu/Settings=$2E
+Phantom1=$2F
+TV/VCR=$30
+Day+=$31
+Day-=$32
+Mute=$33
+
+[ButtonMaps]
+0 = ($1F, $15, $16, $17, $19, $1A, $1B, $1C, $1D, $1E), ($04, $05, $33), ($06, $07),
+    $03, $0C, $0F, $0B, $0D, $0E, $10, $20, $2D, $08, $12, $13, $14, $2E, $29, $2A,
+    $2B, $2C, $18, $21, $23, $24, $25, $26, $27, $28, $2F, $31, $32
+1 = ($1F, $15, $16, $17, $19, $1A, $1B, $1C, $1D, $1E), ($04, $05, $33), ($06, $07),
+    $03, $30, $18, $08
+2 = ($1F, $15, $16, $17, $19, $1A, $1B, $1C, $1D, $1E), ($04, $05, $33), ($06, $07),
+    $03, $0C, $0F, $0B, $0D, $0E, $10, $30, $18, $08
+3 = ($1F, $15, $16, $17, $19, $1A, $1B, $1C, $1D, $1E), ($04, $05, $33), ($06, $07),
+    $03, $0C, $0F, $0B, $0D, $0E, $10, $30, $08
+
+[DigitMaps]
+72 53 94 03 90 46 86 11 92 34 32 21 75 33 30 29 03 64 91 125 130 128 129
+
+[Protocols]
+0000, 0006, 000C, 000D, 0013, 0014, 001C, 001F:8, 0022, 0027:new,
+002D, 0034, 003A, 0045, 0056, 0058:2, 005A, 005C, 005D, 005E:2,
+0060, 0065:2, 006A, 0073, 007E:3, 0092:3, 009C, 009E, 00AF, 00B6,
+00C4, 00C9, 00CA, 00CD:2, 00DE, 00E2, 00E8, 00F2, 00F5, 00F8:3,
+0111, 0114:2, 011B, 016B, 0184:2

@@ -11,26 +11,33 @@ AdvCodeBindFormat=LONG
 SectionTerminator=$FF
 EFCDigits=5
 DevComb=,$16F8,$22E5,,$4EAF,$23D9
+2BytePid=Yes
+KeyMoveSupport=No
+DefaultRestriction=Shift
 SetupValidation=Warn
+ImageMap=cricket.map
 
 [SpecialProtocols]
 Multiplex=01FE
-Pause=01FB (Pause)
 
 [Checksums]
 ^$008:$00A..$014
 ^$200:$20A..$3FF
 ^$400:$402..$7FF
 
+[FixedData]
+$012=03 00
+
 [Settings]
-VPT Status=$010.2.1.1.0 (Off;On)
-CBL Channel Control Lock=$010.3.1.1.0 (Off;On)
-VPT Device=$011.7.8.0.0 DeviceButtons
-CBL uses VPT=$012.0.1.1.0 (No;Yes)
-TV  uses VPT=$012.1.1.1.0 (No;Yes)
+Channel Device=$010.3.1.1.0 (TV;CBL)
+Volume Device=$011.0.1.1.0 (CBL;TV)
+Power Macro=$014.1.2.0.0 (CBL-TV;TV-CBL;CBL;TV)
 CBL Setup Code Lock=$00F.0.1.1.0 (Off;On)
-TV  Setup Code Lock=$00F.1.1.1.0 (Off;On)
-KeyMap=$00E.5.1.0.0 (Standard;Alternate)
+TV Setup Code Lock=$00F.1.1.0.0 (Off;On)
+Key Map=$00E.5.1.0.0 (Standard;Alternate)
+Functionless Bit=$00E.0.1.0.0 (Off;On)
+Check Bit 1=$00E.6.1.0.1 (Set)
+Check Bit 2=$010.2.1.0.1 (Set)
 
 # DeviceTypes
 # The order matches up with default type on DeviceButtons
@@ -49,19 +56,18 @@ CBL = $00A $00B
 TV  = $00C $00D
 
 [Buttons]
-Power=$01
-1=$02,2=$03,3=$04,4=$05,5=$06,6=$07,7=$08,8=$09,9=$0A,0=$0B,
-"vol up":VOL+=$0C,
-"vol down":VOL-=$0D,
-"channel up":CH+=$0E,
-"channel down":CH-=$0F,
+Power=$01:AllMacroBind+Shift
+1=$02,2=$03,3=$04,4=$05,5=$06,6=$07,7=$08,8=$09,9=$0A,0=$0B
+"vol up":VOL+=$0C
+"vol down":VOL-=$0D
+"channel up":CH+=$0E
+"channel down":CH-=$0F
 MUTE=$10
-Rec=$72
+enter:"CBL Enter"=$90:AllMacroBind+Shift
+enter:"TV Enter"=$91:AllMacroBind+Shift
 Setup=$2E
 CBL=$78
 TV=$77
-phantom1=$90
-phantom2=$91
 
 [ButtonMaps]
 0 = ($0B, $02, $03, $04, $05, $06, $07, $08, $09, $0A), ($0C, $0D, $10), ($0E, $0F),
@@ -135,4 +141,3 @@ phantom2=$91
     1938,1939,1940,1941,1943,1944,1945,1946,1947,1948,1950,1951,1952,1953,1958,1959,
     1960,1961,1962,1963,1971,1979,1984,1986,1990,1991,1992,1993,1996,1997,1998,2002,
     2003
-

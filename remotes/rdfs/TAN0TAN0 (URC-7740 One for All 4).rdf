@@ -1,0 +1,83 @@
+[General]
+Name=URC-7740 One For All 4
+EepromSize=$400
+#AdvCodeAddr=$016..$0FF
+UpgradeAddr=$100..$3FC
+MacroSupport=0
+Processor=S3C80
+RAMAddr=$FF00
+RDFSync=3
+ImageMap=URC-7540.map,URC-7542.map
+
+[SpecialProtocols]
+Multiplex=01FE
+
+[Settings]
+VPT Status=$012.2.1.0.0 (Off;On)
+VPT Device=$013.7.8.1.0 DeviceButtons
+TV VPT Status=$014.0.1.0.0 (Off;On)
+VCR VPT Status=$014.1.1.0.0 (Off;On)
+DVD VPT Status=$014.2.1.0.0 (Off;On)
+SAT VPT Status=$014.3.1.0.0 (Off;On)
+
+[Checksums]
+^$000:$002..$3FC
+
+[FixedData]
+$016 = $03
+
+[DeviceTypes]
+TV  = 0
+VCR = 0
+CBL/SAT = 0
+
+[DeviceTypeAliases]
+CBL/SAT = Cable,SAT,Video Acc
+TV  = TV
+VCR = VCR,DVD,Tape,Laserdisc,DAT,CD,Home Auto,Phono,Tuner,Misc Audio,Amp
+
+[DeviceButtons]
+TV  = $00A $00B
+VCR = $00C $00D
+DVD = $00E $00F
+SAT = $010 $011
+
+[Buttons]
+"setup":MAGIC[Setup]=$01,
+Power=$02,
+TV=$03,
+VCR=$04,
+DVD=$05, 
+SAT=$06,
+1=$07, 2=$08, 3=$09, 4=$0A, 5=$0B, 6=$0C, 7=$0D, 8=$0E, 9=$0F, 0=$10,
+"+100":10{-/--}=$11,
+input:20{AV}=$12, 
+"channel up":CH+=$13,
+"channel down":CH-=$14,
+MUTE=$15,
+"vol up":VOL+=$16,
+"vol down":VOL-=$17,
+"up arrow":UP=$18,
+"down arrow":DOWN=$19,
+"left arrow":LEFT=$1A,
+"right arrow":RIGHT=$1B,
+SELECT:OK=$1C,
+Menu=$1D,
+EXIT=$1E,
+"program guide":EPG=$1F,
+"rewind":REW{TextOn}=$20,
+"pause":PAUSE{Hold}=$21, 
+"play":PLAY{TextOff}=$22,
+"fast fwd":FFWD{Expand}=$23,
+"tv/vcr":sp/lp{Red}=$24,
+"stop":STOP{Green}=$25,
+"record":REC{Yellow}=$26,
+slow:AUTO{Blue}=$27
+
+[ButtonMaps]
+0 = ($10, $07, $08, $09, $0A, $0B, $0C, $0D, $0E, $0F), ($16, $17, $15), ($13, $14),
+    $02, $11, $12, $18, $19, $1A, $1B, $1C, $1D, $1E, $1F, $20, $21, $22, $23, $24, $25, $26, $27
+
+[DigitMaps]
+
+[Protocols]

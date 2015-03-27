@@ -1,0 +1,142 @@
+[General]
+Name=Atlas 4-Device Sunflower
+EepromSize=$400
+AdvCodeAddr=$0018..$01FF
+UpgradeAddr=$0200..$03FF
+Processor=HCS08
+BaseAddr=$F800
+RAMAddr=$FF00
+RDFSync=3
+#DevComb=,$2A04,$3ED3,,$19D9
+AdvCodeBindFormat=LONG
+SectionTerminator=$FF
+EFCDigits=5
+ImageMap=Atlas4.map
+SetupValidation=Warn
+
+[SpecialProtocols]
+
+[Checksums]
+
+[FixedData]
+
+[Settings]
+VPT Device=$011.7.8.0.0 DeviceButtons
+VPT Status=$010.2.1.1.0 (Off;On)
+CBL uses VPT=$013.0.1.1.0 (No;Yes)
+TV uses VPT=$013.1.1.1.0 (No;Yes)
+VCR uses VPT=$013.2.1.1.0 (No;Yes)
+CBL Channel Control Lock=$012.3.1.1.0 (Off;On)
+CBL Setup Lock=$012.0.1.1.1 (Off;On)
+
+# DeviceTypes
+# The order matches up with default type on DeviceButtons
+# The names match up with DeviceTypeAliases
+
+[DeviceTypes]
+Cable    = 0
+TV       = 1
+VCR/DVD  = 2
+CD/Audio = 3
+
+[DeviceTypeAliases]
+Cable    = Cable,SAT,Video Acc
+TV       = TV
+VCR/DVD  = VCR,DVD,Tape,Laserdisc,DAT
+CD/Audio = CD,Tuner,Home Auto,Misc Audio,Phono,Amp
+
+[DeviceButtons]
+CBL = $008 $009
+TV  = $00A $00B
+VCR = $00C $00D
+AUD = $00E $00F
+
+[Buttons]
+CBL=$09,
+TV=$01,
+VCR=$0A,
+AUD=$11,
+POWER=$03,
+SETUP=$02,
+"vol up":VOL+=$04,
+"vol down":VOL-=$05,
+MUTE=$33,
+"channel up":CH+=$06,
+"channel down":CH-=$07,
+1=$15,2=$16,3=$17,4=$19,5=$1A,6=$1B,7=$1C,8=$1D,9=$1E,0=$1F,
+sleep:"HELP/*"=$28,
+enter:MUSIC/ENTER/#=$18,
+"prev ch":LAST=$08,
+"fav/scan":FAV=$12,
+display:INFO=$13,
+EXIT=$14,
+MENU=$2F,
+GUIDE=$21,
+surround:A=$25,
+input:B=$26,
+"+100":C=$27,
+"pip freeze":PPV/LOCK=$2E,
+"next track":"PAGE UP"=$23,
+"prev track":"PAGE DOWN"=$24,
+rewind:REW=$0B,
+PLAY=$0C,
+"fast fwd":FFWD=$0D,
+STOP=$0E,
+PAUSE=$0F,
+record:REC=$10,
+x2:BYPASS=$20,
+TV/VCR=$30,
+"up arrow":UP=$29,
+"down arrow":DOWN=$2A,
+"left arrow":LEFT=$2B,
+"right arrow":RIGHT=$2C,
+SELECT=$2D,
+"shift-left":DAY+=$31,
+"shift-right":DAY-=$32,
+macro1:VOD=$22,
+Phantom1=$3A,
+Phantom2=$3B,
+Phantom3=$3C,
+Phantom4=$3D,
+phantom5:DiscreteON=$3E,
+phantom6:DiscreteOFF=$3F
+
+[MultiMacros]
+VOD=$017
+
+[ButtonMaps]
+0 = ($1F,$15,$16,$17,$19,$1A,$1B,$1C,$1D,$1E), ($04,$05,$33), ($06,$07),
+    $03,$0C,$0F,$0B,$0D,$0E,$10,$20,$2D,$08,$12,$13,$14,$2E,$29,$2A,$2B,
+    $2C,$18,$21,$23,$24,$25,$26,$27,$28,$2F,$31,$32
+1 = ($1F,$15,$16,$17,$19,$1A,$1B,$1C,$1D,$1E), ($04,$05,$33), ($06,$07),
+    $03,$30,$18,$08
+2 = ($1F,$15,$16,$17,$19,$1A,$1B,$1C,$1D,$1E), ($04,$05,$33), ($06,$07),
+    $03,$0C,$0F,$0B,$0D,$0E,$10,$30,$18,$08
+3 = ($1F,$15,$16,$17,$19,$1A,$1B,$1C,$1D,$1E), ($04,$05,$33), ($06,$07),
+    $03,$0C,$0F,$0B,$0D,$0E,$10,$30,$08
+
+[DigitMaps]
+
+[Protocols]
+0000, 0006, 000C, 000D, 0013, 0014, 001C, 001F, 0022, 0027, 
+002D, 0034, 003A, 0045, 0056, 0058, 005A, 005C, 005D, 005E:2, 
+0060, 0065, 006A, 0073, 007E:2, 0092, 009C, 009E, 00AF, 00B6, 
+00C4, 00C9, 00CA, 00CD, 00DE, 00E2, 00E8, 00F2, 00F5, 00F8:2, 
+0111, 0114, 016B, 0171, 0184
+
+
+[SetupCodes]
+0 = 0000,0003,0008,0017,0144,0276,0305,0317,0476,0477,0525,0533,0810,0877,0899,1877
+1 = 0000,0016,0017,0019,0021,0030,0039,0047,0051,0053,0054,0056,0060,0090,0092,0093,
+    0135,0145,0150,0154,0156,0165,0166,0171,0178,0179,0180,0236,0250,0282,0451,0463,
+    0466,0603,0623,0624,0628,0632,0638,0679,0683,0688,0701,0703,0707,0717,0720,0751,
+    0774,1047,1147,1256,1347
+2 = 0000,0002,0032,0033,0035,0037,0038,0039,0041,0042,0043,0045,0047,0048,0060,0067,
+    0072,0081,0104,0121,0149,0162,0184,0209,0225,0240,0278,0432,0479,0490,0503,0521,
+    0522,0525,0533,0534,0539,0545,0558,0571,0573,0582,0591,0614,0616,0618,0623,0627,
+    0630,0632,0633,0634,0636,0641,0651,0655,0662,0664,0670,0672,0674,0675,0677,0678,
+    0682,0692,0704,0711,0715,0717,0719,0720,0721,0736,0755,0760,0769,1081,1162,1181
+3 = 0014,0039,0074,0078,0110,0121,0135,0150,0165,0176,0186,0321,0331,0354,0395,0531,
+    0630,0670,0689,0892,1023,1027,1058,1089,1104,1136,1158,1160,1176,1181,1189,1229,
+    1254,1258,1269,1308,1309,1313,1405,1518,1569,1570
+

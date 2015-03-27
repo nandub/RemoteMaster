@@ -53,23 +53,23 @@ $0400=$41,$50,$53
 CBL/SAT  = 0
 TV       = 1
 VCR/DVD  = 2
-CD       = 3
-CBL/SAT  = 0
+AUDIO    = 3
+CBL/SAT  = 0,0
 VCR/DVD  = 2,2
 VCR/DVD  = 2,2
-CD       = 3,3
+AUDIO    = 3,3
 
 [DeviceTypeAliases]
 TV 	= TV
 CBL/SAT = Cable,SAT,Video Acc
 VCR/DVD = VCR,DVD,Tape,Laserdisc,DAT,PVR
-CD      = CD,Home Auto,Phono
+AUDIO   = CD,Tuner,Home Auto,Misc Audio,Phono,Amp
 
 [DeviceButtons]
 CABLE  = $00A $00B
 TV     = $00C $00D
-AUDIO  = $00E $00F
-dev4   = $010 $011
+dev4   = $00E $00F
+AUDIO  = $010 $011
 dev5   = $012 $013
 DVD    = $014 $015
 dev7   = $016 $017
@@ -77,46 +77,19 @@ dev8   = $018 $019
 
 [Buttons]
 SET=$01,
-Power=$02,
-TV=$03,
-CABLE=$04,
-DVD=$05,
-dev5=$06,
-dev8=$07,
-dev4=$08,
-AUDIO=$09,
-dev7=$0A,
-Menu=$0B
-Guide=$0C,
-Up=$0D,
-Down=$0E,
-Left=$0F,
-Right=$10,
-OK=$11
-Vol+=$12,
-Vol-=$13,
-Ch+=$14,
-Ch-=$15,
-Info=$16,
-Exit=$17,
-Mute=$18,
-Last=$19,
-Wide{Record}=$1A,
-CC{Stop}=$1B,
-MTS{Play}=$1C,
-Sleep{Pause}=$1D
-Mode{Skip-}=$1E
-Freeze{Rewind}=$1F
-Audio{Fwd}=$20,
-Swap{Skip+}=$21,
+Power=$02
+DVD=$05
+AUDIO=$09
+CABLE=$04
+TV=$03
+dev5=$06
+dev8=$07
+dev4=$08
+dev7=$0A
 1=$26,2=$27,3=$28,4=$29,5=$2A
 6=$2B,7=$2C,8=$2D,9=$2E,0=$2F
-Input=$30
-Enter{-}=$31
-Zoom-=$34
-Zoom+=$35
-Freeze=$36
-RGB=$37
+"tv/vcr":Input=$30
+enter:Enter{-}=$31
 A{Yellow}=$38
 B{Blue}=$39
 C{Red}=$3A
@@ -125,10 +98,36 @@ InputTV=$3C
 AV=$3D
 Component=$3E
 HDMI=$3F
-Phantom1=$40
-Phantom2=$41
-Phantom3=$42
-Phantom4=$43
+menu:Menu=$0B
+display:Info=$16
+Guide=$0C
+Exit=$17
+"up arrow":Up=$0D
+"down arrow":Down=$0E
+"left arrow":Left=$0F
+"right arrow":Right=$10
+select:OK=$11
+"vol up":Vol+=$12
+"vol down":Vol-=$13
+Mute=$18
+"channel up":Ch+=$14
+"channel down":Ch-=$15
+"prev ch":Last=$19
+record:Wide{Record}=$1A
+pause:Sleep{Pause}=$1D
+play:MTS{Play}=$1C
+stop:CC{Stop}=$1B
+"prev track":Mode{Skip-}=$1E
+rewind:Freeze{Rewind}=$1F
+"fast fwd":Audio{Fwd}=$20
+"next track":Swap{Skip+}=$21
+PhantomZoom-=$34
+PhantomZoom+=$35
+PhantomFreeze=$36
+PhantomRGB=$37
+Phantom1=$22,Phantom2,Phantom3,Phantom4
+Phantom5=$32,Phantom6
+Phantom7=$40,Phantom8,Phantom9,Phantom10
 
 [ButtonMaps]
 0 = ($2F, $26, $27, $28, $29, $2A, $2B, $2C, $2D, $2E), ($12, $13, $18), ($14, $15),
@@ -151,14 +150,13 @@ Phantom4=$43
 [Protocols]
 0000, 0002:5, 0006, 0007, 000A, 000D, 0013, 0014, 0015, 001A, 
 001B, 001C, 001D, 001F:8, 0022, 0027:new, 0029, 002D, 002F, 0034, 
-0039, 003A, 003F, 0045, 0046:2, 0056, 0057, 0058:2, 005A, 005B, 
+0039, 003A, 003F, 0045, 0046, 0056, 0057, 0058:2, 005A, 005B, 
 005C, 005D, 005E:2, 005F, 0060, 0061, 0065:2, 006A, 0073, 007E:3, 
 0083, 0090, 0092:3, 0093, 0098:2, 009C, 009E, 00A4, 00A9, 00AD, 
 00AF, 00B6, 00BF, 00C4, 00C9, 00CA, 00CD:2, 00DB, 00DE, 00E2, 
 00E3, 00E7, 00E8, 00F2, 00F5, 00F8:3, 0103, 0109, 010C, 010F, 
 0111, 0114:2, 0115, 0117, 011A:2, 011B, 011E, 0125, 012A:2, 0161, 
 0162, 016C, 016D, 017E, 0184, 0186, 018B, 0190, 01A4, 01BA
-
 
 [DigitMaps]
 072 048 053 094 092 003 001 090 046 223 224 029 059 112 077 114
@@ -169,12 +167,6 @@ Phantom4=$43
 357 373 270 271 235 236 275 276 283 284 261 262 225 226 253 254
 241 242 286 230 231 013 080 017 031 091 277 209 210 170 131 267
 312 197 229 341
-
-
-
-
-
-
 
 [SetupCodes]
 0 = 0000,0003,0008,0009,0012,0014,0017,0099,0107,0113,0143,0144,0160,0216,0237,0247,
