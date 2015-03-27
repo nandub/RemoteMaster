@@ -25,3 +25,5 @@ circle 7  52,299 67,314
 circle 8  97,299 112,314
 circle 9  52,334 67,349
 circle 0  97,334 112,349
+circle $90:CBL{enter}  52,410 67,420
+circle $91:TV{enter}  97,410 112,420

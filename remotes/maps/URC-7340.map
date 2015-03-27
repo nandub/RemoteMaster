@@ -1,0 +1,50 @@
+#$MTIMFH
+#$GIF:URC-7340.jpg
+#$AUTHOR:rosito
+#$EOH
+default URC-7340
+circle Magic  71,96 71,116
+circle Power  188,95 188,115
+circle 1  72,160 72,180
+circle 8  130,268 130,288
+circle 9  186,268 186,288
+circle 6  185,216 185,236
+circle 3  185,160 185,180
+circle 2  130,160 130,180
+circle 5  128,216 128,236
+circle 4  72,216 72,236
+circle 7  72,268 72,288
+circle -/--  72,325 72,345
+circle 0  130,325 130,345
+circle AV  185,325 185,345
+circle Menu  65,500 65,518
+circle 16x9  194,500 194,518
+circle Exit  195,649 195,667
+circle Info  131,671 131,689
+circle FAV  65,649 65,667
+circle Red  65,716 65,732
+circle Green  107,716 107,732
+circle Yellow  150,716 150,732
+circle Blue  193,716 193,732
+circle Rewind  65,770 65,786
+circle Play  107,770 107,786
+circle Pause  150,770 150,786
+circle FastFwd  193,770 193,786
+circle SkipBack  65,814 65,830
+circle Stop  107,814 107,830
+circle Record  150,814 150,830
+circle SkipFwd  193,814 193,830
+circle Last  130,384 130,404
+circle Mute  130,437 130,457
+poly Mode 106,68 101,81 106,94 154,94 159,81 154,68 106,68
+poly Guide 106,469 101,482 106,494 154,494 159,482 154,469 106,469
+circle Vol+  73,380 73,400
+circle Vol-  73,438 73,458
+circle Ch+  185,380 185,400
+circle Ch-  185,438 185,458
+circle OK  129,574 129,604
+poly Left 93,560 93,586 73,573 93,560
+poly Up 116,540 146,540 131,520 116,540
+poly Right 168,560 168,586 188,573 168,560
+poly Down 116,611 146,611 131,631 116,611
+rect Combi 107,104 154,128

@@ -1,0 +1,61 @@
+#$MTIMFH
+#$-:Image Map file created by Map THIS!
+#$-:Map THIS! free image map editor by Todd C. Wilson
+#$-:Please do not edit lines starting with "#$"
+#$VERSION:1.30
+#$DATE:Mon Dec 24 20:40:51 2012
+#$PATH:C:\Remotes\images\
+#$GIF:URC-1047.jpg
+#$FORMAT:ncsa
+#$EOH
+default URC-1047
+circle Setup  88,43 97,52
+circle Power  131,43 148,54
+circle AUD  89,81 102,93
+circle VCR  118,73 131,85
+circle TV  146,73 159,85
+circle CABLE  174,80 187,92
+circle Guide  86,131 101,148
+circle Exit  132,110 151,121
+circle Info  178,129 194,146
+circle PageUp  197,161 206,172
+circle PageDown  196,192 207,204
+circle Mute  84,222 95,233
+circle Day-  112,240 123,251
+circle Day+  152,239 163,250
+circle PPV/Lock  181,222 192,233
+circle C  172,328 186,340
+circle Rec  171,513 182,524
+circle Fav  132,284 143,295
+circle Last  91,448 102,459
+circle "enter/#"  175,447 186,458
+circle Menu/Settings  67,177 79,196
+circle Select  131,176 148,192
+poly Left 97,151 87,174 98,201 110,190 109,161 97,151 97,151
+poly Up 107,139 131,132 157,140 147,153 119,154 107,139 107,139
+poly Right 167,151 177,175 168,200 153,189 154,161 167,151 167,151
+poly Down 105,210 133,220 159,211 146,196 119,196 105,210 105,210
+circle Vol+  89,262 104,279
+circle Ch+  174,264 188,280
+circle Ch-  167,295 182,311
+circle Vol-  98,294 112,311
+poly A 79,337 91,315 106,338 79,337 79,337
+rect B 123,320 143,341
+circle 1  92,357 111,368
+circle 2  134,358 153,369
+circle 3  176,357 195,368
+circle 4  92,387 111,398
+circle 5  132,387 151,398
+circle 6  176,387 195,398
+circle 7  93,418 112,429
+circle 8  133,417 152,428
+circle 9  176,418 195,429
+circle 0  134,447 153,458
+circle Rew  93,482 112,493
+circle Play  134,482 153,493
+circle FF  173,483 192,494
+circle OnDemand/Macro  94,542 110,553
+circle Bypass  133,543 149,554
+circle TV/VCR  171,542 187,553
+rect Stop 123,500 145,526
+rect Pause 91,506 106,523
