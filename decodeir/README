@@ -1,0 +1,39 @@
+DecodeIR README
+===============
+
+This code is in Public Domain
+
+DecodeIR is a general library which can decode signals for a large number
+of infrared remote controls. It can be used as a regular C library or
+through a java interface.
+
+Here is a traditional C++ so-lib and a Java wrapper which are built
+separately. The so-lib serves both as a traditional library and a
+jni one for the java wrapper.
+
+To build the java jar file you need maven. 'mvn package' will create
+a jar file in the target/ directory. Here is no explicit support to
+install this file.
+
+To configure, build and install the so-lib you need the autoreconf
+command and some other dependencies:
+
+    autoconf v 2.69+
+    automake v 1.14+
+    libtool v 2.4.2+
+    gnu make v 4.0.3+
+    maven v v 3.2.2+
+    gcc v 4.9.2+
+    java-1.8.0-openjdk+
+
+
+With these  in place, the build procedure is indeed:
+
+    $ autoreconf -fi
+    $ ./configure
+    $ make
+    $ sudo make install
+
+There are no specific configuration options. The generic options to
+configure and 'make install' are described in INSTALL. Static library
+generation is disabled in configure.ac.
