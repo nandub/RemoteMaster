@@ -5,12 +5,13 @@ EXTRA_DIST                += Makefile.Linux Makefile.MacOSX StdAfx.h
 
 include_HEADERS           = DecodeIRCaller.h DecodeIR.h
 
-lib_LTLIBRARIES           = libdecodeir.la
-libdecodeir_la_SOURCES    = DecodeIR.cpp
+lib_LTLIBRARIES           = libDecodeIR.la
+libDecodeIR_la_SOURCES    = DecodeIR.cpp
                           # Use -avoid-version to disable symlinks and SONAME.
-libdecodeir_la_LDFLAGS    = -version-info 0:0:0
+libDecodeIR_la_LDFLAGS    = -version-info 0:0:0
+
+javadir                   = src/main/java/com/hifiremote/decodeir
 
 dist-hook:
-	mkdir -p $(distdir)/src/main/java/com/hifiremote/decodeir
-	cp -a $(top_srcdir)/src/main/java/com/hifiremote/decodeir/*.java  \
-	    $(distdir)/src/main/java/com/hifiremote/decodeir
+	mkdir -p $(distdir)/$(javadir)
+	install -t $(distdir)/$(javadir) $(srcdir)/$(javadir)/*.java
