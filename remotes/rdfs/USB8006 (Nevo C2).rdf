@@ -12,7 +12,7 @@ FavKey=$03,0,0,0
 Labels+= 13,0,,,Brand,Model,<html>Remote<br>Model</html>
 MasterPowerSupport=Y
 RDFSync=5 
-ImageMap=USB8004.map
+ImageMap=USB8006.map
 SetupValidation=Warn
 AdvCodeFormat=EFC
 ActivityMapIndex=1
@@ -80,16 +80,16 @@ Dev15 = $5E 0
 [Buttons]
 Power=$01:group0, 
 Home=$02:AllBind+groupLCD, Favorites, Activities, Devices,
-Guide=$09:group2, Menu, Info, Exit,
+Guide=$09:group2, Menu, display:Info, Exit,
 "Vol up":Vol+=$0D:group3, "Up Arrow":Up=$0E:group2, "Channel up":Ch+=$0F:group4, Mute=$10:group3,
-"Left Arrow":Left=$11:group2, OK, "Right Arrow":Right, "prev ch":Last=$14:group4,
+"Left Arrow":Left=$11:group2, select:OK, "Right Arrow":Right, "prev ch":PrevCh=$14:group4,
 "Vol down":Vol-=$15:group3, "Down Arrow":Down=$16:group2, "Channel down":Ch-=$17:group4, Red=$18:group5,
-Green, Yellow, Blue, "prev track":SkipBack=$1C:group6,
-Play, "next track":SkipFwd, Rewind, Pause,
+Green, Yellow, Blue, "prev track":Replay=$1C:group6,
+Play, "next track":Skip, Rewind, Pause,
 "Fast fwd":FastFwd, List, Stop, Record,
 1=$25:group7, 2, 3, 4,
 5, 6, 7, 8,
-9, AV=$2E:group8, 0=$2F:group7, "+100":Enter,
+9, Input=$2E:group8, 0=$2F:group7, "+100":Enter,
 Soft1=$31:group1+groupSoft, Soft2, Soft3, Soft4,
 Soft5, Soft6, Soft7, Soft8,
 Soft9, SoftA, SoftB, SoftC,
@@ -98,7 +98,7 @@ Soft11, Soft12, Soft13, Soft14,
 Soft15, Soft16, Soft17, Soft18,
 Soft19, Soft1A, Soft1B, Soft1C,
 Soft1D, Soft1E,
-Phantom=$4F,
+phantom1:Phantom=$4F,
 Dev1=$50:AllBind, Dev2, Dev3, Dev4, Dev5, Dev6,
 Dev7, Dev8, Dev9, Dev10, Dev11, Dev12,
 Dev13, Dev14, Dev15,
