@@ -42,7 +42,7 @@ DVR/Aux = $7E
 
 [Buttons] 
 Setup=$01, 
-"aspect":Format=$02:group0, 
+aspect:Format=$02:group0, 
 Power=$03, 
 DeviceSelectLeft=$04, 
 DeviceSelectRight=$05, 
@@ -68,7 +68,8 @@ display:Info=$23:group5, Menu, Guide,
 "fav/scan":Fav, OnDemand, Exit, 
 1=$29:group7, 2, 3, 4, 5, 6, 7, 8, 9, 
 "+100":Dash, 0, "tv/vcr":Input,
-TV=$79:groupDevice, Sat/Cbl, DVD, Audio, Media, DVR/Aux
+PowerOff=$39, PowerOn, Delay, Tuner, Input1, Input2, Input3, Input4, 
+TV=$79:groupDevice+AllMoveBind, Sat/Cbl, DVD, Audio, Media, DVR/Aux
 
 [ButtonMaps] 
 0 = ($33, $29, $2A, $2B, $2C, $2D, $2E, $2F, $30, $31), ($14, $1C, $17), ($16, $1E), 

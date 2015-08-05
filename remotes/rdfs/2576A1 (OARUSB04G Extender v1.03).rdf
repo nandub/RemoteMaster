@@ -1,24 +1,37 @@
 [General] 
-Name=URC-6540 OARUSB04G
-EepromSize=$4000
+Name=URC-6540 OARUSB04G Extender v1.03
+EepromSize=$2600
 Processor=S3C80
 Processor+=MAXQ622 
-BaseAddr=$01BE00
+BaseAddr=$01D800
 SegmentTypes= $00 $0B $04 $DF $10 $09 $01 $07 $08
+ExtenderVersionAddr+=SIG, $0E, Hex, $0F
 MasterPowerSupport=Y
 RDFSync=5 
 ImageMap=URC-6540.map
 SoftDev=SetupCodesOnly
 SetupValidation=Warn
 AdvCodeFormat=EFC
-PunchThru=V
+PunchThru=VTC
 ActivityMapIndex=4
+PauseParams=Pause,2/B,100
+XShift=$40
+
+[Extender]
+OEMSignature=257601
 
 [SpecialProtocols]
 DSM=Internal:0
+Pause=Internal:1
+LDKP=Internal:2
+ToadTog=Internal:3
+Multiplex=Internal:4
 
 [Checksums]
-^$0000:$0002..$3FFF
+^$0000:$0002..$25FF
+
+[FixedData+]
+SIG $0E = $01 $03
 
 [DeviceTypes] 
 TV       = 0 
@@ -37,15 +50,20 @@ TV = $04
 STB = $05
 DVD = $06
 AUDIO = $07
+TV2 = $84
+STB2 = $85
+DVD2 = $86
+AUDIO2 = $87
+TV3 = $44
+STB3 = $45
+DVD3 = $46
+AUDIO3 = $47
 
 [Buttons]
 WatchTV=$01:groupActivity,
-Power=$02,
+Power=$02:group4,
 WatchMovie=$03:groupActivity,
-TV=$04,
-STB=$05,
-DVD=$06,
-AUDIO=$07,
+TV=$04:group3,STB,DVD,AUDIO,
 Red=$08:group1,Green,Orange,Blue,Guide,Menu,Info,
 "vol up":Vol+=$0F:group0,"vol down":Vol-,
 "up arrow":Up=$11:group1,"left arrow":Left,"select":OK,"right arrow":Right,"down arrow":Down,Exit,"channel up":Ch+,"channel down":Ch-,
@@ -54,28 +72,49 @@ Mute=$19:group0,
 List=$1B:group2,Record,Stop,"prev track":SkipBack,Pause,"next track":SkipFwd,Play,
 1=$22:group1,2,3,4,5,6,7,8,9,
 dash=$2B:group3,
-0=$2C:group1,
-arrow=$2D:group3,
-Rewind=$2F:group2,"fast fwd":FastFwd
+0=$2C:group1,arrow,
+Rewind=$2F:group2,"fast fwd":FastFwd,
+Phantom1=$31,Phantom2,Phantom3,Phantom4,Phantom5,Phantom6,Phantom7,Phantom8,Phantom9,
+Phantom10,Phantom11,Phantom12,Phantom13,Phantom14,Phantom15,
+WatchTV2=$81:groupActivity,WatchMovie2=$83:groupActivity,
+WatchTV3=$41:groupActivity,WatchMovie3=$43:groupActivity,
+TV2=$84:group9,STB2,DVD2,AUDIO2,
+TV3=$44,STB3,DVD3,AUDIO3,
+Shift-Power=$82:group4,
+Shift-Red=$88:group6,Shift-Green,Shift-Orange,Shift-Blue,Shift-Guide,Shift-Menu,Shift-Info,
+Shift-Vol+=$8F:group5,Shift-Vol-,
+Shift-Up=$91:group6,Shift-Left,Shift-OK,Shift-Right,Shift-Down,Shift-Exit,Shift-Ch+,Shift-Ch-,
+Shift-Mute=$99:group5,
+Shift-PrevCh=$9A:group6,
+Shift-List=$9B:group7,Shift-Record,Shift-Stop,Shift-SkipBack,Shift-Pause,Shift-SkipFwd,Shift-Play,
+Shift-1=$A2:group8,Shift-2,Shift-3,Shift-4,Shift-5,Shift-6,Shift-7,Shift-8,Shift-9,
+Shift-dash=$AB:group9,
+Shift-0=$AC:group8,
+Shift-arrow=$AD:group6,
+Hold=$DA:All-MacroData,DCSave,DCRestore,Shift,
+ComboCancel=$DF:All-MacroData
 
 [ButtonMaps] 
 0 = ($2C, $22, $23, $24, $25, $26, $27, $28, $29, $2A), ($0F, $10, $19), ($17, $18),
     $02, $04, $08, $09, $0A, $0B, $0C, $0D, $0E, $11, $12, $13, $14, $15, $16, $1A, 
-    $1B, $1C, $1D, $1E, $2F, $1F, $20, $30, $21, $2B, $6E, $01, $03, $05, $06, $07
+    $1B, $1C, $1D, $1E, $2F, $1F, $20, $30, $21, $2B, $2D, $01, $03, $05, $06, $07
 1 = ($2C, $22, $23, $24, $25, $26, $27, $28, $29, $2A), ($0F, $10, $19), ($17, $18),
     $02, $05, $08, $09, $0A, $0B, $0C, $0D, $0E, $11, $12, $13, $14, $15, $16, $1A, 
-    $1B, $1C, $1D, $1E, $2F, $1F, $20, $30, $21, $2B, $6E, $01, $03, $04, $06, $07
+    $1B, $1C, $1D, $1E, $2F, $1F, $20, $30, $21, $2B, $2D, $01, $03, $04, $06, $07
 2 = ($2C, $22, $23, $24, $25, $26, $27, $28, $29, $2A), ($0F, $10, $19), ($17, $18),
     $02, $06, $08, $09, $0A, $0B, $0C, $0D, $0E, $11, $12, $13, $14, $15, $16, $1A, 
-    $1B, $1C, $1D, $1E, $2F, $1F, $20, $30, $21, $2B, $6E, $01, $03, $04, $05, $07
+    $1B, $1C, $1D, $1E, $2F, $1F, $20, $30, $21, $2B, $2D, $01, $03, $04, $05, $07
 3 = ($2C, $22, $23, $24, $25, $26, $27, $28, $29, $2A), ($0F, $10, $19), ($17, $18),
     $02, $07, $08, $09, $0A, $0B, $0C, $0D, $0E, $11, $12, $13, $14, $15, $16, $1A, 
-    $1B, $1C, $1D, $1E, $2F, $1F, $20, $30, $21, $2B, $51, $52, $53, $54, $55, $56, 
+    $1B, $1C, $1D, $1E, $2F, $1F, $20, $30, $21, $2B, $2D, $52, $53, $54, $55, $56, 
     $57, $58, $59, $5A, $5B, $5C, $5D, $5E, $5F, $60, $61, $62, $63, $64, $65, $01, 
     $03, $04, $05, $06 
-4 = $08, $09, $0A, $0B, $0C, $0D, $0E, $11, $15, $12, $14, $13, $16, $0F, $10, $19, 
-    $17, $18, $1A, $1B, $1C, $1D, $1E, $1F, $20, $21, $2F, $30, $22, $23, $24, $25, 
-    $26, $27, $28, $29, $2A, $2C, $2B, $2D
+4 = $02, $04, $05, $06, $07, $08, $09, $0A, $0B, $0C, $0D, $0E, $11, $15, $12, $14, 
+    $13, $16, $17, $18, $1A, $1B, $1C, $1D, $1E, $1F, $20, $21, $22, $23, $24, $25, 
+    $26, $27, $28, $29, $2A, $2C, $2D, $2F, $30, $0F, $10, $19, $2B, $82, $84, $85, 
+    $86, $87, $88, $89, $8A, $8B, $8C, $8D, $8E, $91, $95, $92, $94, $93, $96, $97, 
+    $98, $9A, $9B, $9C, $9D, $9E, $9F, $A0, $A1, $A2, $A3, $A4, $A5, $A6, $A7, $A8, 
+    $A9, $AA, $AC, $AD, $8F, $90, $99, $AB
     
 [Protocols] 
 0000, 0002:5, 0014, 001A, 001C, 001F:8, 0022, 0027:new, 002F, 0034, 
@@ -164,4 +203,3 @@ Rewind=$2F:group2,"fast fwd":FastFwd
     3154,3190,3210,3214,3217,3231,3257,3267,3270,3274,3279,3281,3294,3297,3309,3313,
     3326,3347,3372,3380,3409,3418,3429,3456,3490,3516,3517,3526,3535,3580,3626,3627,
     3645,3661,3721
-
