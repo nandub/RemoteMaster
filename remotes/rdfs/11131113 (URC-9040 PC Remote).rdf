@@ -1,0 +1,151 @@
+[General]
+Name=URC-9040 PC Remote
+EepromSize=$1800
+AdvCodeAddr=$018..$3FF
+UpgradeAddr=$402..$7FF
+LearnedAddr=$800..$17FF
+Processor=HCS08
+BaseAddr=$E400
+RAMAddr=$FF00
+RDFSync=3
+AdvCodeFormat=HEX
+AdvCodeBindFormat=LONG
+DevComb=,$0846,$0E13,,$19D3
+SectionTerminator=$FF
+EFCDigits=5
+LearnedDevBtnSwapped=Yes
+WavUpgrade=1
+MacroSupport=0
+ImageMap=URC-9040.map
+
+[SpecialProtocols]
+DSM=Internal:0
+
+[Settings]
+VPT Status=$014.2.1.0.0 (Off;On)
+VPT Device=$015.7.8.1.0 DeviceButtons
+STB uses VPT=$016.0.1.1.0 (No;Yes)
+TV uses VPT=$016.1.1.1.0 (No;Yes)
+Dev3 uses VPT=$016.2.1.1.0 (No;Yes)
+AUDIO uses VPT=$016.3.1.0.0 (No;Yes)
+PC uses VPT=$016.4.1.1.0 (No;Yes)
+STB Channel Control Lock=$014.3.1.1.0 (Off;On)
+PC RF (Device PC1701) Address=$017.1.2.1.0 (Invalid;1 - LShift Prefix;2 - RShift Prefix;3 - LControl Prefix)
+
+[Checksums]
+^$008:$00A..$017
+^$400:$402..$7FF
+
+[DeviceTypes]
+STB      = 0
+TV       = 1
+DVD      = 2
+AUDIO    = 3
+PC       = 4
+
+[DeviceTypeAliases]
+STB     = Cable,SAT,Video Acc,PVR
+TV      = TV
+DVD     = VCR,DVD,Laserdisc
+AUDIO   = Tuner,Misc Audio,Amp,CD,Home Auto,Phono,Tape,DAT
+PC      = PC
+
+[DeviceButtons]
+STB    = $00A $00B
+TV     = $00C $00D
+Dev3   = $00E $00F
+AUDIO  = $010 $011
+PC     = $012 $013
+
+[Buttons]
+TV=$01,
+Guide=$02,
+Power=$03,
+Vol+=$04,
+Vol-=$05,
+Mute=$08,
+Ch+=$06,
+Ch-=$07,
+PC=$09,
+MediaCenter=$0A,
+Rew=$0B,
+Play=$0C,
+Ffw=$0D,
+Stop=$0E,
+Pause=$0F,
+Rec=$10,
+AUDIO=$11,
+-/--=$12,
+AV=$13
+1=$15,
+2=$16,
+3=$17,
+Advance=$18,
+4=$19,
+5=$1A,
+6=$1B,
+7=$1C,
+8=$1D,
+9=$1E,
+0=$1F,
+Last=$20,
+STB=$21,
+Info=$22,
+Menu=$28,
+OK=$14,
+Exit=$23,
+Up=$24,
+Down=$25,
+Left=$26,
+Right=$27,
+Skip-=$29,
+Skip+=$2A,
+Replay=$2B,
+Red=$2C,
+Green=$2D,
+Yellow=$2E,
+Blue=$2F
+Dev3=$31
+
+[ButtonMaps]
+0 = ($1F, $15, $16, $17, $19, $1A, $1B, $1C, $1D, $1E), ($04, $05, $08), ($06, $07),
+    $03, $13, $28, $24, $25, $26, $27, $14, $23, $02, $22, $0C, $0E, $0F, $0B, $0D,
+    $10, $2A, $29, $20, $12, $2C, $2D, $2E, $2F, $2B, $18
+1 = ($1F, $15, $16, $17, $19, $1A, $1B, $1C, $1D, $1E), ($04, $05, $08), ($06, $07),
+    $03, $13, $28, $24, $25, $26, $27, $14, $23, $22, $02, $0E, $0B, $0D, $10, $2A,
+    $29, $20, $12, $2C, $2D, $2E, $2F
+2 = ($1F, $15, $16, $17, $19, $1A, $1B, $1C, $1D, $1E), ($04, $05, $08), ($06, $07),
+    $03, $13, $28, $24, $25, $26, $27, $14, $23, $02, $22, $0C, $0E, $0F, $0B, $0D,
+    $10, $2A, $29, $20, $12, $2B, $18
+3 = ($1F, $15, $16, $17, $19, $1A, $1B, $1C, $1D, $1E), ($04, $05, $08), ($06, $07),
+    $03, $13, $28, $24, $25, $26, $27, $14, $23, $02, $0C, $0E, $0F, $0B, $0D, $10,
+    $2A, $29, $20, $12
+4 = ($1F, $15, $16, $17, $19, $1A, $1B, $1C, $1D, $1E), ($04, $05, $08), ($06, $07),
+    $03, $13, $28, $24, $25, $26, $27, $14, $23, $02, $22, $0C, $0E, $0F, $0B, $0D,
+    $10, $2A, $29, $20, $12, $2B, $18, $09, $0A
+
+[DigitMaps]
+003 053 074 092 094 064 140 001 032 359 404 034 365 366 402 403
+065 448 038 139 066 042 015 169 014 055 008 046 179 187 188 086
+070 043 037 095 360 040 020 051 125 019 167 168 338 191 126 185
+176 177 211 340 189 173 217 218 069 141 348 449 181 182 450 342
+029 075 007 021 071 033 085 026 059 060 443 297 298 194 325 244
+206 207 192 193 357 405 346 451 452 406 195 196 093 270 271
+
+[Protocols]
+0000, 0002:5, 0006, 0010, 0011, 0013, 0014, 0018, 001C, 001D,
+001F:8, 0020, 0027:new, 002A, 002C, 002F, 0034, 003D, 0045, 004A,
+004B:7, 0051, 0057, 0058:2, 005A, 005C, 005D, 005E:2, 005F, 0064,
+0065:2, 0066, 0068, 006A, 006C, 0073, 0075, 007E:3, 0082, 0087,
+008C, 008E, 0095, 0098:2, 009C, 009E, 00A0, 00A1, 00A5, 00A6,
+00A8, 00AA, 00AF, 00B0, 00B2, 00B6, 00B9, 00BD, 00C4, 00C9,
+00CA, 00CC, 00CD:2, 00D1, 00D5, 00DE, 00E2, 00E5, 00E8, 00EB,
+00ED, 00EF, 00F0, 00F3, 00F4, 00F8:3, 0108, 0109, 010C, 0111,
+0114:2, 011A:2, 011B, 011E, 0125, 012A, 012B, 013A, 0156, 015E,
+0160, 0161, 016A, 016C, 016F, 0171, 0173, 0176, 017E, 0180,
+0182:2, 0184, 0187, 0189, 018A, 018C, 019A, 019B, 019C, 019D,
+019F, 01C4, 01FF
+
+[SetupCodes]
+02=0833
+04=1701

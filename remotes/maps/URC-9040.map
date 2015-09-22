@@ -1,0 +1,59 @@
+#$MTIMFH
+#$-:Image Map file created by Map THIS!
+#$-:Map THIS! free image map editor by Todd C. Wilson
+#$-:Please do not edit lines starting with "#$"
+#$VERSION:1.30
+#$TITLE:URC-9040
+#$AUTHOR:Knuckx
+#$DATE:Sat Sep 05 20:37:19 2015
+#$PATH:C:\Users\Chris\Desktop\URC\
+#$GIF:URC-9040.jpg
+#$FORMAT:ncsa
+#$EOH
+circle 1  90,208 90,226
+circle 2  145,208 145,226
+circle 3  200,208 200,226
+circle 4  91,256 91,274
+circle 5  145,256 145,274
+circle 6  200,256 200,274
+circle 7  91,305 91,323
+circle 8  145,305 145,323
+circle 9  201,305 201,323
+circle 0  145,353 145,371
+circle Power  146,156 146,172
+circle -/--  89,354 89,372
+circle AV  200,353 200,371
+rect TV 82,67 135,95
+rect AUDIO 72,119 125,147
+rect PC 155,66 208,94
+rect STB 165,117 218,145
+poly Replay 61,385 46,417 82,415 61,385
+poly Mute 60,660 45,692 81,690 60,660
+poly Advance 231,387 212,413 246,417 231,387
+poly Last 230,662 211,688 245,692 230,662
+circle OK  146,532 146,558
+circle Red  65,730 65,747
+circle Green  115,728 115,745
+circle Yellow  177,728 177,745
+circle Blue  225,730 225,747
+rect Pause 119,766 173,797
+rect Play 119,821 173,852
+rect Skip- 59,766 106,794
+rect Skip+ 186,766 233,794
+rect Rew 62,821 109,849
+rect Ffw 184,821 231,849
+rect Stop 84,875 131,903
+rect Rec 160,875 207,903
+rect MediaCenter 114,393 177,426
+poly Up 111,489 144,463 182,491 173,498 118,499 111,489
+poly Down 107,574 146,609 184,574 175,564 116,564 107,574
+poly Right 191,566 221,532 190,498 181,506 182,556 191,566
+poly Left 103,497 69,532 99,566 110,557 110,505 103,497
+poly Vol+ 45,570 71,614 86,599 55,556 45,570
+poly Vol- 80,626 122,678 123,640 95,611 80,626
+poly Ch+ 206,598 235,557 247,568 221,613 206,598
+poly Ch- 196,610 210,625 170,676 169,639 196,610
+poly Menu 76,454 98,432 125,445 94,473 76,454
+poly Exit 166,445 196,470 214,453 192,432 166,445
+poly Guide 80,482 65,467 45,491 53,508 80,482
+poly Info 237,508 246,490 226,468 209,482 237,508
