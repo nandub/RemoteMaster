@@ -45,7 +45,7 @@ Initial Device Mode=$01E.7.8.0.0 DeviceButtons
 
 [Checksums]
 ^$008:$00A..$028
-^$200:$202..$3FF
+^$200:$20A..$3FF
 ^$400:$402..$7FF
 
 # DeviceTypes
