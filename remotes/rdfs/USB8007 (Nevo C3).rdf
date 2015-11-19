@@ -1,5 +1,5 @@
 [General] 
-Name=Nevo C2 18-device
+Name=Nevo C3 18-device
 EepromSize=$80000 
 Processor=S3F80 
 BaseAddr=$0000
@@ -12,7 +12,7 @@ FavKey=$03,0,0,0
 Labels+= 13,0,,,Brand,Model,<html>Remote<br>Model</html>
 MasterPowerSupport=Y
 RDFSync=5 
-ImageMap=USB8006.map
+ImageMap=URC-8603.map
 SetupValidation=Warn
 AdvCodeFormat=EFC
 ActivityMapIndex=1
@@ -83,16 +83,16 @@ Dev18 = $61 0
 [Buttons]
 Power=$01:group0, 
 Home=$02:AllBind+groupLCD, Favorites, Activities, Devices,
-Guide=$09:group2, Menu, display:Info, Exit,
+Guide=$09:group2, Menu, Info, Exit,
 "Vol up":Vol+=$0D:group3, "Up Arrow":Up=$0E:group2, "Channel up":Ch+=$0F:group4, Mute=$10:group3,
-"Left Arrow":Left=$11:group2, select:OK, "Right Arrow":Right, "prev ch":PrevCh=$14:group4,
+"Left Arrow":Left=$11:group2, OK, "Right Arrow":Right, "prev ch":Last=$14:group4,
 "Vol down":Vol-=$15:group3, "Down Arrow":Down=$16:group2, "Channel down":Ch-=$17:group4, Red=$18:group5,
-Green, Yellow, Blue, "prev track":Replay=$1C:group6,
-Play, "next track":Skip, Rewind, Pause,
+Green, Yellow, Blue, "prev track":SkipBack=$1C:group6,
+Play, "next track":SkipFwd, Rewind, Pause,
 "Fast fwd":FastFwd, List, Stop, Record,
 1=$25:group7, 2, 3, 4,
 5, 6, 7, 8,
-9, Input=$2E:group8, 0=$2F:group7, "+100":Enter,
+9, AV=$2E:group8, 0=$2F:group7, "+100":Enter,
 Soft1=$31:group1+groupSoft, Soft2, Soft3, Soft4,
 Soft5, Soft6, Soft7, Soft8,
 Soft9, SoftA, SoftB, SoftC,
@@ -101,7 +101,7 @@ Soft11, Soft12, Soft13, Soft14,
 Soft15, Soft16, Soft17, Soft18,
 Soft19, Soft1A, Soft1B, Soft1C,
 Soft1D, Soft1E,
-phantom1:Phantom=$4F,
+Phantom=$4F,
 Dev1=$50:AllBind, Dev2, Dev3, Dev4, Dev5, Dev6,
 Dev7, Dev8, Dev9, Dev10, Dev11, Dev12,
 Dev13, Dev14, Dev15, Dev16, Dev17, Dev18,
@@ -134,7 +134,7 @@ Null=$FF:All
 00B7, 00BB, 00BC, 00BD, 00BE, 00C2, 00C4, 00C5, 00C9, 00CA, 
 00CD:2, 00D1, 00D6, 00DE, 00E2, 00E5, 00E7, 00E8, 00EB, 00ED, 
 00F0, 00F2, 00F4, 00F5, 00F8:3, 00FC, 00FD, 0103, 0108, 0109, 
-010C, 010F, 0111, 0112, 0114:2, 0117, 011A:2, 011B, 011E, 0125, 
+010C, 010F, 0111, 0112, 0114:2, 0117, 011A, 011B, 011E, 0125, 
 012A:2, 013A, 0155, 0156, 015E, 015F, 0160, 0161:5, 0162, 016A, 
 016C:2, 016D, 0171, 0173:1, 0174, 0175, 0176, 017A, 017C, 017E, 
 0180, 0182:2, 0184:2, 0186, 0188, 018A, 018C, 019A, 019B, 019C, 
