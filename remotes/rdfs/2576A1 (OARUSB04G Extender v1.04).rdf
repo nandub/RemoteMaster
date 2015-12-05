@@ -19,7 +19,7 @@ PauseParams=Pause,2/B,100
 XShift=$40
 
 [Extender]
-OEMSignature=257601
+OEMSignature=257601 257604
 
 [SpecialProtocols]
 DSM=Internal:0
