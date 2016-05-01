@@ -13,6 +13,9 @@ ImageMap=URC-1067BX3.map
 AdvCodeFormat=EFC
 PunchThru=VC
 
+[SpecialProtocols]
+DSM=Internal:0
+
 [Checksums]
 ^$0000:$0002..$0BFF
 
