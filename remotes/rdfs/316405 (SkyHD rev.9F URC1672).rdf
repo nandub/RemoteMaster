@@ -1,11 +1,12 @@
 [General] 
-Name=Sky URC-1672 316405 JP1.4
+Name=SkyHD rev.9F URC1672 316405 JP1.4
 EepromSize=$1C00
 Processor=S3F80 
 BaseAddr=$D400 
-RDFSync=5 
-SegmentTypes=$00 $1A $01 $09 $07 $08 $10 $CA
-#ImageMap= 
+RDFSync=5
+SegmentTypes=$00 $1A $01 $10 $CA
+ImageMap=SkyHD rev.9F URC1672.map
+PunchThru=V
 SetupValidation=Warn 
 AdvCodeBindFormat=LONG
 AdvCodeFormat=EFC
@@ -15,38 +16,53 @@ EFCDigits=5
 ^$0000:$0002..$1BFF
 
 [DeviceTypes]
-Cable/SAT = 0,0 
-TV = 1,1
-DVD/VCR = 2,2 
-Audio/CD = 3,3
+Sky  = 0,0 
+TV   = 1,1
+AMP  = 2,2 
+Dev4 = 3,3
 
 [DeviceTypeAliases]
-TV        = TV
-Cable/SAT = Cable,SAT,Video Acc
-DVD/VCR   = DVD,Tape,Laserdisc,DAT,VCR
-Audio/CD  = CD,Tuner,Home Auto,Misc Audio,Phono,Amp
+Sky  = Cable,SAT,Video Acc,DVD,Tape,Laserdisc,DAT,VCR
+TV   = TV
+AMP  = CD,Tuner,Misc Audio,Phono,Amp
+Dev4 = Home Auto
 
 [DeviceButtons] 
-STB/[Cable] = 01
-TV =  $02    
-DVD = $40
-AUD = $41
+Sky  = $01
+TV   = $02    
+AMP  = $40
+Dev4 = $41
 
 [Buttons] 
-cable:STB [Cable]=$01
+Sky=$01
 TV=$02
-DVD=$40
-AUD=$41
-Vol+=$04, 
-Vol-=$05, 
+AMP=$40
+Dev4=$41
+Power=$03
+Vol+=$04
+Vol-=$05
 Ch+=$06
 Ch-=$07
-Mute=$08, 
-1=$15, 2, 3, 4, 5, 6, 7, 8, 9, 0
-
-
-[MultiMacros]
-
+Mute=$08
+TVGuide=$09
+BoxOffice=$0A
+Rew=$0B
+Play=$0C
+FFwd=$0D
+Stop=$0E
+Pause=$0F
+Record=$10
+i=$11
+Interactive=$12
+Services=$13
+Help=$14
+Text=$18
+1=$15, 2, 3
+4=$19, 5, 6, 7, 8, 9, 0
+BackUp=$20
+Up=$21, Down, Left, Right
+Red=$25, Green, Yellow, Blue
+Select=$29
 
 [ButtonMaps] 
 0 = ($1F, $15, $16, $17, $19, $1A, $1B, $1C, $1D, $1E), ($04, $05, $08), ($06, $07),
@@ -142,5 +158,3 @@ Mute=$08,
     1823,1831,1858,1868,1933,1935,1982,1989,2003,2021,2061,2104,2114,2116,2137,2172,
     2197,2311,2337,2342,2389,2857
 3 = 0001
-
-

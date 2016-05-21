@@ -1,0 +1,53 @@
+#$MTIMFH
+#$-:Image Map file created by Map THIS!
+#$-:Map THIS! free image map editor by Todd C. Wilson
+#$-:Please do not edit lines starting with "#$"
+#$VERSION:1.30
+#$TITLE:SkyHD rev.9F URC1672
+#$AUTHOR:Knuckx
+#$DATE:Tue May 17 20:37:40 2016
+#$PATH:C:\Users\Chris\Desktop\URC\Manuals\
+#$GIF:SkyHD rev.9F URC1672.jpg
+#$FORMAT:ncsa
+#$EOH
+circle TV  104,128 104,151
+circle Power  274,116 274,140
+circle Mute  135,294 135,313
+circle i  244,293 244,312
+circle Text  101,513 101,532
+circle Help  278,512 278,531
+circle Vol+  84,346 84,366
+circle Vol-  84,455 84,475
+circle Ch-  294,454 294,474
+circle Ch+  296,348 296,368
+circle Select  190,402 190,433
+circle Red  107,694 107,711
+circle Green  160,710 160,727
+circle Yellow  218,711 218,728
+circle Blue  271,694 271,711
+circle 1  123,770 123,794
+circle 2  188,775 188,799
+circle 3  256,770 256,794
+circle 4  122,833 122,857
+circle 5  189,839 189,863
+circle 6  255,833 255,857
+circle 7  123,895 123,919
+circle 8  189,902 189,926
+circle 9  256,897 256,921
+circle 0  189,966 189,990
+rect BackUp 155,499 225,539
+rect Up 149,314 229,363
+rect Left 106,359 148,443
+rect Down 150,440 230,489
+rect Right 231,359 273,443
+rect Play 147,589 234,627
+rect Pause 148,548 235,586
+circle Rew  103,583 103,604
+circle Record  151,653 151,674
+circle Stop  230,652 230,673
+circle FFwd  276,587 276,608
+rect Sky 149,128 233,177
+rect TVGuide 46,228 121,273
+rect BoxOffice 93,180 168,225
+rect Services 212,181 287,226
+rect Interactive 259,229 334,274
