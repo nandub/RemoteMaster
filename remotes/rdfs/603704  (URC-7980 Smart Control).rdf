@@ -53,7 +53,7 @@ Rewind=$2E:group2,"fast fwd":FastFwd=$07:group2,
 Play=$36:group2,Pause=$17:group2,
 Record=$2F:group2,Stop=$37:group2,List=$27:group2
 TV=$E0:groupDevice,STB,BLU,AUD,DVD,GAME,MEDIA,S.BAR,
-WatchTV=$68:groupActivity,ListenToMusic,WatchMovie,PlayGame,Custom
+WatchTV=$68:groupActivity,WatchMovie=$6A:groupActivity,ListenToMusic=$69:groupActivity,PlayGame=$6B:groupActivity,Custom
 
 [ActivityControl]
 WatchTV=group0:TV, group1:TV+AUD+S.BAR, group2:TV+STB, group3:TV+STB::TV, maps:$03+$0B+$09+$81+$83,
