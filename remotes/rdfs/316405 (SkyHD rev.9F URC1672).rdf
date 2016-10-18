@@ -12,8 +12,63 @@ AdvCodeBindFormat=LONG
 AdvCodeFormat=EFC
 EFCDigits=5
 
+[General+]
+Notes=This remote has two accessible device modes - Sky and TV.\n\
+	  In Sky mode, all buttons are programmable. In TV mode, all buttons are programmable\n\
+	  except from Up, Down, Left, Right, Rew, FFwd and Stop which are from the AMP device\n\
+	  and TV, Sky, TVGuide, BoxOffice, Services and Interactive which are from the Sky device\n\
+	  The device assigned to AMP is therefore only accessible on Up, Down, Left, Right, Rew,\n\
+	  FFwd and Stop in TV mode. The TV Keymap Setting changes this by swapping AMP Up and Down\n\
+	  onto Vol+ and Vol-, and TV Vol+ and Vol- onto Up and Down.\n\
+	  Dev4 is a completely inaccessible phantom device.\n\
+	  VPT is enabled automatically when a TV code is set from the keypad.\n\
+	  If a device code of type Sky is assigned to both TV and AMP, all keys in TV mode\n\
+	  will be from the same device upgrade.\n\
+	  \n\
+	  Any (non-9xx) code entered from the keypad has an offset of +28 compared to RMIR.\n\
+	  All magic key combinations must be pressed in TV mode.\n\
+	  The magic key combination for TV code entry or 9xx commands is Select+Red for two seconds.\n\
+	  The magic key combination for AMP code entry is Select+0 for two seconds.\n\
+	  The magic key combination for Sky code entry is Select+i for two seconds, but only certain\n\
+	  codes are selectable - enter a single digit from this list followed by Select:\n    \
+	      0 for 0847\n    \
+	      1 for 1175\n    \
+	      2/5/7 for 1662 (default)\n    \
+	      3 for 1656\n    \
+	      4 for 2661\n    \
+	      6 for 2663\n\
+	  A partial reset (does not remove device upgrades) is available by pressing TV,\n\
+	  then holding Select+Red until 2 flashes, then type 9, 8, 1; wait for 4 flashes.\n\
+	  To perform a MFR Reset: Initialize to $00 or Initialize to $FF; wait for 4 flashes.\n\
+	  \n\
+	  All Other Settings are configurable from the keypad (press TV first):\n    \
+	      Select+1: TV Keymap Swapped\n    \
+	      Select+2: TV Keymap Standard/Default\n    \
+	      Select+6: Global Power Disable/Default, press select to confirm.\n    \
+	      Select+7: Global Power Enable, press select to confirm.\n    \
+	      Select+8: Global Power Unknown, press select to confirm.\n    \
+	      Select+9: Global Power Unknown, press select to confirm.\n    \
+	      Select+Blue: Sky Protocol Param 1. Enter number then select.\n    \
+	      Select+Yellow: Sky Protocol Param 2. Enter number then select.\n    \
+	      Select+Green: Set Sky button macro. To end hold select 2 secs. If set RMIR cannot download.\n    \
+	      Select+Help: No observed effect/unknown, press select to confirm.\n    \
+	      Select+Stop: No observed effect/unknown, press select to confirm.\n\
+	  \n\
+	  These remotes, as manufactured, do not have the JP1.4 connector fitted\n\
+	  to use the remote with RMIR, you must solder on onto the board.\n\
+	  Macros can be created using RMIR, but are only available in Sky mode.\n\
+	  The Sky device type should be used if access to all buttons is desired,\n\
+	  even if the upgrade is for another mode. This remote has a large number\n\
+	  of phantom buttons, which are all unnamed.
+
 [Checksums]
 ^$0000:$0002..$1BFF
+
+[Settings+]
+TV Keymap: Up/Down/Vol+/Vol-=$C8 5.0.1.0.0 (AMP Up/AMP Down/TV Vol+/TV Vol- [Select+2 - Default];TV Vol+/TV Vol-/AMP Up/AMP Down [Select+1])
+Global Power=$CA 6.0.0.0.0 (Disabled [Select+6 - Default]:$80;Enabled [Select+7]:$40;Unknown [Select+8]:$20;Unknown [Select+9]:$10)
+Sky Protocol Param 1 [Select+Blue]=$CA 3.7.8.0.0
+Sky Protocol Param 2 [Select+Yellow]=$CA 4.7.8.0.0
 
 [DeviceTypes]
 Sky  = 0,0 
@@ -81,7 +136,7 @@ Select=$29
     $0D, $10, $0F, $0E, $02, $01, $09, $0A, $13, $12, $D4, $2A, $2B, $2C, $2D
 
 [Protocols] 
-	000B, 0010, 0011, 0013, 0014, 0018, 001A, 001C, 001F:8, 0020:2, 
+    000B, 0010, 0011, 0013, 0014, 0018, 001A, 001C, 001F:8, 0020:2, 
     0022, 0024, 0027:new, 002A, 002C, 002F, 0034, 0037, 003D, 0041, 
     0045, 004A, 004B:7, 0051, 0057, 0058:2, 005A, 005C, 005D, 005E:2, 
     005F, 0064, 0065:2, 0068, 006A:4, 006C, 0073, 0075, 0076, 0077, 
