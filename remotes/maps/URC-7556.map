@@ -25,10 +25,10 @@ circle $1E:9  110,152 110,159
 circle $18:-/--  46,175 46,182
 circle $1F:0  78,174 78,181
 circle $21:AV  111,175 111,182
-circle $06:Ch+  42,220 42,229
-circle $07:Ch-  43,249 43,257
-circle $04:Vol+  111,217 111,225
-circle $05:Vol-  114,252 114,260
+circle $06:Ch+  111,217 111,225
+circle $07:Ch-  114,252 114,260
+circle $04:Vol+  42,220 42,229
+circle $05:Vol-  43,249 43,257
 circle $08:Mute  78,204 78,211
 circle $22:Menu  77,239 77,245
 circle $35:Ok  77,304 77,313
