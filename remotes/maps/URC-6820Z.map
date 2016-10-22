@@ -1,0 +1,38 @@
+#$MTIMFH
+#$-:Image Map file created by Map THIS!
+#$-:Map THIS! free image map editor by Todd C. Wilson
+#$-:Please do not edit lines starting with "#$"
+#$VERSION:1.30
+#$DATE:Mon Apr 25 19:15:36 2016
+#$PATH:C:\Documents and Settings\Administrator\My Documents\JP1\URC-6820Z\
+#$GIF:URC-6820Z.jpg
+#$FORMAT:ncsa
+#$EOH
+default URC-6820Z
+circle TV_Power  38,51 38,64
+circle STB_Power  97,51 97,64
+rect Guide 22,72 50,95
+rect Menu 85,73 113,96
+rect Mute 21,135 49,158
+rect Back 86,135 114,158
+rect OK 54,103 80,126
+rect Up 54,74 80,97
+rect Down 54,131 80,154
+rect Left 24,103 50,126
+rect Right 85,103 111,126
+rect Vol+ 27,171 55,194
+rect Vol- 27,201 55,224
+rect Ch+ 78,170 106,193
+rect Ch- 78,201 106,224
+rect AV 23,327 51,350
+rect 1 25,238 51,261
+rect 2 55,238 81,261
+rect 3 85,238 111,261
+rect 4 25,266 51,289
+rect 5 55,266 81,289
+rect 6 85,266 111,289
+rect 7 24,295 50,318
+rect 8 55,295 81,318
+rect 9 85,295 111,318
+rect 0 55,323 81,346
+rect Exit 85,326 113,349

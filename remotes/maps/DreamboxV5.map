@@ -1,0 +1,55 @@
+#$MTIMFH
+#$-:Image Map file created by Map THIS!
+#$-:Map THIS! free image map editor by Todd C. Wilson
+#$-:Please do not edit lines starting with "#$"
+#$VERSION:1.30
+#$TITLE:Dreambox
+#$DATE:Wed Oct 28 21:42:49 2009
+#$PATH:D:\JP1\MapThis\
+#$GIF:DreamboxV5.jpg
+#$FORMAT:ncsa
+#$EOH
+default Dreambox
+circle $01:SHIFT{Setup}  59,17 73,23
+circle POWER  92,16 106,22
+circle DREAM  53,43 70,52
+circle $05:TV  97,42 114,51
+circle 1  39,65 54,73
+circle 2  74,64 89,72
+circle 3  112,64 127,72
+circle 4  38,84 53,92
+circle 5  74,83 89,91
+circle 6  111,83 126,91
+circle 7  37,102 52,110
+circle 8  74,102 89,110
+circle 9  112,102 128,110
+circle BACK  37,122 52,130
+circle 0  74,121 89,128
+circle FORWARD  112,121 127,128
+circle MUTE  74,149 87,156
+circle EXIT  74,171 87,178
+circle VOL+  30,158 41,169
+circle VOL-  40,184 51,195
+circle BOUQUET+  119,157 130,168
+circle BOUQUET-  109,184 120,195
+circle INFO  24,211 34,221
+circle MENU  125,211 135,221
+circle HELP  27,275 37,285
+circle PVR  122,275 132,285
+circle UP  74,213 103,224
+circle DOWN  74,268 102,279
+poly LEFT 54,229 54,254 33,259 27,241 33,223 54,229 54,229
+poly RIGHT 93,228 93,253 114,259 119,242 114,224 93,228 93,228
+rect OK 59,230 88,250
+circle RED  31,303 40,312
+circle GREEN  60,305 69,314
+circle YELLOW  89,305 98,314
+circle BLUE  118,303 127,312
+circle $29:TV  38,358 47,367
+circle RADIO  62,360 71,369
+circle TEXT  88,360 97,369
+circle REC  112,359 121,368
+circle REW  35,331 44,340
+circle $26:PLAY_PAUSE  61,332 70,341
+circle STOP  88,332 97,341
+circle FFWD  114,331 123,340

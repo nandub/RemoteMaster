@@ -1,0 +1,64 @@
+#$MTIMFH
+#$-:Image Map file created by Map THIS!
+#$-:Map THIS! free image map editor by Todd C. Wilson
+#$-:Please do not edit lines starting with "#$"
+#$VERSION:1.30
+#$DATE:Tue Jun 28 21:37:54 2016
+#$PATH:C:\Users\Dave\Documents\Remotes\RemoteMaster\Images\
+#$GIF:NS-RMT415.jpg
+#$FORMAT:ncsa
+#$EOH
+circle Setup  22,27 28,33
+circle Power  114,27 122,35
+circle Menu  27,77 37,87
+circle Info  117,78 127,88
+circle Guide  28,142 38,152
+circle Exit  116,142 126,152
+circle Stop  28,194 38,204
+circle OK  72,110 86,124
+circle Skip  105,255 115,265
+circle Replay  39,254 49,264
+circle Pause  73,264 83,274
+circle Rec  117,194 127,204
+circle Play  71,224 85,238
+circle VOD  29,447 38,456
+circle Home  57,447 66,456
+circle PageUp  87,447 96,456
+circle Live  115,447 124,456
+circle Input  29,476 38,485
+circle PageDown  86,475 95,484
+circle Wide  115,474 124,483
+rect TV 16,44 37,55
+rect DVD 46,44 67,55
+rect STB 75,44 96,55
+rect STREAM 106,44 127,55
+rect Red 17,161 38,175
+rect Green 46,161 67,175
+rect Yellow 76,161 97,175
+rect Blue 105,161 126,175
+rect Last 58,291 86,308
+rect Mute 59,315 87,332
+rect 1 21,346 47,363
+rect 2 57,346 86,363
+rect 3 96,346 123,363
+rect 4 21,367 49,384
+circle Vol+  37,299 48,310
+rect 0 58,409 86,426
+rect 8 57,389 86,406
+rect 7 21,389 48,406
+rect Dash 21,409 48,426
+rect Enter 97,409 123,426
+rect 6 96,367 123,384
+rect 5 57,367 86,384
+rect 9 96,389 123,406
+poly Up 59,91 50,82 64,73 77,73 92,80 83,91 75,87 67,87 59,92 59,91 59,91
+poly Right 100,89 91,96 94,105 94,110 94,114 90,121 99,129 107,115 107,101 100,89 100,89
+poly Left 51,99 43,91 35,104 35,116 43,130 51,122 47,117 48,107 52,99 51,99 51,99
+poly Down 59,127 50,136 62,143 79,143 92,135 83,128 75,131 66,131 59,127 59,127
+poly Rew 49,212 21,212 16,222 16,229 25,235 50,235 46,227 46,220 50,212 49,212 49,212
+poly FFwd 96,213 118,213 127,219 127,228 121,235 95,235 99,226 98,220 96,213 96,213
+rect List 54,181 89,201
+circle Vol-  39,328 50,339
+circle Ch+  110,298 121,309
+circle Ch-  107,327 118,338
+circle Opt  59,476 69,486
