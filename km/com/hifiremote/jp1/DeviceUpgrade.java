@@ -1273,8 +1273,14 @@ public class DeviceUpgrade extends Highlight
       fixedDataLength = sizeDevBytes;
       cmdLength = sizeCmdBytes;
     }
-    else if ( pCode != null && pCode.length() > 2 )
+    if ( cmdLength == 0 && pCode != null && pCode.length() > 2 )
     {
+      // This was formerly an "else if" and omitted the condition cmdLength == 0.
+      // However, SSD remotes (XSight Touch/Color and Nevo) artificially have a type 00
+      // segment and have sizeDevBytes set, so this alternative would be by-passed.
+      // This alternative should be processed in this case when pCode is present, and
+      // the test cmdLength == 0 will cause this choice to be by-passed for remotes
+      // that really are segmented.
       Processor proc = newRemote.getProcessor(); 
       fixedDataLength = Protocol.getFixedDataLengthFromCode( proc.getEquivalentName(), pCode );
       cmdLength = Protocol.getCmdLengthFromCode( proc.getEquivalentName(), pCode );
@@ -1341,6 +1347,13 @@ public class DeviceUpgrade extends Highlight
         // from protocol under test.  Cmd length not needed here.
         tempLength = p.getFixedDataLength();
         fixedData = new short[ tempLength ];
+        if ( fixedDataOffset + tempLength > code.length )
+        {
+          System.err.println( "Number of fixed bytes for protocol " + p.getDiagnosticName()
+              + " is not compatible with upgrade data");
+          fixedDataHex = new Hex( fixedData );
+          continue;
+        }
         System.arraycopy( code, fixedDataOffset, fixedData, 0, tempLength );
         fixedDataHex = new Hex( fixedData );
       }

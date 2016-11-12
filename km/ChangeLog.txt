@@ -42,6 +42,9 @@ Changes for v2.04
 - Modify Grundig16 entry in protocols.ini to handle revised GrundigXlator (Graham)
 - Fix erroneous occurrence of message about error in RDF that can occur with segmented remotes (Graham)
 - Fix bug preventing message display in Function tab of Device Upgrade Editor when numeric values out of range are entered (Graham)
+- Handle errors caused by apparently empty device upgrades that have either no functions or have number of command bytes set to zero (Graham)
+- Add BandOtranslator for Bang & Olafson protocol and update protocols.ini accordingly (Dave Reed)
+- Add executors for new processor TI2541 to protocols.ini (Dave Reed)
 
 Changes for v2.03
 -- Alpha 8 --
