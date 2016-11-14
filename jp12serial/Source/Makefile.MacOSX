@@ -1,0 +1,22 @@
+JAVA_INCLUDE=/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/System/Library/Frameworks/JavaVM.framework/Versions/A/Headers
+INCLUDE = -I$(JAVA_INCLUDE)
+OPT=-O2
+DEBUG=
+SHARED_OPTS=-shared -fPIC
+EXTENSION=jnilib
+
+all: libjp12serial.$(EXTENSION)
+
+deploy: ../Mac\ OS\ X-x86_64/libjp12serial.$(EXTENSION) ../Mac\ OS\ X-i386/libjp12serial.$(EXTENSION)
+
+libjp12serial.$(EXTENSION): jp12serial.cpp jp12serial.hpp
+	$(CXX) $(INCLUDE) $(OPT) $(DEBUG) $(SHARED_OPTS) -o $@ $<
+
+../Mac\ OS\ X-x86_64/libjp12serial.$(EXTENSION): jp12serial.cpp jp12serial.hpp
+	$(CXX) $(INCLUDE) -m64 $(OPT) $(DEBUG) $(SHARED_OPTS) -o "$@" "$<"
+
+../Mac\ OS\ X-i386/libjp12serial.$(EXTENSION): jp12serial.cpp jp12serial.hpp
+	$(CXX) $(INCLUDE) -m32 $(OPT) $(DEBUG) $(SHARED_OPTS) -o "$@" "$<"
+
+clean:
+	rm -f ../*/*.$(EXTENSION)

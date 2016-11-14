@@ -1,0 +1,18 @@
+JAVA_INCLUDE=/usr/lib/jvm/jdk-8-oracle-arm32-vfp-hflt/include
+INCLUDE = -I$(JAVA_INCLUDE) -I$(JAVA_INCLUDE)/linux
+OPT=-O2
+DEBUG=
+SHARED_OPTS=-shared -fPIC
+
+all: libjp12serial.so
+
+deploy: ../Linux-arm/libjp12serial.so
+
+libjp12serial.so: jp12serial.cpp jp12serial.hpp
+	$(CXX) $(INCLUDE) $(OPT) $(DEBUG) $(SHARED_OPTS) -o $@ $<
+
+../Linux-arm/libjp12serial.so: jp12serial.cpp jp12serial.hpp
+	$(CXX) $(INCLUDE) $(OPT) $(DEBUG) $(SHARED_OPTS) -o $@ $<
+
+clean:
+	rm -f ../*/*.so
