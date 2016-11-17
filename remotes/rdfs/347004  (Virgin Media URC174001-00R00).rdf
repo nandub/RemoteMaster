@@ -3,7 +3,7 @@ Name=Virgin Media URC174001-00R00
 EepromSize=$2100 
 Processor=S3F80 
 BaseAddr=$DB00
-SegmentTypes=$13 $00 $1A $10
+SegmentTypes=$13 $00 $10
 Shift=0
 DeviceSelection=N
 PunchThru=V
@@ -73,8 +73,6 @@ Rewind=$18,Play,"fast fwd":FastFwd,"prev track":SkipBack,Record,Stop,"next track
 0108, 0109, 011A:2, 011B, 011E, 012A, 012B, 015E, 016A:2, 0173:1, 
 0174, 0180, 0184:2, 0189, 018A, 019A, 019B, 01AA, 01B9, 01C3, 
 01EA, 0230
-
-
 
 [SetupCodes]
 0 = 2201,2605

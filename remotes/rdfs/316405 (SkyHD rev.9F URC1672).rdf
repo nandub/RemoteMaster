@@ -4,7 +4,7 @@ EepromSize=$1C00
 Processor=S3F80 
 BaseAddr=$D400 
 RDFSync=5
-SegmentTypes=$00 $1A $01 $10 $CA
+SegmentTypes=$00 $CA $03 $01 $10
 ImageMap=SkyHD rev.9F URC1672.map
 PunchThru=V
 SetupValidation=Warn 
@@ -15,15 +15,16 @@ EFCDigits=5
 [General+]
 Notes=This remote has two accessible device modes - Sky and TV.\n\
 	  In Sky mode, all buttons are programmable. In TV mode, all buttons are programmable\n\
-	  except from Up, Down, Left, Right, Rew, FFwd and Stop which are from the AMP device\n\
-	  and TV, Sky, TVGuide, BoxOffice, Services and Interactive which are from the Sky device\n\
-	  The device assigned to AMP is therefore only accessible on Up, Down, Left, Right, Rew,\n\
-	  FFwd and Stop in TV mode. The TV Keymap Setting changes this by swapping AMP Up and Down\n\
-	  onto Vol+ and Vol-, and TV Vol+ and Vol- onto Up and Down.\n\
+	  except from Up/Down/Left/Right/Rew/FFwd/Stop which are from the AMP device\n\
+	  and TV/Sky/TVGuide/BoxOffice/Services/Interactive which are from the Sky device\n\
+	  The device assigned to AMP is therefore only accessible on Up/Down/Left/Right/Rew/\n\
+	  FFwd/Stop in TV mode. The TV Keymap Setting changes this by swapping AMP Up/Down\n\
+	  onto Vol+/Vol-, and TV Vol+/Vol- onto Up/Down.\n\
+	  This remote has AV shift; when i/Help is pressed in TV mode, the Up/Down/Left/Right\n\
+	  keys are accessed from the TV devices shifted Up/Down/Left/Right keys, until a key other\n\
+	  than i/Help/Up/Down/Left/Right/Select is pressed.\n\
 	  Dev4 is a completely inaccessible phantom device.\n\
 	  VPT is enabled automatically when a TV code is set from the keypad.\n\
-	  If a device code of type Sky is assigned to both TV and AMP, all keys in TV mode\n\
-	  will be from the same device upgrade.\n\
 	  \n\
 	  Any (non-9xx) code entered from the keypad has an offset of +28 compared to RMIR.\n\
 	  All magic key combinations must be pressed in TV mode.\n\
@@ -50,22 +51,20 @@ Notes=This remote has two accessible device modes - Sky and TV.\n\
 	      Select+9: Global Power Unknown, press select to confirm.\n    \
 	      Select+Blue: Sky Protocol Param 1. Enter number then select.\n    \
 	      Select+Yellow: Sky Protocol Param 2. Enter number then select.\n    \
-	      Select+Green: Set Sky button macro. To end hold select 2 secs. If set RMIR cannot download.\n    \
+	      Select+Green: Set Sky button macro, assigns to SkyMacroPhantom.\n    \
 	      Select+Help: No observed effect/unknown, press select to confirm.\n    \
 	      Select+Stop: No observed effect/unknown, press select to confirm.\n\
 	  \n\
-	  These remotes, as manufactured, do not have the JP1.4 connector fitted\n\
-	  to use the remote with RMIR, you must solder on onto the board.\n\
-	  Macros can be created using RMIR, but are only available in Sky mode.\n\
-	  The Sky device type should be used if access to all buttons is desired,\n\
-	  even if the upgrade is for another mode. This remote has a large number\n\
-	  of phantom buttons, which are all unnamed.
+	  These remotes, as manufactured, do not have the JP1.4 connector fitted;\n\
+	  to use the remote with RMIR, you must solder one onto the board.\n\
+	  Macros can be created using RMIR.\n\
+	  This remote has a large number of phantom buttons, which are all unnamed.
 
 [Checksums]
 ^$0000:$0002..$1BFF
 
 [Settings+]
-TV Keymap: Up/Down/Vol+/Vol-=$C8 5.0.1.0.0 (AMP Up/AMP Down/TV Vol+/TV Vol- [Select+2 - Default];TV Vol+/TV Vol-/AMP Up/AMP Down [Select+1])
+TV Keymap: Up/Down/Vol+/Vol-=$CA 5.0.1.0.0 (AMP Up/AMP Down/TV Vol+/TV Vol- [Select+2 - Default];TV Vol+/TV Vol-/AMP Up/AMP Down [Select+1])
 Global Power=$CA 6.0.0.0.0 (Disabled [Select+6 - Default]:$80;Enabled [Select+7]:$40;Unknown [Select+8]:$20;Unknown [Select+9]:$10)
 Sky Protocol Param 1 [Select+Blue]=$CA 3.7.8.0.0
 Sky Protocol Param 2 [Select+Yellow]=$CA 4.7.8.0.0
@@ -118,6 +117,7 @@ BackUp=$20
 Up=$21, Down, Left, Right
 Red=$25, Green, Yellow, Blue
 Select=$29
+SkyMacroPhantom=$C0
 
 [ButtonMaps] 
 0 = ($1F, $15, $16, $17, $19, $1A, $1B, $1C, $1D, $1E), ($04, $05, $08), ($06, $07),

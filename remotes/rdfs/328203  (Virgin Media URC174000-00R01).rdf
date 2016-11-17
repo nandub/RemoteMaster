@@ -3,7 +3,7 @@ Name=Virgin Media URC174000-00R01
 EepromSize=$2100 
 Processor=S3F80 
 BaseAddr=$5F00
-SegmentTypes=$13 $C8 $00 $1A $10
+SegmentTypes=$13 $C8 $00 $10
 Shift=0
 DeviceSelection=N
 PunchThru=none
@@ -42,8 +42,8 @@ STB  = 0
 TV   = 1
 
 [DeviceTypeAliases]
-TV     = TV,CD,Tuner,Home Auto,Misc Audio,Phono,Amp
-STB    = Cable,SAT,Video Acc,DVD,Tape,Laserdisc,DAT,VCR 
+TV     = CD,Tuner,Home Auto,Misc Audio,Phono,Amp,TV
+STB    = SAT,Video Acc,DVD,Tape,Laserdisc,DAT,VCR,Cable
 
 [DeviceButtons] 
 STB   = $80 $81 $3B $00
