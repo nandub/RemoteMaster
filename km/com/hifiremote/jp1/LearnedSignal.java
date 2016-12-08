@@ -109,27 +109,24 @@ public class LearnedSignal extends Highlight
     }
   }
   
-  public Hex getSignalHex( Remote remote )
+  public String getSignalHexText()
   {
-    if ( format == 1 || format == 2 )
+    // If format != 0, convert to format 0.  Return the format 0 data, without any header
+    Hex hex = new Hex( data );
+    if ( format > 0 )
     {
-      // Just get the data, without any header
-      return new Hex( data );
+      ProntoSignal ps = new ProntoSignal( this );
+      if ( ps.error == null )
+      {
+        hex = ps.makeLearned( 0 ).getData();
+      }
+      if ( ps.error != null )
+      {
+        return "This signal cannot be displayed in standard UEI learned signal form.  "
+            + "Select Pronto format to clone or copy this signal.";
+      }
     }
-    // Get the signal complete with header
-    short[] signal = new short[ getSize() ];
-    Hex.put(data, signal, 3 );
-    signal[ 0 ] = ( short )keyCode;
-    if ( remote.getLearnedDevBtnSwapped() )
-    {
-      signal[ 1 ] = ( short )( 0x20 | deviceButtonIndex );
-    }
-    else
-    {
-      signal[ 1 ] = ( short )( deviceButtonIndex << 4 | 0x02 );
-    }
-    signal[ 2 ] = ( short )data.length();
-    return new Hex( signal );
+    return hex.toString();
   }
 
   public int getSize()
@@ -199,6 +196,16 @@ public class LearnedSignal extends Highlight
   {
     String sName = name == null || name.isEmpty() ? notes : name;
     return sName == null || sName.isEmpty() ? remote.getButton( keyCode ).getName() : sName;
+  }
+  
+  public int getFormat()
+  {
+    return format;
+  }
+
+  public void setFormat( int format )
+  {
+    this.format = format;
   }
   
   /** The 7-byte header of an XSight Touch learned signal,
@@ -300,6 +307,8 @@ public class LearnedSignal extends Highlight
   public void clearTimingAnalyzer()
   {
     timingAnalyzer = null;
+    unpackLearned = null;
+    decodes = null;
   }
 
   public static boolean hasDecodeIR()

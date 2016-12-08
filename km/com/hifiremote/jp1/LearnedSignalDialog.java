@@ -12,6 +12,7 @@ import java.util.Arrays;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
+import javax.swing.ButtonGroup;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -22,6 +23,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
@@ -33,7 +35,8 @@ import javax.swing.event.DocumentListener;
 /**
  * The Class LearnedSignalDialog.
  */
-public class LearnedSignalDialog extends JDialog implements ActionListener, DocumentListener
+public class LearnedSignalDialog extends JDialog implements ActionListener, DocumentListener,
+  ItemListener
 {
 
   /**
@@ -54,7 +57,7 @@ public class LearnedSignalDialog extends JDialog implements ActionListener, Docu
     }
 
     dialog.setRemoteConfiguration( config );
-    dialog.setLearnedSignal( learnedSignal );
+    dialog.setLearnedSignal( learnedSignal, false );
     
     // Set preferred size of advanced button to that for the wider 
     // of the two possible button captions
@@ -97,7 +100,17 @@ public class LearnedSignalDialog extends JDialog implements ActionListener, Docu
     JPanel topPanel = new JPanel( new BorderLayout() );
     contentPane.add( topPanel, BorderLayout.PAGE_START );
     
-    // Add the bound device and key controls
+    // Add the signal name (when used) and the bound device and key controls
+    JPanel idPanel = new JPanel( new FlowLayout( FlowLayout.LEFT, 0, 0 ) );
+    namePanel = new JPanel( new FlowLayout( FlowLayout.LEFT, 5, 1 ) );
+    namePanel.setBorder( BorderFactory.createTitledBorder( "Signal Name" ) );
+    namePanel.add( new JLabel( "Name:" ) );
+    namePanel.add( nameField );
+    namePanel.setVisible( false );
+    nameStrut.setVisible( false );
+    idPanel.add( namePanel );
+    idPanel.add( nameStrut );
+    
     JPanel panel = new JPanel( new FlowLayout( FlowLayout.LEFT, 5, 0 ) );
     panel.setAlignmentX( Component.LEFT_ALIGNMENT );
     panel.setBorder( BorderFactory.createTitledBorder( "Bound Key" ) );
@@ -107,8 +120,10 @@ public class LearnedSignalDialog extends JDialog implements ActionListener, Docu
     panel.add( new JLabel( "Key:" ) );
     panel.add( boundKey );
     panel.add( shift );
-    panel.add( xShift );    
-    topPanel.add( panel, BorderLayout.LINE_START );
+    panel.add( xShift );     
+    idPanel.add( panel );
+    
+    topPanel.add( idPanel, BorderLayout.LINE_START );
     boundKey.addActionListener( this );
     shift.addActionListener( this );
     xShift.addActionListener( this );
@@ -133,8 +148,77 @@ public class LearnedSignalDialog extends JDialog implements ActionListener, Docu
     });
     signalTextArea.setToolTipText( "Edits to Signal Data do not take effect until you press Apply or OK" );
     JScrollPane scrollPane = new JScrollPane( signalTextArea );
-    scrollPane.setBorder( BorderFactory.createCompoundBorder( BorderFactory.createTitledBorder( "Signal Data" ), scrollPane.getBorder() ) );
-    topPanel.add( scrollPane, BorderLayout.PAGE_END );
+
+    panel = new JPanel( new BorderLayout() );
+    panel.setBorder( BorderFactory.createCompoundBorder( BorderFactory.createTitledBorder( "Signal Data" ), panel.getBorder() ) );
+    
+    ButtonGroup bg1 = new ButtonGroup();
+    bg1.add( learnButton );
+    bg1.add( prontoButton );
+    learnButton.setSelected( true );
+    learnButton.addItemListener( this );
+    prontoButton.addItemListener( this );
+    
+    ButtonGroup bg2 = new ButtonGroup();
+    bg2.add( oddButton );
+    bg2.add( evenButton );
+    oddButton.setSelected( true );
+    oddButton.setEnabled( false );
+    evenButton.setEnabled( false );
+    keypressLabel.setEnabled( false );
+    
+    JPanel formatPanel = new JPanel( new FlowLayout() );
+    JLabel formatLabel = new JLabel( "Data format:" );
+    formatLabel.setToolTipText(
+        "<html>When the Apply button is disabled, the Signal Data area displays its<br>"
+            + "data in the selected format.  The display will switch between the two<br>"
+            + "formats when the selection is changed.  When the Apply button is enabled,<br>"
+            + "the data in the Signal Data area will be interpreted as being in the<br>"
+            + "selected format when Apply or OK is pressed.  Changing the selected format<br>"
+            + "will have no effect on the displayed data.  Make sure that the selected<br>"
+            + "format is correct before pressing Apply or OK.</html>" );
+    formatPanel.add( formatLabel );
+    formatPanel.add( learnButton );
+    learnButton.setToolTipText(
+        "<html>UEI Learned format represents an IR signal in the original internal format<br>"
+            + "used by UEI remotes.  Remotes with a Maxim (MAXQ) or Texas Instruments (TI)<br>"
+            + "processor use a newer format.  RMIR converts those formats to and from the<br>"
+            + "original one as required, to provide a consistent display across all remotes.</html>" );        
+    formatPanel.add( prontoButton );
+    prontoButton.setToolTipText(
+        "<html>For conversion to UEI Learned, Pronto format accepts all formats other than those<br>"
+            + "beginning with 8000.  Those are an index into an internal database to which RMIR<br>"
+            + "has no access.  On conversion from UEI Learned, Pronto format provides only the<br>"
+            + "Pronto raw formats, those beginning 0000 or 0100.</html>");
+    keypressLabel.setToolTipText( 
+        "<html>Predefined Pronto formats support protocols that toggle.  These are<br>"
+            + "protocols that alternate between two distinct signals on succesive<br>"
+            + "keypresses.  UEI learned format does not support toggles, so you can<br>"
+            + "here select whether the Pronto should be converted to the learned signal<br>"
+            + "for an odd-numbered or even-numbered keypress.</html>");
+    formatPanel.add( new JLabel( "        " ) );
+    formatPanel.add( keypressLabel );
+    formatPanel.add( oddButton );
+    formatPanel.add( evenButton );
+    oddButton.setToolTipText( 
+        "<html>When selected, Pronto signals for protocols that toggle will be<br>"
+        + "interpreted as sent on the 1st, 3rd, 5th etc. keypress</html>" );
+    evenButton.setToolTipText( 
+        "<html>When selected, Pronto signals for protocols that toggle will be<br>"
+        + "interpreted as sent on the 2nd, 4th, 6th etc. keypress</html>" );
+    panel.add( formatPanel, BorderLayout.PAGE_START );
+    panel.add( scrollPane, BorderLayout.CENTER );
+    topPanel.add( panel, BorderLayout.PAGE_END );
+    
+    ItemListener i = new ItemListener() {
+      @Override
+      public void itemStateChanged(ItemEvent e) {
+        if ( e.getStateChange() == ItemEvent.SELECTED )
+          applyButton.setEnabled( true );
+      }
+    };
+    oddButton.addItemListener( i );
+    evenButton.addItemListener( i );
     
     table = new JP1Table( model );
     table.setCellSelectionEnabled( false );
@@ -165,7 +249,7 @@ public class LearnedSignalDialog extends JDialog implements ActionListener, Docu
 
     // setup analyzer/analysis boxes and message label
     analysisMessageLabel.setText( null );
-    ItemListener i = new ItemListener() {
+    i = new ItemListener() {
         @Override
         public void itemStateChanged(ItemEvent e) {
           if ( e.getStateChange() == ItemEvent.SELECTED )
@@ -177,20 +261,7 @@ public class LearnedSignalDialog extends JDialog implements ActionListener, Docu
 
     // setup round to box
     burstRoundBox.setColumns( 4 );
-    burstRoundBox.getDocument().addDocumentListener(new DocumentListener() {
-      public void changedUpdate(DocumentEvent e) {
-        applyButton.setEnabled( true );
-        setAdvancedAreaTextFields();
-      }
-      public void removeUpdate(DocumentEvent e) {
-        applyButton.setEnabled( true );
-        setAdvancedAreaTextFields();
-      }
-      public void insertUpdate(DocumentEvent e) {
-        applyButton.setEnabled( true );
-        setAdvancedAreaTextFields();
-      }
-    });
+    burstRoundBox.getDocument().addDocumentListener( dl );
 
     burstTextArea.setEditable( false );
     burstTextArea.setLineWrap( true );
@@ -246,6 +317,18 @@ public class LearnedSignalDialog extends JDialog implements ActionListener, Docu
     advancedArea.setVisible( false );
     setAdvancedButtonText( advancedArea.isVisible() );
   }
+  
+  DocumentListener dl = new DocumentListener() {
+    public void changedUpdate(DocumentEvent e) {
+      signalTextChanged();
+    }
+    public void removeUpdate(DocumentEvent e) {
+      signalTextChanged();
+    }
+    public void insertUpdate(DocumentEvent e) {
+      signalTextChanged();
+    }
+  };
 
   /**
    * Sets the learned signal.
@@ -253,34 +336,42 @@ public class LearnedSignalDialog extends JDialog implements ActionListener, Docu
    * @param learnedSignal
    *          the new learned signal
    */
-  private void setLearnedSignal( LearnedSignal learnedSignal )
+  private void setLearnedSignal( LearnedSignal learnedSignal, boolean applyOnly )
   {
-    table.initColumns( model );
-    if ( learnedSignal == null )
+    if ( !applyOnly )
     {
-      this.learnedSignal = new LearnedSignal( 0, 0, 0, new Hex(), null );
-      boundKey.setSelectedIndex( 0 );
-      shift.setSelected( false );
-      xShift.setSelected( false );
-      model.set( this.learnedSignal );
-      signalTextArea.setText( null );
-      burstRoundBox.setText( null );
-      burstTextArea.setText( null );
-      onceDurationTextArea.setText( null );
-      repeatDurationTextArea.setText( null );
-      extraDurationTextArea.setText( null );
-      analyzerBox.setModel( new DefaultComboBoxModel( new String[] { "..." } ) );
-      analysisBox.setModel( new DefaultComboBoxModel( new String[] { "..." } ) );
-      return;
+      table.initColumns( model );
+      if ( learnedSignal == null )
+      {
+        this.learnedSignal = new LearnedSignal( 0, 0, 0, new Hex(), null );
+        nameField.setText( null );
+        boundKey.setSelectedIndex( 0 );
+        shift.setSelected( false );
+        xShift.setSelected( false );
+        model.set( this.learnedSignal );
+        signalTextArea.setText( null );
+        burstRoundBox.getDocument().removeDocumentListener( dl );
+        burstRoundBox.setText( null );
+        burstRoundBox.getDocument().addDocumentListener( dl );
+        burstTextArea.setText( null );
+        onceDurationTextArea.setText( null );
+        repeatDurationTextArea.setText( null );
+        extraDurationTextArea.setText( null );
+        analyzerBox.setModel( new DefaultComboBoxModel( new String[] { "..." } ) );
+        analysisBox.setModel( new DefaultComboBoxModel( new String[] { "..." } ) );
+        return;
+      }
+      this.learnedSignal = learnedSignal;
+      Remote remote = config.getRemote();
+      nameField.setText( learnedSignal.getName() );
+      boundDevice.setSelectedItem( remote.getDeviceButton( learnedSignal.getDeviceButtonIndex() ) );
+      setButton( learnedSignal.getKeyCode(), boundKey, shift, xShift );
+      model.set( learnedSignal );
+      signalTextLock = true;
+      signalTextArea.setText( learnedSignal.getSignalHexText() );
+      signalTextLock = false;
+      learnButton.setSelected( true );
     }
-    this.learnedSignal = learnedSignal;
-    Remote remote = config.getRemote();
-    boundDevice.setSelectedItem( remote.getDeviceButton( learnedSignal.getDeviceButtonIndex() ) );
-    setButton( learnedSignal.getKeyCode(), boundKey, shift, xShift );
-    model.set( learnedSignal );
-    signalTextLock = true;
-    signalTextArea.setText( learnedSignal.getSignalHex( config.getRemote() ).toString() );
-    signalTextLock = false;
 
     LearnedSignalTimingAnalyzer timingAnalyzer = this.learnedSignal.getTimingAnalyzer();
     if ( !timingAnalyzer.getIsValid() )
@@ -418,6 +509,8 @@ public class LearnedSignalDialog extends JDialog implements ActionListener, Docu
     xShift.setVisible( remote.getXShiftEnabled() );
     boundDevice.setModel( new DefaultComboBoxModel( remote.getDeviceButtons() ) );
     boundKey.setModel( new DefaultComboBoxModel( remote.getLearnButtons() ) );
+    namePanel.setVisible( remote.usesEZRC() );
+    nameStrut.setVisible( remote.usesEZRC() );
   }
 
   private void setButton( int code, JComboBox comboBox, JCheckBox shiftBox, JCheckBox xShiftBox )
@@ -502,25 +595,70 @@ public class LearnedSignalDialog extends JDialog implements ActionListener, Docu
       int keyCode = getKeyCode( boundKey, shift, xShift );
       learnedSignal.setDeviceButtonIndex( deviceIndex );
       learnedSignal.setKeyCode( keyCode );
-
+      learnedSignal.setName( nameField.getText() );
+      
       if ( signalTextHasChanged )
       {
-        Hex data = ( new Hex( Hex.parseHex( signalTextArea.getText() ) ) ).subHex( 3 );
-        learnedSignal.setData( data );
+        int format = remote.getLearnedFormat();
+        ProntoSignal ps = null;
+        if ( learnButton.isSelected() )
+        {
+          // Signal text area should hold learned signal data in format 0 without any header
+          Hex data = new Hex( Hex.parseHex( signalTextArea.getText() ) );
+          learnedSignal.setData( data );
+          learnedSignal.setFormat( 0 );
+        }
+        else if ( prontoButton.isSelected() )
+        {
+          ps = new ProntoSignal( signalTextArea.getText() );
+          ps.unpack( oddButton.isSelected() ? 0 : 1 );
+          if ( ps.error == null )
+          {
+            LearnedSignal ls = ps.makeLearned( format );
+            if ( ps.error == null )
+            {
+              learnedSignal.setData( ls.getData() ); 
+              learnedSignal.setFormat( format );
+            }
+          }
+        }
+        
         learnedSignal.clearTimingAnalyzer();
-
-        UnpackLearned ul = learnedSignal.getUnpackLearned();
         if ( config.hasSegments() )
         {
           // set default value
           learnedSignal.setSegmentFlags( 0xFF );
         }
-        if ( ! ul.ok )
+        
+        if ( remote.isSSD() && learnedSignal.getHeader() == null )
+        {
+          // Only two header values have been seen, this one and 10 00 00 18 60 00 00.  Tests
+          // seem to show that it makes no difference which is used.
+          learnedSignal.setHeader( new Hex( new short[]{ 0x10, 00, 00, 0x18, 0x20, 00, 00 } ) );
+        }
+
+        UnpackLearned ul = learnedSignal.getUnpackLearned();
+        
+        if ( ps != null && ps.error != null )
+        {
+          ok = false;
+          String message = "Malformed Pronto signal: " + ps.error;
+          String title = "Pronto Signal Error";
+          JOptionPane.showMessageDialog( this, message, title, JOptionPane.ERROR_MESSAGE );
+        }
+        else if ( ! ul.ok )
         {
           ok = false;
           String message = "Malformed learned signal: " + ul.error;
           String title = "Learned Signal Error";
           JOptionPane.showMessageDialog( this, message, title, JOptionPane.ERROR_MESSAGE );
+        }
+        else if ( format != learnedSignal.getFormat() )
+        {
+          // This conversion will be from format 0 to format 1 or 2, so should not cause an error
+          ps = new ProntoSignal( learnedSignal );
+          learnedSignal.setData( ps.makeLearned( format ).getData() );
+          learnedSignal.setFormat( format );
         }
       }
       else
@@ -533,7 +671,7 @@ public class LearnedSignalDialog extends JDialog implements ActionListener, Docu
     
     if ( source == applyButton && ok )
     {
-      setAdvancedAreaTextFields();
+      setLearnedSignal( learnedSignal, true );
       model.set( learnedSignal );
       applyButton.setEnabled( false );
     }
@@ -650,6 +788,10 @@ public class LearnedSignalDialog extends JDialog implements ActionListener, Docu
   private boolean advancedAreaUpdating = false;
   private boolean analysisUpdating = false;
 
+  private JPanel namePanel = null;
+  private JTextField nameField = new JTextField( 10 );
+  private Component nameStrut = Box.createHorizontalStrut( 5 );
+  
   // panel holding advanced area controls
   private JPanel advancedAreaControls = new JPanel();
   // text box to enter rounding of times
@@ -676,7 +818,13 @@ public class LearnedSignalDialog extends JDialog implements ActionListener, Docu
   /** The duration text area. */
   //private JTextArea durationTextArea = new JTextArea( 8, 70 );
   
-  private JTextArea signalTextArea = new JTextArea( 3, 70 );
+  private JTextArea signalTextArea = new JTextArea( 6, 70 );
+  
+  private JRadioButton learnButton = new JRadioButton( "UEI Learned" );
+  private JRadioButton prontoButton = new JRadioButton( "Pronto" );
+  private JRadioButton oddButton = new JRadioButton( "Odd" );
+  private JRadioButton evenButton = new JRadioButton( "Even" );
+  private JLabel keypressLabel = new JLabel( "Keypress:" );
 
   /** The learned signal. */
   private LearnedSignal learnedSignal = null;
@@ -706,4 +854,30 @@ public class LearnedSignalDialog extends JDialog implements ActionListener, Docu
     documentChanged( e );
   }
 
+  @Override
+  public void itemStateChanged( ItemEvent e )
+  {
+    if ( e.getStateChange() == ItemEvent.SELECTED )
+    {
+      oddButton.setEnabled( prontoButton.isSelected() );
+      evenButton.setEnabled( prontoButton.isSelected() );
+      keypressLabel.setEnabled( prontoButton.isSelected() );
+      if ( applyButton.isEnabled() )
+      {
+        return;
+      }
+      signalTextLock = true;
+      if ( learnButton.isSelected() )
+      {
+        signalTextArea.setText( learnedSignal.getSignalHexText() );
+      }
+      else if ( prontoButton.isSelected() )
+      {
+        ProntoSignal ps = new ProntoSignal( learnedSignal );
+        ps.makePronto();
+        signalTextArea.setText( ps.toString() );
+      }
+      signalTextLock = false;
+    }
+  }
 }

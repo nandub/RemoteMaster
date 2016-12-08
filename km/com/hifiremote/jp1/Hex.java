@@ -409,7 +409,12 @@ public class Hex implements Cloneable, Comparable< Hex >
       else if ( token.equals( "." ) )
         value = NO_MATCH;
       else
-        data[ offset++ ] = ( short )( value | Short.parseShort( token, 16 ) );
+      {
+        int temp = Integer.parseInt( token, 16 );
+        if ( temp > 0x7FFF ) temp -= 0x10000;
+        data[ offset++ ] = ( short )( value | temp );
+//        data[ offset++ ] = ( short )( value | Short.parseShort( token, 16 ) );
+      }
     }
   }
 

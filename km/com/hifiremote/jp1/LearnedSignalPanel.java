@@ -127,7 +127,7 @@ public class LearnedSignalPanel extends RMTablePanel< LearnedSignal >
     this.remoteConfig = remoteConfig;
     ( ( LearnedSignalTableModel )model ).set( remoteConfig );
     table.initColumns( model );
-    newButton.setEnabled( remoteConfig != null && remoteConfig.getRemote().getLearnedAddress() != null );
+    newButton.setEnabled( remoteConfig != null );
   }
 
   /*

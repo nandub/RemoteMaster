@@ -120,6 +120,7 @@ public class ProntoSignal
   private int[] durations = null;   // Durations of each MARK and SPACE in microseconds
   private int oneTime = 0;          // Number of durations in initial part of signal sent once only
   private int repeat = 0;           // Number of durations in repeating part of signal
+  private int extra = 0;            // Number of durations in final part of signal sent once only
   private int frequency = 0;        // Carrier frequency in Hz
   
   public String error = null;
@@ -137,10 +138,23 @@ public class ProntoSignal
   public ProntoSignal( LearnedSignal ls )
   {
     UnpackLearned ul = ls.getUnpackLearned();
-    oneTime = ul.oneTime;
-    repeat = ul.repeat;
-    frequency = ul.frequency;
-    durations = ul.durations.clone();
+    if ( ul != null && ul.ok )
+    {
+      oneTime = ul.oneTime;
+      repeat = ul.repeat;
+      extra = ul.extra;
+      frequency = ul.frequency;
+      durations = ul.durations.clone();
+    }
+  }
+  
+  public int[] getDurations()
+  {
+    return durations;
+  }
+
+  public void makePronto()
+  {
     int unit = 0;
     if ( frequency > 0 )
     {
@@ -269,7 +283,7 @@ public class ProntoSignal
     }
   }
 
-  public void unpack()
+  public void unpack( int togNum )
   {
     error = null;
     
@@ -319,6 +333,7 @@ public class ProntoSignal
         pfm.freqDiv = pronto[ 1 ];
         oneTime = 2 * pronto[ 2 ];
         repeat = 2 * pronto[ 3 ];
+        extra = 0;  // Pronto does not support an extra section
         pData = Arrays.copyOfRange( pronto, 4, pronto.length );
       }
       else
@@ -377,7 +392,7 @@ public class ProntoSignal
       {
         stringCode[ i ] = pronto[ i+6 ] < 0x0010 ? ( short )pronto[ i+6 ] : 
           pronto[ i+6 ] == 0x0010 ? -1 : 
-            ( short )pfm.toggle.chars[ 0 ];  // Odd press of toggle
+            ( short )pfm.toggle.chars[ togNum & 1 ];
       } 
     }
     else if ( pfm.fmtID > 0x1000 )
@@ -423,7 +438,7 @@ public class ProntoSignal
       // Next set toggle positions
       for ( int i : pfm.toggle.locations )
       {
-        stringCode[ i ] = ( short )pfm.toggle.chars[ 0 ];
+        stringCode[ i ] = ( short )pfm.toggle.chars[ togNum & 1 ];
         scSize++;
       }
       
@@ -527,6 +542,7 @@ public class ProntoSignal
         burstList.set( count - 1, val + carry );
       }
       repeat = count;
+      extra = 0;
       
       // The carry has been handled for the repeat section, but still needs adding to any oneTime section
       if ( carry > 0 && oneTime > 0 )
@@ -596,9 +612,14 @@ public class ProntoSignal
     }
   }
 
-  public LearnedSignal makeLearned()
+  public LearnedSignal makeLearned( int format )
   {
     error = null;
+    if ( format > 2 )
+    {
+      error = "Format value " + format + " is not supported";
+      return null;
+    }
     int[] data = new int[ ( oneTime + repeat )/2 ];
     List< int[] > bursts = new ArrayList< int[] >();
     
@@ -620,6 +641,10 @@ public class ProntoSignal
     {
       length += ( repeat/2 + 1 )/2 + 1;
     }
+    if ( extra > 0 )
+    {
+      length += ( extra/2 + 1 )/2 + 1;
+    }
     
     if ( length + 3 > 0x80 )  // Max length including 3-byte header is 0x80
     {
@@ -628,26 +653,68 @@ public class ProntoSignal
     }
     
     Hex hex = new Hex( length );
-
-    int unit = frequency > 0 ? (int)Math.floor( 8000000. / frequency + 0.5 ) : 0;
-    if ( unit > 0x7FFF )
+    // Get carrier period in units of system clock period, from corresponding frequencies in Hz
+    double clock = format == 0 ? 8000000.0 : format== 1 ? 12000000.0 : 4000000.0;
+    int period = frequency > 0 ? (int)Math.floor( clock / frequency + 0.5 ) : 0;
+    if ( period > 0x7FFF )
     {
-      error = "Nonzero frequency is less than 250Hz";
+      error = "Nonzero frequency is below supported lower limit";
       return null;
     }
+    double[] units = new double[ 2 ];   // units in us for burst ON and OFF times
+    if ( format == 0 )
+    {
+      units[ 0 ] = units[ 1 ] = 2.0;
+    }
+    if ( format == 1 )
+    {
+      units[ 0 ] = ( period == 0 ) ? 2.0 : period / 12.0;
+      units[ 1 ] = 4.0 / 3.0;
+    }
+    else if ( format == 2 )
+    {
+      units[ 0 ] = units[ 1 ] = ( period == 0 ) ? 2.0 : period / 4.0;
+    }
 
-    hex.put( unit, 0 ); 
+    hex.put( period, 0 ); 
     hex.set( ( short )bursts.size(), 2 );
     int ndx = 3;
 
-    for ( int i = 0; i < 2*bursts.size(); i++ )
+    for ( int i = 0; i < bursts.size(); i++ )
     {
-      int t = bursts.get( i/2 )[ i % 2 ]/2;
-      if ( t > 0xFFFF ) 
+      int tOn  = ( int )Math.round( bursts.get( i )[ 0 ] / units[ 0 ] );
+      int tOff = ( int )Math.round( bursts.get( i )[ 1 ] / units[ 1 ] );
+      if ( format > 0 )
       {
-        t = 0xFFFF; 
+        if ( tOn > 0xFFF )
+        {
+          tOn = 0xFFF;
+          error = "Burst MARK duration out of range for format " + format;
+        }
+        if ( tOff > 0xFFFFF ) 
+        {
+          tOff = 0xFFFFF;
+          error = "Burst SPACE duration out of range for format " + format;
+        }
+        tOn = ( tOn << 4 ) | ( tOff >> 16 );  // 3 nibbles for On, 5 for Off
+        tOff &= 0xFFFF;
       }
-      hex.put( t, ndx );
+      else
+      {
+        if ( tOn > 0xFFFF )
+        {
+          tOn = 0xFFFF;
+          error = "Burst MARK duration out of range for format 0";
+        }
+        if ( tOff > 0xFFFF )
+        {
+          tOff = 0xFFFF;
+          error = "Burst SPACE duration out of range for format 0";
+        }
+      }
+      hex.put( tOn, ndx );
+      ndx += 2;
+      hex.put( tOff, ndx );
       ndx += 2;
     }
     if ( oneTime > 0 )
@@ -669,14 +736,27 @@ public class ProntoSignal
       for ( int i = oneTime/2; i < ( oneTime + repeat )/2; )
       {
         int x = data[ i++ ]<<4;
-        if ( i < repeat/2 ) 
+        if ( i < ( oneTime + repeat )/2 ) 
         {
           x |= data[ i++ ];
         }
         hex.set( ( short )x, ndx++ );
       }
     }
-    return new LearnedSignal( 0, 0, 0, hex, null );
+    if ( extra > 0 )
+    {
+      hex.set( ( short )( extra/2 ), ndx++ );
+      for ( int i = ( oneTime + repeat )/2; i < ( oneTime + repeat + extra )/2; )
+      {
+        int x = data[ i++ ]<<4;
+        if ( i < ( oneTime + repeat + extra )/2 ) 
+        {
+          x |= data[ i++ ];
+        }
+        hex.set( ( short )x, ndx++ );
+      }
+    }
+    return new LearnedSignal( 0, 0, format, hex, null );
   }
 
   @Override

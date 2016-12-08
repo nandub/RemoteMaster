@@ -3885,6 +3885,12 @@ public class Remote implements Comparable< Remote >
   {
     return learnedAddress;
   }
+  
+  public int getLearnedFormat()
+  {
+    String procName = getProcessor().getEquivalentName();
+    return procName.equals( "MAXQ610" ) ? 1 : procName.equals( "TI2541" ) ? 2 : 0;
+  }
 
   public AddressRange getTimedMacroAddress()
   {

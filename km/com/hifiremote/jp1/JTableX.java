@@ -272,17 +272,24 @@ public class JTableX extends JTable
    * @return true, if is truncated
    */
   private boolean isTruncated( int row, int col )
-  {
-    Object o = getValueAt( row, col );
-    if ( o == null )
+  {  
+    try
+    {
+      Object o = getValueAt( row, col );
+      if ( o == null )
+        return false;
+      Rectangle rect = getCellRect( row, col, true );
+      TableCellRenderer r = ( DefaultTableCellRenderer )getCellRenderer( row, col );
+      Component c = r.getTableCellRendererComponent( this, o, false, false, row, col );
+      Dimension d = c.getPreferredSize();
+      if ( d.width < rect.width - 4 )
+        return false;
+      return true;
+    }
+    catch ( Exception e )
+    {
       return false;
-    Rectangle rect = getCellRect( row, col, true );
-    TableCellRenderer r = ( DefaultTableCellRenderer )getCellRenderer( row, col );
-    Component c = r.getTableCellRendererComponent( this, o, false, false, row, col );
-    Dimension d = c.getPreferredSize();
-    if ( d.width < rect.width - 4 )
-      return false;
-    return true;
+    }
   }
 
   @Override

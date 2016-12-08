@@ -45,6 +45,10 @@ Changes for v2.04
 - Handle errors caused by apparently empty device upgrades that have either no functions or have number of command bytes set to zero (Graham)
 - Add BandOtranslator for Bang & Olafson protocol and update protocols.ini accordingly (Dave Reed)
 - Add executors for new processor TI2541 to protocols.ini (Dave Reed)
+-- Release build 10
+- Fix bugs in import of learned signals (Graham)
+- Add support for import/export of Pronto signals (Graham)
+- Add 64-bit compilation of jp1usb.dll v0.031 (Graham)
 
 Changes for v2.03
 -- Alpha 8 --
