@@ -52,18 +52,18 @@ DREAM = $00E $00F
 [Buttons]
 setup:"SHIFT (Setup)"=$01,
 POWER=$02,
-TV=$03,
+TV1=$03,
 AUX=$04,
-DREAM=$05,
+DREAM1=$05,
 1=$06,2=$07,3=$08,4=$09,5=$0A,
 6=$0B,7=$0C,8=$0D,9=$0E,0=$0F,
-"+100":"FORWARD (-/--)"=$10,
-"tv/vcr":"BACK (AV)"=$11,
+"+100":"FORWARD{-/--}"=$10,
+"tv/vcr":"BACK{AV}"=$11,
 "vol up":VOL+=$12,"vol down":VOL-=$13,MUTE=$14,
-"slow-":"EXIT (Zoom)"=$15,
+"slow-":"LAME{zoom}"=$15,
 "channel up":BOUQUET+=$16,"channel down":BOUQUET-=$17,
 display:INFO=$18,
-menu:"MENU"=$19,
+menu:"DREAM_MENU"=$19,
 "up arrow":UP=$1A,
 "down arrow":DOWN=$1B,
 "left arrow":LEFT=$1C,
@@ -71,12 +71,12 @@ menu:"MENU"=$19,
 select:OK=$1E,
 guide:AUDIO=$1F,
 exit:VIDEO=$20,
-rewind:"RED (Rewind)"=$21,
-play:"GREEN (Play)"=$22,
-pause:"YELLOW (Pause)"=$23,
-"fast fwd":"BLUE (Fast Fwd)"=$24,
-stop:"TV (Stop)"=$25,
-record:"RADIO (Record)"=$26,
+rewind:"RED"=$21,
+play:"GREEN"=$22,
+pause:"YELLOW"=$23,
+"fast fwd":"BLUE"=$24,
+stop:"TV_STOP"=$25,
+record:"RADIO"=$26,
 slow:TEXT=$27,
 eject:HELP=$28,
 "Shift-Power"=$82,
@@ -153,7 +153,7 @@ Phantom7=$2F
 005A, 005C, 005D, 005E:2, 0064, 0065:2, 0068, 0072, 0075, 007C, 
 007E:3, 0082, 0087, 008C, 0090, 0098:2, 009C, 00A1, 00A5, 00A6, 
 00A8, 00AA, 00AB, 00B0, 00B2, 00B7, 00BD:2, 00C9, 00CA, 00CD:2, 
-00D5, 00D9, 00DE, 00E2, 00E5, 00E8, 00EB:4, 00F3, 00F4, 00F8:3, 
+00D5, 00D9, 00DE, 00E2, 00E5, 00E8, 00EB, 00F3, 00F4, 00F8:3, 
 0111, 011B, 016C
 
 
@@ -176,4 +176,5 @@ Phantom7=$2F
     0752,0768,0770,0774,0783,0788,0790,0836,0841,0850,0872,1032,1036,1070,1115,1151,
     1562,1901,1903,1906,1908,1932,1940,1965
 2 = 0001,1237,1266,1269
-
+
+
