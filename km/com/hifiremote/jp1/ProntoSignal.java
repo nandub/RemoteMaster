@@ -615,7 +615,7 @@ public class ProntoSignal
   public LearnedSignal makeLearned( int format )
   {
     error = null;
-    if ( format > 2 )
+    if ( format > 3 )
     {
       error = "Format value " + format + " is not supported";
       return null;
@@ -654,7 +654,7 @@ public class ProntoSignal
     
     Hex hex = new Hex( length );
     // Get carrier period in units of system clock period, from corresponding frequencies in Hz
-    double clock = format == 0 ? 8000000.0 : format== 1 ? 12000000.0 : 4000000.0;
+    double clock = ( format == 0 || format == 3 ) ? 8000000.0 : format== 1 ? 12000000.0 : 4000000.0;
     int period = frequency > 0 ? (int)Math.floor( clock / frequency + 0.5 ) : 0;
     if ( period > 0x7FFF )
     {
@@ -675,16 +675,21 @@ public class ProntoSignal
     {
       units[ 0 ] = units[ 1 ] = ( period == 0 ) ? 2.0 : period / 4.0;
     }
+    else if ( format == 3 )
+    {
+      units[ 0 ] = 1.6;
+      units[ 1 ] = 2.0;
+    }
 
-    hex.put( period, 0 ); 
-    hex.set( ( short )bursts.size(), 2 );
+    hex.put( period, format == 3 ? 1 : 0 ); 
+    hex.set( ( short )bursts.size(), format == 3 ? 0 : 2 );
     int ndx = 3;
 
     for ( int i = 0; i < bursts.size(); i++ )
     {
       int tOn  = ( int )Math.round( bursts.get( i )[ 0 ] / units[ 0 ] );
       int tOff = ( int )Math.round( bursts.get( i )[ 1 ] / units[ 1 ] );
-      if ( format > 0 )
+      if ( format == 1 || format == 2 )
       {
         if ( tOn > 0xFFF )
         {

@@ -49,6 +49,11 @@ Changes for v2.04
 - Fix bugs in import of learned signals (Graham)
 - Add support for import/export of Pronto signals (Graham)
 - Add 64-bit compilation of jp1usb.dll v0.031 (Graham)
+-- Private build 11
+- Fix bug in use of "Set baseline" with XSight Touch and similar remotes (Graham)
+- Various additions and fixes to protocols.ini (Dave Reed)
+- Add LearnedFormat as new RDF parameter to override default setting (Graham)
+- Add support for Learned Format 3, first seen in Inteset INT-422-3 (Graham)
 
 Changes for v2.03
 -- Alpha 8 --

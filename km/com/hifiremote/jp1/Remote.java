@@ -1432,6 +1432,10 @@ public class Remote implements Comparable< Remote >
         learnedAddress = new AddressRange( value, this );
         check( learnedAddress, "LearnedAddr" );
       }
+      else if ( parm.equals( "LearnedFormat" ) )
+      {
+        learnedFormat = RDFReader.parseNumber( value );
+      }
       else if ( parm.equalsIgnoreCase( "SegmentTypes" ) )
       {
         StringTokenizer st = new StringTokenizer( value, ", " );
@@ -3683,6 +3687,8 @@ public class Remote implements Comparable< Remote >
   /** The device code offset. */
   private int deviceCodeOffset;
   
+  private int learnedFormat = -1;
+  
   private String notes = null;
 
   public String getNotes()
@@ -3888,6 +3894,10 @@ public class Remote implements Comparable< Remote >
   
   public int getLearnedFormat()
   {
+    if ( learnedFormat >= 0 )
+    {
+      return learnedFormat;
+    }
     String procName = getProcessor().getEquivalentName();
     return procName.equals( "MAXQ610" ) ? 1 : procName.equals( "TI2541" ) ? 2 : 0;
   }

@@ -871,7 +871,7 @@ public class LearnedSignalDialog extends JDialog implements ActionListener, Docu
       {
         signalTextArea.setText( learnedSignal.getSignalHexText() );
       }
-      else if ( prontoButton.isSelected() )
+      else if ( prontoButton.isSelected() && learnedSignal != null && learnedSignal.getData().length() > 0 )
       {
         ProntoSignal ps = new ProntoSignal( learnedSignal );
         ps.makePronto();

@@ -227,6 +227,7 @@ public class LearnedSignal extends Highlight
    * Format is 0 for original learned signal format,
    * 1 for the format used by remotes with Maxim processors
    * 2 for the format used in TI CC2541 processors
+   * 3 for the new format used in the Inteset 422-3
    */
   private int format = 0;
 

@@ -82,7 +82,7 @@ public class UnsignedByteRenderer extends DefaultTableCellRenderer
   @Override
   public void paint( Graphics g )
   {
-    if ( remoteConfig != null && remoteConfig.allowHighlighting() && !useSavedData() )
+    if ( !useSavedData() )
     {
       Dimension d = component.getSize();
       int end = highlight.length - 1;
@@ -91,18 +91,21 @@ public class UnsignedByteRenderer extends DefaultTableCellRenderer
         g.setColor( Color.RED );
         g.fillRect( 0, 0, d.width, d.height );
       }
-      else if ( settingAddresses.containsKey( offset ) && highlight[ offset ] == Color.WHITE )
+      else if ( remoteConfig != null && remoteConfig.allowHighlighting() )
       {
-        for ( int i = 0; i < 8; i++ )
+        if ( settingAddresses.containsKey( offset ) && highlight[ offset ] == Color.WHITE )
         {
-          g.setColor( highlight[ end - 8 * settingAddresses.get( offset ) - i ] );
-          g.fillRect( d.width - 3 * i - 3, 0, 2, d.height );
+          for ( int i = 0; i < 8; i++ )
+          {
+            g.setColor( highlight[ end - 8 * settingAddresses.get( offset ) - i ] );
+            g.fillRect( d.width - 3 * i - 3, 0, 2, d.height );
+          }
         }
-      }
-      else
-      {
-        g.setColor( highlight[ offset ] );
-        g.fillRect( 0, 0, d.width, d.height );
+        else
+        {
+          g.setColor( highlight[ offset ] );
+          g.fillRect( 0, 0, d.width, d.height );
+        }
       }
     }
     super.paint( g );

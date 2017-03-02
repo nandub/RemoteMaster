@@ -2128,9 +2128,9 @@ public class RemoteConfiguration
         short[] segData = hex.getData();
         int deviceButtonIndex = remote.hasDeviceSelection() ? segData[ 0 ] : 0;
         int format = remote.getLearnedFormat();
-        int len = format == 0 ? segData.length - 2 :  segData[ 2 ] - 1;
+        int len = format == 0 ? segData.length - 2 :  format == 3 ? segData[ 3 ] - 3 : segData[ 2 ] - 1;
         // hex.getData[ 3 ] seems always to be 0 and is not stored in the learned signal
-        LearnedSignal ls = new LearnedSignal( hex.getData()[ 1 ], deviceButtonIndex, format, hex.subHex( format == 0 ? 2 : 4, len ), null );
+        LearnedSignal ls = new LearnedSignal( hex.getData()[ 1 ], deviceButtonIndex, format, hex.subHex( format == 0 ? 2 : format == 3 ? 7 : 4, len ), null );
         ls.setSegmentFlags( segment.getFlags() );
         if ( remote.usesEZRC() )
         {
@@ -7689,14 +7689,14 @@ public class RemoteConfiguration
         ls.clearMemoryUsage();
         Hex hex = ls.getData();
         int size = hex.length();
-        int segSize = size + 2 + ( format > 0 ? 2 : 0 );
+        int segSize = size + 2 + ( format == 0 ? 0 : format == 3 ? 5 : 2 );
         int lenMod = segSize & ( remote.getForceModulus() - 1 );
         segSize += remote.doForceEvenStarts() && lenMod > 0 ? remote.getForceModulus() - lenMod : 0;
         Hex segData = new Hex( segSize );
         int flags = ls.getSegmentFlags();
         segData.set( ( short )ls.getDeviceButtonIndex(), 0 );
         segData.set( ( short )ls.getKeyCode(), 1 );
-        if ( format > 0 )
+        if ( format == 1 || format == 2 )
         {
           // It is not clear whether the 0 at offset 3 is high byte of 2-byte little-endian
           // length value or is a set of flags that have not yet been seen.  The fact that
@@ -7709,6 +7709,15 @@ public class RemoteConfiguration
             // set padding byte to 0xFF
             segData.set( ( short )0xFF, segSize - 1 );
           }
+        }
+        else if ( format == 3 )
+        {
+          segData.set( ( short )0, 2 );
+          segData.set( ( short )( size + 3 ), 3 );
+          segData.set( ( short )0, 4 );
+          segData.set( ( short )ls.getKeyCode(), 5 );
+          segData.set( ( short )0, 6 );
+          segData.put( hex, 7 );
         }
         else
         {
