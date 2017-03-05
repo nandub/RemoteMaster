@@ -1,0 +1,59 @@
+#$MTIMFH
+#$-:Image Map file created by Map THIS!
+#$-:Map THIS! free image map editor by Todd C. Wilson
+#$-:Please do not edit lines starting with "#$"
+#$VERSION:1.30
+#$TITLE:URC-7940
+#$DATE:Fri Feb 10 22:42:13 2017
+#$PATH:C:\Users\Dave\Documents\Remotes\RemoteMaster\Images\
+#$GIF:ATT-S30-S1B.jpg
+#$FORMAT:ncsa
+#$EOH
+default URC-7940
+circle OK  68,192 84,208
+circle Info  104,237 119,247
+circle Exit  33,236 48,246
+circle Back  33,149 48,159
+circle Options  103,150 118,160
+circle Rew  53,63 65,75
+circle FF  85,63 97,75
+circle Play  103,87 115,99
+circle Stop  34,87 46,99
+circle Power  68,15 80,27
+circle SkipBack  52,112 64,124
+circle SkipFwd  86,111 98,123
+circle Vol+  31,271 43,283
+circle Vol-  31,303 43,315
+circle Ch+  107,272 119,284
+circle Ch-  107,303 119,315
+circle Pause  68,86 82,100
+circle Record  29,111 39,120
+circle Mute  56,307 66,316
+circle Last  80,307 90,316
+circle Help  91,444 101,453
+circle TVInput  45,444 55,453
+rect 1 17,324 48,341
+rect 2 53,324 84,341
+rect 3 89,325 120,342
+rect 4 18,347 49,364
+rect 5 54,348 85,365
+rect 6 90,348 121,365
+rect 7 18,370 49,387
+rect 8 54,370 85,387
+rect 9 90,371 121,388
+rect Delete 18,393 49,410
+rect 0 54,395 85,412
+rect CC 90,395 121,412
+rect Yellow_A 26,422 52,434
+rect Green_B 57,422 83,434
+rect Red_C 86,422 112,434
+rect Guide 43,245 94,268
+rect Recordings 45,276 92,291
+rect OnDemand 14,30 49,45
+rect Interactive 51,29 86,44
+rect MyMultimedia 89,30 124,45
+rect Menu 44,125 92,145
+poly Left 50,180 40,169 32,183 31,189 31,192 32,199 35,207 39,213 50,203 48,198 46,193 46,189 48,185 50,180 50,180
+poly Up 46,165 59,158 73,157 79,158 84,161 87,162 91,166 81,175 77,173 73,172 70,171 67,171 63,172 60,174 56,176 47,165 46,165 46,165
+poly Down 57,209 45,220 56,226 61,227 67,227 71,227 76,227 80,226 84,225 88,223 91,221 91,220 82,210 78,212 74,213 71,213 67,213 64,213 60,212 58,211 57,210 57,209 57,209
+poly Right 87,183 98,171 102,177 104,183 105,189 105,195 104,200 102,206 99,210 97,213 87,204 90,198 91,195 91,191 90,185 89,182 87,183 87,183

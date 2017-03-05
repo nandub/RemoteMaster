@@ -1,0 +1,61 @@
+#$MTIMFH
+#$-:Image Map file created by Map THIS!
+#$-:Map THIS! free image map editor by Todd C. Wilson
+#$-:Please do not edit lines starting with "#$"
+#$VERSION:1.30
+#$TITLE:TTYV-URC179251
+#$AUTHOR:Knuckx
+#$DATE:Tue Aug 16 20:57:48 2016
+#$PATH:C:\Users\Chris\Desktop\URC\Manuals\
+#$GIF:TTYV-URC179251.jpg
+#$FORMAT:ncsa
+#$EOH
+circle OK  93,374 93,399
+circle Guide  148,252 148,267
+circle i  37,252 37,267
+circle Record  150,502 150,517
+circle Y  36,502 36,517
+circle Vol-  34,418 34,433
+circle Vol+  34,335 34,350
+circle Ch+  151,334 151,349
+circle Ch-  151,418 151,433
+circle STBPower  43,38 43,49
+circle AV  92,38 92,49
+circle TVPower  141,38 141,49
+circle Play  93,548 93,565
+circle Back  93,460 93,477
+circle PageUp  107,639 107,651
+circle PageDown  150,639 150,651
+rect 1 29,67 58,95
+rect 2 78,67 107,95
+rect 4 29,108 58,136
+rect 5 78,108 107,136
+rect 6 127,108 156,136
+rect 7 29,148 58,176
+rect 8 78,148 107,176
+rect 9 127,148 156,176
+rect 0 78,188 107,216
+rect 3 127,67 156,95
+rect Sub/Del 31,192 56,216
+rect ^/AD 129,192 154,216
+rect TalkTalk 67,237 118,266
+rect Green 57,288 91,308
+rect Yellow 93,288 127,308
+rect Red 21,288 55,308
+rect Blue 129,288 163,308
+rect Mute 24,447 50,473
+rect Search 62,490 88,516
+rect Close 136,447 162,473
+rect Text 98,490 124,516
+rect Rewind 35,536 61,562
+rect FastFwd 125,536 151,562
+rect SkipBack 24,582 50,608
+rect Pause 61,582 87,608
+rect Stop 98,582 124,608
+rect SkipFwd 136,582 162,608
+rect Zoom 58,627 84,653
+rect Help 23,627 49,653
+rect Up 83,327 103,347
+rect Left 45,364 65,384
+rect Down 83,403 103,423
+rect Right 121,364 141,384

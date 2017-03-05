@@ -1,0 +1,55 @@
+#$MTIMFH
+#$-:Image Map file created by Map THIS!
+#$-:Map THIS! free image map editor by Todd C. Wilson
+#$-:Please do not edit lines starting with "#$"
+#$VERSION:1.30
+#$DATE:Mon Aug 29 23:23:35 2016
+#$PATH:C:\Users\Chris\Desktop\URC\Manuals\
+#$GIF:URC-1666.jpg
+#$FORMAT:ncsa
+#$EOH
+circle Home  60,75 60,89
+circle STBPower  170,52 170,68
+circle TVPower  115,62 115,78
+circle OK  119,250 119,273
+circle Mute  81,358 81,373
+circle Back  155,358 155,373
+circle Timer  118,389 118,404
+circle List  49,424 49,439
+circle Fav  94,438 94,453
+circle Audio  185,423 185,438
+circle Subt  142,438 142,453
+circle Red  49,545 49,560
+circle Green  94,549 94,564
+circle Yellow  138,548 138,563
+circle Blue  183,544 183,559
+rect Pause 93,470 141,493
+rect Play 93,497 141,520
+rect Stop 153,489 201,517
+rect Record 33,489 81,517
+rect FastFwd 153,458 201,486
+rect Rewind 33,459 81,487
+rect 2 94,573 137,601
+rect 5 94,609 137,637
+rect 6 145,609 188,637
+rect 4 42,609 85,637
+rect 3 146,573 189,601
+rect 1 41,573 84,601
+rect 7 43,644 86,672
+rect 8 94,644 137,672
+rect 0 94,679 137,707
+rect 9 144,644 187,672
+rect TV/AV 44,679 87,707
+rect Text 143,679 186,707
+rect Down 100,291 140,328
+rect Left 42,230 82,270
+rect Right 158,230 198,271
+rect Up 100,173 140,210
+rect Vol+ 29,181 63,226
+rect Vol- 35,278 81,326
+rect Ch+ 175,183 209,228
+rect Vol- 156,277 202,325
+rect Info 71,110 116,136
+rect Menu 126,110 171,136
+rect Guide 33,136 78,162
+rect Exit 162,136 207,162

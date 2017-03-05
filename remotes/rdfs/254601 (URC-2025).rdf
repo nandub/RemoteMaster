@@ -9,7 +9,7 @@ BaseAddr=$F800
 RDFSync=5
 SectionTerminator=$FF 
 SetupValidation=Warn
-#ImageMap=URC-1067BX3.map
+ImageMap=URC-2025.map
 AdvCodeFormat=EFC
 PunchThru=VC
 
@@ -76,7 +76,6 @@ C Red=$2F,
 A Yellow=$30,
 Replay=$31,
 Play=$32,
-
 Rewind:rew=$34,
 "->|"=$35,
 "fast fwd":FF=$36,
