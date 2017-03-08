@@ -48,7 +48,7 @@ rect Up 100,173 140,210
 rect Vol+ 29,181 63,226
 rect Vol- 35,278 81,326
 rect Ch+ 175,183 209,228
-rect Vol- 156,277 202,325
+rect Ch- 156,277 202,325
 rect Info 71,110 116,136
 rect Menu 126,110 171,136
 rect Guide 33,136 78,162
