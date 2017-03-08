@@ -6,24 +6,24 @@ BaseAddr=$EE00
 SegmentTypes=$13 $14 $00 $1A $01 $07 $08 $09 $10
 PunchThru=V
 SoftDev=SetupCodesOnly  
-LearnedFormat=3
 RDFSync=5 
-#ImageMap=
+LearnedFormat=3
+ImageMap=NS-RMT415.map
 SetupValidation=WARN
 AdvCodeFormat=EFC
 
 [Checksums]
-^$0000:$0002..$0DFF
+*$0000:$0002..$0DFF
 
 [DeviceTypes]
-CBL/SAT  = 0
-TV       = 1
-DVD/VCR  = 2
-Audio    = 3
-CBL/SAT  = 0,2
-DVD      = 2,2
-Audio    = 3,2
-Audio    = 3,2
+CBL/SAT = 0 
+TV = 1 
+DVD/VCR = 2 
+Audio = 3 
+CBL/SAT = 0,0 
+DVD = 2,2 
+Audio = 3,3 
+Audio = 3,3
 
 [DeviceTypeAliases]
 TV 	= TV
@@ -35,8 +35,8 @@ Audio   = CD,Tuner,Home Auto,Misc Audio,Phono,Amp
 dev1=$04       
 TV=$03         
 dev3=$09       
-AUX=$08        
-STB=$06        
+STREAM=$08        
+STB=$06       
 DVD=$05        
 dev7=$0A       
 dev8=$07       
@@ -45,7 +45,7 @@ dev8=$07
 TV=$03
 DVD=$05
 STB=$06
-AUX=$08
+STREAM=$08
 dev1=$04
 dev3=$09
 dev7=$0A
@@ -53,13 +53,13 @@ dev8=$07
 Setup=$01
 Power=$3C
 Menu=$0B
-display:Info=$16
+Info=$16
 Guide=$0C
 Exit=$17
 "up arrow":Up=$0D,"down arrow":Down=$0E,"left arrow":Left=$0F,"right arrow":Right=$10
 select:OK=$11
 Red=$38,Green=$39,Yellow=$3A,Blue=$3B
-PVR=$24
+List=$24
 Play=$1C
 Stop=$1B
 record:Rec=$1A
@@ -69,18 +69,18 @@ rewind:Rew=$1F
 "next track":Skip=$21
 "prev track":Replay=$1E
 1=$26,2=$27,3=$28,4=$29,5=$2A,6=$2B,7=$2C,8=$2D,9=$2E,0=$2F
-"tv/vcr":Input=$30
-+100:Dash=$31
+"+100":Dash=$30
+Enter=$31
 "vol up":Vol+=$12,"vol down":Vol-=$13,Mute=$18
-"channel up":Ch+=$14,"channel down":Ch-=$15,"prev ch":Recall=$19
-"fav/scan":Fav=$25
-SAP=$22
-P-Lock/Game=$3F
-CCD=$23
-Sleep=$35
-Audio/DynVol=$34
-Pict=$37
-Zoom=$32
+"channel up":Ch+=$14,"channel down":Ch-=$15,"prev ch":Last=$19
+"fav":VOD=$25
+Home=$22
+PageUp=$3F
+Live=$23
+"tv/vcr":Input=$35
+Opt=$34
+PageDown=$37
+Wide=$32
 phantom1=$02
 phantom2=$33
 phantom3=$36
