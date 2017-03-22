@@ -155,16 +155,20 @@ public class LearnedSignalTimingSummaryDialog extends JDialog implements ActionL
         summary.append( '\t' );
 
         LearnedSignalTimingAnalysis analysis = null;
-        if ( roundingSet && !s.getTimingAnalyzer().getSelectedAnalyzer().getIsRoundingLocked() )
+//        if ( roundingSet && !s.getTimingAnalyzer().getSelectedAnalyzer().getIsRoundingLocked() )
+        if ( roundingSet && !s.getTimingAnalyzer().getAnalyzer( "Raw Data" ).getIsRoundingLocked() )
         {
-          LearnedSignalTimingAnalyzerBase analyzer = s.getTimingAnalyzer().getSelectedAnalyzer();
+//          LearnedSignalTimingAnalyzerBase analyzer = s.getTimingAnalyzer().getSelectedAnalyzer();
+          LearnedSignalTimingAnalyzerBase analyzer = s.getTimingAnalyzer().getAnalyzer("Raw Data");
           analyzer.saveState();
           analyzer.setRoundTo( r );
-          analysis = s.getTimingAnalyzer().getSelectedAnalysis();
+//          analysis = s.getTimingAnalyzer().getSelectedAnalysis();
+          analysis = s.getTimingAnalyzer().getAnalyzer( "Raw Data" ).getAnalysis( "Even" );
           analyzer.restoreState();
         }
         else
-          analysis = s.getTimingAnalyzer().getSelectedAnalysis();
+//          analysis = s.getTimingAnalyzer().getSelectedAnalysis();
+          analysis = s.getTimingAnalyzer().getAnalyzer( "Raw Data" ).getAnalysis( "Even" );
 
         if ( ul.oneTime > 0 && ul.extra > 0 && ul.repeat == 0 )
         {
