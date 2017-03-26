@@ -54,6 +54,11 @@ Changes for v2.04
 - Various additions and fixes to protocols.ini (Dave Reed)
 - Add LearnedFormat as new RDF parameter to override default setting (Graham)
 - Add support for Learned Format 3, first seen in Inteset INT-422-3 (Graham)
+-- Private build 12
+- Fix bug in Learned Signal Timing Summary which could cause Biphase values to be displayed as Raw values (Graham)
+- Correct the support for Learned Format 3. (Graham)
+- Add support for Learned Format 4 which is the signal structure of format 0 but with 46-entry ROM burst table (Graham)
+- Enhance RDF checksum syntax with postfixed /n (n=1,2,4) to specify range length rounding when default is inappropriate (Graham)
 
 Changes for v2.03
 -- Alpha 8 --

@@ -111,9 +111,21 @@ public class LearnedSignal extends Highlight
   
   public String getSignalHexText()
   {
-    // If format != 0, convert to format 0.  Return the format 0 data, without any header
     Hex hex = new Hex( data );
-    if ( format > 0 )
+    // If format not 0 or 4, convert to format 0.  Return the format 0 data, without any header.
+    boolean convert = format > 0 && format < 4;
+    if ( !convert )
+    {
+      // Formats 0 and 4.  Convert these if they use ROM burst table entries beyond map 17,
+      // as not all remotes support these high frequency entries.  Formats 0 and 4 are identical
+      // except for signals that use these entries.  Conversion replaces ROM burst table data
+      // by burst table embedded in signal hex.
+      int burstNum = hex.getData()[ 2 ];
+      if ( ( burstNum & 0x80 ) != 0 && ( burstNum & 0x1F ) > 17 )
+        convert = true;
+    }
+    
+    if ( convert )
     {
       ProntoSignal ps = new ProntoSignal( this );
       if ( ps.error == null )

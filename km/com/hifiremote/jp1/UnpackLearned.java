@@ -15,8 +15,6 @@ public class UnpackLearned
 
   /** The frequency. */
   public int frequency;
-  
-  private int period;
 
   /** The bursts. */
   public int[] bursts;
@@ -46,7 +44,38 @@ public class UnpackLearned
    */
   public UnpackLearned( Hex hex, int format )
   {
-    if ( format > 3 )
+    /*
+     * There are 5 formats (0-4) used for the hex data of learned signals.  They differ in
+     * the format used for burst tables, in the unit used for carrier period and in one case
+     * also in the location of the carrier period within the hex data.
+     * 
+     * In all cases a burst value takes 4 bytes (8 nibbles), but in formats 0 and 4 the ON and OFF
+     * durations are each 4 nibbles while in formats 1-3 the ON duration is 3 nibbles and OFF
+     * duration is 5 nibbles.  The only distinction between formats 0 and 4 is that they use a
+     * different burst table in ROM.
+     * 
+     * Units used are as follows:
+     *   Formats 0, 4:  Carrier period in units of the period of an 8MHz clock, ON and OFF durations
+     *      both in units of 2us (= 16 * 8MHz clock period).
+     *   Format 1:  Carrier period in units of the period of a 12MHz clock, ON durations in 
+     *      units of carrier period, OFF durations in units of 4/3 us (= 16 * 12MHz clock period).
+     *   Format 2:  Carrier period in units of the period of a 4MHz clock, ON and OFF durations
+     *      both in units of carrier period.
+     *   Format 3:  Carrier period in units of the period of a 10MHz clock, ON durations in 
+     *      units of carrier period, OFF durations in units of 2us.
+     *      
+     * There is an exception to this for unmodulated signals.  In these cases format 1
+     * uses 4/3us as unit for both ON and OFF durations, other formats all use 2us for both
+     * durations.  The period is usually given as 0 but a small nonzero value has also been seen
+     * which makes the unit for a modulated signal of that period be the correct unit for an 
+     * unmodulated signal. 
+     * 
+     * A further difference between formats is in the bit that selects whether the burst table is
+     * embedded in the signal or is in a table in ROM.  Format 3 uses bit 6 to flag the ROM table,
+     * other formats use bit 7.
+     */
+    
+    if ( format > 4 )
     {
       ok = false;
       error = "Format=" + format + " not supported";
@@ -60,32 +89,10 @@ public class UnpackLearned
       error = "hex learned signal too short to unpack";
       return;
     }
-    period = hex.get( format == 3 ? 1 : 0 );
-    if ( period == 0 )
-    {
-      frequency = 0;
-    }
-    else if ( format == 2 )
-    {
-      frequency = 4000000 / period;
-    }
-    else if ( format == 1 )
-    {
-      frequency = 12000000 / period;
-    }
-    else if ( format == 3 )
-    {
-      frequency = 10000000 / period;
-    }
-    else
-    {
-      frequency = 8000000 / period;
-    }
-    if ( frequency > 400000 )
-    {
-      // Some remotes, eg JP2 & JP3, use a small but nonzero period for zero frequency
-      frequency = 0;
-    }
+    
+    int period = hex.get( format == 3 ? 1 : 0 );
+    frequency = period == 0 || period == zeroPeriods[ format ] ? 0 : (int)( ( clockMHz[ format ] * 1000000.0 ) / period + 0.5 );
+    
     int offset = loadBurstTable( hex, format );
     if ( ok )
     {
@@ -129,29 +136,75 @@ public class UnpackLearned
 
     return str.toString();
   }
+  
+  /**
+   * Returns the units in microseconds for ON and OFF bursts for given format 
+   * and carrier frequency.
+   */
+  public static double[] getBurstUnits( int format, int freq )
+  {
+    if ( freq == 0 )
+    {
+      double mult = format == 1 ? 4.0 / 3.0 : 2.0;
+      return new double[]{ mult, mult };
+    }
 
+    double multOn = format == 0 || format == 4 ? 2.0 : 1000000.0 / freq;
+    double multOff = ( new double[]{ 2.0, 4.0/3.0, multOn, 2.0, 2.0 } )[ format ];
+    return new double[]{ multOn, multOff };
+  }
+
+  private int[] getBurstTimes( int[] val, int format )
+  {
+    int[] times = new int[ 2 ];
+
+    boolean split35 = format == 1 || format == 2 || format == 3;
+    double[] mult = getBurstUnits( format, frequency );
+    int on = val[ 0 ] >> ( split35 ? 4 : 0 );
+    times[ 0 ] = (int)( (double)on * mult[ 0 ] + 0.5 );
+    int off =  val[ 1 ] + ( split35 ? ( val[ 0 ] & 0x0F ) << 16 : 0 );
+    times[ 1 ] = (int)( (double)off * mult[ 1 ] + 0.5 );
+    return times;
+  }
+  
   /**
    * Load burst table.
-   * 
-   * @param hex
-   *          the hex
-   * @return the int
+   * Returns the offset in hex data to byte beyond burst table.
    */
   private int loadBurstTable( Hex hex, int format )
   {
     int burstNum = hex.getData()[ format == 3 ? 0 : 2 ];
+    // Code in URC-7781 indicates that bits 5-7 of burstNum are potential flags, bits 0-4
+    // are the number of bursts if burst table is embedded in signal or are a map number
+    // if burst table is in ROM.  This is consistent with the newer burst table actually
+    // only using 0-31 for map numbers despite having 46 entries.  Maps 18-31 are used for
+    // learning but the corresponding entry in 32-45 is used for sending.
+    int mask = format == 3 ? 0x40 : 0x80;  // Mask for bit that selects ROM burst table
     int result;
-    if ( ( burstNum & 0xC0 ) != 0 )
+    if ( ( burstNum & mask ) != 0 )
     {
       result = 3;
-      int[] romBursts = ( burstNum & 0x80 ) > 0 ? romBursts7 : romBursts6;
-      int[] romIndex = ( burstNum & 0x80 ) > 0 ? romIndex7 : romIndex6;
-      burstNum &= 0x3F;
-      if ( burstNum >= romIndex.length )
+      int[] romBursts = format == 0 ? romBurstsA : romBurstsB;
+      int[] romIndex = format == 0 ? romIndexA : romIndexB;
+      int[] romPeriods = format == 0 ? romPeriodsA : romPeriodsB;
+      burstNum &= 0x1F;
+      // Map numbers > 17 are used for high frequency learned signals (around 400MHz or more)
+      // where a different map is used for sending than for learning.  The offset is 3 for
+      // format 0 where the ROM table has 24 entries and is 14 for the other formats where
+      // the ROM table has 46 entries.
+      if ( format == 0 && burstNum >= 21 )
       {
+        // In format 0, map numbers 21-23 are used for sending but do not occur in signals.
+        // For other formats, valid map numbers are 0-31 and due to the mask, burstNum cannot
+        // exceed this.
         ok = false;
         error = "ROM burst index out of range";
         return 0;
+      }
+      if ( burstNum >= 18 )
+      {
+        frequency = (int)( 8000000.0 / romPeriods[ burstNum - 18 ] + 0.5 );
+        burstNum += ( format == 0 ? 3 : 14 );
       }
       burstNum = romIndex[ burstNum ];
       int count = romBursts.length - burstNum;
@@ -161,9 +214,17 @@ public class UnpackLearned
       while ( count > 1 )
       {
         count -= 2;
-        bursts[ count ] = ( int )( ( romBursts == romBursts7 ? 2.0 : 1.6 ) * romBursts[ count + burstNum ] + 0.5 );
-        bursts[ count + 1 ] = 2 * romBursts[ count + 1 + burstNum ];
+        int[] val = new int[]{ romBursts[ count + burstNum ], romBursts[ count + burstNum + 1 ] };
+        int[] times = getBurstTimes( val, romBursts == romBurstsA ? 0 : 3 );
+        bursts[ count ] = times[ 0 ];
+        bursts[ count + 1 ] = times[ 1 ];
       }
+    }
+    else if ( ( burstNum & 0xE0 ) != 0 )
+    {
+      ok = false;
+      error = "burst number byte has unexpected flag";
+      return 0;
     }
     else if ( burstNum != 0 )
     {
@@ -175,45 +236,12 @@ public class UnpackLearned
         return 0;
       }
       bursts = new int[ burstNum * 2 ];
-      
-      /**
-       *   A burst is stored as two 16-bit values, but in learned formats 1 and 2 this is
-       *   interpreted as a 12-bit (3 nibble) ON value and a 20-bit (5 nibble) OFF value.
-       */
-      boolean split35 = format == 1 || format == 2;
-      
-      // period == 0 needs to be covered but has not actually been seen, as a small
-      // nonzero value seems to be used for unmodulated signals to make these timing
-      // calculations be correct.  2us is used here.
-      double multOn, multOff;
-      if ( format == 0 )
+      for ( int i = 0; i < burstNum; i++ )
       {
-        multOn = multOff = 2.0;
-      }
-      else if ( format == 1 )
-      {
-        multOn = ( period == 0 ) ? 2.0 : period / 12.0;
-        multOff = 4.0 / 3.0;
-      }
-      else if ( format == 2 )
-      {
-        multOn = ( period == 0 ) ? 2.0 : period / 4.0;
-        multOff = multOn;
-      }
-      else  // format == 3
-          {
-        multOn = 1.6;
-        multOff = 2.0;
-          }
-      for ( int ndx = 0; ndx < burstNum * 2; ndx += 2 )
-      {
-        int val = hex.get( ndx * 2 + 3 ) >> ( split35 ? 4 : 0 );
-      bursts[ ndx ] = (int)( (double)val * multOn + 0.5 );
-      }
-      for ( int ndx = 1; ndx < burstNum * 2; ndx += 2 )
-      {
-        int val =  hex.get( ndx * 2 + 3 ) + ( split35 ? ( hex.getData()[ ndx * 2 + 2 ] & 0x0F ) * 0x10000 : 0 );
-        bursts[ ndx ] = (int)( (double)val * multOff + 0.5 );
+        int[] val = new int[]{ hex.get( 4 * i + 3 ), hex.get( 4 * i + 5 ) };
+        int[] times = getBurstTimes( val, format );
+        bursts[ 2 * i ] = times[ 0 ];
+        bursts[ 2 * i + 1 ] = times[ 1 ];
       }
     }
     else
@@ -350,8 +378,8 @@ public class UnpackLearned
     return temp;
   }
 
-  /** The rom bursts when bit 7 of burstNum is set */
-  private final int[] romBursts7 =
+  /** The ROM bursts for learned format 0, in the data format of learned format 0 */
+  private final int[] romBurstsA =
   {
       0x01A3, 0x4A81, 0x068F, 0x0690, 0x01A3, 0x04F6, 0x01A3, 0x01A4, // 0
       0x00D2, 0xAF0C, 0x00D2, 0x4507, 0x0277, 0x00D3, 0x00D2, 0x0278, // 8
@@ -379,14 +407,28 @@ public class UnpackLearned
       0x0013, 0x7B5B, 0x0013, 0x10C2, 0x0013, 0x0B22  // 198
   };
 
-  /** The index for romBursts7. */
-  private final int[] romIndex7 =
+  /** The index for romBurstsA. */
+  private final int[] romIndexA =
   {
       48, 56, 64, 74, 86, 8, 98, 16, 22, 30, 144, 150, 158, 108, 118, 130, 0, 38, 168, 170, 180, 186, 188, 198
   };
   
-  /** The rom bursts when bit 6 of burstNum is set */
-  private final int[] romBursts6 =
+  /**
+   *   Periods for maps 21-23 in units of period of 8MHz clock
+   */
+  private final int[] romPeriodsA =
+  {
+      0x0012, 0x0012, 0x0014
+  };
+  
+  // The table for ROM bursts type B is taken from the Inteset INT422-3, the first remote
+  // to use this data that we came across.  As a result, it is in learned format 3.  The
+  // corresponding tables in remotes with learned formats 1, 2 and 4 are in the those formats
+  // but are equivalent in their data.  The type B periods table is from the URC-7960 for
+  // simplicity, to keep the same 8MHz clock as the type A table.
+  
+  /** The ROM bursts for learned formats 1-4, in the data format of learned format 3 */
+  private final int[] romBurstsB =
   {
       0x0160, 0x60C9, 0x0AB0, 0x08CA, 0x0160, 0x034D, 0x0160, 0x0119, // 0
       0x0160, 0x4F1F, 0x1560, 0x08CA, 0x0160, 0x034D, 0x0160, 0x0119, // 8
@@ -436,11 +478,33 @@ public class UnpackLearned
       0x07C0, 0x616A, 0x05C0, 0x1E20, 0x05C0, 0x1806, 0x05C0, 0x11EB, 0x05C0, 0x0BD1, 0x05C0, 0x05B6  // 420
   };
       
-  /** The index for romBursts6. */
-  private final int[] romIndex6 = 
+  /** The index for romBurstsB. */
+  private final int[] romIndexB = 
   {
       0, 8, 16, 26, 38, 50, 58, 68, 74, 82, 90, 96, 104, 114, 124, 136, 
       150, 158, 168, 174, 186, 198, 208, 214, 224, 234, 240, 246, 254, 266, 276, 288, 
       300, 306, 318, 330, 340, 346, 356, 366, 372, 378, 386, 398, 408, 420
   };
+  
+  /**
+   *   Periods for maps 32-45 in units of period of 8MHz clock (from URC-7960)
+   */
+  private final int[] romPeriodsB = 
+  {
+      0x0014, 0x0012, 0x0012, 0x0012, 0x0014, 0x0012, 0x0012, 0x0012, 
+      0x0012, 0x0008, 0x0012, 0x0012, 0x0012, 0x0012
+  };
+  
+  /**
+   * The clock rate in MHz whose period is used as unit for carrier periods in each format
+   */
+  public final static int[] clockMHz = new int[] { 8, 12, 4, 10, 8 };
+  
+  /**
+   * Period values that can signify an unmodulated signal for each format.  The nonzero values
+   * are those that, interpreted as an actual period, give the burst On and Off units
+   * used for unmodulated signals in that format (4/3us for format 1, 2us for formats 2, 3).
+   */
+  public final static int[] zeroPeriods = new int[] { 0, 16, 8, 20, 0 };
+  
 }

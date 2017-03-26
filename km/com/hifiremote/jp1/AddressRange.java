@@ -29,9 +29,13 @@ public class AddressRange extends RDFParameter
   
   public void parse( String text, Remote remote ) throws Exception
   {
-    StringTokenizer st = new StringTokenizer( text, ".=" );
+    StringTokenizer st = new StringTokenizer( text, ".=/" );
     start = RDFReader.parseNumber( st.nextToken() );
     end = RDFReader.parseNumber( st.nextToken() );
+    if ( st.hasMoreTokens() )
+    {
+      roundTo = RDFReader.parseNumber( st.nextToken() );
+    }
     freeStart = start;
     freeEnd = end;
   }
@@ -86,6 +90,11 @@ public class AddressRange extends RDFParameter
     this.freeEnd = freeEnd;
   }
 
+  public int getRoundTo()
+  {
+    return roundTo;
+  }
+
   public int getSize()
   {
     return end + 1 - start;
@@ -98,7 +107,12 @@ public class AddressRange extends RDFParameter
    */
   public String toString()
   {
-    return "$" + Integer.toHexString( start ) + "..$" + Integer.toHexString( end );
+    String str = "$" + Integer.toHexString( start ) + "..$" + Integer.toHexString( end );
+    if ( roundTo > 0 )
+    {
+      str += "/" + roundTo;
+    }
+    return str;
   }
 
   /** The start. */
@@ -122,4 +136,6 @@ public class AddressRange extends RDFParameter
    * freeStart value is the address of the first byte that can be used for borrowing.
    */
   private int freeStart;
+  
+  private int roundTo = 0;  // 0 signifies default value
 }

@@ -37,6 +37,9 @@ public class XorCheckSum extends CheckSum
    */
   public short calculateCheckSum( short[] data, int start, int end )
   {
+    // getRoundTo() value 0 denotes default rounding, values > 0 are explicitly set.
+    int rounding = addressRange.getRoundTo() - 1;
+    end |= rounding < 0 ? 0 : rounding;
     short sum = 0;
     for ( int i = start; i <= end; i++ )
     {

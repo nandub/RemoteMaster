@@ -615,7 +615,7 @@ public class ProntoSignal
   public LearnedSignal makeLearned( int format )
   {
     error = null;
-    if ( format > 3 )
+    if ( format > 4 )
     {
       error = "Format value " + format + " is not supported";
       return null;
@@ -654,32 +654,17 @@ public class ProntoSignal
     
     Hex hex = new Hex( length );
     // Get carrier period in units of system clock period, from corresponding frequencies in Hz
-    double clock = ( format == 0 || format == 3 ) ? 8000000.0 : format== 1 ? 12000000.0 : 4000000.0;
+    double clock = 1000000.0 * UnpackLearned.clockMHz[ format ];
+    // NOTE:  Unmodulated signals have their period set to 0, but there has been some evidence
+    // of the small nonzero values given by UnpackLearned.zeroPeriods for each format being used
+    // instead.  For the time being, 0 is used consistently here.
     int period = frequency > 0 ? (int)Math.floor( clock / frequency + 0.5 ) : 0;
     if ( period > 0x7FFF )
     {
       error = "Nonzero frequency is below supported lower limit";
       return null;
     }
-    double[] units = new double[ 2 ];   // units in us for burst ON and OFF times
-    if ( format == 0 )
-    {
-      units[ 0 ] = units[ 1 ] = 2.0;
-    }
-    if ( format == 1 )
-    {
-      units[ 0 ] = ( period == 0 ) ? 2.0 : period / 12.0;
-      units[ 1 ] = 4.0 / 3.0;
-    }
-    else if ( format == 2 )
-    {
-      units[ 0 ] = units[ 1 ] = ( period == 0 ) ? 2.0 : period / 4.0;
-    }
-    else if ( format == 3 )
-    {
-      units[ 0 ] = 1.6;
-      units[ 1 ] = 2.0;
-    }
+    double[] units = UnpackLearned.getBurstUnits( format, frequency );
 
     hex.put( period, format == 3 ? 1 : 0 ); 
     hex.set( ( short )bursts.size(), format == 3 ? 0 : 2 );
@@ -689,7 +674,7 @@ public class ProntoSignal
     {
       int tOn  = ( int )Math.round( bursts.get( i )[ 0 ] / units[ 0 ] );
       int tOff = ( int )Math.round( bursts.get( i )[ 1 ] / units[ 1 ] );
-      if ( format == 1 || format == 2 )
+      if ( format == 1 || format == 2 || format == 3 )
       {
         if ( tOn > 0xFFF )
         {

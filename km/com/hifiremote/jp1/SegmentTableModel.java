@@ -325,11 +325,11 @@ public class SegmentTableModel extends JP1TableModel< Segment >
       {
         config.getSavedData()[ i ] = 0xFF;
       }
-      CheckSum[] sums = remote.getCheckSums();
-      for ( int i = 0; i < sums.length; ++i )
-      {
-        sums[ i ].setCheckSum( config.getSavedData() );
-      }
+      CheckSum sum = remote.getCheckSums()[ 0 ];
+      int oldEnd = sum.getAddressRange().getEnd();
+      sum.getAddressRange().setEnd( pos - 1 );
+      sum.setCheckSum( config.getSavedData() );
+      sum.getAddressRange().setEnd( oldEnd );
       return;
     }
     else

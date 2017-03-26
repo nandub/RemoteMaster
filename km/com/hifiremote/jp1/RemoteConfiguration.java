@@ -2128,9 +2128,9 @@ public class RemoteConfiguration
         short[] segData = hex.getData();
         int deviceButtonIndex = remote.hasDeviceSelection() ? segData[ 0 ] : 0;
         int format = remote.getLearnedFormat();
-        int len = format == 0 ? segData.length - 2 :  format == 3 ? segData[ 3 ] - 3 : segData[ 2 ] - 1;
+        int len = format == 0 || format == 4 ? segData.length - 2 :  format == 3 ? segData[ 3 ] - 3 : segData[ 2 ] - 1;
         // hex.getData[ 3 ] seems always to be 0 and is not stored in the learned signal
-        LearnedSignal ls = new LearnedSignal( hex.getData()[ 1 ], deviceButtonIndex, format, hex.subHex( format == 0 ? 2 : format == 3 ? 7 : 4, len ), null );
+        LearnedSignal ls = new LearnedSignal( hex.getData()[ 1 ], deviceButtonIndex, format, hex.subHex( format == 0 || format == 4 ? 2 : format == 3 ? 7 : 4, len ), null );
         ls.setSegmentFlags( segment.getFlags() );
         if ( remote.usesEZRC() )
         {
@@ -7689,7 +7689,7 @@ public class RemoteConfiguration
         ls.clearMemoryUsage();
         Hex hex = ls.getData();
         int size = hex.length();
-        int segSize = size + 2 + ( format == 0 ? 0 : format == 3 ? 5 : 2 );
+        int segSize = size + 2 + ( format == 0 || format == 4 ? 0 : format == 3 ? 5 : 2 );
         int lenMod = segSize & ( remote.getForceModulus() - 1 );
         segSize += remote.doForceEvenStarts() && lenMod > 0 ? remote.getForceModulus() - lenMod : 0;
         Hex segData = new Hex( segSize );
@@ -7719,7 +7719,7 @@ public class RemoteConfiguration
           segData.set( ( short )0, 6 );
           segData.put( hex, 7 );
         }
-        else
+        else // formats 0 and 4
         {
           segData.put( hex, 2 );
         }

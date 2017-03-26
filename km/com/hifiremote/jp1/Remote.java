@@ -3898,8 +3898,10 @@ public class Remote implements Comparable< Remote >
     {
       return learnedFormat;
     }
+    // JP1.3 and earlier are format 0, S3F80 remotes with segments are type 4 by default
     String procName = getProcessor().getEquivalentName();
-    return procName.equals( "MAXQ610" ) ? 1 : procName.equals( "TI2541" ) ? 2 : 0;
+    return procName.equals( "MAXQ610" ) ? 1 : procName.equals( "TI2541" ) ? 2 
+        : segmentTypes != null ? 4 : 0;
   }
 
   public AddressRange getTimedMacroAddress()

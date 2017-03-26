@@ -17,12 +17,19 @@ public class Xor16CheckSum extends CheckSum
   public short calculateCheckSum( short[] data, int start, int end )
   {
     // For remotes with segments, UpdateImage() updates the checksum range end to
-    // point to the last byte written.  The number of bytes covered by the checksum
-    // needs to be rounded up to a multiple of 4.
-    //
-    // TESTED:  Round to multiple of 2 fails for remote with signature 257302
-//    end = end + 1 - ( end & 1 );
-    end = end + 3 - ( end & 3 );
+    // point to the last byte written.  The length certainly needs to be rounded up
+    // to a multiple of 2, but remotes such as the URC6820Z Zapper+ appear to need
+    // rounding to a multiple of 4.  See this post for a discussion:
+    // http://www.hifi-remote.com/forums/viewtopic.php?p=127545#127545
+    
+    // Here 4 is set as the default, which can be over-ridden by an explicit setting
+    // in the RDF by following the normal checksum syntax, without any space, by /2
+    // to set to a multiple of 2.  Values /1 and /4 are also recognised but unlikely
+    // to be needed.
+
+    // getRoundTo() value 0 denotes default rounding, values > 0 are explicitly set.
+    int rounding = addressRange.getRoundTo() - 1;
+    end |= rounding < 0 ? 3 : rounding;
     short sum = 0;
     for ( int i = start; i <= end - 1; i += 2 )
     {
