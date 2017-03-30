@@ -59,6 +59,10 @@ Changes for v2.04
 - Correct the support for Learned Format 3. (Graham)
 - Add support for Learned Format 4 which is the signal structure of format 0 but with 46-entry ROM burst table (Graham)
 - Enhance RDF checksum syntax with postfixed /n (n=1,2,4) to specify range length rounding when default is inappropriate (Graham)
+-- Private build 13
+- Fix bug importing raw upgrade with incomplete command data when command length > 1 (Graham)
+- Fix bug importing raw upgrade with protocol code when testing for spurious final byte if segment lengths are rounded upward (Graham)
+- Support encrypted protocol code in device upgrade segments for non-XSight remotes (Graham)
 
 Changes for v2.03
 -- Alpha 8 --

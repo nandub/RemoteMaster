@@ -1616,6 +1616,8 @@ public class RemoteConfiguration
             Hex hex = new Hex( items.pid, 0, items.fixedData.length() + 3 );
             hex.put( items.fixedData, 3 );
             hex.set( ( short )0x01, 2 );
+            System.err.println();
+            System.err.println( "Setup code=" + items.alias + "/" + items.setupCode );
             items.upgrade.importRawUpgrade( hex, remote, items.alias, items.pid, items.pCode );
           }
           else
@@ -2187,7 +2189,16 @@ public class RemoteConfiguration
         if ( protocolOffset > 0 && protocolOffset < hex.length() - 4 )
         {
           protocolCode = hex.subHex( protocolOffset + 4 );
-          if ( remote.usesEZRC() )
+          // XSight remotes always use encryption by XORing with encryptionKey but some upgrades
+          // downloaded from simpleset.com also contain embedded protocols encrypted in this way.
+          // The encrypted and unencrypted protocols can be distinguished by testing the 4th byte,
+          // which is the header byte for the timing block.  Unencrypted, bit 6 is always 0 but it 
+          // is encrypted by XORing with 0x64, which sets this bit.  Since both unencrypted and
+          // encrypted protocols can occur in the same downloaded settings.bin file, there seems
+          // no need to re-encrypt protocols when reconstructing type 0x10 segments for these
+          // remotes, but re-encryption remains necessary for XSight remotes, i.e those that
+          // use EZ-RC.
+          if ( remote.usesEZRC() || ( protocolCode.getData()[ 3 ] & 0x40 ) > 0 )
           {
             decryptObjcode( protocolCode );
           }
@@ -2226,6 +2237,8 @@ public class RemoteConfiguration
           upgrade.setRemoteConfig( this );
           upgrade.setSizeCmdBytes( hex.getData()[ 7 ] );
           upgrade.setSizeDevBytes( hex.getData()[ 8 ] );
+          System.err.println();
+          System.err.println( "Setup code=" + alias + "/" + setupCode );
           upgrade.importRawUpgrade( deviceHex, remote, alias, new Hex( pidHex ), protocolCode );
           upgrade.setSetupCode( setupCode );    
           upgrade.setSegmentFlags( segment.getFlags() );
@@ -6929,6 +6942,8 @@ public class RemoteConfiguration
       try
       {
         upgrade.setRemoteConfig( this );
+        System.err.println();
+        System.err.println( "Setup code=" + alias + "/" + setupCode );
         upgrade.importRawUpgrade( deviceHex, remote, alias, new Hex( pidHex ), protocolCode );
         upgrade.setSetupCode( setupCode );
         if ( protocolUpgradeUsed != null )
@@ -7036,6 +7051,8 @@ public class RemoteConfiguration
         try
         {
           upgrade.setRemoteConfig( this );
+          System.err.println();
+          System.err.println( "Setup code=" + alias + "/" + setupCode );
           upgrade.importRawUpgrade( deviceHex, remote, alias, new Hex( pidHex ), protocolCode );
           upgrade.setSetupCode( setupCode );
           upgrade.setButtonIndependent( false );

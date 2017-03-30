@@ -1494,7 +1494,7 @@ public class DeviceUpgrade extends Highlight
         p.setAltPID( remote, pid );
       }
       
-      if ( pCode != null && remote.doForceEvenStarts() )
+      if ( pCode != null && remote.doForceEvenStarts() && getCode( p ) != null )
       {
         // check for possibility that last byte(s) of pCode is/are spurious
         int pLen = pCode.length();
@@ -1675,7 +1675,7 @@ public class DeviceUpgrade extends Highlight
     int missingIndex = 1;
     for ( Button b : buttons )
     {
-      if ( index >= code.length )
+      if ( index + cmdLength - 1 >= code.length )
       {
         break;
       }
