@@ -17,7 +17,7 @@ LearnedFormat=3
 DSM=Internal:0
 
 [Checksums]
-*$0000:$0002..$0FFF
+*$0000:$0002..$0FFF/2
 
 # DeviceTypes
 # The order matches up with default type on DeviceButtons

@@ -13,6 +13,7 @@ SetupValidation=Warn
 AdvCodeFormat=EFC
 PunchThru=V
 ActivityMapIndex=4
+16BitSetupCode=Yes
 
 [SpecialProtocols]
 DSM=Internal:0

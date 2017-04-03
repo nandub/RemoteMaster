@@ -16,6 +16,7 @@ SetupValidation=Warn
 AdvCodeFormat=EFC
 ActivityMapIndex=1
 PunchThru=V
+16BitSetupCode=Yes
 
 [Checksums]
 ^$0000:$0002..$3FFF

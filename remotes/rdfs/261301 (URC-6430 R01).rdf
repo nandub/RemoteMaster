@@ -13,6 +13,7 @@ SoftDev=SetupCodesOnly
 AdvCodeFormat=EFC
 PunchThru=V
 ActivityMapIndex=3
+16BitSetupCode=Yes
 
 [SpecialProtocols]
 DSM=Internal:0

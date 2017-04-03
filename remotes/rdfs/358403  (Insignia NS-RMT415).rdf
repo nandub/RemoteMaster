@@ -5,7 +5,8 @@ Processor=S3F80
 BaseAddr=$EE00
 SegmentTypes=$13 $14 $00 $1A $01 $07 $08 $09 $10
 PunchThru=V
-SoftDev=SetupCodesOnly  
+SoftDev=SetupCodesOnly 
+BlockFormat=N
 RDFSync=5 
 LearnedFormat=3
 ImageMap=NS-RMT415.map
@@ -13,7 +14,7 @@ SetupValidation=WARN
 AdvCodeFormat=EFC
 
 [Checksums]
-*$0000:$0002..$0DFF
+*$0000:$0002..$0DFF/2
 
 [DeviceTypes]
 CBL/SAT = 0 

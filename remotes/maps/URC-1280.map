@@ -1,0 +1,62 @@
+#$MTIMFH
+#$-:Image Map file created by Map THIS!
+#$-:Map THIS! free image map editor by Todd C. Wilson
+#$-:Please do not edit lines starting with "#$"
+#$VERSION:1.30
+#$TITLE:URC-1280
+#$AUTHOR:Knuckx
+#$DATE:Fri Mar 31 19:39:21 2017
+#$PATH:C:\Users\Chris\Desktop\URC\MyRDFs\
+#$GIF:URC-1280.jpg
+#$FORMAT:ncsa
+#$EOH
+circle Setup  37,37 37,46
+circle Power  101,36 101,47
+circle Rewind  36,127 36,138
+circle Play  69,127 69,138
+circle FastFwd  103,127 103,138
+circle Stop  36,154 36,165
+circle Pause  70,154 70,165
+circle Record  103,154 103,165
+circle Guide  35,193 35,203
+circle Info  103,193 103,203
+circle Menu  70,183 70,195
+rect TV 57,35 82,49
+rect VCR 25,55 50,69
+rect AMP 25,75 50,89
+rect DVD 57,55 82,69
+rect Hi-Fi 57,75 82,89
+rect DVB-T 57,95 82,109
+rect SAT 89,55 114,69
+rect MP3 89,75 114,89
+rect Dev8 25,95 50,109
+rect Dev10 89,95 114,109
+circle OK  70,244 70,261
+circle AV  35,296 35,306
+circle Exit  103,296 103,306
+circle Back  69,323 69,333
+circle Mute  69,350 69,360
+circle Vol+  36,322 36,332
+circle Vol-  36,351 36,361
+circle Ch-  103,350 103,360
+circle Ch+  103,323 103,333
+circle Green  58,376 58,384
+circle Red  34,376 34,384
+circle Yellow  81,375 81,383
+circle Blue  105,375 105,383
+circle 1  36,402 36,413
+circle 2  70,402 70,413
+circle 3  104,402 104,413
+circle 4  36,429 36,440
+circle 5  70,429 70,440
+circle 6  104,429 104,440
+circle 7  36,457 36,468
+circle 8  70,457 70,468
+circle 0  70,485 70,496
+circle 9  104,457 104,468
+circle Text  36,484 36,492
+circle TextOff  104,484 104,492
+rect Down 51,268 89,288
+rect Up 51,201 89,221
+rect Left 26,225 46,263
+rect Right 94,225 114,263
