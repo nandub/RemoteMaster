@@ -167,7 +167,7 @@ public class RemoteConfiguration
     {
       sigData = Hex.parseHex( prop );
     }
-    SetupCode.setMax( remote.getSegmentTypes() == null ? remote.usesTwoBytePID() ? 4095 : 2047 : 0x7FFF );
+    SetupCode.setMax( remote );
     notes = section.getProperty( "Notes" );
 
     deviceButtonNotes = new String[ remote.getDeviceButtons().length ];
@@ -579,7 +579,7 @@ public class RemoteConfiguration
     {
       highlight[ i ] = Color.WHITE;
     }
-    SetupCode.setMax( remote.getSegmentTypes() == null ? remote.usesTwoBytePID() ? 4095 : 2047 : 0x7FFF );
+    SetupCode.setMax( remote );
 
     System.err.println( "Remote is " + remote );
 
@@ -4426,7 +4426,7 @@ public class RemoteConfiguration
     owner = rm;
     this.remote = remote;
     createActivities();
-    SetupCode.setMax( remote.getSegmentTypes() == null ? remote.usesTwoBytePID() ? 4095 : 2047 : 0x7FFF );
+    SetupCode.setMax( remote );
 
     int eepromSize = remote.getEepromSize();
     data = new short[ eepromSize ];

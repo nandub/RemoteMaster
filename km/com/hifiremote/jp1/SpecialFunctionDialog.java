@@ -189,9 +189,10 @@ public class SpecialFunctionDialog extends JDialog implements ActionListener, Fo
     NumberFormatter formatter = new NumberFormatter( format );
     formatter.setValueClass( Integer.class );
     formatter.setMinimum( new Integer( 0 ) );
-    formatter.setMaximum( new Integer( 2047 ) );
+    formatter.setMaximum( new Integer( SetupCode.getMax() ) );
     setupCode = new JFormattedTextField( formatter );
     setupCode.setColumns( 4 );
+    setupCode.setToolTipText( "<html>The maximum setup code value<br>for this remote is " + SetupCode.getMax() + "</html>" );
     FocusSelector.selectOnFocus( setupCode );
 
     box = Box.createVerticalBox();

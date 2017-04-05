@@ -28,6 +28,7 @@ import com.hifiremote.jp1.Remote;
 import com.hifiremote.jp1.RemoteConfiguration;
 import com.hifiremote.jp1.RemoteManager;
 import com.hifiremote.jp1.RemoteMaster;
+import com.hifiremote.jp1.SetupCode;
 import com.hifiremote.jp1.XorCheckSum;
 import com.hifiremote.jp1.extinstall.UpgradeItem.Classification;
 import com.hifiremote.jp1.io.JPS;
@@ -281,6 +282,7 @@ public class RMExtInstall extends ExtInstall
   public static void LoadHex( ErrorLogger Erl, String arg, IrHexConfig Config, AdvList Adv, UpgradeList Upgrade,
       Rdf rdf, int sigAddr ) throws IOException
   {
+    int oldSetupMax = SetupCode.getMax();
     Remote remote = null;
     short[] sigData = null;
     BufferedReader rdr = null;
@@ -415,6 +417,28 @@ public class RMExtInstall extends ExtInstall
         else
         {
           errorMsg = "Extender is not for this remote.";
+          return;
+        }
+      }
+      int extSetupMax = SetupCode.getMax();
+      if ( isSimpleset && oldSetupMax > extSetupMax )
+      {
+        int maxUpgSetup = 0;
+        for ( DeviceUpgrade du : remoteConfig.getDeviceUpgrades() )
+        {
+          maxUpgSetup = Math.max( maxUpgSetup, du.getSetupCode() );
+        }
+        if ( maxUpgSetup > extSetupMax )
+        {
+          String message = "<html>The maximum setup code supported by this extender is " + extSetupMax + ".  There are device upgrades<br>"
+              + "in the unextended configuration with setup codes that exceed this limit.  Please use the<br>"
+              + "Devices panel to change these to lower values, or to delete affected upgrades if they are<br>"
+              + "unused, and then start the extender installation again.  Your new setup codes can be chosen<br>"
+              + "freely, but you may wish to open the Code Selector on the toolbar to choose values that <br>"
+              + "do not conflict with built-in codes.</html>";
+          String title = "Setup codes out of range";
+          JOptionPane.showMessageDialog( null, message, title, JOptionPane.INFORMATION_MESSAGE );
+          errorMsg = "Aborting installation.";
           return;
         }
       }

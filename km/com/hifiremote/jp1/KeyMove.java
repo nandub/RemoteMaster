@@ -28,7 +28,8 @@ public class KeyMove extends AdvancedCode implements Cloneable
     this.deviceButtonIndex = deviceButtonIndex;
     short[] hex = data.getData();
     deviceType = hex[ DEVICE_TYPE_INDEX ] >> ( setupCodeIndex == DEVICE_TYPE_INDEX ? 4 : 0 );
-    setupCode = Hex.get( hex, setupCodeIndex ) & SetupCode.getMax();
+    int mask = SetupCode.getMax() > 4095 ? 0xFFFF : SetupCode.getMax();
+    setupCode = Hex.get( hex, setupCodeIndex ) & mask;
   }
 
   /**

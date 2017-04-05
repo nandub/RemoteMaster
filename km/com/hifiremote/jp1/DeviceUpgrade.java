@@ -614,7 +614,7 @@ public class DeviceUpgrade extends Highlight
     }
     if ( remote != null && remote != newRemote )
     {
-      SetupCode.setMax( remote.getSegmentTypes() == null ? remote.usesTwoBytePID() ? 4095 : 2047 : 0x7FFF );
+      SetupCode.setMax( remote );
       Button[] buttons = remote.getUpgradeButtons();
       ButtonAssignments newAssignments = new ButtonAssignments();
       java.util.List< java.util.List< String >> unassigned = new ArrayList< java.util.List< String >>();

@@ -177,8 +177,10 @@ public class KeyMoveTableModel extends JP1TableModel< KeyMove >
     {
       return false;
     }
-    if ( col == 0 || col > 4 && col < 8 )
+    if ( col == 0 || col > 2 && col < 8 )
     {
+      // Changed to include cols 3 & 4 (dev type and setup code) to force editing
+      // with key move dialog, as this includes validation that simple editing omits.
       return false;
     }
 

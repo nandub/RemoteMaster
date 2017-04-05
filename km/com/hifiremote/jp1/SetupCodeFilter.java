@@ -17,10 +17,21 @@ import javax.swing.text.DocumentFilter;
 public class SetupCodeFilter extends DocumentFilter
 {
   private JTextField tf;
+  private static boolean skipCheck = false;
 
   public SetupCodeFilter( JTextField tf )
   {
     this.tf = tf;
+  }
+
+  public static void setSkipCheck( boolean skip )
+  {
+    skipCheck = skip;
+  }
+
+  public static boolean doSkipCheck()
+  {
+    return skipCheck;
   }
 
   public void insertString( DocumentFilter.FilterBypass fb, int offset, String string, AttributeSet attr )
@@ -58,6 +69,11 @@ public class SetupCodeFilter extends DocumentFilter
 
   private void checkInput( String proposedValue, int offset ) throws BadLocationException
   {
+    if ( skipCheck )
+    {
+      return;
+    }
+    
     if ( proposedValue.length() > 0 )
     {
       boolean isValid = false;
@@ -73,12 +89,12 @@ public class SetupCodeFilter extends DocumentFilter
       if ( !isValid )
       {
         Toolkit.getDefaultToolkit().beep();
-        JP1Frame.showMessage( "Setup code must be a number between 0 and " + SetupCode.getMax(), tf );
+        KeyMapMaster.showMessage( "Setup code " + proposedValue + " is invalid.  Enter a number between 0 and " + SetupCode.getMax(), tf );
         throw new BadLocationException( proposedValue, offset );
       }
       else
       {
-        JP1Frame.clearMessage( tf );
+        KeyMapMaster.clearMessage( tf );
       }
     }
   }

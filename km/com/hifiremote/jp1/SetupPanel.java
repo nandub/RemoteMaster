@@ -6,6 +6,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Insets;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
@@ -402,7 +403,14 @@ public class SetupPanel extends KMPanel implements ActionListener, ItemListener,
     Protocol p = deviceUpgrade.getProtocol();
     Remote remote = deviceUpgrade.getRemote();
     int val = deviceUpgrade.getSetupCode();
-    setupCode.setText( val < 0 ? null : SetupCode.toString( val ) );
+    if ( SetupCodeFilter.doSkipCheck() && val > SetupCode.getMax() )
+    {
+      Toolkit.getDefaultToolkit().beep();
+      JOptionPane.showMessageDialog( setupCode, "Setup code " + val + " is invalid.  Enter a number between 0 and " + SetupCode.getMax() );
+      deviceUpgrade.setSetupCode( 0 );
+      val = 0;
+    }
+    setupCode.setText( val < 0 ? null : SetupCode.toString( val ) );    
     setupCode.setToolTipText( "Enter the desired setup code (between 0 and " + SetupCode.getMax()
         + ") for the device upgrade." );
     java.util.List< Protocol > protocols = ProtocolManager.getProtocolManager().getProtocolsForRemote( remote );

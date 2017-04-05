@@ -145,10 +145,11 @@ public class DeviceButton extends Highlight
   public short getSetupCode( short[] data )
   {
     short setupCode = highAddress > 0 ? data[ highAddress ] : data[ 3 ];
-    int mask = SetupCode.getMax() >> 8;
-    if ( ( mask & 0xF0 ) == 0 )
+    if ( highAddress > 0 )
     {
-      // Don't apply mask if setup code allows highest nibble to be nonzero (remotes with segments)
+      // Remotes without segments, that use high address byte to encode device
+      // type index and, for remotes with 1-byte PID, also bit 8 of PID.
+      int mask = SetupCode.getMax() >> 8;
       setupCode &= mask;
     }
     setupCode <<= 8;
@@ -167,12 +168,12 @@ public class DeviceButton extends Highlight
    */
   public void setSetupCode( short setupCode, short[] data )
   {
-    if ( setupCode > SetupCode.getMax() )
-    {
-      throw new NumberFormatException( "Setup codes must be between 0 and " + SetupCode.getMax() );
-    }
     if ( highAddress > 0 )
     {
+      if ( setupCode > SetupCode.getMax() )
+      {
+        throw new NumberFormatException( "Setup codes must be between 0 and " + SetupCode.getMax() );
+      }
       int val = setupCode - deviceCodeOffset;
       short temp = ( short )val;
       temp >>= 8;

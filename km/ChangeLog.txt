@@ -63,6 +63,11 @@ Changes for v2.04
 - Fix bug importing raw upgrade with incomplete command data when command length > 1 (Graham)
 - Fix bug importing raw upgrade with protocol code when testing for spurious final byte if segment lengths are rounded upward (Graham)
 - Support encrypted protocol code in device upgrade segments for non-XSight remotes (Graham)
+-- Release build 14
+- Fix bugs preventing error messages about setup codes beyond maximum from displaying (Graham)
+- Set setup code maximum for a segmented remote to 8999 if it has built-in values > 4095, to 4095 otherwise (Graham)
+- Add new RDF parameter 16BitSetupCode to permit override of 4095 limit when necessary (Graham)
+- Prevent extender installation, with suitable message, when remote has device upgrades with setup codes exceeding maximum for extender (Graham) 
 
 Changes for v2.03
 -- Alpha 8 --

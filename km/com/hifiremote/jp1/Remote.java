@@ -155,7 +155,7 @@ public class Remote implements Comparable< Remote >
     {
       if ( loaded )
       {
-        SetupCode.setMax( segmentTypes == null ? usesTwoBytePID() ? 4095 : 2047 : 0x7FFF );
+        SetupCode.setMax( this );
         KeyMove.setSetupCodeIndex( segmentTypes == null ? 0 : 1 );
         KeyMove.setCmdIndex( segmentTypes == null ? 2 : 3 );
         return;
@@ -853,6 +853,11 @@ public class Remote implements Comparable< Remote >
     return deviceCodeOffset;
   }
 
+  public int getMaxBuiltInCode()
+  {
+    return maxBuiltInCode;
+  }
+
   /**
    * Gets the device types.
    * 
@@ -1110,7 +1115,9 @@ public class Remote implements Comparable< Remote >
 
   public List< Integer > getSegmentTypes()
   {
-    load();
+    // The condition !loaded is needed to prevent an infinite loop, as load() calls
+    // this function even when loaded==true
+    if ( !loaded ) load();
     return segmentTypes;
   }
 
@@ -1625,6 +1632,10 @@ public class Remote implements Comparable< Remote >
       else if ( parm.equalsIgnoreCase( "2BytePid" ) )
       {
         twoBytePID = RDFReader.parseFlag( value );
+      }
+      else if ( parm.equalsIgnoreCase( "16BitSetupCode" ) )
+      {
+        twoByteSetupCode = RDFReader.parseFlag( value );
       }
       else if ( parm.equalsIgnoreCase( "LearnedDevBtnSwapped" ) )
       {
@@ -3235,6 +3246,7 @@ public class Remote implements Comparable< Remote >
       {
         Integer code = new Integer( st.nextToken() );
         code += deviceCodeOffset;
+        maxBuiltInCode = Math.max( code, maxBuiltInCode );
         map.put( code, code );
       }
     }
@@ -3686,6 +3698,8 @@ public class Remote implements Comparable< Remote >
 
   /** The device code offset. */
   private int deviceCodeOffset;
+  
+  private int maxBuiltInCode = 0;
   
   private int learnedFormat = -1;
   
@@ -4185,6 +4199,11 @@ public class Remote implements Comparable< Remote >
 
   /** The two byte pid. */
   private boolean twoBytePID = false;
+  
+  /**
+   * Set when setup codes can be more than 12 bits
+   */
+  private boolean twoByteSetupCode = false;
 
   /**
    * Uses two byte pid.
@@ -4194,6 +4213,11 @@ public class Remote implements Comparable< Remote >
   public boolean usesTwoBytePID()
   {
     return twoBytePID;
+  }
+  
+  public boolean usesTwoByteSetupCode()
+  {
+    return twoByteSetupCode;
   }
   
   public boolean usesEZRC()

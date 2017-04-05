@@ -492,15 +492,18 @@ public class DeviceButtonTableModel extends JP1TableModel< DeviceButton >
     }
   }
   
-  public boolean hasInvalidCodes()
+  
+  /**
+   * Returns a set of flags indicating what invalidities are present
+   * in the device button codes:
+   * bit 0 set = setup code is neither built-in or that of an upgrade
+   * bit 1 set = setup code exceeds maximum for the remote
+   * bit 2 set = XSight remote (i.e. uses EZ-RC) with setup code that has no upgrade
+   */
+  public int hasInvalidCodes()
   {
-    Remote remote = remoteConfig.getRemote();
-    if ( remote.getSetupValidation() == Remote.SetupValidation.OFF )
-    {
-      return false;
-    }
-    
-    boolean result = false;    
+    int result = 0;
+    Remote remote = remoteConfig.getRemote();    
     for ( int i = 0; i < getRowCount(); i++ )
     {
       DeviceButton deviceButton = getRow( i );
@@ -510,29 +513,22 @@ public class DeviceButtonTableModel extends JP1TableModel< DeviceButton >
       {
         setupCodeRenderer.setDeviceButton( deviceButton );
         setupCodeRenderer.setDeviceType( deviceType );
-        result = result || !setupCodeRenderer.isValid( setupCode.getValue() );
+        if ( !setupCodeRenderer.isValid( setupCode.getValue() ) )
+        {
+          // isValid() always returns true if remote.getSetupValidation() is OFF
+          result |= 1;
+        }
+        if ( setupCode.getValue() > SetupCode.getMax() )
+        {
+          result |= 2;
+        }
+        if ( remote.usesEZRC() && !deviceButton.isConstructed() && deviceButton.getUpgrade() == null )
+        {
+          result |= 4;
+        }
       }
     }
     return result;
-  }
-  
-  public boolean hasMissingUpgrades()
-  {
-    Remote remote = remoteConfig.getRemote();
-    if ( !remote.usesEZRC() )
-    {
-      return false;
-    }
-    for ( int i = 0; i < getRowCount(); i++ )
-    {
-      DeviceButton deviceButton = getRow( i );
-      DeviceType deviceType = ( DeviceType )getValueAt( i, 2 );
-      if ( deviceType != null && !deviceButton.isConstructed() && deviceButton.getUpgrade() == null )
-      {
-        return true;
-      }
-    }
-    return false;
   }
 
   /*

@@ -81,6 +81,10 @@ public class GeneralPanel extends RMPanel implements ListSelectionListener, Acti
         activeTable = deviceButtonTable;
         setHighlightAction( deviceButtonTable );
       }
+      public void focusLost( FocusEvent e )
+      {
+        JP1Frame.clearMessage( deviceButtonTable );
+      }
     } );
 
     activeTable = deviceButtonTable;
@@ -429,19 +433,23 @@ public class GeneralPanel extends RMPanel implements ListSelectionListener, Acti
 
   public boolean setWarning()
   {
-    boolean result = deviceModel.hasInvalidCodes() || deviceModel.hasMissingUpgrades();
+    int warn = deviceModel.hasInvalidCodes();
     String warningText = "WARNING:";
-    if ( deviceModel.hasInvalidCodes() )
+    if ( ( warn & 3 ) > 0 )
     {
-      warningText += "  Setup Codes shown in RED are invalid.";
+      warningText += "  Setup Codes shown in RED";
+      warningText += ( warn & 1 ) > 0 ? "  are invalid" : "";
+      warningText += warn == 3 ? " or" : "";
+      warningText += ( warn & 2 ) > 0 ? " exceed maximum value of " + SetupCode.getMax() : "";
+      warningText += ".";
     }
-    if ( deviceModel.hasMissingUpgrades() )
+    if ( ( warn & 4 ) > 0 )
     {
       warningText += "  Names shown in RED have no assigned upgrade.";
     }
     warningLabel.setText( warningText );
-    warningPanel.setVisible( result );
-    return result;
+    warningPanel.setVisible( warn > 0 );
+    return warn > 0;
   }
 
   public DeviceButtonTableModel getDeviceButtonTableModel()

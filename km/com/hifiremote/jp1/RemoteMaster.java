@@ -116,7 +116,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
 
   /** Description of the Field. */
   public final static String version = "v2.04";
-  public final static int buildVer = 13;
+  public final static int buildVer = 14;
   
   public static int getBuild()
   {
@@ -3824,7 +3824,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
         {
           newSettings[ i ].setValue( settingValues[ i ] );
         }
-        SetupCode.setMax( newRemote.getSegmentTypes() == null ? newRemote.usesTwoBytePID() ? 4095 : 2047: 0x7FFF );
+        SetupCode.setMax( newRemote );
         remoteConfig.updateImage();
         RemoteConfiguration.resetDialogs();
         update();

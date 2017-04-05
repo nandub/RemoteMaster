@@ -12,9 +12,13 @@ public class SetupCode
 
   private static int max = 2047;
 
-  public static void setMax( int newMax )
+  public static void setMax( Remote r )
   {
-    max = newMax;
+    // The maximum of 8999 is the largest that can be input without triggering a
+    // 9xx command, but we have no evidence that this will not be exceeded in future
+    // by UEI, e.g. by replacing 9xx commands with dedicated buttons.
+    max = r.getSegmentTypes() == null ? r.usesTwoBytePID() ? 4095 : 2047
+        : r.usesTwoByteSetupCode() || r.getMaxBuiltInCode() > 4095 ? 8999 : 4095;
   }
 
   public static int getMax()
@@ -37,7 +41,7 @@ public class SetupCode
     else
     {
       value = Integer.parseInt( s );
-      if ( value < 0 || value > max )
+      if ( value < 0 )
       {
         throw new IllegalArgumentException();
       }

@@ -5,6 +5,8 @@ import info.clearthought.layout.TableLayout;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.PrintWriter;
@@ -370,8 +372,8 @@ public class DeviceEditorPanel extends JPanel implements ActionListener, ChangeL
   {
     try
     {
+      SetupCodeFilter.setSkipCheck( true );
       Object source = e.getSource();
-
       if ( source == remoteList )
       {
         Remote remote = ( Remote )remoteList.getSelectedItem();
@@ -392,6 +394,7 @@ public class DeviceEditorPanel extends JPanel implements ActionListener, ChangeL
     {
       ex.printStackTrace( System.err );
     }
+    SetupCodeFilter.setSkipCheck( false );
   } // actionPerformed
 
   /**
@@ -475,6 +478,7 @@ public class DeviceEditorPanel extends JPanel implements ActionListener, ChangeL
    */
   public void stateChanged( ChangeEvent e )
   {
+    JP1Frame.clearMessage( currPanel );
     currPanel.commit();
     currPanel = ( KMPanel )( ( JTabbedPane )e.getSource() ).getSelectedComponent();
     currPanel.update();
