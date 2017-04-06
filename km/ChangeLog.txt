@@ -67,7 +67,8 @@ Changes for v2.04
 - Fix bugs preventing error messages about setup codes beyond maximum from displaying (Graham)
 - Set setup code maximum for a segmented remote to 8999 if it has built-in values > 4095, to 4095 otherwise (Graham)
 - Add new RDF parameter 16BitSetupCode to permit override of 4095 limit when necessary (Graham)
-- Prevent extender installation, with suitable message, when remote has device upgrades with setup codes exceeding maximum for extender (Graham) 
+- Prevent extender installation, with suitable message, when remote has device upgrades with setup codes exceeding maximum for extender (Graham)
+- Update digitmaps.bin to 675 (Dave Reed, Graham)
 
 Changes for v2.03
 -- Alpha 8 --
