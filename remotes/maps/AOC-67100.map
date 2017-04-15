@@ -1,0 +1,65 @@
+#$MTIMFH
+#$-:Image Map file created by Map THIS!
+#$-:Map THIS! free image map editor by Todd C. Wilson
+#$-:Please do not edit lines starting with "#$"
+#$VERSION:1.30
+#$TITLE:URC-67100
+#$DATE:Wed Apr 12 16:04:24 2017
+#$PATH:C:\Users\mikek\Desktop\
+#$GIF:AOC-67100.jpg
+#$FORMAT:ncsa
+#$EOH
+circle Setup  28,18 35,24
+circle Power  112,19 120,27
+circle Menu  32,60 42,70
+circle Info  114,61 124,71
+circle Guide  32,120 42,130
+circle Exit  115,120 125,130
+circle Stop  31,168 41,178
+circle OK/Enter  73,88 87,102
+circle Skip  103,225 113,235
+circle Replay  42,225 52,235
+circle Pause  72,235 82,245
+circle Rec  115,168 125,178
+circle Play  73,197 87,211
+circle Fav  31,412 40,421
+circle AddFav  57,414 66,423
+circle Pict  86,414 95,423
+circle CC  113,414 122,423
+circle Sleep  30,440 39,449
+circle Audio  85,443 94,452
+circle Zoom  112,442 121,451
+rect TV 19,32 40,44
+rect DVD 48,32 69,43
+rect STB 76,32 97,43
+rect AUX 104,33 125,44
+rect Red 19,137 40,151
+rect Green 47,137 68,151
+rect Yellow 76,136 97,150
+rect Blue 105,137 126,151
+rect Last 58,260 86,277
+rect Mute 58,284 86,301
+rect 1 20,312 48,329
+rect 2 55,312 83,329
+rect 3 94,312 122,329
+rect 4 20,333 48,350
+circle Vol+  38,268 49,279
+rect 0 57,376 85,393
+rect 8 57,354 85,371
+rect 7 21,354 49,371
+rect Input 21,375 49,392
+rect Dash 95,376 123,393
+rect 6 94,333 122,350
+rect 5 55,333 83,350
+rect 9 94,354 122,371
+poly Up 59,72 50,63 64,54 77,54 92,61 83,72 75,68 67,68 59,73 59,72 59,72
+poly Right 99,68 90,75 93,84 93,89 93,93 89,100 98,108 106,94 106,80 99,68 99,68
+poly Left 55,77 47,69 39,82 39,94 47,108 55,100 52,92 52,85 56,77 55,77 55,77
+poly Down 61,106 52,115 64,122 81,122 94,114 85,107 77,110 68,110 61,106 61,106
+poly Rew 51,186 23,186 18,196 18,203 27,209 52,209 48,201 48,194 52,186 51,186 51,186
+poly FFwd 92,186 114,186 123,192 123,201 117,208 91,208 95,199 94,193 92,186 92,186
+rect PVR 55,155 90,175
+circle Vol-  38,295 49,306
+circle Ch+  107,268 118,279
+circle Ch-  106,294 117,305
+circle Photo  58,442 68,452
