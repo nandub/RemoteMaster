@@ -351,17 +351,24 @@ public class RMExtInstall extends ExtInstall
           return;
         }
       }
-      int eepromSize = ( extenderMerge ) ? remoteConfig.getRemote().getEepromSize() : Config.size() - baseAddr;
+      if ( extenderMerge && !isSimpleset && baseAddr != remoteConfig.getRemote().getBaseAddress() )
+      {
+        errorMsg = "EEPROM area is located differently in extended and base remotes";
+        return;
+      }
+      // Simpleset remotes, having segments, can handle extenders with different base address
+      // provided that the E2 area has the same end address.  The E2 size is calculated
+      // by first finding the end address from the unextended remote then subtracting the
+      // base address for the extender.  For non-simpleset remotes the two base addresses will
+      // be the same and the E2 size will simply be that of the unextended remote.
+      int eepromSize = ( ( extenderMerge ) ? remoteConfig.getRemote().getEepromSize() 
+          + remoteConfig.getRemote().getBaseAddress() : Config.size() ) - baseAddr;
       if ( Config.size() > baseAddr + eepromSize )
       {
         errorMsg = "Extender data extends beyond EEPROM size.";
         return;
       }
-      if ( extenderMerge && baseAddr != remoteConfig.getRemote().getBaseAddress() )
-      {
-        errorMsg = "EEPROM area is located differently in extended and base remotes";
-        return;
-      }
+      
       StringBuilder sb = new StringBuilder();
       int sigLen = isSimpleset ? 6 : 8;
       for ( int ndx = 0; Config.IsValid( ndx + sigAddr ) && ndx < sigLen; ndx++ )

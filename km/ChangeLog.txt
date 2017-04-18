@@ -69,6 +69,8 @@ Changes for v2.04
 - Add new RDF parameter 16BitSetupCode to permit override of 4095 limit when necessary (Graham)
 - Prevent extender installation, with suitable message, when remote has device upgrades with setup codes exceeding maximum for extender (Graham)
 - Update digitmaps.bin to 675 (Dave Reed, Graham)
+-- Private build 15
+- Fix bug in RMExtInstall preventing installation of Simpleset extender when remote and extender have different base addresses (Graham)
 
 Changes for v2.03
 -- Alpha 8 --
