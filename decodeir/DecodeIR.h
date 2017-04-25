@@ -571,8 +571,7 @@ inline uint32_t parity(uint32_t p) {
     x = x ^ (x >> 2);
     return ( x ^ (x >> 1)) & 1;
 }
-e
-num {
+enum {
     prGap = 1,
     prAsync = 1,
     prByXMP = 1,
