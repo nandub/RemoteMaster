@@ -3,7 +3,7 @@
 AC_CONFIG_MACRO_DIR([m4])
 
 AC_PREREQ([2.69])
-AC_INIT(DecodeIR, 2.44, [http://www.hifi-remote.com/forums])
+AC_INIT(DecodeIR, 2.45, [http://www.hifi-remote.com/forums])
 AC_CONFIG_SRCDIR([DecodeIR.cpp])
 AC_CONFIG_HEADERS([config.h])
 
