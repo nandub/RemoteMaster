@@ -27,7 +27,7 @@
 #define min(x, y) ((x) < (y) ? (x) : (y))
 #define max(x, y) ((x) > (y) ? (x) : (y))
 
-static char const version_cstr[] = "2.54";
+static char const version_cstr[] = "2.45";
 
 Signal::Signal(
         uint32_t* p_Context,
