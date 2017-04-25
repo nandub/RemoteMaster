@@ -28,13 +28,12 @@
 #include <stdio.h>
 #include <math.h>
 
-#ifdef JNI
-typedef uint16_t frequency_t;
-typedef uint16_t microseconds_t;
-#else
-// These can be changed, should the need arise. However, this will change the API.
+#ifdef USE_JNI
 typedef unsigned frequency_t;
 typedef unsigned microseconds_t;
+#else
+typedef uint16_t frequency_t;
+typedef uint16_t microseconds_t;
 #endif
 
 #define require(x) if (!(x)) { return; }
