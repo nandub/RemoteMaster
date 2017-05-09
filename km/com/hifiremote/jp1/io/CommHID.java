@@ -71,7 +71,7 @@ public class CommHID extends IO
 	  return portNames;
 	}
 
-	int getRemotePID() {
+	public int getRemotePID() {
 	  return thisPID;
 	}
 

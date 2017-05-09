@@ -1530,10 +1530,13 @@ public class RemoteConfiguration
         DeviceButton dev = remote.getDeviceButton( 0x50 + data[ pos++ ] );
         // constructed keycode for the function
         int ref = data[ pos ] + 0x100 * data[ pos + 1 ];
-        Function f = dev.getUpgrade().getFunctionMap().get( ref );
-        if ( dev != null && f != null )
+        if ( dev.getUpgrade() != null )
         {
-          items.assisters.add(  new Assister( dev, f ) );
+          Function f = dev.getUpgrade().getFunctionMap().get( ref );
+          if ( dev != null && f != null )
+          {
+            items.assisters.add(  new Assister( dev, f ) );
+          }
         }
       }
       else if ( tag.equals(  "punchthrumap" ) )

@@ -71,6 +71,12 @@ Changes for v2.04
 - Update digitmaps.bin to 675 (Dave Reed, Graham)
 -- Private build 15
 - Fix bug in RMExtInstall preventing installation of Simpleset extender when remote and extender have different base addresses (Graham)
+-- Private build 16
+- Amend handling of irref tag in RemoteConfiguration.decodeItem() to ignore devices, presumed deleted, that have no assigned upgrade (Graham)
+-- Private build 17
+- Fix bug, introduced in build 11, preventing Raw Download displaying with XSight Touch and similar remotes (Graham)
+- Modify RemoteMaster.getOpenInterface() to check that Enhanced Power Management is disabled in Windows for CommHID interface (Graham)
+- Add new entry to Help menu that links to the file of patches etc. for disabling Enhanced Power Management (Graham)
 
 Changes for v2.03
 -- Alpha 8 --

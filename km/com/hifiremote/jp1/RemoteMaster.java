@@ -30,6 +30,7 @@ import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.net.URL;
@@ -116,7 +117,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
 
   /** Description of the Field. */
   public final static String version = "v2.04";
-  public final static int buildVer = 15;
+  public final static int buildVer = 17;
   
   public static int getBuild()
   {
@@ -263,6 +264,8 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
   private JMenuItem wikiItem = null;
 
   private JMenuItem forumItem = null;
+  
+  private JMenuItem powerManagementItem = null;
   
   private int tooltipDelay = 0;
   private int tooltipDefaultDelay = 0;
@@ -2287,6 +2290,10 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
       forumItem = new JMenuItem( "Forums", KeyEvent.VK_F );
       forumItem.addActionListener( this );
       menu.add( forumItem );
+      
+      powerManagementItem = new JMenuItem( "Enhanced Power Management info", KeyEvent.VK_E );
+      powerManagementItem.addActionListener( this );
+      menu.add( powerManagementItem );
 
       menu.addSeparator();
     }
@@ -3278,6 +3285,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
     System.err.println( "Interface Name = " + ( interfaceName == null ? "NULL" : interfaceName ) );
     String portName = properties.getProperty( "Port" );
     System.err.println( "Port Name = " + ( portName == null ? "NULL" : portName ) );
+    IO ioOut = null;
     if ( interfaceName != null && ( use == Use.DOWNLOAD || use == Use.UPLOAD ) )
     {
       for ( IO temp : interfaces )
@@ -3287,16 +3295,12 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
         if ( tempName.equals( interfaceName ) )
         {
           System.err.println( "Interface matched.  Trying to open remote." );
-          IO ioOut = testInterface( temp, portName, file, use );
-          if ( ioOut != null )
-          {
-            return ioOut;
-          }
-          else
+          ioOut = testInterface( temp, portName, file, use );
+          if ( ioOut == null )
           {
             System.err.println( "Failed to open" );
-            break;
           }
+          break;
         }
       }
     }
@@ -3323,15 +3327,70 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
         }
         String tempName = temp.getInterfaceName();
         System.err.println( "Testing interface: " + ( tempName == null ? "NULL" : tempName ) );
-        IO ioOut = testInterface( temp, null, file, use );
+        ioOut = testInterface( temp, null, file, use );
         if ( ioOut != null )
         {
           System.err.println( "Opened interface type " + Integer.toHexString( ioOut.getInterfaceType() ) );
-          return ioOut;
+          break;
         }
       }
     }
-    return null;
+    if ( ioOut != null && ioOut.getInterfaceName().equals( "CommHID" ) 
+        && System.getProperty( "os.name" ).startsWith( "Windows" )
+        && Float.parseFloat( System.getProperty( "os.version" ) ) >= 6.3f )
+    {
+      // os.version 6.3 is Windows 8.1
+      try 
+      {
+        int enabled = -1;
+        String hidPid = Integer.toHexString( ( ( CommHID )ioOut ).getRemotePID() ).toUpperCase();
+        String key = "HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Enum\\USB\\VID_06E7&PID_" + hidPid + "\\XSIGHT.\\Device Parameters";
+        ProcessBuilder builder = new ProcessBuilder( "reg", "query", key );         
+        Process reg = builder.start();
+        String line = null;
+        BufferedReader output = new BufferedReader( new InputStreamReader(reg.getInputStream() ) );
+        while ( ( line = output.readLine() ) != null )
+        {
+          if ( line.contains( "EnhancedPowerManagementEnabled" ) )
+          {
+            int pos = line.indexOf( "0x" );
+            if ( pos >= 0 )
+            {
+              line = line.substring( pos + 2 );
+              pos = line.indexOf( " " );
+              if ( pos > 0 )
+              {
+                line = line.substring( 0, pos );
+              }
+              enabled = Integer.parseInt( line, 16 );
+              System.err.println( "Enhanced Power Management is " + ( enabled > 0 ? "enabled" : "disabled" ) );
+            }
+            break;
+          }
+        }
+        if ( enabled < 0 )
+        {
+          System.err.println( "Enhanced Power Management is not supported" );
+        }
+        reg.waitFor();
+
+        if ( enabled > 0 )
+        {
+          String title = "Enhanced Power Management";
+          String message = 
+              "Uploading or downloading from this remote requires Enhanced Power Management\n"
+                  + "to be disabled in Windows.  A zip file with instructions on how to do this,\n"
+                  + "including registry patches to do so and an explanation of how to do so manually\n"
+                  + "with regedit, is available in the JP1 forum.  There is a link to this file from\n"
+                  + "the Help menu.  The PID of your remote, needed for these instructions, is " + hidPid + ".";
+          JOptionPane.showMessageDialog( null, message, title, JOptionPane.ERROR_MESSAGE );
+          ioOut = null;
+        }
+      }
+      catch( Exception e )
+      {}
+    }
+    return ioOut;
   }
   
   private IO testInterface( IO ioIn, String portName, File file, Use use )
@@ -3974,6 +4033,11 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
       else if ( source == forumItem )
       {
         URL url = new URL( "http://www.hifi-remote.com/forums/" );
+        desktop.browse( url.toURI() );
+      }
+      else if ( source == powerManagementItem )
+      {
+        URL url = new URL( "http://www.hifi-remote.com/forums/dload.php?action=file&file_id=12673" );
         desktop.browse( url.toURI() );
       }
       else
