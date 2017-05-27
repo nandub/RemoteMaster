@@ -31,6 +31,7 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.net.URL;
@@ -117,7 +118,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
 
   /** Description of the Field. */
   public final static String version = "v2.04";
-  public final static int buildVer = 17;
+  public final static int buildVer = 18;
   
   public static int getBuild()
   {
@@ -1671,7 +1672,6 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
   
   public static byte[] readBinary( File file )
   {
-    int totalBytesRead = 0;
     byte[] data = null;
     try
     {
@@ -1681,45 +1681,48 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
         System.err.println( "File " + file.getAbsolutePath() + " empty or not found" );
         return null;
       }
-      data = new byte[ length ];
-      InputStream input = null;
-      try 
-      {
-        input = new BufferedInputStream(new FileInputStream( file ) );
-        while( totalBytesRead < data.length )
-        {
-          int bytesRemaining = data.length - totalBytesRead;
-          //input.read() returns -1, 0, or more :
-          int bytesRead = input.read( data, totalBytesRead, bytesRemaining ); 
-          if ( bytesRead > 0 )
-          {
-            totalBytesRead = totalBytesRead + bytesRead;
-          }
-        }
-        /*
-             the while loop usually has a single iteration only.
-         */
-        if ( totalBytesRead != length )
-        {
-          System.err.println( "File read error: file length = " + length + ", bytes read = " + totalBytesRead );
-          return null;
-        }
-        System.err.println( "Bytes read from file: " + totalBytesRead );
-      }
-      catch (FileNotFoundException ex) {
-        System.err.println( "File not found" );
-        return null;
-      }
-      finally 
-      {
-        if ( input != null )
-        {
-          System.err.println("Closing input stream.");
-          input.close();
-        }
-      }
+      InputStream in = new FileInputStream( file );
+      data = readBinary( in, length );
+      in.close();
     }
     catch (IOException ex) {
+      System.err.println( ex );
+      return null;
+    }
+    return data;
+  }
+  
+  public static byte[] readBinary( InputStream in, int length )
+  {
+    if ( in == null || length == 0 ) return null;
+    int totalBytesRead = 0;
+    byte[] data = new byte[ length ];
+    InputStream input = null;
+    try 
+    {
+      input = new BufferedInputStream( in );
+      while( totalBytesRead < length )
+      {
+        int bytesRemaining = data.length - totalBytesRead;
+        //input.read() returns -1, 0, or more :
+        int bytesRead = input.read( data, totalBytesRead, bytesRemaining ); 
+        if ( bytesRead > 0 )
+        {
+          totalBytesRead = totalBytesRead + bytesRead;
+        }
+      }
+      input.close();
+      /*
+           the while loop usually has a single iteration only.
+       */
+      if ( totalBytesRead != length )
+      {
+        System.err.println( "File read error: file length = " + length + ", bytes read = " + totalBytesRead );
+        return null;
+      }
+      System.err.println( "Bytes read from file: " + totalBytesRead );
+    }
+    catch ( Exception ex ) {
       System.err.println( ex );
       return null;
     }
@@ -2224,9 +2227,10 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
 
     getSystemFilesItem = new JCheckBoxMenuItem( "Get system files" );
     getSystemFilesItem.setToolTipText( "<html>When checked, a download from the remote also copies<br>"
-        + "the system files of the remote to the XSight subfolder<br>"
-        + "of the installation folder, creating it if it does not<br>"
-        + "exist.</html>" );
+        + "the system files of the remote to a zip file in the XSight<br>"
+        + "subfolder of the installation folder, creating this subfolder<br>"
+        + "if it does not exist.  The name of the zip file is Sys followed<br>"
+        + "by the USB PID of the remote.</html>" );
     getSystemFilesItem.setVisible( false );
     getSystemFilesItem.setSelected( false );
     menu.add( getSystemFilesItem );
@@ -3347,8 +3351,9 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
         String key = "HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Enum\\USB\\VID_06E7&PID_" + hidPid + "\\XSIGHT.\\Device Parameters";
         ProcessBuilder builder = new ProcessBuilder( "reg", "query", key );         
         Process reg = builder.start();
+        BufferedReader output = new BufferedReader( new InputStreamReader( reg.getInputStream() ) );
+        reg.waitFor();
         String line = null;
-        BufferedReader output = new BufferedReader( new InputStreamReader(reg.getInputStream() ) );
         while ( ( line = output.readLine() ) != null )
         {
           if ( line.contains( "EnhancedPowerManagementEnabled" ) )
@@ -3372,9 +3377,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
         {
           System.err.println( "Enhanced Power Management is not supported" );
         }
-        reg.waitFor();
-
-        if ( enabled > 0 )
+        else if ( enabled > 0 )
         {
           String title = "Enhanced Power Management";
           String message = 
@@ -4930,6 +4933,13 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
     int pos = 0;
     File file = new File( new File( workDir, "XSight" ), "irdb.bin" );
     byte[] data = RemoteMaster.readBinary( file );
+    if ( data == null )
+    {
+      String title = "Extract irdb.bin";
+      String message = 
+            "File irdb.bin not found so extract process has been aborted"; 
+      JOptionPane.showMessageDialog( this, message, title, JOptionPane.INFORMATION_MESSAGE );
+    }
     LinkedHashMap< Integer, List< Integer > > setups = new LinkedHashMap< Integer, List<Integer> >();
     LinkedHashMap< Integer, Integer > pidLenBytes = new LinkedHashMap< Integer, Integer >();
     List< Integer > prots = new ArrayList< Integer >();

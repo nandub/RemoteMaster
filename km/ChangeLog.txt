@@ -77,6 +77,8 @@ Changes for v2.04
 - Fix bug, introduced in build 11, preventing Raw Download displaying with XSight Touch and similar remotes (Graham)
 - Modify RemoteMaster.getOpenInterface() to check that Enhanced Power Management is disabled in Windows for CommHID interface (Graham)
 - Add new entry to Help menu that links to the file of patches etc. for disabling Enhanced Power Management (Graham)
+-- Private build 18
+- Add experimental code for performing firmware update of XSight Touch/Color and clones (Graham)
 
 Changes for v2.03
 -- Alpha 8 --
