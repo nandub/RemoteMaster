@@ -8567,6 +8567,7 @@ public class RemoteConfiguration
     SpecialFunctionDialog.reset();
     FavScanDialog.reset();
     LearnedSignalDialog.reset();
+    RMZipEntryChooser.reset();
   }
   
   public boolean allowHighlighting()

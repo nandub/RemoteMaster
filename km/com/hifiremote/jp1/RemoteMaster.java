@@ -23,7 +23,6 @@ import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -31,7 +30,6 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.net.URL;
@@ -48,6 +46,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.StringTokenizer;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
@@ -93,7 +93,6 @@ import com.hifiremote.jp1.io.IO;
 import com.hifiremote.jp1.io.JP12Serial;
 import com.hifiremote.jp1.io.JP1Parallel;
 import com.hifiremote.jp1.io.JP1USB;
-import com.hifiremote.jp1.assembler.MAXQ610data;
 
 /**
  * Description of the Class.
@@ -118,7 +117,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
 
   /** Description of the Field. */
   public final static String version = "v2.04";
-  public final static int buildVer = 18;
+  public final static int buildVer = 24;
   
   public static int getBuild()
   {
@@ -745,11 +744,13 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
 
   private class UploadSystemFile extends SwingWorker< Void, Void >
   {
-    private File file = null;
+    private Remote remote = null;
+    private ZipEntry entry = null;
     
-    private UploadSystemFile( File file )
+    private UploadSystemFile( Remote remote, ZipEntry entry )
     {
-      this.file = file;
+      this.remote = remote;
+      this.entry = entry;
     }
     
     @Override
@@ -769,24 +770,36 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
         setInterfaceState( null );
         return null;
       }
+      ZipFile zip = getSystemZipFile( remote );
+      String usbPID = Integer.toHexString( ( ( CommHID )io ).getRemotePID() ).toUpperCase();
+      if ( !( zip.getName().contains( usbPID ) ) )
+      {
+        zip.close();
+        JOptionPane.showMessageDialog( RemoteMaster.this, "The chosen file is not for this remote!" );
+        setInterfaceState( null );
+        return null;
+      }
 
-      System.err.println( "Uploading system file " + file.getName() );
-      ( ( CommHID )io ).writeSystemFile( file );
+      System.err.println( "Uploading system file " + entry.getName() );
+      long length = entry.getSize();
+      InputStream in = zip.getInputStream( entry );
+      byte[] data = RemoteMaster.readBinary( in, ( int )length );
+      zip.close();
+      ( ( CommHID )io ).writeSystemFile( entry.getName(), data );
       if ( verifyUploadItem.isSelected() )
       {
         System.err.println( "Verifying upload." );
-        byte[] readBytes = ( ( CommHID )io ).readSystemFile( file.getName() );
+        byte[] readBytes = ( ( CommHID )io ).readSystemFile( entry.getName() );
         io.closeRemote();
-        byte[] fileBytes = RemoteMaster.readBinary( file );
 
-        if ( readBytes.length != fileBytes.length )
+        if ( readBytes.length != data.length )
         {
           System.err.println( "Upload verify failed: read back " + readBytes.length
-              + " bytes, but expected " + fileBytes.length + "." );
+              + " bytes, but expected " + data.length + "." );
           JOptionPane.showMessageDialog( RemoteMaster.this, "Upload verify failed: read back " + readBytes.length
-              + " bytes, but expected " + fileBytes.length );
+              + " bytes, but expected " + data.length );
         }
-        else if ( !Arrays.equals( readBytes, fileBytes ) )
+        else if ( !Arrays.equals( readBytes, data ) )
         {
           System.err.println( "Upload verify failed: data read back doesn't match data written." );
           JOptionPane.showMessageDialog( RemoteMaster.this,
@@ -1650,6 +1663,55 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
     return getSystemFilesItem.isSelected();
   }
   
+  public static ZipFile getSystemZipFile( Remote remote )
+  {
+    ZipFile zipfile = null;
+    try
+    {
+      String sig = remote.getSignature();
+      String zipName = "Upg" + sig.substring( 3 ) + ".zip";
+      File inputDir = new File( RemoteMaster.getWorkDir(), "XSight" );
+      File file = new File( inputDir, zipName );
+      if ( file.exists() )
+      {
+        zipfile = new ZipFile( new File( inputDir, zipName ) );
+      }
+    }
+    catch( Exception e )
+    {
+      return null;
+    }
+    return zipfile;
+  }
+  
+//  public static ZipEntry getZipEntry( Remote remote, String name )
+//  {
+//    if ( remote == null || name == null )
+//    {
+//      return null;
+//    }
+//    ZipFile zipfile = null;
+//    ZipEntry zip = null;
+//    try
+//    {
+//      zipfile = getSystemZipFile( remote );
+//      zip = zipfile.getEntry( name );
+////      Enumeration< ? extends ZipEntry > zipEnum = zipfile.entries();
+////      while ( zipEnum.hasMoreElements() ) 
+////      { 
+////        ZipEntry entry = ( ZipEntry ) zipEnum.nextElement(); 
+////        if ( entry.getName().equals( name ) )
+////        {
+////          zip = entry;
+////          break;
+////        }
+////      }
+//      zipfile.close();
+//    }
+//    catch ( Exception e ){ };
+//    return zip;
+//  }
+  
   public static void setSystemFilesItems( RemoteMaster rm, Remote remote )
   {
     if ( admin && remote != null && remote.isSSD() )
@@ -1658,8 +1720,14 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
       putSystemFileItem.setVisible( true );
       parseIRDBItem.setVisible( true );
       extractSSItem.setVisible( false );
-      File file = new File( new File( workDir, "XSight" ), "irdb.bin" );
-      parseIRDBItem.setEnabled( file.exists() && file.isFile() );
+      ZipFile zipfile = getSystemZipFile( remote );
+      putSystemFileItem.setEnabled( zipfile != null );
+      parseIRDBItem.setEnabled( zipfile != null && zipfile.getEntry( "irdb.bin" ) != null );
+      try {
+        if ( zipfile != null )
+          zipfile.close();
+      }
+      catch ( Exception e ){}
       return;
     }
     getSystemFilesItem.setVisible( false );
@@ -2236,8 +2304,9 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
     menu.add( getSystemFilesItem );
 
     putSystemFileItem = new JMenuItem( "Put system file..." );
-    putSystemFileItem.setToolTipText( "<html>Uploads a system file to the remote, selected from<br>"
-        + "the XSight subfolder of the installation folder.</html>" );
+    putSystemFileItem.setToolTipText( "<html>Uploads a single system file to the remote, extracted from<br>"
+        + "the appropriate upgrade file in the XSight subfolder of the<br>"
+        + "installation folder.</html>" );
     putSystemFileItem.setVisible( false );
     putSystemFileItem.addActionListener( this );
     menu.add( putSystemFileItem );
@@ -2519,44 +2588,6 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
       }
     }
     chooser.removePropertyChangeListener( area );
-    return result;
-  }
-  
-  public File getSystemFileChoice()
-  {
-    // Selects an XSight system file for uploading
-    File result = null;
-    File dir = new File( workDir, "XSight" );
-    if ( !dir.exists() )
-    {
-      System.err.println( "Folder " + dir.getAbsolutePath() + " not found" );
-      return null;
-    }
-    
-    while ( result == null )
-    {
-      RMFileChooser chooser = new RMFileChooser( dir );
-      int returnVal = chooser.showOpenDialog( this );
-      if ( returnVal == RMFileChooser.APPROVE_OPTION )
-      {
-        result = chooser.getSelectedFile();
-
-        if ( !result.exists() )
-        {
-          JOptionPane.showMessageDialog( this, result.getName() + " doesn't exist.", "File doesn't exist.",
-              JOptionPane.ERROR_MESSAGE );
-        }
-        else if ( result.isDirectory() )
-        {
-          JOptionPane.showMessageDialog( this, result.getName() + " is a directory.", "File doesn't exist.",
-              JOptionPane.ERROR_MESSAGE );
-        }
-      }
-      else
-      {
-        return null;
-      }
-    }
     return result;
   }
   
@@ -3788,13 +3819,27 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
       }
       else if ( source == putSystemFileItem )
       {
-        File file = getSystemFileChoice();
-        if ( file == null )
+        Remote remote = remoteConfig.getRemote();
+        ZipFile zipfile = null;
+        try
         {
-          return;
+          zipfile = getSystemZipFile( remote );
+          ZipEntry entry = RMZipEntryChooser.showDialog( RemoteMaster.this, zipfile );
+          if ( entry == null )
+          {
+            return;
+          }
+
+          setInterfaceState( "UPLOADING " + entry.getName().toUpperCase() + "..." );
+          ( new UploadSystemFile( remote, entry ) ).execute();
         }
-        setInterfaceState( "UPLOADING " + file.getName().toUpperCase() + "..." );
-        ( new UploadSystemFile( file ) ).execute();
+        finally
+        {
+          if ( zipfile != null )
+          {
+            zipfile.close();
+          }
+        }
       }
       else if ( source == setBaselineItem )
       {
@@ -4927,19 +4972,33 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
     JOptionPane.showMessageDialog( this, message, title, JOptionPane.INFORMATION_MESSAGE );
   }
   
-  
   private void extractIrdb()
   {
-    int pos = 0;
-    File file = new File( new File( workDir, "XSight" ), "irdb.bin" );
-    byte[] data = RemoteMaster.readBinary( file );
-    if ( data == null )
+    Remote remote = remoteConfig.getRemote();
+    ZipFile zipfile = getSystemZipFile( remote );
+    ZipEntry entry = null;
+    byte[] data = null;
+    if ( zipfile != null && ( entry = zipfile.getEntry( "irdb.bin" ) ) != null )
+    {
+      try
+      {
+        data = readBinary( zipfile.getInputStream( entry ), ( int )entry.getSize() );
+        zipfile.close();
+      }
+      catch( Exception e )
+      {
+        entry = null;
+      }
+    }
+    if ( entry == null )
     {
       String title = "Extract irdb.bin";
       String message = 
             "File irdb.bin not found so extract process has been aborted"; 
       JOptionPane.showMessageDialog( this, message, title, JOptionPane.INFORMATION_MESSAGE );
+      return;
     }
+    int pos = 0;
     LinkedHashMap< Integer, List< Integer > > setups = new LinkedHashMap< Integer, List<Integer> >();
     LinkedHashMap< Integer, Integer > pidLenBytes = new LinkedHashMap< Integer, Integer >();
     List< Integer > prots = new ArrayList< Integer >();
@@ -5083,8 +5142,8 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
     printExtract( setups, pidLenBytes, prots, null );
     String title = "Extract irdb.bin";
     String message = 
-        "Extract data, including [Protocols] and [SetupCodes] sections\n"
-        + "for the RDF, have been output to rmaster.err"; 
+        "Extract data, including [Protocols] and [SetupCodes] sections for the\n"
+        + "RDF for " + remote.getName() + " have been output to rmaster.err"; 
     JOptionPane.showMessageDialog( this, message, title, JOptionPane.INFORMATION_MESSAGE );
   }
   
@@ -5092,6 +5151,8 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
       LinkedHashMap< Integer, Integer > pidLenBytes, List< Integer > prots,
       List< Integer > maps )
   {
+    Remote remote = remoteConfig.getRemote();
+    System.err.println( "RDF data for " + remote.getName() + " follows:" );
     System.err.println();
     System.err.println( "[SetupCodes]");
     List< Integer > types = new ArrayList< Integer >( setups.keySet() );

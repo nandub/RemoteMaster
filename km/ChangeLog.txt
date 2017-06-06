@@ -79,6 +79,8 @@ Changes for v2.04
 - Add new entry to Help menu that links to the file of patches etc. for disabling Enhanced Power Management (Graham)
 -- Private build 18
 - Add experimental code for performing firmware update of XSight Touch/Color and clones (Graham)
+-- Private builds 19-24
+- Further experiments with the code for firmware updates, unfortunately none successful (Graham)
 
 Changes for v2.03
 -- Alpha 8 --

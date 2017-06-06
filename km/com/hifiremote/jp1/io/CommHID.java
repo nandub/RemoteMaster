@@ -53,8 +53,8 @@ public class CommHID extends IO
 	 *          or responding that the file is absent.
 	 *    19  Request length of named file.  Response is a type 01 packet giving length
 	 *          or responding that the file is absent.
-	 *    20  Probably a request for the remote to enter update mode.  It carries no
-	 *          data and the response is a type 01 packet with no data, but the remote
+	 *    20  Request for the remote to enter update mode.  It carries no data
+	 *          and the response is a type 01 packet with no data, but the remote
 	 *          then disconnects its USB port followed by a reconnection.
 	 *    27  Request a 6-byte value that is possibly the complement of a hex serial
 	 *          number, returned in a type 01 packet.  There are no known side effects. 
@@ -76,35 +76,49 @@ public class CommHID extends IO
 	byte ssdOut[] = new byte[62];
 	int interfaceType = -1;
 	int firmwareFileCount = 0;
+	boolean upgradeSuccess = true;
 	LinkedHashMap< String, Hex > firmwareFileVersions = new LinkedHashMap< String, Hex >();
 	LinkedHashMap< String, Hex > upgradeFileVersions = new LinkedHashMap< String, Hex >();
 
 	private int runningTotal = 0;
 	
 	int getPIDofAttachedRemote() {
-		try  {
-			hid_mgr = HIDManager.getInstance();
-			HIDinfo = hid_mgr.listDevices();
-			for (int i = 0; i<HIDinfo.length; i++)  
-				if (HIDinfo[i].getVendor_id() == 0x06E7) {
-				  HIDdevice = HIDinfo[i];
-				  String manString = HIDinfo[i].getManufacturer_string();
-				  String prodString = HIDinfo[i].getProduct_string();
-				  thisPID = HIDinfo[i].getProduct_id();
-				  System.err.println( "Remote found: Manufacturer = " + manString + ", Product = " + prodString  
-				      + ", Product ID = " + Integer.toHexString( thisPID ).toUpperCase() );	
-					return thisPID;
-				}
-		}  catch (Exception e) {
-    		return 0;
-    	}
-		return 0;
+	  try  {
+	    hid_mgr = HIDManager.getInstance();
+	    System.err.println( "HIDManager " + hid_mgr + " devices are:" );
+	    HIDinfo = hid_mgr.listDevices();
+	    if ( HIDinfo != null )
+	    {
+	      for (int i = 0; i<HIDinfo.length; i++)
+	      {
+	        System.err.println( "Device " + i + ": " + HIDinfo[i] );
+	      }
+	      for (int i = 0; i<HIDinfo.length; i++)  
+	        if (HIDinfo[i].getVendor_id() == 0x06E7) {
+	          HIDdevice = HIDinfo[i];
+	          String manString = HIDinfo[i].getManufacturer_string();
+	          String prodString = HIDinfo[i].getProduct_string();
+	          thisPID = HIDinfo[i].getProduct_id();
+	          System.err.println( "Remote found: Manufacturer = " + manString + ", Product = " + prodString  
+	              + ", Product ID = " + Integer.toHexString( thisPID ).toUpperCase() );	
+	          return thisPID;
+	        }
+	    }
+	    else
+	    {
+	      System.err.println( "None" );
+	      return 0;
+	    }
+	  }  catch (Exception e) {
+	    return 0;
+	  }
+	  return 0;
 	}
-	
+
 	public String getInterfaceName() {
-		return "CommHID";
+	  return "CommHID";
 	}
-	
+
 	public String getInterfaceVersion() {
 	  return "0.5";
 	}
@@ -582,6 +596,7 @@ public class CommHID extends IO
          if ( length < 0 )
          {
            System.err.println( "File " + name + " has unknown length and could not be updated" );
+           upgradeSuccess = false;
            continue;
          }
          InputStream zip = zipfile.getInputStream( entry );
@@ -590,6 +605,7 @@ public class CommHID extends IO
          if ( !writeSystemFile( name, data ) )
          {
            System.err.println( "Failed to write system file " + name );
+           upgradeSuccess = false;
          }
 
          // FOR TESTING ONLY (with the above writeSystemFile() commented out:
@@ -601,12 +617,13 @@ public class CommHID extends IO
 //           output = new FileOutputStream( new File( outputDir, name + "out"  ), false );
 //           output.write( data );
 //         }
-//         catch(FileNotFoundException ex){
+//         catch(Exception ex){
 //           System.err.println( "Unable to open file " + name );
 //         }
          // END TESTING
       }
-      zipfile.close();
+      if ( zipfile != null )
+        zipfile.close();
     }
     catch ( Exception e )
     {
@@ -614,13 +631,6 @@ public class CommHID extends IO
       return false;
     }
     return true;
-	}
-	
-	public void writeSystemFile( File file )
-	{
-	  String name = file.getName();
-    byte[] data = RemoteMaster.readBinary( file );
-    writeSystemFile( name, data );
 	}
 	
 	public boolean deleteSystemFiles( List< String > forDeletion )
@@ -699,12 +709,25 @@ public class CommHID extends IO
 	  return true;
 	}
 	
+	boolean waitForMillis( int waitTime )
+	{
+	  System.err.println( "Waiting for " + waitTime + "ms" );
+	  long waitStart = Calendar.getInstance().getTimeInMillis();
+	  long delay = 0;
+	  while ( delay < waitTime )
+    { 
+      delay = Calendar.getInstance().getTimeInMillis() - waitStart;
+    }
+	  return true;
+	}
+	
 	boolean waitForTouchReconnection()
 	{
     long waitStart = Calendar.getInstance().getTimeInMillis();
 	  boolean wasAbsent = false;
+	  int lastCount = -1;
     while ( true )
-    {
+    { 
       long delay = Calendar.getInstance().getTimeInMillis() - waitStart; 
       if ( delay > 15000 )
       {
@@ -715,11 +738,34 @@ public class CommHID extends IO
       try
       {
         HIDinfo = hid_mgr.listDevices();
-        for (int i = 0; i<HIDinfo.length; i++)
+        waitForMillis( 500 );
+        int count = HIDinfo == null ? 0 : HIDinfo.length;
+        if ( count != lastCount )
         {
-          if (HIDinfo[i].getVendor_id() == 0x06E7) 
+          System.err.println( "Number of devices = " + count + " after delay of " + delay + "ms" );
+          lastCount = count;
+//          if ( HIDinfo != null )
+//          {
+//            System.err.println( "Devices are:" );
+//            for (int i = 0; i<HIDinfo.length; i++)
+//            {
+//              System.err.println( "  Device " + i + ": " + HIDinfo[i] );
+//            }
+//          }
+        }
+        if ( HIDinfo != null )
+        {
+          for ( int i = 0; i<HIDinfo.length; i++ )
           {
-            present = true;
+            if ( HIDinfo[i].getVendor_id() == 0x06E7 ) 
+            {
+              present = true;
+              if ( devHID != null && !wasAbsent )
+              {
+                devHID.close();
+              }
+              break;
+            }
           }
         }
         if ( !wasAbsent && !present )
@@ -738,6 +784,7 @@ public class CommHID extends IO
       }
       catch ( IOException e )
       {
+        System.err.println( "Error: " + e );
         return false;        
       }
     }
@@ -824,6 +871,15 @@ public class CommHID extends IO
     if ( getVersionsFromUpgrade( zipName ) )
     {
       int[] upgNeeds = testForUpgrade( changed, newFiles, forDeletion );
+      
+      // TESTING
+//      upgNeeds = new int[]{1,1,1};
+//      changed.clear();
+//      newFiles.clear();
+//      forDeletion.clear();
+//      forDeletion = Arrays.asList( "Pacific.rgn" );
+      // END TESTING
+      
       if ( upgNeeds[ 0 ] > 0 )
       {
         String message = 
@@ -855,6 +911,7 @@ public class CommHID extends IO
         else if ( response == 1 )
         {
           System.err.println( "Proceeding with firmware revision" );
+          upgradeSuccess = true;
           if ( upgNeeds[ 1 ] > 0 )
           {
             // Put remote into update mode with type 0x20 packet.
@@ -869,15 +926,20 @@ public class CommHID extends IO
               return 0;
             }
           }
-          
+
           boolean connectOK = true;
-          if ( ( upgNeeds[ 1 ] == 0 || ( connectOK = waitForTouchReconnection() ) == true ) &&
-               deleteSystemFiles( forDeletion ) &&
-               getVersionsFromRemote() &&     
-               writeSystemFiles( zipName, changed ) &&
-               getVersionsFromRemote() &&
-               writeSystemFiles( zipName, newFiles ) &&
-               getVersionsFromRemote() )
+          if ( ( upgNeeds[ 1 ] == 0 || ( connectOK = waitForTouchReconnection() ) == true ) && 
+              waitForMillis( upgNeeds[ 1 ] == 1 ? 10000 : 0 ) &&
+              writeSystemFiles( zipName, changed ) &&
+              waitForMillis( 300 ) &&
+              getVersionsFromRemote() &&
+              writeSystemFiles( zipName, newFiles ) &&
+              waitForMillis( 300 ) &&
+              getVersionsFromRemote() &&
+              deleteSystemFiles( forDeletion ) &&
+              waitForMillis( 300 ) &&
+              getVersionsFromRemote() &&
+              upgradeSuccess )
           {
             message = "Upgrade succeeded.  Continuing with normal download.";
             JOptionPane.showMessageDialog( null, message, title, JOptionPane.INFORMATION_MESSAGE );
@@ -1215,10 +1277,10 @@ public class CommHID extends IO
 	      sb.append( (char)ssdIn[ i ] );
 	  }
 	  String name = sb.toString();
-	  if ( !absent )
-	  {
+//	  if ( !absent )
+//	  {
 	    firmwareFileVersions.put( name, hex );
-	  }
+//	  }
 	  System.err.println( "  " + name + " : " + hex.toString() );
 	}
 	
