@@ -117,7 +117,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
 
   /** Description of the Field. */
   public final static String version = "v2.04";
-  public final static int buildVer = 24;
+  public final static int buildVer = 25;
   
   public static int getBuild()
   {
@@ -821,7 +821,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
     }
   }
   
-  private class UploadTask extends WriteTask
+  private class UploadTask extends WriteTask implements ProgressUpdater
   {
     private short[] data;
     private boolean allowClockSet;
@@ -904,7 +904,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
         remoteConfig.updateCheckSums();
       }
 
-      int rc = io.writeRemote( remote.getBaseAddress(), data );
+      int rc = io.writeRemote( remote.getBaseAddress(), data, this );
 
       if ( rc != data.length )
       {
@@ -984,6 +984,12 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
         exitPrompt = false;
         dispatchEvent( new WindowEvent( RemoteMaster.this, WindowEvent.WINDOW_CLOSING ) );
       }
+    }
+
+    @Override
+    public void updateProgress( int value )
+    {
+      setInterfaceState( "UPLOADING:", value );
     }
   }
 
@@ -3502,6 +3508,11 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
 
   private void setInterfaceState( String state )
   {
+    setInterfaceState( state, null );
+  }
+
+  private void setInterfaceState( String state, Integer progress )
+  {
     interfaceText = state;
     if ( duEditor != null )
     {
@@ -3509,6 +3520,18 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
     }
     else if ( state != null )
     {
+      if ( progress != null ) {
+        if (interfaceState.isIndeterminate())
+          interfaceState.setIndeterminate( false );
+        interfaceState.setValue( progress );
+        state = state + " " + progress + "%";
+      }
+      else if (!interfaceState.isIndeterminate())
+      {
+        interfaceState.setIndeterminate( true );
+        interfaceState.setValue( 0 );
+      }
+
       interfaceState.setString( state );
       ( ( CardLayout )statusBar.getLayout() ).show( statusBar, "INTERFACE" );
     }

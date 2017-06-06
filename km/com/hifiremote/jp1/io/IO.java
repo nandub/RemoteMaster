@@ -3,6 +3,7 @@ package com.hifiremote.jp1.io;
 import java.io.File;
 
 import com.hifiremote.LibraryLoader;
+import com.hifiremote.jp1.ProgressUpdater;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -191,6 +192,22 @@ public abstract class IO
 
   /**
    * Write remote.
+   *
+   * @param address
+   *          the address
+   * @param sBuffer
+   *          the s buffer
+   * @param progressUpdater
+   *          allows updating the progress
+   * @return the int
+   */
+  public int writeRemote( int address, short[] sBuffer, ProgressUpdater progressUpdater )
+  {
+    return writeRemote( address, sBuffer, sBuffer.length, progressUpdater );
+  }
+
+  /**
+   * Write remote.
    * 
    * @param address
    *          the address
@@ -210,7 +227,28 @@ public abstract class IO
 
   /**
    * Write remote.
-   * 
+   *
+   * @param address
+   *          the address
+   * @param sBuffer
+   *          the s buffer
+   * @param length
+   *          the length
+   * @param progressUpdater
+   *          allows updating the progress
+   * @return the int
+   */
+  public int writeRemote( int address, short[] sBuffer, int length, ProgressUpdater progressUpdater )
+  {
+    byte[] buffer = new byte[ length ];
+    for ( int i = 0; i < length; ++i )
+      buffer[ i ] = ( byte )( sBuffer[ i ] & 0xFF );
+    return writeRemote( address, buffer, length, progressUpdater );
+  }
+
+  /**
+   * Write remote.
+   *
    * @param address
    *          the address
    * @param buffer
@@ -224,7 +262,41 @@ public abstract class IO
 
   /**
    * Write remote.
-   * 
+   *
+   * @param address
+   *          the address
+   * @param buffer
+   *          the buffer
+   * @param progressUpdater
+   *          allows updating the progress
+   * @return the int
+   */
+  public int writeRemote( int address, byte[] buffer, ProgressUpdater progressUpdater )
+  {
+    return writeRemote( address, buffer, buffer.length, progressUpdater );
+  }
+
+  /**
+   * Write remote.
+   *
+   * @param address
+   *          the address
+   * @param buffer
+   *          the buffer
+   * @param length
+   *          the length
+   * @param progressUpdater
+   *          allows updating the progress
+   * @return the int
+   */
+  public int writeRemote( int address, byte[] buffer, int length, ProgressUpdater progressUpdater )
+  {
+    return writeRemote( address, buffer, length );
+  }
+
+  /**
+   * Write remote.
+   *
    * @param address
    *          the address
    * @param buffer
@@ -233,5 +305,7 @@ public abstract class IO
    *          the length
    * @return the int
    */
-  public abstract int writeRemote( int address, byte[] buffer, int length );
+  public int writeRemote( int address, byte[] buffer, int length ) {
+    throw new RuntimeException("Not implemented");
+  }
 }

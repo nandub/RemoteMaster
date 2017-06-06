@@ -20,6 +20,7 @@ import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileSystemView;
 
+import com.hifiremote.jp1.ProgressUpdater;
 import org.apache.commons.lang3.StringEscapeUtils;
 
 import com.hifiremote.jp1.Scanner;
@@ -306,7 +307,7 @@ public class JPS extends IO
    * @see com.hifiremote.jp1.io.IO#writeRemote(int, byte[], int)
    */
   @Override
-  public int writeRemote( int address, byte[] buffer, int length )
+  public int writeRemote( int address, byte[] buffer, int length, ProgressUpdater progressUpdater )
   {
     try
     {
@@ -322,25 +323,27 @@ public class JPS extends IO
       ByteArrayOutputStream bao = new ByteArrayOutputStream();
       s.save( bao );
 
+      int maxChunkSize = 4096;
       String osName = System.getProperty( "os.name" );
       if ( osName.equals( "Linux" ) )
       {
-        FileChannel o = FileChannel.open( Paths.get( filePath ), StandardOpenOption.WRITE, StandardOpenOption.SYNC );
-        int dataWritten = 0, dataLeft = bao.size(), chunkSize;
-        byte[] data = bao.toByteArray();
-        while ( dataLeft > 0 )
-        {
-          chunkSize = Math.min(512, dataLeft);
-          o.write( ByteBuffer.wrap( data, dataWritten, chunkSize ) );
-          dataWritten += chunkSize;
-          dataLeft -= chunkSize;
-        }
-        o.close();
-      } else {
-        OutputStream o = new FileOutputStream( filePath );
-        o.write( bao.toByteArray() );
-        o.close();
+        maxChunkSize = 512;
       }
+      FileChannel o = FileChannel.open( Paths.get( filePath ), StandardOpenOption.WRITE, StandardOpenOption.SYNC );
+      int dataWritten = 0, total = bao.size(), dataLeft = total, chunkSize;
+      byte[] data = bao.toByteArray();
+      if ( progressUpdater != null )
+        progressUpdater.updateProgress( 0 );
+      while ( dataLeft > 0 )
+      {
+        chunkSize = Math.min( maxChunkSize, dataLeft );
+        o.write( ByteBuffer.wrap( data, dataWritten, chunkSize ) );
+        dataWritten += chunkSize;
+        dataLeft -= chunkSize;
+        if ( progressUpdater != null )
+          progressUpdater.updateProgress( (int)((double)dataWritten / total * 100) );
+      }
+      o.close();
       bao.close();
     }
     catch ( Exception e )

@@ -81,6 +81,11 @@ Changes for v2.04
 - Add experimental code for performing firmware update of XSight Touch/Color and clones (Graham)
 -- Private builds 19-24
 - Further experiments with the code for firmware updates, unfortunately none successful (Graham)
+-- Private build 25
+- Add support for tracking progress on progress bar for upload to remote (Marcin)
+- Change SimpleSet upload implementation for Windows and Mac OS X to one used for Linux (Marcin)
+- Potential fix for upload to OARUSB04G 4000 on Mac OS X (Marcin)
+- Implement progress tracking for uploading to SimpleSet remotes (Marcin)
 
 Changes for v2.03
 -- Alpha 8 --
