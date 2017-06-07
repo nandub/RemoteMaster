@@ -250,7 +250,8 @@ public class RawDataDialog extends JDialog implements ActionListener
       // Only use 4 chars of signature as remotes with a 4-char signature may not
       // have the remaining 4 junk chars being valid in a filename.
       int start = signature.startsWith( "USB" ) ? 3 : 0;
-      File rawFile = new File( signature.substring( start, start + 4 ) + ".ir" );
+      int end = Math.min(start + 4, signature.length());  // Be sure not to go past the end of the string
+      File rawFile = new File( signature.substring( start, end ) + ".ir" );
       chooser.setSelectedFile( rawFile );
       int returnVal = chooser.showSaveDialog( RawDataDialog.this );
       if ( returnVal == RMFileChooser.APPROVE_OPTION )

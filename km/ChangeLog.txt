@@ -86,6 +86,8 @@ Changes for v2.04
 - Change SimpleSet upload implementation for Windows and Mac OS X to one used for Linux (Marcin)
 - Potential fix for upload to OARUSB04G 4000 on Mac OS X (Marcin)
 - Implement progress tracking for uploading to SimpleSet remotes (Marcin)
+-- Private build 26
+- Check not to go past the length of the signature String when trying to save RAW download (Marcin)
 
 Changes for v2.03
 -- Alpha 8 --
