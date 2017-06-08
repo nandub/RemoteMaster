@@ -117,7 +117,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
 
   /** Description of the Field. */
   public final static String version = "v2.04";
-  public final static int buildVer = 26;
+  public final static int buildVer = 27;
   
   public static int getBuild()
   {
@@ -771,7 +771,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
         return null;
       }
       ZipFile zip = getSystemZipFile( remote );
-      String usbPID = Integer.toHexString( ( ( CommHID )io ).getRemotePID() ).toUpperCase();
+      String usbPID = String.format( "%04X", ( ( CommHID )io ).getRemotePID() );
       if ( !( zip.getName().contains( usbPID ) ) )
       {
         zip.close();
@@ -3384,7 +3384,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
       try 
       {
         int enabled = -1;
-        String hidPid = Integer.toHexString( ( ( CommHID )ioOut ).getRemotePID() ).toUpperCase();
+        String hidPid = String.format( "%04X", ( ( CommHID )ioOut ).getRemotePID() );
         String key = "HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Enum\\USB\\VID_06E7&PID_" + hidPid + "\\XSIGHT.\\Device Parameters";
         ProcessBuilder builder = new ProcessBuilder( "reg", "query", key );         
         Process reg = builder.start();
@@ -4108,7 +4108,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
       }
       else if ( source == powerManagementItem )
       {
-        URL url = new URL( "http://www.hifi-remote.com/forums/dload.php?action=file&file_id=12673" );
+        URL url = new URL( "http://www.hifi-remote.com/forums/dload.php?action=file&file_id=14564" );
         desktop.browse( url.toURI() );
       }
       else

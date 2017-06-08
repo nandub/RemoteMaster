@@ -88,6 +88,9 @@ Changes for v2.04
 - Implement progress tracking for uploading to SimpleSet remotes (Marcin)
 -- Private build 26
 - Check not to go past the length of the signature String when trying to save RAW download (Marcin)
+-- Private build 27
+- Update link in Help menu to the file of patches etc. for disabling Enhanced Power Management, as the file has had to be re-posted (Graham)
+- Correct the handling by CommHID of USB PIDs that have leading zeroes (Graham)
 
 Changes for v2.03
 -- Alpha 8 --

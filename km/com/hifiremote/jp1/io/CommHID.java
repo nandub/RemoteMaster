@@ -100,7 +100,7 @@ public class CommHID extends IO
 	          String prodString = HIDinfo[i].getProduct_string();
 	          thisPID = HIDinfo[i].getProduct_id();
 	          System.err.println( "Remote found: Manufacturer = " + manString + ", Product = " + prodString  
-	              + ", Product ID = " + Integer.toHexString( thisPID ).toUpperCase() );	
+	              + ", Product ID = " + String.format( "%04X", thisPID ) );	
 	          return thisPID;
 	        }
 	    }
@@ -317,7 +317,7 @@ public class CommHID extends IO
 
 	@Override
 	public String getRemoteSignature() {
-	  return "USB" + Integer.toHexString( thisPID ).toUpperCase();
+	  return "USB" + String.format( "%04X", thisPID );
 	}
 
 	@Override
@@ -738,7 +738,6 @@ public class CommHID extends IO
       try
       {
         HIDinfo = hid_mgr.listDevices();
-        waitForMillis( 500 );
         int count = HIDinfo == null ? 0 : HIDinfo.length;
         if ( count != lastCount )
         {
@@ -781,6 +780,7 @@ public class CommHID extends IO
           devHID.enableBlocking();
           return true;
         }
+        waitForMillis( 500 );
       }
       catch ( IOException e )
       {
@@ -867,7 +867,7 @@ public class CommHID extends IO
     List< String > changed = new ArrayList< String >();
     List< String > newFiles = new ArrayList< String >();
     List< String > forDeletion = new ArrayList< String >();
-    String zipName = "Upg" + Integer.toHexString( thisPID ) + ".zip";
+    String zipName = "Upg" + String.format( "%04X", thisPID ) + ".zip";
     if ( getVersionsFromUpgrade( zipName ) )
     {
       int[] upgNeeds = testForUpgrade( changed, newFiles, forDeletion );
@@ -1118,7 +1118,7 @@ public class CommHID extends IO
 	  ZipOutputStream zip = null;
     File outputDir = new File( RemoteMaster.getWorkDir(), "XSight" );
     boolean result = true;
-    String zipName = "Sys" + Integer.toHexString( thisPID ) + ".zip";
+    String zipName = "Sys" + String.format( "%04X", thisPID ) + ".zip";
     
     try 
     {
