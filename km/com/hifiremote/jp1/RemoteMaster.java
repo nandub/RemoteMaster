@@ -3385,29 +3385,44 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
       {
         int enabled = -1;
         String hidPid = String.format( "%04X", ( ( CommHID )ioOut ).getRemotePID() );
-        String key = "HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Enum\\USB\\VID_06E7&PID_" + hidPid + "\\XSIGHT.\\Device Parameters";
+        String key = "HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Enum\\USB\\VID_06E7&PID_" + hidPid;
         ProcessBuilder builder = new ProcessBuilder( "reg", "query", key );         
         Process reg = builder.start();
         BufferedReader output = new BufferedReader( new InputStreamReader( reg.getInputStream() ) );
         reg.waitFor();
         String line = null;
-        while ( ( line = output.readLine() ) != null )
-        {
-          if ( line.contains( "EnhancedPowerManagementEnabled" ) )
+        boolean done = false;
+        while ( !done && ( line = output.readLine() ) != null )
+        {  
+          if ( !line.startsWith( "HKEY" ) )
           {
-            int pos = line.indexOf( "0x" );
-            if ( pos >= 0 )
+            continue;
+          }
+          key = line + "\\Device Parameters";
+          builder = new ProcessBuilder( "reg", "query", key );
+          reg = builder.start();
+          BufferedReader out2 = new BufferedReader( new InputStreamReader( reg.getInputStream() ) );
+          reg.waitFor();
+          String line2 = null;
+          while ( ( line2 = out2.readLine() ) != null )
+          {
+            if ( line2.contains( "EnhancedPowerManagementEnabled" ) )
             {
-              line = line.substring( pos + 2 );
-              pos = line.indexOf( " " );
-              if ( pos > 0 )
+              int pos = line2.indexOf( "0x" );
+              if ( pos >= 0 )
               {
-                line = line.substring( 0, pos );
+                line2 = line2.substring( pos + 2 );
+                pos = line2.indexOf( " " );
+                if ( pos > 0 )
+                {
+                  line2 = line2.substring( 0, pos );
+                }
+                enabled = Integer.parseInt( line2, 16 );
+                System.err.println( "Enhanced Power Management is " + ( enabled > 0 ? "enabled" : "disabled" ) );
               }
-              enabled = Integer.parseInt( line, 16 );
-              System.err.println( "Enhanced Power Management is " + ( enabled > 0 ? "enabled" : "disabled" ) );
+              done = true;
+              break;
             }
-            break;
           }
         }
         if ( enabled < 0 )

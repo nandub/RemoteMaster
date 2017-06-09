@@ -87,22 +87,25 @@ public class CommHID extends IO
 	    hid_mgr = HIDManager.getInstance();
 	    System.err.println( "HIDManager " + hid_mgr + " devices are:" );
 	    HIDinfo = hid_mgr.listDevices();
+	    HIDdevice = null;
 	    if ( HIDinfo != null )
 	    {
 	      for (int i = 0; i<HIDinfo.length; i++)
 	      {
 	        System.err.println( "Device " + i + ": " + HIDinfo[i] );
-	      }
-	      for (int i = 0; i<HIDinfo.length; i++)  
 	        if (HIDinfo[i].getVendor_id() == 0x06E7) {
-	          HIDdevice = HIDinfo[i];
-	          String manString = HIDinfo[i].getManufacturer_string();
-	          String prodString = HIDinfo[i].getProduct_string();
-	          thisPID = HIDinfo[i].getProduct_id();
-	          System.err.println( "Remote found: Manufacturer = " + manString + ", Product = " + prodString  
-	              + ", Product ID = " + String.format( "%04X", thisPID ) );	
-	          return thisPID;
+            HIDdevice = HIDinfo[i];
 	        }
+	      }
+	      if ( HIDdevice != null )
+	      {
+	        String manString = HIDdevice.getManufacturer_string();
+	        String prodString = HIDdevice.getProduct_string();
+	        thisPID = HIDdevice.getProduct_id();
+	        System.err.println( "Remote found: Manufacturer = " + manString + ", Product = " + prodString  
+	            + ", Product ID = " + String.format( "%04X", thisPID ) );	
+	        return thisPID;
+	      }
 	    }
 	    else
 	    {
@@ -268,7 +271,8 @@ public class CommHID extends IO
 	  try  
 	  {
 	    getPIDofAttachedRemote();
-	    devHID = hid_mgr.openById(0x06E7, thisPID, null);
+//	    devHID = hid_mgr.openById(0x06E7, thisPID, null);
+	    devHID = HIDdevice.open();
 	    devHID.enableBlocking();
 	    List< Remote > remotes = RemoteManager.getRemoteManager().findRemoteBySignature( getRemoteSignature() );
 	    if ( remotes.size() > 0 )
@@ -287,7 +291,12 @@ public class CommHID extends IO
 	      {
 	        return MAXQ_ReopenRemote() ? "UPG" : "";
 	      }
-	      MAXQ_USB_getInfoAndSig();
+	      if ( !MAXQ_USB_getInfoAndSig() || E2address == 0 )
+	      {
+	        System.err.println( "GetInfoAndSig failed, taking data from RDF" );
+	        E2address = remote.getBaseAddress();
+	        E2size = remote.getEepromSize();
+	      }
 	    }
 	    else
 	    {
@@ -729,7 +738,7 @@ public class CommHID extends IO
     while ( true )
     { 
       long delay = Calendar.getInstance().getTimeInMillis() - waitStart; 
-      if ( delay > 15000 )
+      if ( delay > 60000 )
       {
         System.err.println( "Reconnection maximum wait exceeded" );
         return false;
@@ -738,6 +747,7 @@ public class CommHID extends IO
       try
       {
         HIDinfo = hid_mgr.listDevices();
+        HIDdevice = null;
         int count = HIDinfo == null ? 0 : HIDinfo.length;
         if ( count != lastCount )
         {
@@ -756,11 +766,14 @@ public class CommHID extends IO
         {
           for ( int i = 0; i<HIDinfo.length; i++ )
           {
-            if ( HIDinfo[i].getVendor_id() == 0x06E7 ) 
+            if ( HIDinfo[i] != null && HIDinfo[i].getVendor_id() == 0x06E7 ) 
             {
+              HIDdevice = HIDinfo[i];
+              System.err.println( "Remote is connected" );
               present = true;
               if ( devHID != null && !wasAbsent )
               {
+                System.err.println( "Closing connection" );
                 devHID.close();
               }
               break;
@@ -776,15 +789,25 @@ public class CommHID extends IO
         if ( present && wasAbsent )
         {
           System.err.println( "Reconnected after wait of " + delay + "ms" );
-          devHID = hid_mgr.openById(0x06E7, thisPID, null);
-          devHID.enableBlocking();
-          return true;
+//          devHID = hid_mgr.openById(0x06E7, thisPID, null);
+          devHID = HIDdevice.open();
+          if ( devHID != null )
+          {
+            System.err.println( "Connection opened" );
+            devHID.enableBlocking();
+            return true;
+          }
+          else
+          {
+            System.err.println( "Connection failed to open" );
+            return false;
+          }
         }
         waitForMillis( 500 );
       }
       catch ( IOException e )
       {
-        System.err.println( "Error: " + e );
+        e.printStackTrace();
         return false;        
       }
     }
@@ -929,7 +952,7 @@ public class CommHID extends IO
 
           boolean connectOK = true;
           if ( ( upgNeeds[ 1 ] == 0 || ( connectOK = waitForTouchReconnection() ) == true ) && 
-              waitForMillis( upgNeeds[ 1 ] == 1 ? 10000 : 0 ) &&
+              waitForMillis( upgNeeds[ 1 ] == 1 ? 60000 : 0 ) &&
               writeSystemFiles( zipName, changed ) &&
               waitForMillis( 300 ) &&
               getVersionsFromRemote() &&
