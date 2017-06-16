@@ -550,7 +550,8 @@ public class RemoteConfiguration
       String signature2 = null;
       RemoteManager rm = RemoteManager.getRemoteManager();
       List< Remote > remotes = null;
-      for ( int i = signature.length(); i >= 4; i-- )
+      int minLength = signature.startsWith( "USB" ) ? 7 : 4;
+      for ( int i = signature.length(); i >= minLength; i-- )
       {
         signature2 = signature.substring( 0, i );
         remotes = rm.findRemoteBySignature( signature2 );

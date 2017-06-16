@@ -93,6 +93,8 @@ Changes for v2.04
 - Correct the handling by CommHID of USB PIDs that have leading zeroes (Graham)
 - Modify testing of Enhanced Power Management to support XSight Lite/Plus and similar remotes (Graham)
 - If GetInfoAndSig fails for XSight Lite/Plus style of remote, take E2 address and size from RDF (Graham)
+-- Private build 28
+- If an unknown XSight is found during a raw download, give option to run diagnostics to identify it (Graham)
 
 Changes for v2.03
 -- Alpha 8 --

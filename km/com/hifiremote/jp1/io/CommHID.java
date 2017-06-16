@@ -27,6 +27,7 @@ import com.hifiremote.jp1.Hex;
 import com.hifiremote.jp1.Remote;
 import com.hifiremote.jp1.RemoteManager;
 import com.hifiremote.jp1.RemoteMaster;
+import com.hifiremote.jp1.RemoteMaster.NegativeDefaultButtonJOptionPane;
  
 public class CommHID extends IO 
 {
@@ -270,9 +271,22 @@ public class CommHID extends IO
 	public String openRemote(String portName) {
 	  try  
 	  {
-	    getPIDofAttachedRemote();
+	    devHID = null;
+	    if ( HIDdevice != null )
+	    {
+	      devHID = HIDdevice.open();
+	    }
+	    if ( devHID == null )
+	    {
+	      getPIDofAttachedRemote();
+	      devHID = HIDdevice.open();
+	    }
+	    if ( devHID == null )
+	    {
+	      return "";
+	    }
 //	    devHID = hid_mgr.openById(0x06E7, thisPID, null);
-	    devHID = HIDdevice.open();
+
 	    devHID.enableBlocking();
 	    List< Remote > remotes = RemoteManager.getRemoteManager().findRemoteBySignature( getRemoteSignature() );
 	    if ( remotes.size() > 0 )
@@ -283,7 +297,21 @@ public class CommHID extends IO
 	    }
 	    else
 	    {
-	      return null;
+	      // Unknown remote.  Treat for testing as XSight Lite style.
+	      remote = null;
+	      interfaceType = 0x106;
+	      E2address = 0;   // This will be changed on testing
+	      E2size = 0x400;  // Seek to read 1K during testing
+	      return "HID";
+	      
+	      
+//	      String title = "Unknown remote";
+//	      String message = "RMIR has found a remote that appears to be of the XSight type with\n"
+//	          + "signature " + getRemoteSignature() + ".  There is no RDF for this remote and without\n"
+//	          + "one, RMIR is unable to open it.  You may wish to post a message in the\n"
+//	          + "JP1 forums to seek help in creating an RDF for it.";
+//	      JOptionPane.showMessageDialog( null, message, title, JOptionPane.INFORMATION_MESSAGE );
+//	      return "";
 	    }
 	    if ( interfaceType == 0x106 )
 	    {
@@ -291,12 +319,18 @@ public class CommHID extends IO
 	      {
 	        return MAXQ_ReopenRemote() ? "UPG" : "";
 	      }
-	      if ( !MAXQ_USB_getInfoAndSig() || E2address == 0 )
+	      MAXQ_ReopenRemote();
+	      waitForMillis( 200 );
+	      if ( MAXQ_USB_getInfoAndSig() && E2address > 0 )
+	      {
+          System.err.println( "GetInfoAndSig succeeded" );
+        }
+	      else
 	      {
 	        System.err.println( "GetInfoAndSig failed, taking data from RDF" );
 	        E2address = remote.getBaseAddress();
 	        E2size = remote.getEepromSize();
-	      }
+	      } 
 	    }
 	    else
 	    {
@@ -350,22 +384,141 @@ public class CommHID extends IO
 	  return interfaceType;
 	}
 	
+	private String getTouchVersion()
+	{
+	  short[] v = firmwareFileVersions.get( "MCUFirmware" ).getData();
+	  return v == null ? "Unknown" : "" + v[5] + "." + v[4] + "." + v[2];
+	}
+	
+	private String getMAXQ_LiteVersion()
+	{
+	  byte[] cmdBuff = {(byte)0x00, (byte)0x03, (byte)0x53, (byte)0x00, (byte)0x50 };
+    if ( !writeMAXQcmdReport(cmdBuff) )
+    {
+      return "Unknown";
+    }
+    if ( !readMAXQreport() || dataRead[0] != 0 )
+    {
+      return "Unknown";
+    }
+    char[] c = new char[6];
+    for ( int i = 0; i < 6; i++ )
+    {
+      c[i] = ( char )inReport[ i + 3 ];
+    }
+    String v = new String( c );
+    return v.substring( 0, 4 ) + "." + v.substring( 4 );
+	}
+	
+	private int testRemote( byte[] buffer, int length )
+	{
+	  String title = "Unknown remote";
+	  String message = null;
+	  int numRead = 0;
+	  System.err.println();
+	  System.err.println( "Starting diagnostics for unknown XSight remote" );
+	  if ( getVersionsFromRemote( false ) )
+	  {
+	    message = "RMIR has found an XSight Touch style of remote with the following data:"
+	        + "\n    Signature = " + getRemoteSignature()
+	        + "\n    Firmware version = " + getTouchVersion();
+	  }
+	  else
+	  {
+	    System.err.println( "Not a Touch-style remote.  Testing for Lite-style.");
+	    waitForTouchReconnection();
+	    MAXQ_ReopenRemote();
+      waitForMillis( 200 );
+      if ( MAXQ_USB_getInfoAndSig() && E2address > 0 )
+      {
+        message = "RMIR has found an XSight Lite style of remote with the following data:"
+            + "\n    Signature = " + getRemoteSignature()
+            + "\n    Firmware version = " + getMAXQ_LiteVersion()
+            + "\n    EEPROM address = $" + Integer.toHexString( E2address )
+            + "\n    EEPROM size = $" + Integer.toHexString( E2size );
+        numRead = readMAXQ_Lite( E2address, buffer, length );
+      }
+      else
+      {
+        for ( int address = 0x00000; address < 0x30000; address += 0x400 )
+        {
+          waitForMillis( 100 );
+          numRead = readMAXQ_Lite( address, buffer, length );
+          if ( numRead > 0 )
+          {
+            message = "RMIR has found a remote possibly of the XSight Lite type the following data:"
+                + "\n    Signature = " + getRemoteSignature()
+                + "\n    Possible EEPROM address = $" + Integer.toHexString( address );
+            break;
+          }
+        }
+        if ( numRead <= 0 )
+        {
+          message = "RMIR has found a remote that appears to be of the XSight type with\n"
+              + "signature " + getRemoteSignature() + " but is unable to read it." ;
+        }
+      }
+	  }
+	  System.err.println( message );
+	  if ( numRead > 0 )
+	  {
+	    System.err.println( "The data read from the start of this area is:" );
+	    short[] e2Data = new short[ numRead ];
+	    for ( int i = 0; i < numRead; i++ )
+	    {
+	      e2Data[ i ] = ( short )( buffer[ i ] & 0xFF );
+	    }
+	    System.err.println( Hex.toString( e2Data, 32 ) );
+	  }
+	  message += "\n\nYou may wish to post a message in the JP1 forums to seek help in\n"
+	             + "creating an RDF for this remote.  If so, please post the rmaster.err\n"
+	             + "file that you will find in the RMIR installation folder and include a\n"
+	             + "link to that file in your message.";
+	  JOptionPane.showMessageDialog( null, message, title, JOptionPane.INFORMATION_MESSAGE );
+	  return numRead;
+	}
+	
 	int readMAXQ_Lite( int address, byte[] buffer, int length ) {  //MAXQ
-		byte[] cmdBuff = new byte[10];
+		System.err.println( "Starting MAXQ read of $" + Integer.toHexString( length ) + " bytes at $" + Integer.toHexString( address ) );
+	  byte[] cmdBuff = new byte[10];
 		assembleMAXQreadAddress(address, length, cmdBuff);
 		int numToRead = length + 4;  // total packet  length plus error byte and checksum
 		if (!writeMAXQcmdReport(cmdBuff))
-			return -1;
+		{
+		  System.err.println( "Failed to initiate MAXQ read" );
+		  return -1;
+		}
 		int numReports = 1 + numToRead/64;
 		int dataIdx = 0;
 		int reportOffset = 3;  //First report has length and error bytes
 		for (int i=0; i < numReports; i++) {
-			try {
-				devHID.readTimeout(inReport, 3000);
+			try 
+			{
+			  Arrays.fill( inReport, ( byte )0xFF );
+			  int numRead = devHID.readTimeout(inReport, 3000);
+			  if ( inReport[ 0 ] == 0xFF )
+			  {
+			    System.err.println( "Read attempt timed out for MAXQ report " + i + " of " + numReports );
+          return -1;
+			  }
+			  else if ( numRead != 64 )
+				{
+				  System.err.println( "Incomplete read of MAXQ report " + i + " of " + numReports + ", " + numRead + " bytes of 64 read" );
+				  return -1;
+				}
+				if ( i == 0 && inReport[ 2 ] != 0 )
+				{
+				  System.err.println( "Read of $" + Integer.toHexString( length ) + " bytes at $" + Integer.toHexString( address )
+				      + " returned error code " + inReport[ 2 ] );
+				  return -1;
+				}
 				System.arraycopy(inReport,reportOffset, buffer, dataIdx, 
 				                      Math.min(length - dataIdx, 64 - reportOffset));
-			} catch (Exception e) {
-				return -1;
+			} 
+			catch (Exception e) 
+			{
+			  System.err.println( "Failed at read of MAXQ report " + i + " of " + numReports );
+			  return -1;
 			}
 			dataIdx += 64 - reportOffset;
 			reportOffset = 0;
@@ -402,7 +555,25 @@ public class CommHID extends IO
 	public int readRemote( int address, byte[] buffer, int length ) 
 	{
 		int bytesRead = -1;
-		if ( interfaceType == 0x106 )
+		if ( remote == null )
+		{
+		  String title = "Unknown remote";
+		  String message = "This remote is not recognised by RMIR but appears to be of the\n"
+		                 + "XSight type.  RMIR can run further diagnostics to help identify\n"
+		                 + "it further.  This will typically take less than 30 seconds but in\n"
+		                 + "exceptional circumstances can take up to 10 minutes or so.\n\n"
+		                 + "Would you like to run these diagnostics now?";
+		  if ( NegativeDefaultButtonJOptionPane.showConfirmDialog( null, message, title, 
+		      JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE ) == JOptionPane.YES_OPTION )
+		  {
+		    bytesRead = testRemote( buffer, length );
+		  }
+		  else
+		  {
+		    return -1;
+		  }
+		}
+		else if ( interfaceType == 0x106 )
 		{
 			bytesRead = readMAXQ_Lite(address,buffer, length);
 		}
@@ -732,86 +903,136 @@ public class CommHID extends IO
 	
 	boolean waitForTouchReconnection()
 	{
-    long waitStart = Calendar.getInstance().getTimeInMillis();
-	  boolean wasAbsent = false;
-	  int lastCount = -1;
-    while ( true )
-    { 
-      long delay = Calendar.getInstance().getTimeInMillis() - waitStart; 
+    long waitStart = Calendar.getInstance().getTimeInMillis();	  
+	  try
+	  {
+	    devHID.close();
+	  }
+	  catch ( Exception e )
+	  {
+	    System.err.println( "Error in closing device after disconnection" );
+	  }
+	  
+	  devHID = null;
+	  waitForMillis( 2000 );
+	  while ( devHID == null )
+	  {
+	    long delay = Calendar.getInstance().getTimeInMillis() - waitStart; 
       if ( delay > 60000 )
       {
         System.err.println( "Reconnection maximum wait exceeded" );
         return false;
       }
-      boolean present = false;
-      try
-      {
-        HIDinfo = hid_mgr.listDevices();
-        HIDdevice = null;
-        int count = HIDinfo == null ? 0 : HIDinfo.length;
-        if ( count != lastCount )
-        {
-          System.err.println( "Number of devices = " + count + " after delay of " + delay + "ms" );
-          lastCount = count;
-//          if ( HIDinfo != null )
+	    try
+	    {
+	      devHID = HIDdevice.open();
+	      if ( devHID != null )
+	      {
+	        System.err.println( "Reopened device after wait of " + delay + "ms" );
+	        return true;
+	      }
+	      else
+	      {
+	        System.err.println( "Reopen attempt gave null device after wait of " + delay + "ms" );
+	      }
+	    }
+	    catch ( Exception e )
+	    {
+	      System.err.println( "Error in reopen attempt" );
+	    }
+	    waitForMillis( 500 );
+	  }
+	  return false;
+	}
+	
+
+
+//	  boolean wasAbsent = false;
+//	  while ( true )
+//	  {
+//	    long delay = Calendar.getInstance().getTimeInMillis() - waitStart; 
+//	    if ( delay > 60000 )
+//	    {
+//	      System.err.println( "Reconnection maximum wait exceeded" );
+//	      return false;
+//	    }
+//	    boolean present = false;
+//      try
+//      {
+//        HIDinfo = hid_mgr.listDevices();
+//        HIDdevice = null;
+//        int count = HIDinfo == null ? 0 : HIDinfo.length;
+//        if ( count != lastCount )
+//        {
+//          System.err.println( "Number of devices = " + count + " after delay of " + delay + "ms" );
+//          lastCount = count;
+////          if ( HIDinfo != null )
+////          {
+////            System.err.println( "Devices are:" );
+////            for (int i = 0; i<HIDinfo.length; i++)
+////            {
+////              System.err.println( "  Device " + i + ": " + HIDinfo[i] );
+////            }
+////          }
+//        }
+//        if ( HIDinfo != null )
+//        {
+//          for ( int i = 0; i<HIDinfo.length; i++ )
 //          {
-//            System.err.println( "Devices are:" );
-//            for (int i = 0; i<HIDinfo.length; i++)
+//            if ( HIDinfo[i] != null && HIDinfo[i].getVendor_id() == 0x06E7 ) 
 //            {
-//              System.err.println( "  Device " + i + ": " + HIDinfo[i] );
+//              HIDdevice = HIDinfo[i];
+//              System.err.println( "Remote is connected" );
+//              present = true;
+//              if ( devHID != null && !wasAbsent )
+//              {
+//                System.err.println( "Closing connection" );              
+//                try
+//                {
+//                  devHID.close();
+//                }
+//                catch ( IOException e )
+//                {
+//                  System.err.println( "IOException on attempting close" );
+//                }
+//                devHID = null;
+//              }
+//              break;
 //            }
 //          }
-        }
-        if ( HIDinfo != null )
-        {
-          for ( int i = 0; i<HIDinfo.length; i++ )
-          {
-            if ( HIDinfo[i] != null && HIDinfo[i].getVendor_id() == 0x06E7 ) 
-            {
-              HIDdevice = HIDinfo[i];
-              System.err.println( "Remote is connected" );
-              present = true;
-              if ( devHID != null && !wasAbsent )
-              {
-                System.err.println( "Closing connection" );
-                devHID.close();
-              }
-              break;
-            }
-          }
-        }
-        if ( !wasAbsent && !present )
-        {
-          System.err.println( "Disconnected after wait of " + delay + "ms" );
-          wasAbsent = true;
-        }
-
-        if ( present && wasAbsent )
-        {
-          System.err.println( "Reconnected after wait of " + delay + "ms" );
-//          devHID = hid_mgr.openById(0x06E7, thisPID, null);
-          devHID = HIDdevice.open();
-          if ( devHID != null )
-          {
-            System.err.println( "Connection opened" );
-            devHID.enableBlocking();
-            return true;
-          }
-          else
-          {
-            System.err.println( "Connection failed to open" );
-            return false;
-          }
-        }
-        waitForMillis( 500 );
-      }
-      catch ( IOException e )
-      {
-        e.printStackTrace();
-        return false;        
-      }
-    }
-	}
+//        }
+//        if ( !wasAbsent && !present )
+//        {
+//          System.err.println( "Disconnected after wait of " + delay + "ms" );
+//          wasAbsent = true;
+//        }
+//
+//        if ( present && wasAbsent )
+//        {
+//          System.err.println( "Reconnected after wait of " + delay + "ms" );
+////          devHID = hid_mgr.openById(0x06E7, thisPID, null);
+//          devHID = HIDdevice.open();
+//          if ( devHID != null )
+//          {
+//            System.err.println( "Connection opened" );
+//            devHID.enableBlocking();
+//            return true;
+//          }
+//          else
+//          {
+//            System.err.println( "Connection failed to open" );
+//            return false;
+//          }
+//        }
+//        waitForMillis( 500 );
+//      }
+//      catch ( Exception e )
+//      {
+//        e.printStackTrace();
+//        return false;        
+//      }
+//    }
+//	}
 	
 	/**
 	 *  return array elements are:
@@ -881,7 +1102,8 @@ public class CommHID extends IO
 	  int status = 0;
 	  
 	  // Read firmware file versions from remote
-	  if ( !getVersionsFromRemote() )
+	  if ( !getVersionsFromRemote( true ) 
+	      || !getVersionsFromRemote( false ) )
 	  {
 	    return 0;
 	  }
@@ -898,6 +1120,7 @@ public class CommHID extends IO
       // TESTING
 //      upgNeeds = new int[]{1,1,1};
 //      changed.clear();
+//      changed = Arrays.asList( "lang.fr" );
 //      newFiles.clear();
 //      forDeletion.clear();
 //      forDeletion = Arrays.asList( "Pacific.rgn" );
@@ -937,6 +1160,13 @@ public class CommHID extends IO
           upgradeSuccess = true;
           if ( upgNeeds[ 1 ] > 0 )
           {
+            if ( !getVersionsFromRemote( true ) 
+                || !getVersionsFromRemote( false )
+                || !getVersionsFromRemote( false ) )
+            {
+              return 0;
+            }
+            waitForMillis( 7000 );
             // Put remote into update mode with type 0x20 packet.
             // Change packet type to 0x27 for testing without entering update mode.
             writeTouchUSBReport( new byte[]{0x20}, 1 );
@@ -955,13 +1185,13 @@ public class CommHID extends IO
               waitForMillis( upgNeeds[ 1 ] == 1 ? 60000 : 0 ) &&
               writeSystemFiles( zipName, changed ) &&
               waitForMillis( 300 ) &&
-              getVersionsFromRemote() &&
+              getVersionsFromRemote( true ) &&
               writeSystemFiles( zipName, newFiles ) &&
               waitForMillis( 300 ) &&
-              getVersionsFromRemote() &&
+              getVersionsFromRemote( false ) &&
               deleteSystemFiles( forDeletion ) &&
               waitForMillis( 300 ) &&
-              getVersionsFromRemote() &&
+              getVersionsFromRemote( false ) &&
               upgradeSuccess )
           {
             message = "Upgrade succeeded.  Continuing with normal download.";
@@ -1236,7 +1466,7 @@ public class CommHID extends IO
     return result;
 	}
 	
-	private boolean getVersionsFromRemote()
+	private boolean getVersionsFromRemote( boolean getSerial )
 	{
 	  byte[] o = new byte[2];
     o[0]=1;
@@ -1263,6 +1493,10 @@ public class CommHID extends IO
       o[1] = ssdIn[ 1 ];
       // Send acknowledgement.
       writeTouchUSBReport( o, 2 );
+    }
+    if ( !getSerial )
+    {
+      return true;
     }
     writeTouchUSBReport( new byte[]{0x27}, 1 );
     if ( readTouchUSBReport( ssdIn ) < 0 )

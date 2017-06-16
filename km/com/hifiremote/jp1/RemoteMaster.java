@@ -117,7 +117,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
 
   /** Description of the Field. */
   public final static String version = "v2.04";
-  public final static int buildVer = 27;
+  public final static int buildVer = 28;
   
   public static int getBuild()
   {
@@ -577,7 +577,8 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
         System.err.println( "Searching for RDF" );
         if ( remotes == null )
         {
-          for ( int i = sig.length(); i >= 4; i-- )
+          int minLength = sig.startsWith( "USB" ) ? 7 : 4;
+          for ( int i = sig.length(); i >= minLength; i-- )
           {
             sig2 = sig.substring( 0, i );
             remotes = rm.findRemoteBySignature( sig2 );
