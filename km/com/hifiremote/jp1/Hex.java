@@ -42,15 +42,18 @@ public class Hex implements Cloneable, Comparable< Hex >
     data = parseHex( text );
   }
 
-  /**
-   * Instantiates a new hex.
-   * 
-   * @param data
-   *          the data
-   */
   public Hex( short[] data )
   {
     this.data = data;
+  }
+  
+  public Hex( byte[] ba )
+  {
+    data = new short[ ba.length ];
+    for ( int i = 0; i < ba.length;i++ )
+    {
+      data[ i ] = ( short )( ba[ i ] & 0xFF );
+    }
   }
 
   /**
@@ -124,6 +127,17 @@ public class Hex implements Cloneable, Comparable< Hex >
       data = new short[ 0 ];
     }
   }
+  
+  public byte[] toByteArray()
+  {
+    byte[] ba = new byte[ data.length ];
+    for ( int i = 0; i < data.length; i++ )
+    {
+      ba[ i ] = ( byte )( data[ i ] & 0xFF );
+    }
+    return ba;
+  }
+  
 
   /**
    * Length.
@@ -469,6 +483,17 @@ public class Hex implements Cloneable, Comparable< Hex >
       rc.append( str );
     }
     return rc.toString().toUpperCase();
+  }
+  
+  public static String toString( byte[] data, int breakAt, int offset, int length )
+  {
+    int size = Math.min( length,  data.length - offset );
+    short[] buffer = new short[ size ];
+    for ( int i = 0; i < size; i++ )
+    {
+      buffer[ i ] = ( short )( data[ offset + i ] & 0xFF );
+    }
+    return toString( buffer, breakAt );
   }
 
   /**

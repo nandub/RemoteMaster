@@ -128,6 +128,10 @@ public class LayoutPanel extends KMPanel implements ActionListener, Runnable
       public void componentResized( ComponentEvent event )
       {
         int width = scrollPane.getViewport().getExtentSize().width;
+        if ( updated )
+        {
+          dividerLocation = splitPane.getDividerLocation();
+        }
         Remote remote = deviceUpgrade.getRemote();
         int height = ( width * remote.getHeight() ) / remote.getWidth();
         Dimension d = new Dimension( width, height );
@@ -417,6 +421,7 @@ public class LayoutPanel extends KMPanel implements ActionListener, Runnable
    */
   public void update()
   {
+    updated = true;
     Remote r = deviceUpgrade.getRemote();
     maps = r.getImageMaps( deviceUpgrade.getDeviceType() );
     if ( screenIndex >= maps.length )
@@ -425,7 +430,10 @@ public class LayoutPanel extends KMPanel implements ActionListener, Runnable
     map = maps[ screenIndex ];
     image = map.getImageFile() != null ? new ImageIcon( map.getImageFile().getAbsolutePath() ) : null;
 
-    splitPane.setDividerLocation( r.getWidth() + scrollPane.getVerticalScrollBar().getWidth() );
+    double frameWidth = RemoteMaster.getFrame().getSize().getWidth();
+    int imageWidth = r.getWidth() + scrollPane.getVerticalScrollBar().getWidth();
+    int newWidth = dividerLocation > 0 ? dividerLocation : Math.min(imageWidth, ( int )( frameWidth * 0.5 ) );
+    splitPane.setDividerLocation( newWidth );
 
     boolean found = false;
     for ( ButtonShape shape : map.getShapes() )
@@ -1169,6 +1177,10 @@ public class LayoutPanel extends KMPanel implements ActionListener, Runnable
   private JPanel remotePanel = null;
   
   private SelectionPanel selector = null;
+  
+  private int dividerLocation = 0;
+  
+  private boolean updated = false;
 
   @Override
   public void run()

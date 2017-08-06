@@ -428,6 +428,7 @@ public class SetupPanel extends KMPanel implements ActionListener, ItemListener,
     if ( p == null )
     {
       protocolList.setSelectedIndex( -1 );
+      updateInProgress = false;
       return;
     }
     

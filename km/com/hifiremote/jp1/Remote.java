@@ -3412,7 +3412,7 @@ public class Remote implements Comparable< Remote >
     String name = getProcessor().getName();
     if ( name.equals( "HCS08" ) )
     {
-      return "JP1.2";
+      return segmentTypes == null ? "JP1.2" : "JPUSB";
     }
     else if ( name.equals( "S3F80" ) )
     {

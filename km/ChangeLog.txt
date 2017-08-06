@@ -95,6 +95,17 @@ Changes for v2.04
 - If GetInfoAndSig fails for XSight Lite/Plus style of remote, take E2 address and size from RDF (Graham)
 -- Private build 28
 - If an unknown XSight is found during a raw download, give option to run diagnostics to identify it (Graham)
+-- Private build 29
+- Remove the test for Touch-style remote from diagnostics of build 28 in case it crashes Lite-style remote (Graham)
+-- Private build 34
+- Fix bug in Device Upgrade Editor preventing changes to setup code holding if no protocol is selected (Graham)
+- Preserve divider position in Layout Panel when switching between tabs of Device Upgrade Editor (Graham)
+-- Private builds 35-39
+- Modify CommHID to support Monster Revolution 200, an XSight-style remote with HCS08 processor (Graham)
+- Enhance the semantics of the RDF [General] section entry SoftDev=Y,Y to apply to remotes with segments, a change needed for the Monster (Graham)
+-- Private build 40
+- Add support for firmware upgrades for XSight Touch-style remotes (Graham)
+- Add new file, RMIR.sys, containing the data needed to support XSight firmware upgrades (Graham) 
 
 Changes for v2.03
 -- Alpha 8 --

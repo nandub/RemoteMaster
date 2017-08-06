@@ -177,18 +177,18 @@ public class RemoteConfiguration
     int e2FormatOffset = remote.getE2FormatOffset();
     if ( e2FormatOffset >= 0 )
     {
-      char[] val = new char[ 6 ];
-      boolean isNull = true;
-      for ( int i = 0; i < 6; i++ )
+      StringBuilder sb = new StringBuilder();
+      for ( int i = 0; i < 20 - e2FormatOffset; i++ )
       {
         int n = data[ e2FormatOffset + i ];
-        val[ i ] = ( char )n;
-        if ( n != 0xFF )
+        if ( n == 0xFF )
         {
-          isNull = false;
+          break;
         }
+        sb.append( ( char )n );
       }
-      eepromFormatVersion = isNull ? null : new String( val );             
+      String e2f = sb.toString();
+      eepromFormatVersion = e2f.isEmpty() ? null : e2f;                         
     }
     
     LinkedHashMap< GeneralFunction, Integer > iconrefMap = null;
@@ -423,6 +423,10 @@ public class RemoteConfiguration
       if ( favWidth > 0 )
       {
         favKeyDevButton.setFavoritewidth( favWidth );
+      }
+      if ( deviceButtonList == null )
+      {
+        deviceButtonList = new ArrayList< DeviceButton >();
       }
     }
     
@@ -1894,7 +1898,7 @@ public class RemoteConfiguration
     return;
   }
   
-  private void decryptObjcode( Hex code )
+  public static void decryptObjcode( Hex code )
   {
     for (  int i = 0; i < code.length(); i++ )
     {
@@ -1902,7 +1906,7 @@ public class RemoteConfiguration
     }
   }
   
-  private Hex encryptObjcode( Hex code )
+  public static Hex encryptObjcode( Hex code )
   {
     Hex hex = new Hex( code );
     for (  int i = 0; i < hex.length(); i++ )
@@ -2730,9 +2734,10 @@ public class RemoteConfiguration
 //        }
 //      }
 //    }
-    else if ( remote.usesEZRC() )
+    if ( remote.usesEZRC() )
     {
-      if ( !remote.isSSD() )
+      boolean allowEmpty = remote.getSoftDevices() != null && remote.getSoftDevices().getAllowEmptyButtonSettings();
+      if ( !remote.isSSD() && !allowEmpty )
       {
         List< DeviceButton > missing = new ArrayList< DeviceButton >();
         List< Integer > missingCodes = new ArrayList< Integer >();
@@ -3834,18 +3839,18 @@ public class RemoteConfiguration
     int e2FormatOffset = remote.getE2FormatOffset();
     if ( e2FormatOffset >= 0 )
     {
-      char[] val = new char[ 6 ];
-      boolean isNull = true;
-      for ( int i = 0; i < 6; i++ )
+      StringBuilder sb = new StringBuilder();
+      for ( int i = 0; i < 20 - e2FormatOffset; i++ )
       {
         int n = data[ e2FormatOffset + i ];
-        val[ i ] = ( char )n;
-        if ( n != 0xFF )
+        if ( n == 0xFF )
         {
-          isNull = false;
+          break;
         }
+        sb.append( ( char )n );
       }
-      eepromFormatVersion = isNull ? null : new String( val );               
+      String e2f = sb.toString();
+      eepromFormatVersion = e2f.isEmpty() ? null : e2f;               
     }
     
 //    String chk = Integer.toHexString( remote.getCheckSums()[ 0 ].calculateCheckSum( data, 2, 0x0FFF ) & 0xFFFF );
@@ -4089,6 +4094,10 @@ public class RemoteConfiguration
     {
       updateReferences();
       swapFunctions( null );
+      if ( deviceButtonList == null )
+      {
+        deviceButtonList = new ArrayList< DeviceButton >();
+      }
     }
   }
   
@@ -5155,7 +5164,7 @@ public class RemoteConfiguration
         }
         if ( eepromFormatVersion != null )
         {
-          for ( int i = 0; i < 6; i++ )
+          for ( int i = 0; i < eepromFormatVersion.length(); i++ )
           {
             data[ pos++ ] = ( short )eepromFormatVersion.charAt( i );
           }
@@ -6561,9 +6570,26 @@ public class RemoteConfiguration
     if ( segments.get( 0 ) != null )
     {
       segments.get( 0 ).clear();
-      for ( DeviceButton db : deviceButtons )
+    }
+
+    // In remotes with segments, "allow empty settings" is used to signify that device segments should be
+    // created only for assigned device buttons - the interpretation of "empty settings" here being "missing
+    // device segments".
+    boolean allowEmpty = remote.getSoftDevices() != null && remote.getSoftDevices().getAllowEmptyButtonSettings();
+    for ( DeviceButton db : deviceButtons )
+    {
+      if ( !allowEmpty || db.getSegment() != null && db.getDeviceSlot( db.getSegment().getHex().getData() ) != 0xFFFF )
       {
-        segments.get( 0 ).add(  db.getSegment() );
+        // To keep conformity with earlier builds, which only considered allowEmpty==false, create a missing
+        // type 0 segment list only when allowEmpty==true.
+        if ( allowEmpty && segments.get( 0 ) == null )
+        {
+          segments.put( 0, new ArrayList< Segment >() );
+        }
+        if ( segments.get( 0 ) != null )
+        {
+          segments.get( 0 ).add(  db.getSegment() );
+        }
       }
     }
     if ( remote.getSegmentTypes().contains( 0x15 ) || remote.getSegmentTypes().contains( 0x11 ) )
@@ -6581,9 +6607,12 @@ public class RemoteConfiguration
       
       if ( remote.getSegmentTypes().contains( 0x15 ) )
       {
-        Hex hex = createNameHex( map );
         segments.put( 0x15, new ArrayList< Segment >() );
-        segments.get( 0x15 ).add( new Segment( 0x15, 0xFF, hex ) );
+        if ( !map.isEmpty() )
+        {
+          Hex hex = createNameHex( map );
+          segments.get( 0x15 ).add( new Segment( 0x15, 0xFF, hex ) );
+        }
       }
       if ( remote.getSegmentTypes().contains( 0x11 ) )
       {
@@ -7267,16 +7296,16 @@ public class RemoteConfiguration
       if ( dev.getButtonRestriction() != DeviceButton.noButton )
       {
         devDependent.add( dev );
-        if ( hasSegments() && dev.getSegment() != null )
-        {
-          Segment segment = dev.getSegment();
-          int segSize = segment.getHex().length();
-          int protOffset = segment.getHex().get( 2 );
-          if ( protOffset > 0 )
-          {
-            dev.addProtocolMemoryUsage( segSize - protOffset - 4 );
-          }
-        }
+//        if ( hasSegments() && dev.getSegment() != null )
+//        {
+//          Segment segment = dev.getSegment();
+//          int segSize = segment.getHex().length();
+//          int protOffset = segment.getHex().get( 2 );
+//          if ( protOffset > 0 )
+//          {
+//            dev.addProtocolMemoryUsage( segSize - protOffset - 4 );
+//          }
+//        }
       }
     }
     
@@ -7359,6 +7388,11 @@ public class RemoteConfiguration
             segments.put( upgType, new ArrayList< Segment >() );
           }
           segments.get( upgType ).add( new Segment( upgType, flags, segData, dev ) );
+
+          if ( dev.getButtonRestriction() != DeviceButton.noButton && code != null )
+          {
+            dev.addProtocolMemoryUsage( code.length() );
+          }
         }
       }
       
@@ -7419,9 +7453,16 @@ public class RemoteConfiguration
             {
               du.setSoftButtonSegment( segment );
             }
-            segments.get( 0x0A ).add( segment );
+            // In remotes with segments, "allow empty settings" is used to signify that device segments should be
+            // created only for assigned device buttons - the interpretation of "empty settings" here being "missing
+            // device segments".  Correspondingly, type 0x0A segments should also only be created for assigned device buttons.
+            boolean allowEmpty = remote.getSoftDevices() != null && remote.getSoftDevices().getAllowEmptyButtonSettings();
+            if ( !allowEmpty || du != null )
+            {
+              segments.get( 0x0A ).add( segment );
+            }
           }
-          
+
           map.clear();
           if ( remote.getSegmentTypes().contains( 0x20 ) && du != null && !du.getHardButtons().isEmpty())
           {
@@ -8937,9 +8978,12 @@ public class RemoteConfiguration
         work.add( makeItem( "delay", new Hex( new short[]{ delay } ), true ) );
       }
       boolean assistantDone = false;
-      if ( isSysMacro )
+      if ( isSysMacro  )
       {
         work.add( makeItem( "issystemmacro", new Hex( new short[]{ 1 } ), true ) );
+      }
+      if ( isSysMacro )
+      {
         assistantDone = true;
         work.add( makeItem( "assistant", new Hex( 0 ), false ) );
       }

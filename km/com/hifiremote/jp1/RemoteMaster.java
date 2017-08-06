@@ -117,7 +117,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
 
   /** Description of the Field. */
   public final static String version = "v2.04";
-  public final static int buildVer = 28;
+  public final static int buildVer = 40;
   
   public static int getBuild()
   {
@@ -3377,74 +3377,32 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
         }
       }
     }
-    if ( ioOut != null && ioOut.getInterfaceName().equals( "CommHID" ) 
-        && System.getProperty( "os.name" ).startsWith( "Windows" )
-        && Float.parseFloat( System.getProperty( "os.version" ) ) >= 6.3f )
+    
+    if ( ioNeedsPowerManagementCheck( ioOut ) )
     {
-      // os.version 6.3 is Windows 8.1
-      try 
+      CommHID ioHID = ( CommHID )ioOut;
+      int enabled = ioHID.getEnhancedPowerManagementStatus();
+      if ( enabled < 0 )
       {
-        int enabled = -1;
-        String hidPid = String.format( "%04X", ( ( CommHID )ioOut ).getRemotePID() );
-        String key = "HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Enum\\USB\\VID_06E7&PID_" + hidPid;
-        ProcessBuilder builder = new ProcessBuilder( "reg", "query", key );         
-        Process reg = builder.start();
-        BufferedReader output = new BufferedReader( new InputStreamReader( reg.getInputStream() ) );
-        reg.waitFor();
-        String line = null;
-        boolean done = false;
-        while ( !done && ( line = output.readLine() ) != null )
-        {  
-          if ( !line.startsWith( "HKEY" ) )
-          {
-            continue;
-          }
-          key = line + "\\Device Parameters";
-          builder = new ProcessBuilder( "reg", "query", key );
-          reg = builder.start();
-          BufferedReader out2 = new BufferedReader( new InputStreamReader( reg.getInputStream() ) );
-          reg.waitFor();
-          String line2 = null;
-          while ( ( line2 = out2.readLine() ) != null )
-          {
-            if ( line2.contains( "EnhancedPowerManagementEnabled" ) )
-            {
-              int pos = line2.indexOf( "0x" );
-              if ( pos >= 0 )
-              {
-                line2 = line2.substring( pos + 2 );
-                pos = line2.indexOf( " " );
-                if ( pos > 0 )
-                {
-                  line2 = line2.substring( 0, pos );
-                }
-                enabled = Integer.parseInt( line2, 16 );
-                System.err.println( "Enhanced Power Management is " + ( enabled > 0 ? "enabled" : "disabled" ) );
-              }
-              done = true;
-              break;
-            }
-          }
-        }
-        if ( enabled < 0 )
-        {
-          System.err.println( "Enhanced Power Management is not supported" );
-        }
-        else if ( enabled > 0 )
-        {
-          String title = "Enhanced Power Management";
-          String message = 
-              "Uploading or downloading from this remote requires Enhanced Power Management\n"
-                  + "to be disabled in Windows.  A zip file with instructions on how to do this,\n"
-                  + "including registry patches to do so and an explanation of how to do so manually\n"
-                  + "with regedit, is available in the JP1 forum.  There is a link to this file from\n"
-                  + "the Help menu.  The PID of your remote, needed for these instructions, is " + hidPid + ".";
-          JOptionPane.showMessageDialog( null, message, title, JOptionPane.ERROR_MESSAGE );
-          ioOut = null;
-        }
+        System.err.println( "Enhanced Power Management is not supported" );
       }
-      catch( Exception e )
-      {}
+      else if ( enabled > 0 )
+      {
+        String title = "Enhanced Power Management";
+        String message = 
+            "Uploading or downloading from this remote requires Enhanced Power Management\n"
+                + "to be disabled in Windows.  A zip file with instructions on how to do this,\n"
+                + "including registry patches to do so and an explanation of how to do so manually\n"
+                + "with regedit, is available in the JP1 forum.  There is a link to this file from\n"
+                + "the Help menu.  It is preferable to use regedit to edit the Windows registry\n"
+                + "directly if you feel confident in doing so.  The registry key you need to change\n"
+                + "is at:\n\n" + ( ( CommHID )ioOut ).getRegistryKey() + "\n\n"
+                + "where you need to change the value of \"EnhancedPowerManagementEnabled\" from 1 to 0\n"
+                + "by right-clicking and selecting Modify.\n\n"
+                + "After this change, you need to disconnect and reconnect the remote from the PC.";
+        JOptionPane.showMessageDialog( null, message, title, JOptionPane.ERROR_MESSAGE );
+        ioOut = null;
+      }
     }
     return ioOut;
   }
@@ -3452,7 +3410,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
   private IO testInterface( IO ioIn, String portName, File file, Use use )
   {
     String ioName = ioIn.getInterfaceName();
-    String osName = System.getProperty( "os.name" );
+//    String osName = System.getProperty( "os.name" );
     if ( file != null && !ioName.equals( "JPS" ) )
     {
       return null;
@@ -3486,6 +3444,14 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
     {
       return null;
     }
+  }
+  
+  public static boolean ioNeedsPowerManagementCheck( IO io )
+  {
+    // True if interface is CommHID and os.version >= 6.3, which is Windows 8.1
+    return io != null && io.getInterfaceName().equals( "CommHID" ) 
+        && System.getProperty( "os.name" ).startsWith( "Windows" )
+        && Float.parseFloat( System.getProperty( "os.version" ) ) >= 6.3f;
   }
   
   public boolean usesNonModalDeviceEditor()
