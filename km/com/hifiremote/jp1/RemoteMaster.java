@@ -41,6 +41,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -117,7 +118,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
 
   /** Description of the Field. */
   public final static String version = "v2.04";
-  public final static int buildVer = 40;
+  public final static int buildVer = 41;
   
   public static int getBuild()
   {
@@ -145,7 +146,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
 
   public enum Use
   {
-    DOWNLOAD, READING, UPLOAD, SAVING, SAVEAS, EXPORT
+    DOWNLOAD, READING, UPLOAD, SAVING, SAVEAS, EXPORT, RAWDOWNLOAD
   }
   
   public static int defaultToolTipTimeout = 5000;
@@ -227,6 +228,8 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
   private JRadioButtonMenuItem defaultDelayItem = null;
   
   private JRadioButtonMenuItem specifiedDelayItem = null;
+  
+  public static JCheckBoxMenuItem noUpgradeItem = null;
 
   // Advanced menu items
   private JMenuItem cleanUpperMemoryItem = null;
@@ -245,7 +248,17 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
   
   private static JMenuItem parseIRDBItem = null;
   
+  private static JMenuItem xziteOpsItem = null;
+  
+  private static JMenuItem xziteReformatItem = null;
+  
+  private static JMenuItem verifyXZITEfilesItem = null;
+  
+  private static JMenu xziteOps = null;
+  
   private static JMenuItem extractSSItem = null;
+  
+  public static JCheckBoxMenuItem forceUpgradeItem = null;
   
   private static JMenuItem analyzeMAXQprotocols = null;
 
@@ -466,10 +479,11 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
     private JRadioButton protocols = new JRadioButton( "Protocol" );
   }
 
-  private class DownloadTask extends SwingWorker< RemoteConfiguration, Void >
+  private class DownloadTask extends SwingWorker< RemoteConfiguration, Void > implements ProgressUpdater
   {
     private File file = null;
     private Use use = null;
+    private IO io = null;
     
     public DownloadTask()
     {
@@ -484,10 +498,24 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
     }
     
     @Override
+    public void updateProgress( int value )
+    {
+      if ( value < 0 )
+      {
+        setInterfaceState( "DOWNLOADING..." );
+      }
+      else
+      {
+        String name = io != null ? io.getProgressName() : null;
+        setInterfaceState( name != null ? name : "PREPARING:", value );
+      }
+    }
+
+    @Override
     protected RemoteConfiguration doInBackground() throws Exception
     {
       clearAllInterfaces();
-      IO io = getOpenInterface( file, use );
+      IO io = getOpenInterface( file, use, this );
       if ( io == null )
       {
         setInterfaceState( null );
@@ -498,6 +526,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
 
       // See comment in Hex.getRemoteSignature( short[] ) for why the line below was not safe
       // String sig = io.getRemoteSignature();
+      this.io = io;
       int baseAddress = io.getRemoteEepromAddress();
       System.err.println( "Base address = $" + Integer.toHexString( baseAddress ).toUpperCase() );
       String sigString = getIOsignature( io, baseAddress );
@@ -743,21 +772,20 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
     }
   };
 
-  private class UploadSystemFile extends SwingWorker< Void, Void >
+  private class XziteFileTask extends SwingWorker< Void, Void > implements ProgressUpdater
   {
-    private Remote remote = null;
-    private ZipEntry entry = null;
+    private String op = null;
+    private IO io = null;
     
-    private UploadSystemFile( Remote remote, ZipEntry entry )
+    public XziteFileTask( String op )
     {
-      this.remote = remote;
-      this.entry = entry;
+      this.op = op;
     }
     
     @Override
     protected Void doInBackground() throws Exception
     {
-      IO io = getOpenInterface( null, Use.UPLOAD );
+      IO io = getOpenInterface( null, Use.UPLOAD, this );
       if ( io == null )  
       {
         JOptionPane.showMessageDialog( RemoteMaster.this, "No remotes found!" );
@@ -765,60 +793,87 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
         return null;
       }
       System.err.println( "Interface opened successfully" );
+      this.io = io;
+      
       if ( !( io instanceof CommHID ) )
       {
         JOptionPane.showMessageDialog( RemoteMaster.this, "Not an XSight remote!" );
         setInterfaceState( null );
         return null;
       }
-      ZipFile zip = getSystemZipFile( remote );
-      String usbPID = String.format( "%04X", ( ( CommHID )io ).getRemotePID() );
-      if ( !( zip.getName().contains( usbPID ) ) )
-      {
-        zip.close();
-        JOptionPane.showMessageDialog( RemoteMaster.this, "The chosen file is not for this remote!" );
-        setInterfaceState( null );
-        return null;
-      }
+      CommHID ioHID = ( CommHID )io;
 
-      System.err.println( "Uploading system file " + entry.getName() );
-      long length = entry.getSize();
-      InputStream in = zip.getInputStream( entry );
-      byte[] data = RemoteMaster.readBinary( in, ( int )length );
-      zip.close();
-      ( ( CommHID )io ).writeSystemFile( entry.getName(), data );
-      if ( verifyUploadItem.isSelected() )
+      if ( !op.equals( "Delete/Save" ) )
       {
-        System.err.println( "Verifying upload." );
-        byte[] readBytes = ( ( CommHID )io ).readSystemFile( entry.getName() );
-        io.closeRemote();
-
-        if ( readBytes.length != data.length )
+        File sysFile = RemoteMaster.getRmirSys();
+        String message = null;
+        if ( ioHID.setFileData( sysFile ) )
         {
-          System.err.println( "Upload verify failed: read back " + readBytes.length
-              + " bytes, but expected " + data.length + "." );
-          JOptionPane.showMessageDialog( RemoteMaster.this, "Upload verify failed: read back " + readBytes.length
-              + " bytes, but expected " + data.length );
-        }
-        else if ( !Arrays.equals( readBytes, data ) )
-        {
-          System.err.println( "Upload verify failed: data read back doesn't match data written." );
-          JOptionPane.showMessageDialog( RemoteMaster.this,
-              "Upload verify failed: data read back doesn't match data written." );
+          Hex upgVersion = ioHID.getUpgradeData().get( "MCUFIRMWARE" ).version;
+          Hex remoteVersion = new Hex( 4 );
+          ioHID.getTouchVersion( remoteVersion );
+          if ( !upgVersion.equals( remoteVersion ) )
+          {
+            message = "You do not have the latest firmware.  You need to\n"
+                + "upgrade to the latest version before you can use\n"
+                + "this option to upload individual system files."; 
+          }
         }
         else
         {
-          System.err.println( "Upload verification succeeded." );
+          message = "Unable to verify the firmware verion of your remote.\n"
+              + "This option is only available for the latest firmware.";
+        }
+        if ( message != null )
+        {
+          String title = "Upload XSight system file";
+          JOptionPane.showMessageDialog( RemoteMaster.this, message, title, JOptionPane.INFORMATION_MESSAGE );
+          setInterfaceState( null );
+          return null;
         }
       }
-      else
+
+      if ( op.equals( "Upload" ) )
       {
-        io.closeRemote();
-        JOptionPane.showMessageDialog( RemoteMaster.this, "Upload complete!" );
+        RMListChooser.showDialog( RemoteMaster.this, ioHID, true );
       }
-      System.err.println( "Ending upload" );
+      else if ( op.equals( "Delete/Save" ) )
+      {
+        RMListChooser.showDialog( RemoteMaster.this, ioHID, false );
+      }
+      else if ( op.equals( "Reformat" ) )
+      {
+        ioHID.reformatXZITE();
+        ioHID.closeRemote();
+      }
+      else if ( op.equals( "Verify" ) )
+      {
+        List< String > comments = ioHID.verifyXZITEfiles();
+        ioHID.closeRemote();
+        System.err.println( "Verification of system files:" );
+        StringBuilder sb = new StringBuilder();
+        int n = 0;
+        for ( String s : comments )
+        {
+          if ( n++ > 0 )
+          {
+            sb.append( '\n' );
+          }
+          sb.append( s );
+          System.err.println( "  " + s );
+        }
+        String title = "System file verification";
+        JOptionPane.showMessageDialog( null, sb.toString(), title, JOptionPane.INFORMATION_MESSAGE );
+      }
       setInterfaceState( null );
       return null;
+    }
+    
+    @Override
+    public void updateProgress( int value )
+    {
+      String name = io != null ? io.getProgressName() : null;
+      setInterfaceState( name != null ? name : "PREPARING:", value );
     }
   }
   
@@ -828,6 +883,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
     private boolean allowClockSet;
     private File file = null;
     private Use use = null;
+    private IO io = null;
 
     private UploadTask( short[] data, boolean allowClockSet )
     {
@@ -850,7 +906,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
     {
       resetInterfaceState();
       Remote remote = remoteConfig.getRemote();
-      IO io = getOpenInterface( file, use );
+      IO io = getOpenInterface( file, use, this );
       if ( io == null )  
       {
         JOptionPane.showMessageDialog( RemoteMaster.this, "No remotes found!" );
@@ -858,6 +914,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
         return null;
       }
       System.err.println( "Interface opened successfully" );
+      this.io = io;
       if ( use == Use.UPLOAD )
       {
         int baseAddress = io.getRemoteEepromAddress();
@@ -905,7 +962,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
         remoteConfig.updateCheckSums();
       }
 
-      int rc = io.writeRemote( remote.getBaseAddress(), data, this );
+      int rc = io.writeRemote( remote.getBaseAddress(), data );
 
       if ( rc != data.length )
       {
@@ -925,7 +982,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
         if ( io.getInterfaceType() == 0x106 )
         {
           io.closeRemote();
-          io = getOpenInterface( null, Use.READING );
+          io = getOpenInterface( null, Use.READING, this );
         }
         short[] readBack = new short[ data.length ];
         rc = io.readRemote( remote.getBaseAddress(), readBack );
@@ -990,7 +1047,15 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
     @Override
     public void updateProgress( int value )
     {
-      setInterfaceState( "UPLOADING:", value );
+      if ( value < 0 )
+      {
+        setInterfaceState( "UPLOADING..." );
+      }
+      else
+      {
+        String name = io != null ? io.getProgressName() : null;
+        setInterfaceState( name != null ? name : "PREPARING:", value );
+      }
     }
   }
 
@@ -1670,13 +1735,18 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
     return getSystemFilesItem.isSelected();
   }
   
+  public static String getSystemZipName( Remote remote )
+  {
+    String sig = remote.getSignature();
+    return "Sys" + sig.substring( 3 ) + ".zip";
+  }
+  
   public static ZipFile getSystemZipFile( Remote remote )
   {
     ZipFile zipfile = null;
     try
     {
-      String sig = remote.getSignature();
-      String zipName = "Upg" + sig.substring( 3 ) + ".zip";
+      String zipName = getSystemZipName( remote );
       File inputDir = new File( RemoteMaster.getWorkDir(), "XSight" );
       File file = new File( inputDir, zipName );
       if ( file.exists() )
@@ -1691,44 +1761,13 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
     return zipfile;
   }
   
-//  public static ZipEntry getZipEntry( Remote remote, String name )
-//  {
-//    if ( remote == null || name == null )
-//    {
-//      return null;
-//    }
-//    ZipFile zipfile = null;
-//    ZipEntry zip = null;
-//    try
-//    {
-//      zipfile = getSystemZipFile( remote );
-//      zip = zipfile.getEntry( name );
-////      Enumeration< ? extends ZipEntry > zipEnum = zipfile.entries();
-////      while ( zipEnum.hasMoreElements() ) 
-////      { 
-////        ZipEntry entry = ( ZipEntry ) zipEnum.nextElement(); 
-////        if ( entry.getName().equals( name ) )
-////        {
-////          zip = entry;
-////          break;
-////        }
-////      }
-//      zipfile.close();
-//    }
-//    catch ( Exception e ){ };
-//    return zip;
-//  }
-  
   public static void setSystemFilesItems( RemoteMaster rm, Remote remote )
   {
-    if ( admin && remote != null && remote.isSSD() )
+    if ( remote != null && remote.isSSD() )
     {
-      getSystemFilesItem.setVisible( true );
-      putSystemFileItem.setVisible( true );
-      parseIRDBItem.setVisible( true );
+      xziteOps.setVisible( rmirSys.exists() );
       extractSSItem.setVisible( false );
       ZipFile zipfile = getSystemZipFile( remote );
-      putSystemFileItem.setEnabled( zipfile != null );
       parseIRDBItem.setEnabled( zipfile != null && zipfile.getEntry( "irdb.bin" ) != null );
       try {
         if ( zipfile != null )
@@ -1737,10 +1776,8 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
       catch ( Exception e ){}
       return;
     }
-    getSystemFilesItem.setVisible( false );
+    xziteOps.setVisible( false );
     getSystemFilesItem.setSelected( false );
-    putSystemFileItem.setVisible( false );
-    parseIRDBItem.setVisible( false );
     extractSSItem.setVisible( admin && ( remote != null && remote.usesSimpleset() || rm.binLoaded() != null ) );
     extractSSItem.setEnabled( admin && rm.binLoaded() != null );
   }
@@ -1769,6 +1806,11 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
   
   public static byte[] readBinary( InputStream in, int length )
   {
+    return readBinary( in, length, false );
+  }
+  
+  public static byte[] readBinary( InputStream in, int length, boolean quiet )
+  {
     if ( in == null || length == 0 ) return null;
     int totalBytesRead = 0;
     byte[] data = new byte[ length ];
@@ -1795,7 +1837,10 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
         System.err.println( "File read error: file length = " + length + ", bytes read = " + totalBytesRead );
         return null;
       }
-      System.err.println( "Bytes read from file: " + totalBytesRead );
+      if ( !quiet )
+      {
+        System.err.println( "Bytes read from file: " + totalBytesRead );
+      }
     }
     catch ( Exception ex ) {
       System.err.println( ex );
@@ -2178,6 +2223,14 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
     specifiedDelayItem.addActionListener( this );
     tooltipSubMenu.add( specifiedDelayItem );
     group.add( specifiedDelayItem );
+    
+    noUpgradeItem = new JCheckBoxMenuItem( "No XSight Firmware Upgrade" );
+    noUpgradeItem.setSelected( Boolean.parseBoolean( properties.getProperty( "NoUpgrade", "false" ) ) );
+    noUpgradeItem.addActionListener( this );
+    noUpgradeItem.setToolTipText( "<html>Selecting this option will stop download of an XSight<br>"
+        + "Touch-style or Nevo remote offering to upgrade the remote,<br>"
+        + "even if an upgrade is available.</html>" );
+    menu.add( noUpgradeItem );
 
     appendAdvancedOptions( menu );
 
@@ -2299,33 +2352,70 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
     menu.add( clearBaselineItem );
     
     menu.addSeparator();
+    
+    xziteOps = new JMenu( "XSight operations" );
+    menu.add( xziteOps );
+    xziteOps.setVisible( false );
 
-    getSystemFilesItem = new JCheckBoxMenuItem( "Get system files" );
+    xziteOpsItem = new JMenuItem( "List/Remove/Save XSight files..." );
+    xziteOpsItem.setToolTipText( "<html>Lists all files in the XSight file system and gives<br>"
+        + "option to remove or save to PC selected items one<br>"
+        + "at a time.</html>" );
+    xziteOpsItem.addActionListener( this );
+    xziteOpsItem.setVisible( admin );
+    xziteOps.add( xziteOpsItem );
+    
+    verifyXZITEfilesItem = new JMenuItem( "Verify XSight system files" );
+    verifyXZITEfilesItem.setToolTipText( "<html>Validates the content of all XSight system files<br>"
+        + "and returns a description of any discrepancies" );
+    verifyXZITEfilesItem.addActionListener( this );
+    xziteOps.add( verifyXZITEfilesItem );
+    
+    putSystemFileItem = new JMenuItem( "Upload XSight system file..." );
+    putSystemFileItem.setToolTipText( "<html>Uploads system files to the remote one at a time, selected from<br>"
+        + "the files of the latest available firmware version.  Note that<br>"
+        + "this option is only available if the MCU firmware is already<br>"
+        + "the latest version.  This option is intended to provide a means<br>"
+        + "to restore accidentally corrupted or deleted files.</html>" );
+    putSystemFileItem.addActionListener( this );
+    xziteOps.add( putSystemFileItem );
+    
+    xziteReformatItem = new JMenuItem( "Format and rebuild XSight file system..." );
+    xziteReformatItem.setToolTipText( "<html>Formats the file system of the remote and restores the system files.<br>"
+        + "The MCU firmware is not affected.  The remote is left in a factory<br>"
+        + "reset state." );
+    xziteReformatItem.addActionListener( this );
+    xziteOps.add( xziteReformatItem );
+
+//    if ( admin ) 
+      xziteOps.addSeparator();
+    
+    forceUpgradeItem = new JCheckBoxMenuItem( "Force XSight Firmware Update" );
+    forceUpgradeItem.setSelected( false );
+//    forceUpgradeItem.setVisible( admin );
+    forceUpgradeItem.setToolTipText( "<html>Selecting this option will force download of an XSight<br>"
+        + "Touch-style or Nevo remote to offer to upgrade the remote,<br>"
+        + "even if the current firmware is up-to-date.</html>" );
+    xziteOps.add( forceUpgradeItem );
+    
+    getSystemFilesItem = new JCheckBoxMenuItem( "Get XSight system files" );
     getSystemFilesItem.setToolTipText( "<html>When checked, a download from the remote also copies<br>"
         + "the system files of the remote to a zip file in the XSight<br>"
         + "subfolder of the installation folder, creating this subfolder<br>"
         + "if it does not exist.  The name of the zip file is Sys followed<br>"
         + "by the USB PID of the remote.</html>" );
-    getSystemFilesItem.setVisible( false );
     getSystemFilesItem.setSelected( false );
-    menu.add( getSystemFilesItem );
-
-    putSystemFileItem = new JMenuItem( "Put system file..." );
-    putSystemFileItem.setToolTipText( "<html>Uploads a single system file to the remote, extracted from<br>"
-        + "the appropriate upgrade file in the XSight subfolder of the<br>"
-        + "installation folder.</html>" );
-    putSystemFileItem.setVisible( false );
-    putSystemFileItem.addActionListener( this );
-    menu.add( putSystemFileItem );
-
+    getSystemFilesItem.setVisible( admin );
+    getSystemFilesItem.addActionListener( this );
+    xziteOps.add( getSystemFilesItem );
+    
     parseIRDBItem = new JMenuItem( "Extract from irdb.bin" );
     parseIRDBItem.setToolTipText( "<html>Extracts data for an RDF from the copy of the irdb.bin<br>"
-        + "system file in the XSight subfolder of the installation<br>"
-        + "folder.  You must first use \"Get system files\" to copy<br>"
-        + "this and other system files from the remote to this folder.</html>" );
-    parseIRDBItem.setVisible( false );
+        + "system file in the zip file for this remote created by<br>"
+        + "the \"Get XSight system files\" option.</html>" );
     parseIRDBItem.addActionListener( this );
-    menu.add( parseIRDBItem );
+    parseIRDBItem.setVisible( admin );
+    xziteOps.add( parseIRDBItem );
     
     extractSSItem = new JMenuItem( "Extract from simpleset binary" );
     extractSSItem.setToolTipText( "<html>Extracts data for an RDF from the currently loaded<br>"
@@ -2333,7 +2423,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
     extractSSItem.setVisible( false );
     extractSSItem.addActionListener( this );
     menu.add( extractSSItem );
-    
+      
     analyzeMAXQprotocols = new JMenuItem( "Analyze MAXQ protocols" );
     analyzeMAXQprotocols.setVisible( admin );
     analyzeMAXQprotocols.addActionListener( this );
@@ -3321,14 +3411,14 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
    * 
    * @return the open interface
    */
-  public IO getOpenInterface( File file, Use use )
+  public IO getOpenInterface( File file, Use use, ProgressUpdater progressUpdater )
   {
     String interfaceName = properties.getProperty( "Interface" );
     System.err.println( "Interface Name = " + ( interfaceName == null ? "NULL" : interfaceName ) );
     String portName = properties.getProperty( "Port" );
     System.err.println( "Port Name = " + ( portName == null ? "NULL" : portName ) );
     IO ioOut = null;
-    if ( interfaceName != null && ( use == Use.DOWNLOAD || use == Use.UPLOAD ) )
+    if ( interfaceName != null && ( use == Use.DOWNLOAD || use == Use.UPLOAD || use == Use.RAWDOWNLOAD ) )
     {
       for ( IO temp : interfaces )
       {
@@ -3337,7 +3427,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
         if ( tempName.equals( interfaceName ) )
         {
           System.err.println( "Interface matched.  Trying to open remote." );
-          ioOut = testInterface( temp, portName, file, use );
+          ioOut = testInterface( temp, portName, file, use, progressUpdater );
           if ( ioOut == null )
           {
             System.err.println( "Failed to open" );
@@ -3369,13 +3459,18 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
         }
         String tempName = temp.getInterfaceName();
         System.err.println( "Testing interface: " + ( tempName == null ? "NULL" : tempName ) );
-        ioOut = testInterface( temp, null, file, use );
+        ioOut = testInterface( temp, null, file, use, progressUpdater );
         if ( ioOut != null )
         {
           System.err.println( "Opened interface type " + Integer.toHexString( ioOut.getInterfaceType() ) );
           break;
         }
       }
+    }
+    
+    if ( ioOut != null )
+    {
+      ioOut.setUse( use );
     }
     
     if ( ioNeedsPowerManagementCheck( ioOut ) )
@@ -3407,7 +3502,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
     return ioOut;
   }
   
-  private IO testInterface( IO ioIn, String portName, File file, Use use )
+  private IO testInterface( IO ioIn, String portName, File file, Use use, ProgressUpdater progressUpdater )
   {
     String ioName = ioIn.getInterfaceName();
 //    String osName = System.getProperty( "os.name" );
@@ -3432,6 +3527,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
         return ioIn;
       }
     }
+    ioIn.setProgressUpdater( progressUpdater );
     portName = ioIn.openRemote( portName != null ? portName : file != null ? file.getAbsolutePath() : null );
     if ( portName == null ) portName = "";
     System.err.println( "Port Name = " + ( portName.isEmpty() ? "NULL" : portName ) );
@@ -3442,6 +3538,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
     }
     else
     {
+      ioIn.setProgressUpdater( null );
       return null;
     }
   }
@@ -3488,7 +3585,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
     setInterfaceState( interfaceText );
   }
 
-  private void setInterfaceState( String state )
+  public void setInterfaceState( String state )
   {
     setInterfaceState( state, null );
   }
@@ -3658,6 +3755,17 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
           properties.setProperty( "TooltipDelay", ""+tooltipDelay );
         }
       }
+      else if ( source == noUpgradeItem )
+      {
+        if ( !noUpgradeItem.isSelected() )
+        {
+          properties.remove( "NoUpgrade" );
+        }
+        else
+        {
+          properties.setProperty( "NoUpgrade", Boolean.toString( noUpgradeItem.isSelected() ) );
+        }
+      }
       else if ( source == cleanUpperMemoryItem )
       {
         String title = "Clean Upper Memory";
@@ -3824,27 +3932,37 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
       }
       else if ( source == putSystemFileItem )
       {
-        Remote remote = remoteConfig.getRemote();
-        ZipFile zipfile = null;
-        try
+          setInterfaceState( "GETTING FILE LIST..." );
+          ( new XziteFileTask( "Upload" ) ).execute();
+      }
+      else if ( source == verifyXZITEfilesItem )
+      {
+          setInterfaceState( "VERIFYING..." );
+          ( new XziteFileTask( "Verify" ) ).execute();
+      }
+      else if ( source == xziteOpsItem )
+      {
+        setInterfaceState( "GETTING FILE LIST..." );
+        ( new XziteFileTask( "Delete/Save" ) ).execute();
+      }
+      else if ( source == xziteReformatItem )
+      {
+        String title = "Reformat XSight";
+        String message = "<html>Are you sure you want to format the file system of the remote<br>"
+            + "and reinstall the system files?  This operation will leave the<br>"
+            + "remote in factory reset state, all setup data having been deleted.<br>"
+            + "If you continue, be aware that during the rebuild phase it is normal<br>"
+            + "for the progress indicator to stay at 15% for an extended period.<br><br>"
+            + "Make sure you have saved any setup that you want to reload after<br>"
+            + "the rebuild.<br><br>Do you want to continue?</html>";
+        int reply = NegativeDefaultButtonJOptionPane.showConfirmDialog( this, message, title, 
+            JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE );
+        if ( reply != JOptionPane.YES_OPTION )
         {
-          zipfile = getSystemZipFile( remote );
-          ZipEntry entry = RMZipEntryChooser.showDialog( RemoteMaster.this, zipfile );
-          if ( entry == null )
-          {
-            return;
-          }
-
-          setInterfaceState( "UPLOADING " + entry.getName().toUpperCase() + "..." );
-          ( new UploadSystemFile( remote, entry ) ).execute();
+          return;
         }
-        finally
-        {
-          if ( zipfile != null )
-          {
-            zipfile.close();
-          }
-        }
+        setInterfaceState( "FORMATTING..." );
+        ( new XziteFileTask( "Reformat" ) ).execute();
       }
       else if ( source == setBaselineItem )
       {
@@ -3868,6 +3986,18 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
       {
         extractIrdb();
         setSystemFilesItems( this, remoteConfig.getRemote() );
+      }
+      else if ( source == getSystemFilesItem )
+      {
+        if ( getSystemFilesItem.isSelected() )
+        {
+          String title = "System files";
+          String message = "<html>The system files will be saved to a zip package in an<br>"
+              + "XSight subfolder of the RMIR installation folder on the<br>"
+              + "next download.  This subfolder will be created if it does<br>"
+              + "not exist.</html>";
+          JOptionPane.showMessageDialog( this, message, title, JOptionPane.INFORMATION_MESSAGE );
+        }
       }
       else if ( source == extractSSItem )
       {
@@ -4510,6 +4640,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
     try
     {
       workDir = getJarContainingFolder( RemoteMaster.class );
+      rmirSys = new File( workDir, "RMIR.sys" );
       File propertiesFile = null;
       File errorsFile = null;
       File fileToOpen = null;
@@ -4697,10 +4828,16 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
   private static ArrayList< String > parms = new ArrayList< String >();
   
   private static File workDir = null;
+  private static File rmirSys = null;
 
   public static File getWorkDir()
   {
     return workDir;
+  }
+
+  public static File getRmirSys()
+  {
+    return rmirSys;
   }
 
   /** The Constant rmirEndings. */

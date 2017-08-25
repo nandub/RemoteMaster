@@ -321,7 +321,7 @@ public class Function extends GeneralFunction
     // There appear to be functions that differ only in the keygid
     // but as the keygid seems not to be used by the remote, they are
     // treated here as equivalent
-    if ( data == null || f.data == null )
+    if ( name == null || data == null || f.data == null )
     {
       return false;
     }

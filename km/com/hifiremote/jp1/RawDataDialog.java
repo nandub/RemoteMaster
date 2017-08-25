@@ -124,7 +124,7 @@ public class RawDataDialog extends JDialog implements ActionListener
     @Override
     protected Void doInBackground() throws Exception
     {
-      IO io = owner.getOpenInterface( null, Use.DOWNLOAD );
+      IO io = owner.getOpenInterface( null, Use.RAWDOWNLOAD, null );
       if ( io == null )
       {
         JOptionPane.showMessageDialog( owner, "No remotes found!" );

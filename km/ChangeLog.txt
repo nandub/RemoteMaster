@@ -105,7 +105,14 @@ Changes for v2.04
 - Enhance the semantics of the RDF [General] section entry SoftDev=Y,Y to apply to remotes with segments, a change needed for the Monster (Graham)
 -- Private build 40
 - Add support for firmware upgrades for XSight Touch-style remotes (Graham)
-- Add new file, RMIR.sys, containing the data needed to support XSight firmware upgrades (Graham) 
+- Add new file, RMIR.sys, containing the data needed to support XSight firmware upgrades (Graham)
+-- Private build 41
+- Add support to upload individual system files to XSight Touch-style remotes (Graham)
+- Add support to delete, and save to PC, individual system files to XSight Touch-style remotes (Graham)
+- Add support to reformat file system of XSight Touch-style remotes and reinstall all system files (Graham)
+- Add support to force upgrade of XSight remote even when firmware is up-to-date (Graham)
+- Add support for stopping the offer of firmware upgrade of XSight remote even when firmware is not up-to-date (Graham)
+- Provide detailed commentary of operations in progress bar for XSight remotes (Graham)
 
 Changes for v2.03
 -- Alpha 8 --

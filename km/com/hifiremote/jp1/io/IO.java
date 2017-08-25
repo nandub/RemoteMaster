@@ -4,6 +4,7 @@ import java.io.File;
 
 import com.hifiremote.LibraryLoader;
 import com.hifiremote.jp1.ProgressUpdater;
+import com.hifiremote.jp1.RemoteMaster.Use;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -115,31 +116,11 @@ public abstract class IO
     return openRemote( null );
   }
 
-  /**
-   * Read remote.
-   * 
-   * @param address
-   *          the address
-   * @param sBuffer
-   *          the s buffer
-   * @return the int
-   */
   public int readRemote( int address, short[] sBuffer )
   {
     return readRemote( address, sBuffer, sBuffer.length );
   }
 
-  /**
-   * Read remote.
-   * 
-   * @param address
-   *          the address
-   * @param sBuffer
-   *          the s buffer
-   * @param length
-   *          the length
-   * @return the int
-   */
   public int readRemote( int address, short[] sBuffer, int length )
   {
     byte[] buffer = new byte[ length ];
@@ -149,15 +130,6 @@ public abstract class IO
     return len;
   }
 
-  /**
-   * Read remote.
-   * 
-   * @param address
-   *          the address
-   * @param buffer
-   *          the buffer
-   * @return the int
-   */
   public int readRemote( int address, byte[] buffer )
   {
     return readRemote( address, buffer, buffer.length );
@@ -192,22 +164,6 @@ public abstract class IO
 
   /**
    * Write remote.
-   *
-   * @param address
-   *          the address
-   * @param sBuffer
-   *          the s buffer
-   * @param progressUpdater
-   *          allows updating the progress
-   * @return the int
-   */
-  public int writeRemote( int address, short[] sBuffer, ProgressUpdater progressUpdater )
-  {
-    return writeRemote( address, sBuffer, sBuffer.length, progressUpdater );
-  }
-
-  /**
-   * Write remote.
    * 
    * @param address
    *          the address
@@ -223,27 +179,6 @@ public abstract class IO
     for ( int i = 0; i < length; ++i )
       buffer[ i ] = ( byte )( sBuffer[ i ] & 0xFF );
     return writeRemote( address, buffer, length );
-  }
-
-  /**
-   * Write remote.
-   *
-   * @param address
-   *          the address
-   * @param sBuffer
-   *          the s buffer
-   * @param length
-   *          the length
-   * @param progressUpdater
-   *          allows updating the progress
-   * @return the int
-   */
-  public int writeRemote( int address, short[] sBuffer, int length, ProgressUpdater progressUpdater )
-  {
-    byte[] buffer = new byte[ length ];
-    for ( int i = 0; i < length; ++i )
-      buffer[ i ] = ( byte )( sBuffer[ i ] & 0xFF );
-    return writeRemote( address, buffer, length, progressUpdater );
   }
 
   /**
@@ -267,45 +202,43 @@ public abstract class IO
    *          the address
    * @param buffer
    *          the buffer
-   * @param progressUpdater
-   *          allows updating the progress
-   * @return the int
-   */
-  public int writeRemote( int address, byte[] buffer, ProgressUpdater progressUpdater )
-  {
-    return writeRemote( address, buffer, buffer.length, progressUpdater );
-  }
-
-  /**
-   * Write remote.
-   *
-   * @param address
-   *          the address
-   * @param buffer
-   *          the buffer
-   * @param length
-   *          the length
-   * @param progressUpdater
-   *          allows updating the progress
-   * @return the int
-   */
-  public int writeRemote( int address, byte[] buffer, int length, ProgressUpdater progressUpdater )
-  {
-    return writeRemote( address, buffer, length );
-  }
-
-  /**
-   * Write remote.
-   *
-   * @param address
-   *          the address
-   * @param buffer
-   *          the buffer
    * @param length
    *          the length
    * @return the int
    */
-  public int writeRemote( int address, byte[] buffer, int length ) {
-    throw new RuntimeException("Not implemented");
+  public abstract int writeRemote( int address, byte[] buffer, int length );
+  
+  public Use getUse()
+  {
+    return use;
   }
+
+  public void setUse( Use use )
+  {
+    this.use = use;
+  }
+
+  public String getProgressName()
+  {
+    return progressName;
+  }
+
+  public void setProgressName( String progressName )
+  {
+    this.progressName = progressName;
+  }
+
+  public ProgressUpdater getProgressUpdater()
+  {
+    return progressUpdater;
+  }
+
+  public void setProgressUpdater( ProgressUpdater progressUpdater )
+  {
+    this.progressUpdater = progressUpdater;
+  }
+
+  private Use use = null;
+  private String progressName = null;
+  protected ProgressUpdater progressUpdater = null;
 }

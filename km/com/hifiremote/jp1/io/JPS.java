@@ -307,7 +307,7 @@ public class JPS extends IO
    * @see com.hifiremote.jp1.io.IO#writeRemote(int, byte[], int)
    */
   @Override
-  public int writeRemote( int address, byte[] buffer, int length, ProgressUpdater progressUpdater )
+  public int writeRemote( int address, byte[] buffer, int length )
   {
     try
     {

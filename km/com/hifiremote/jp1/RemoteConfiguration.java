@@ -8609,7 +8609,7 @@ public class RemoteConfiguration
     SpecialFunctionDialog.reset();
     FavScanDialog.reset();
     LearnedSignalDialog.reset();
-    RMZipEntryChooser.reset();
+    RMListChooser.reset();
   }
   
   public boolean allowHighlighting()
