@@ -42,6 +42,10 @@ public class Activity extends Highlight
           String aStr = "";
           for ( int j = 0; j < a.size(); j++ )
           {
+            if ( a.get( j ).toString().isEmpty() )
+            {
+              continue;
+            }
             if ( j > 0 )
             {
               aStr += ", ";
@@ -162,10 +166,11 @@ public class Activity extends Highlight
       {
         return "\"" + ks.db.getName() + "\"/" + b.getKeyCode();
       }
-      else
+      else if ( ks.db != null && ks.fn != null )
       {
         return "\"" + ks.db.getName() + "\"//" + ks.fn.serial;
       }
+      else return "";
     }
     
     public void set( Remote remote )

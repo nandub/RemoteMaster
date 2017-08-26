@@ -113,6 +113,8 @@ Changes for v2.04
 - Add support to force upgrade of XSight remote even when firmware is up-to-date (Graham)
 - Add support for stopping the offer of firmware upgrade of XSight remote even when firmware is not up-to-date (Graham)
 - Provide detailed commentary of operations in progress bar for XSight remotes (Graham)
+- Fix bug in loading .ir files with overflow from upgrade region to advanced code or learning regions (Graham)
+- Prevent null pointer error in storing activity assists (Graham)
 
 Changes for v2.03
 -- Alpha 8 --

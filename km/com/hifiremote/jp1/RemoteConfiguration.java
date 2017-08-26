@@ -6844,8 +6844,8 @@ public class RemoteConfiguration
     // build an array containing the ends of all the possible ranges
 
     int[] bounds = new int[ 8 ];
-    bounds[ 0 ] = 0; // leave space for the next entry in the table
-    bounds[ 1 ] = 0; // leave space for the 1st protocol code
+    bounds[ 0 ] = 0; // leave space for the next entry in the table (except the last)
+    bounds[ 1 ] = 0; // leave space for the previous entry in the table (except the first)
     bounds[ 2 ] = deviceTableOffset;
     bounds[ 3 ] = protocolTableOffset;
     bounds[ 4 ] = addr.getEnd() + 1;
@@ -6886,7 +6886,11 @@ public class RemoteConfiguration
       int codeOffset = processor.getInt( data, offset + 2 * count ) - remote.getBaseAddress();
       if ( i == 0 )
       {
-        bounds[ 1 ] = codeOffset; // save the offset of the first protocol code
+        bounds[ 1 ] = codeOffset;
+      }
+      else
+      {
+        bounds[ 1 ] = processor.getInt( data, offset + 2 * ( count - 1 ) ) - remote.getBaseAddress();
       }
       if ( i == count - 1 )
       {
@@ -6933,7 +6937,14 @@ public class RemoteConfiguration
           pid += 0x100;
         }
       }
-
+      if ( i == 0 )
+      {
+        bounds[ 1 ] = codeOffset;
+      }
+      else
+      {
+        bounds[ 1 ] = processor.getInt( data, offset + 2 * ( count - 1 ) ) - remote.getBaseAddress();
+      }
       if ( i == count - 1 )
       {
         bounds[ 0 ] = 0;
