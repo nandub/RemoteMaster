@@ -806,7 +806,7 @@ public class CommHID extends IO
           // File is not a system file
           continue;
         }
-        if ( !sysNames.contains( name ) )
+        if ( RemoteMaster.admin && !sysNames.contains( name ) )
         {
           int ndx = ucSysNames.indexOf( name.toUpperCase() );
           String s = "Case error in name: file " + name + " should be " + sysNames.get( ndx  );
@@ -1349,6 +1349,38 @@ public class CommHID extends IO
 
           if ( response == 1 )
           {
+            message = 
+                  "A firmware upgrade takes place as a series of stages, during which\n"
+                + "the remote will restart twice.  Each restart involves the remote\n"
+                + "disconnecting from the PC then reconnecting automatically after a\n"
+                + "short delay.  Often this all goes smoothly and the upgrade runs through\n"
+                + "to completion.  However, with some remotes and/or PCs, not all the\n"
+                + "stages complete at first attempt.  In this case you will get an error\n"
+                + "message asking you to repeat the upgrade.\n\n"
+                + "If this happens, please do another download and accept the offer to\n"
+                + "upgrade the firmware.  You may have to do this several times, but each\n"
+                + "time the upgrade should proceed through at least one more stage,\n"
+                + "finally giving you a success message.\n\n"
+                + "If after 5 repeats of the upgrade process you are still getting an\n"
+                + "error message then make a post in the JP1 forum asking for help, but\n"
+                + "please allow for 5 repeats before doing so.  In our pre-release tests\n"
+                + "we have never experienced failure after such repeats.\n\n"
+                + "Do you still want to continue with the firmware upgrade?";
+            response = JOptionPane.showConfirmDialog( null, message, title, 
+                JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE );
+          }
+          else
+          {
+            message = "To stop the firmware upgrade being offered in future without\n"
+                + "installing it, check the item \"No XSight Firmware Upgrade\"\n"
+                + "in the Options menu.  This will remain checked each time you\n"
+                + "open RMIR until you specifically uncheck it.";
+            JOptionPane.showMessageDialog( null, message, title, JOptionPane.INFORMATION_MESSAGE );
+            response = JOptionPane.NO_OPTION;
+          }
+
+          if ( response == JOptionPane.YES_OPTION )
+          {
             System.err.println( "Proceeding with firmware revision" );
             RemoteMaster.forceUpgradeItem.setSelected( false );
             if ( remoteType == RemoteType.XZITE )
@@ -1364,15 +1396,7 @@ public class CommHID extends IO
                   + "Continuing with normal download.";
               JOptionPane.showMessageDialog( null, message, title, JOptionPane.INFORMATION_MESSAGE );
             }
-          }  // if ( response == 1 )
-          else
-          {
-            message = "To stop the firmware upgrade being offered in future without\n"
-                + "installing it, check the item \"No XSight Firmware Upgrade\"\n"
-                + "in the Options menu.  This will remain checked each time you\n"
-                + "open RMIR until you specifically uncheck it.";
-            JOptionPane.showMessageDialog( null, message, title, JOptionPane.INFORMATION_MESSAGE );
-          }
+          }  // if ( response == JOptionPane.YES_OPTION )
         } // if ( upgNeeds[ 0 ] > 0 )
       } // if ( doUpgradeTest )
     } // if ( getUse() == Use.DOWNLOAD )
@@ -1479,8 +1503,8 @@ public class CommHID extends IO
         {
           System.err.println( "Writing of upgraded MCU firmware failed" );
           message = "Upgrade failed.  Unable to write MCU firmware.\n\n"
-              + "Please disconnect the remote, remove and replace the batteries\n"
-              + "and repeat the upgrade process.";
+              + "Please disconnect the remote, remove the batteries, put them\n"
+              + "back in, reconnect the remote and repeat the upgrade process.";
           JOptionPane.showMessageDialog( null, message, title, JOptionPane.ERROR_MESSAGE );
           return false;
         }
@@ -1514,9 +1538,9 @@ public class CommHID extends IO
     }
     else
     {
-      message = "Upgrade failed. ";
-      message += "Unable to write all required files.";
-      message += "\nAborting download";
+      message = "Upgrade failed. Unable to update all support files.\n\n"
+          + "Please disconnect and reconnect the remote, then repeat the\n"
+          + "upgrade process";
       JOptionPane.showMessageDialog( null, message, title, JOptionPane.ERROR_MESSAGE );
       return false;
     }
@@ -1995,6 +2019,7 @@ public class CommHID extends IO
         System.err.println( "Error in reopen attempt" );
         return false;
       }
+      waitForMillis( 3000 );
     } // while ( devHID == null )
 
     if ( devHID != null )
@@ -2034,7 +2059,6 @@ public class CommHID extends IO
       System.err.println( "Reopen attempt gave null device after wait of " + delay + "ms" );
       return false;
     }
-    waitForMillis( 3000 );
     return true;
   }
 

@@ -415,7 +415,10 @@ public class LearnedSignalTableModel extends JP1TableModel< LearnedSignal >
       LearnedSignal ls = getRow( row );
       DeviceButton db = remote.getDeviceButton( ls.getDeviceButtonIndex() );
       DeviceUpgrade upg = db.getUpgrade();
-      upg.getLearnedMap().remove( ls.getKeyCode() );
+      if ( upg != null )
+      {
+        upg.getLearnedMap().remove( ls.getKeyCode() );
+      }
     }
     super.removeRow( row );
   }

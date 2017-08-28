@@ -118,7 +118,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
 
   /** Description of the Field. */
   public final static String version = "v2.04";
-  public final static int buildVer = 41;
+  public final static int buildVer = 42;
   
   public static int getBuild()
   {
@@ -2390,7 +2390,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
 //    if ( admin ) 
       xziteOps.addSeparator();
     
-    forceUpgradeItem = new JCheckBoxMenuItem( "Force XSight Firmware Update" );
+    forceUpgradeItem = new JCheckBoxMenuItem( "Force XSight Firmware Upgrade" );
     forceUpgradeItem.setSelected( false );
 //    forceUpgradeItem.setVisible( admin );
     forceUpgradeItem.setToolTipText( "<html>Selecting this option will force download of an XSight<br>"

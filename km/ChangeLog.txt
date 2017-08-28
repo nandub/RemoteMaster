@@ -115,6 +115,11 @@ Changes for v2.04
 - Provide detailed commentary of operations in progress bar for XSight remotes (Graham)
 - Fix bug in loading .ir files with overflow from upgrade region to advanced code or learning regions (Graham)
 - Prevent null pointer error in storing activity assists (Graham)
+-- Private build 42
+- Minor tweak to WaitForReconnection in XSight upgrade process (Graham)
+- Add second stage confirm message after offer to upgrade is accepted (Graham)
+- Make the test for case error in Verify option be active only in admin mode (Graham)
+- Fix bug that gave error when deleting learned signals in certain exceptional circumstances (Graham)
 
 Changes for v2.03
 -- Alpha 8 --
