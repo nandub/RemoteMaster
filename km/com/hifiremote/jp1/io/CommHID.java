@@ -13,7 +13,6 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Enumeration;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.zip.ZipEntry;
@@ -26,8 +25,6 @@ import com.codeminders.hidapi.HIDManager;
 import com.codeminders.hidapi.HIDDevice;
 import com.codeminders.hidapi.HIDDeviceInfo;
 import com.hifiremote.jp1.Hex;
-import com.hifiremote.jp1.JP1Frame;
-import com.hifiremote.jp1.ProgressUpdater;
 import com.hifiremote.jp1.Remote;
 import com.hifiremote.jp1.RemoteConfiguration;
 import com.hifiremote.jp1.RemoteManager;
@@ -118,6 +115,7 @@ public class CommHID extends IO
   byte ssdOut[] = new byte[62];
   int interfaceType = -1;
   int firmwareFileCount = 0;
+  int powerStatus = -1;  // Enhanced Power Management status, -1 = not used in this OS
   boolean upgradeSuccess = true;
   boolean isAppInfo2 = false;
   boolean newAppInfo2 =false;
@@ -1240,7 +1238,7 @@ public class CommHID extends IO
     boolean noUpgrade = RemoteMaster.noUpgradeItem.isSelected() || isPortUpg
         || remoteType != RemoteType.XZITE ;
     
-    if ( getUse() == Use.DOWNLOAD )
+    if ( getUse() == Use.DOWNLOAD && !noUpgrade )
     {
       if ( RemoteMaster.admin )
       {
@@ -1262,7 +1260,7 @@ public class CommHID extends IO
       boolean doUpgradeTest = false;
       String title = "Firmware upgrade";
       File sysFile = RemoteMaster.getRmirSys();
-      if ( !noUpgrade && sysFile.exists() )
+      if ( sysFile.exists() )
       {
         System.err.println( "Version numbers from remote:" );
         for ( String name : firmwareFileVersions.keySet() )
@@ -1349,22 +1347,22 @@ public class CommHID extends IO
 
           if ( response == 1 )
           {
-            message = 
-                  "A firmware upgrade takes place as a series of stages, during which\n"
-                + "the remote will restart twice.  Each restart involves the remote\n"
-                + "disconnecting from the PC then reconnecting automatically after a\n"
-                + "short delay.  Often this all goes smoothly and the upgrade runs through\n"
-                + "to completion.  However, with some remotes and/or PCs, not all the\n"
-                + "stages complete at first attempt.  In this case you will get an error\n"
-                + "message asking you to repeat the upgrade.\n\n"
-                + "If this happens, please do another download and accept the offer to\n"
-                + "upgrade the firmware.  You may have to do this several times, but each\n"
-                + "time the upgrade should proceed through at least one more stage,\n"
-                + "finally giving you a success message.\n\n"
-                + "If after 5 repeats of the upgrade process you are still getting an\n"
-                + "error message then make a post in the JP1 forum asking for help, but\n"
-                + "please allow for 5 repeats before doing so.  In our pre-release tests\n"
-                + "we have never experienced failure after such repeats.\n\n"
+            message =  "A firmware upgrade involves updating both the firmware of the central\n"
+                + "processor and a series of support files.  Sometimes that of the central\n"
+                + "processor is already up to date and only the support files need updating.\n"
+                + "In that case the upgrade runs to completion as a single process.  If the\n"
+                + "processor firmware needs updating, however, the upgrade takes place as a\n"
+                + "series of stages, during which the remote will restart twice.  Each restart\n"
+                + "involves the remote disconnecting from the PC then reconnecting.  Usually\n"
+                + "this reconnection takes place automatically. However, with some remotes\n"
+                + "and/or PCs a pop-up will ask the user to disconnect and then reconnect the USB\n"
+                + "cable in the course of the upgrade and to press OK to continue when you have\n"
+                + "done so.  Please follow any such instructions that appear on the PC.\n\n"
+                + "If you get a message from Windows saying \"USB device not recognised\" or\n"
+                + "something similar while the progress bar is saying \"Waiting for reconnection\",\n"
+                + "please wait for the progress bar to reach its end, taking at most one minute.\n"
+                + "The pop-up about disconnection and reconnection will then appear, and doing so\n"
+                + "will resolve the problem.\n\n"
                 + "Do you still want to continue with the firmware upgrade?";
             response = JOptionPane.showConfirmDialog( null, message, title, 
                 JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE );
@@ -1382,7 +1380,6 @@ public class CommHID extends IO
           if ( response == JOptionPane.YES_OPTION )
           {
             System.err.println( "Proceeding with firmware revision" );
-            RemoteMaster.forceUpgradeItem.setSelected( false );
             if ( remoteType == RemoteType.XZITE )
             {
               if ( !upgradeXZITE( upgNeeds, changed, newFiles ) )
@@ -1392,6 +1389,7 @@ public class CommHID extends IO
             }
             else
             {
+              RemoteMaster.forceUpgradeItem.setSelected( false );
               message = "Firmware upgrade for this remote is not yet implemented.\n"
                   + "Continuing with normal download.";
               JOptionPane.showMessageDialog( null, message, title, JOptionPane.INFORMATION_MESSAGE );
@@ -1468,7 +1466,7 @@ public class CommHID extends IO
         {
           System.err.println( "Request to disconnect failed" );
           message = "Upgrade failed.  Request to disconnect failed.\n"
-              + "Aborting download.";
+              + "Aborting firmware upgrade.";
           JOptionPane.showMessageDialog( null, message, title, JOptionPane.ERROR_MESSAGE );
           return false;
         }
@@ -1501,11 +1499,15 @@ public class CommHID extends IO
         }
         if ( !success )
         {
-          System.err.println( "Writing of upgraded MCU firmware failed" );
-          message = "Upgrade failed.  Unable to write MCU firmware.\n\n"
-              + "Please disconnect the remote, remove the batteries, put them\n"
-              + "back in, reconnect the remote and repeat the upgrade process.";
-          JOptionPane.showMessageDialog( null, message, title, JOptionPane.ERROR_MESSAGE );
+          // If powerStatus == 1 then a message has already appeared
+          if ( powerStatus != 1 )
+          {
+            System.err.println( "Writing of upgraded MCU firmware failed" );
+            message = "Upgrade failed.  Unable to write MCU firmware.\n\n"
+                + "Please disconnect the remote, remove the batteries, put them\n"
+                + "back in, reconnect the remote and repeat the upgrade process.";
+            JOptionPane.showMessageDialog( null, message, title, JOptionPane.ERROR_MESSAGE );
+          }
           return false;
         }
       } // try
@@ -1538,15 +1540,19 @@ public class CommHID extends IO
     }
     else
     {
-      message = "Upgrade failed. Unable to update all support files.\n\n"
-          + "Please disconnect and reconnect the remote, then repeat the\n"
-          + "upgrade process";
-      JOptionPane.showMessageDialog( null, message, title, JOptionPane.ERROR_MESSAGE );
+      // If powerStatus == 1 then a message has already appeared
+      if ( powerStatus != 1 )
+      {
+        message = "Upgrade failed. Unable to update all support files.\n\n"
+            + "Please disconnect and reconnect the remote, then repeat the\n"
+            + "upgrade process";
+        JOptionPane.showMessageDialog( null, message, title, JOptionPane.ERROR_MESSAGE );
+      }
       return false;
     }
     return true;
   }
-  
+
   private int getEndPKG( int fileStart, byte[] buffer )
   {
     int pos = fileStart;
@@ -1895,9 +1901,7 @@ public class CommHID extends IO
       System.err.println( "Write Firmware File aborting.  No data available." );
       return false;
     }
-    setProgressName( "WRITING NEW FIRMWARE:" );
-    if ( progressUpdater != null )
-      progressUpdater.updateProgress( 0 );
+    RemoteMaster.forceUpgradeItem.setSelected( false );
     int len = data.length - 8;  // first 8 bytes are not sent
     int pos = 0;
     int count = 0;
@@ -1907,23 +1911,43 @@ public class CommHID extends IO
     ssdOut[ 3 ] = ( byte )( ( len >> 8 ) & 0xFF );
     ssdOut[ 4 ] = ( byte )( ( len >> 16 ) & 0xFF );
     ssdOut[ 5 ] = ( byte )( ( len >> 24 ) & 0xFF );
+    int n = 0;
     boolean success = false;
-    long waitStart = Calendar.getInstance().getTimeInMillis();
-    for ( int i = 0; i < 4; i++ )
+    while ( n < 2 )
     {
-      int written = writeTouchUSBReport( ssdOut, 62 );
-      System.err.println( "Firmware header packet " + ( i+1 ) + " sent" );
-      int read = readTouchUSBReport(ssdIn, 5000);
-      long delay = Calendar.getInstance().getTimeInMillis() - waitStart; 
-      System.err.println( "Response to header " + ( i+1 ) + " received after wait of " + delay + "ms" );
-      
-      if ( written == 65 && read == 64 && ssdIn[ 2 ] == 0 )
+      setProgressName( "WRITING NEW FIRMWARE:" );
+      if ( progressUpdater != null )
+        progressUpdater.updateProgress( 0 );
+      long waitStart = Calendar.getInstance().getTimeInMillis();
+      for ( int i = 0 ; i < 4; i++ )
       {
-        success = true;
+        int written = writeTouchUSBReport( ssdOut, 62 );
+        System.err.println( "Firmware header packet " + ( i+1 ) + " sent" );
+        int read = readTouchUSBReport(ssdIn, 5000);
+        long delay = Calendar.getInstance().getTimeInMillis() - waitStart; 
+        System.err.println( "Response to header " + ( i+1 ) + " received after wait of " + delay + "ms" );
+
+        if ( written == 65 && read == 64 && ssdIn[ 2 ] == 0 )
+        {
+          success = true;
+          break;
+        }
+      }
+      if ( success )
+      {
         break;
       }
+      n++;
+      if ( n < 2 )
+      {
+        String title = "Writing updated firmware";
+        String message = "Please disconnect the USB cable from the remote,\n"
+            + "connect it again and then press OK to continue";
+        JOptionPane.showMessageDialog( null, message, title, JOptionPane.INFORMATION_MESSAGE );
+        waitForTouchReconnection();
+      }
     }
-    
+
     if ( !success )
     {
       System.err.println( "Error: Firmware header packet failed" );
@@ -1968,14 +1992,15 @@ public class CommHID extends IO
   
   boolean waitForTouchReconnection()
   {
+    powerStatus = -1;
     setProgressName( "WAITING FOR RECONNECTION:" );
     if ( progressUpdater != null )
       progressUpdater.updateProgress( 0 );
-    long waitStart = Calendar.getInstance().getTimeInMillis();
     long delay = 0;
     try
     {
-      devHID.close();
+      if ( devHID != null )
+        devHID.close();
     }
     catch ( Exception e )
     {
@@ -1985,71 +2010,93 @@ public class CommHID extends IO
     
     devHID = null;
     waitForMillis( 2000 );
-    while ( devHID == null )
+    int n = 0;
+    long timeOut = 60000;
+    while ( ( n & 1 ) == 0 )
     {
-      delay = Calendar.getInstance().getTimeInMillis() - waitStart; 
-      if ( delay > 120000 )
+      long waitStart = Calendar.getInstance().getTimeInMillis();
+      while ( devHID == null )
       {
-        System.err.println( "Reconnection maximum wait exceeded" );
-        return false;
-      }
-      try
-      {
-        HIDinfo = hid_mgr.listDevices();
-        if ( HIDinfo != null )
+        delay = Calendar.getInstance().getTimeInMillis() - waitStart; 
+        if ( delay > timeOut )
         {
-          for ( int i = 0; i<HIDinfo.length; i++ )
+          if ( n < 2 )
           {
-            if ( HIDinfo[i].getVendor_id() == 0x06E7 ) 
+            String title = "Reconnection";
+            String message = "Please disconnect the USB cable from the remote,\n"
+                + "connect it again and then press OK to continue";
+            JOptionPane.showMessageDialog( null, message, title, JOptionPane.INFORMATION_MESSAGE );
+            n += 2;
+            break;
+          }
+          else
+          {
+            System.err.println( "Reconnection maximum wait exceeded" );
+            return false;
+          }
+        }
+        if ( progressUpdater != null )
+          progressUpdater.updateProgress( (int)((double)delay / timeOut * 100) );
+        try
+        {
+          HIDinfo = hid_mgr.listDevices();
+          if ( HIDinfo != null )
+          {
+            for ( int i = 0; i<HIDinfo.length; i++ )
             {
-              HIDdevice = HIDinfo[ i ];
-              devHID = HIDdevice.open();
-//              devHID = hid_mgr.openById(0x06E7, thisPID, null);
-              if ( devHID != null )
+              if ( HIDinfo[i].getVendor_id() == 0x06E7 ) 
               {
-                devHID.enableBlocking();
+                HIDdevice = HIDinfo[ i ];
+                devHID = HIDdevice.open();
+                //              devHID = hid_mgr.openById(0x06E7, thisPID, null);
+                if ( devHID != null )
+                {
+                  devHID.enableBlocking();
+                }
+                n++;
+                break;
               }
-              break;
             }
           }
         }
-      }
-      catch ( Exception e )
-      {
-        System.err.println( "Error in reopen attempt" );
-        return false;
-      }
-      waitForMillis( 3000 );
-    } // while ( devHID == null )
+        catch ( Exception e )
+        {
+          System.err.println( "Error in reopen attempt" );
+          return false;
+        }
+        waitForMillis( 3000 );
+      } // while ( devHID == null )
+    }
 
     if ( devHID != null )
     {
-      int status = -1;
       System.err.println( "Reopened device after wait of " + delay + "ms" );
       if ( RemoteMaster.ioNeedsPowerManagementCheck( this )
-          && ( status = getEnhancedPowerManagementStatus() ) == 1 )
+          && ( powerStatus = getEnhancedPowerManagementStatus() ) == 1 )
       {
         String title = "Firmware upgrade";
         String message = "The remote has opened in a new mode in which Enhanced Power Management\n"
             + "is still enabled.  Please use regedit to disable it. The key that needs\n"
             + "to be changed is at:\n\n" + getRegistryKey() + "\n\n"
-            + "where EnhancedPowerManagementEnabled needs to be changed from 1 to 0.\n\n"
-            + "After making this change, you need to disconnect and reconnect the\n"
+            + "where EnhancedPowerManagementEnabled needs to be changed from 1 to 0.\n"
+            + "Right-click the entry and select Modify, enter the new value 0 and press\n"
+            + "OK.  After making this change, you need to disconnect and reconnect the\n"
             + "remote and run the update process again.\n\n"
-            + "If the remote is still in Update Mode then nothing has been written to it.\n"
-            + "Remove and replace the batteries to exit Update Mode before repeating the\n"
-            + "upgrade.  If the remote has exited Update Mode then the MCU Firmware has been\n"
-            + "updated but the support files have not been written.  In this case you may\n"
-            + "need to remove the batteries and then reconnect the remote to the PC before\n"
-            + "replacing them, in order for the PC to accept the USB connection.";
+            + "If the remote is still in Update Mode then remove and reinsert the\n"
+            + "batteries to exit Update Mode.  The remote will then be as it was before\n"
+            + "you started the upgrade procedure.  You may repeat the upgrade process now\n"
+            + "or at a later time.\n\n"
+            + "If the remote has exited Update Mode then the upgrade process has started\n"
+            + "but is incomplete.  You should not need to remove and reinsert the batteries\n"
+            + "but you do need to repeat the upgrade process to allow it to complete.";
         JOptionPane.showMessageDialog( null, message, title, JOptionPane.INFORMATION_MESSAGE );
         return false;
       }
-      if ( status == -1 )
+      if ( powerStatus == -1 )
       {
         System.err.println( "Enhanced Power Management is not supported in this mode" );
       }
-      else if ( status == 0 )
+      else if ( powerStatus == 0 )
       {
         System.err.println( "Enhanced Power Management is disabled in this mode" );
       }

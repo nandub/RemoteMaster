@@ -120,6 +120,10 @@ Changes for v2.04
 - Add second stage confirm message after offer to upgrade is accepted (Graham)
 - Make the test for case error in Verify option be active only in admin mode (Graham)
 - Fix bug that gave error when deleting learned signals in certain exceptional circumstances (Graham)
+-- Private build 43
+- Added MAXQ executor for Apple protocol to protocols.ini (Graham)
+- Updated digitmaps.bin to 689 (Dave Reed)
+- Added facility to disconnect and reconnect remote in XSight firmware update when automatic reconnection fails (Graham)
 
 Changes for v2.03
 -- Alpha 8 --
