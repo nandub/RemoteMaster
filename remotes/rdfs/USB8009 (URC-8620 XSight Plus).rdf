@@ -4,7 +4,7 @@ EepromSize=$4000
 Processor=S3C80 
 Processor+=MAXQ622 
 BaseAddr=$02C000
-SegmentTypes=$13 $12 $00 $15 $03 $0B $1D $1E $09 $10 $20 $0A $11
+SegmentTypes=$13 $12 $00 $15 $03 $0B $1D $1E $1F $09 $10 $20 $0A $11
 SoftDev=Y,N
 Shift=$00
 FavKey=$23,0,0,0
@@ -89,8 +89,7 @@ User5, User6, User7, User8,
 User9, UserA, UserB, UserC,
 "Discrete On"=$DA:group0, "Discrete Off", Sys1=$DC:AllMoveBind+groupSystem, Sys2,
 Activity0=$F4:groupActivity+AllMoveBind, Activity1, Activity2, Activity3,
-Activity4, Activity5, Activity6, Activity7, Activity8, Activity9,
-Hold=$FE:AllBind+AllFavData+groupHold
+Activity4, Activity5, Activity6, Activity7, Activity8, Activity9, Activity10, Activity11
 
 [ButtonMaps] 
 0 = ($10, $05, $0D, $15, $06, $0E, $16, $07, $0F, $17), ($27, $20, $30), ($2F, $28), 

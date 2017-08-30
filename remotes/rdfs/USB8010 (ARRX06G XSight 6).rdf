@@ -1,5 +1,5 @@
 [General] 
-Name=Acoustic Research ARRX12G XSight 12-device
+Name=Acoustic Research ARRX06G XSight 6-device
 EepromSize=$4000
 Processor=S3C80 
 Processor+=MAXQ622 
@@ -56,12 +56,6 @@ Dev3 = $52 0
 Dev4 = $53 0
 Dev5 = $54 0
 Dev6 = $55 0
-Dev7 = $56 0
-Dev8 = $57 0
-Dev9 = $58 0
-Dev10 = $59 0
-Dev11 = $5A 0
-Dev12 = $5B 0
 
 [Buttons]
 Red=$01:group5, "Skip Reverse"::"prev track":SkipBack=$02:group6, "Search Reverse"::Rewind, Stop,
@@ -77,7 +71,6 @@ OK=$25:group2, "Menu Down"::"Down Arrow":Down, "Volume Up"::"Vol up":Vol+=$27:gr
 Power=$29:group0, LCDok=$2A:All+groupLCD, Devices, Menu=$2C:group2,
 "Menu Right"::"Right Arrow":Right=$2D:group2, Exit, "Channel Up"::"Channel up":Ch+=$2F:group4, Mute=$30:group3,
 Dev1=$50:AllBind, Dev2, Dev3, Dev4, Dev5, Dev6,
-Dev7, Dev8, Dev9, Dev10, Dev11, Dev12,
 Soft1=$90:groupSoft+group1, Soft2, Soft3, Soft4,
 Soft5, Soft6, Soft7, Soft8, 
 Soft9, SoftA, SoftB, SoftC, 

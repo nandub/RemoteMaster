@@ -1,0 +1,115 @@
+[General] 
+Name=Monster Revolution 200
+EepromSize=$3000
+Processor=HCS08 
+BaseAddr=$C800
+BlockFormat=Y
+SegmentTypes=$13 $12 $DA $15 $00 $10 $20 $0A $03 $1E $0B $1F $1D $09 
+SoftDev=Y,Y
+Shift=$00
+FavKey=$32,0,0,0
+Labels+= 13,0,,,Brand,Model,<html>Remote<br>Model</html>
+MasterPowerSupport=Y
+RDFSync=5 
+SetupValidation=OFF
+AdvCodeFormat=EFC
+PunchThru=V
+ImageMap=MonsterRev200.map
+
+[Checksums]
+^$0000:$0002..$2FFF/2
+
+[DeviceTypes] 
+TV       = 0 
+VCR      = 1
+SAT      = 2
+CBL      = 2
+DVD      = 5
+RCV      = 3
+AMP      = 3
+MIS      = 3
+HOM      = 2
+CAS      = 1
+LDP      = 5
+DAT      = 1
+CD       = 4
+PHO      = 4
+DVR      = 1
+VAC      = 2
+
+[DeviceTypeAliases]
+TV       = TV
+VCR      = VCR
+SAT      = SAT
+CBL      = Cable
+DVD      = DVD
+RCV      = Tuner
+AMP      = Amp
+MIS      = Misc Audio
+HOM      = Home Auto
+CAS      = Tape
+LDP      = Laserdisc
+DAT      = DAT
+CD       = CD
+PHO      = Phono
+DVR      = PVR
+VAC      = Video Acc
+
+[DeviceButtons] 
+Dev1 = $97 0
+Dev2 = $98 0
+Dev3 = $99 0
+Dev4 = $9A 0
+Dev5 = $9B 0
+Dev6 = $9C 0
+Dev7 = $9D 0
+Dev8 = $9E 0
+
+[Buttons]
+Dev=$02:AllBind, Activities:Act, "Channel down":Ch-=$04:group3, "Vol down":Vol-=$05:group2, 
+"Channel up":Ch+=$06:group3, "Vol up":Vol+=$07:group2, Mute,
+Stop=$0A:group4, Rewind, Play, "Fast fwd":FastFwd, Pause, Record, "prev ch":Prev=$10:group3,
+LCDdown=$12:AllBind, LCDok, TV, 1=$15:group5, 2, 3, "next track":SkipFwd=$18:group4,
+5=$1A:group5, 6, 7, 8, 9, 0:10, "prev track":SkipBack=$20:group4,
+Enter=$22:group5, Input=$23:group6, Clear=$24:group1, Info, Guide, Back,
+"up arrow":SelUp=$2C:group1, "left arrow":SelLeft,  "down arrow":SelDown, "right arrow":SelRight, select:SelOK,
+Fav=$32:AllBind, 4=$33:group5, LCDup=$34:AllBind, Menu=$35:group1, Power=$36:group0,
+Dev1=$97:AllBind, Dev2, Dev3, Dev4, Dev5, Dev6, Dev7, Dev8,
+User1=$9F:groupUser, User2, User3,
+Soft1=$AB:groupSoft+group7, Soft2, Soft3, Soft4, Soft5, Soft6, Soft7, Soft8, Soft9, Soft10,
+Soft11, Soft12, Soft13, Soft14, Soft15, Soft16, Soft17, Soft18, Soft19, Soft20,
+Soft21, Soft22, Soft23, Soft24, Soft25, Soft26, Soft27, Soft28, Soft29, Soft30,
+Activity1=$F0:groupActivity+AllMoveBind, Activity2, Activity3, Activity4,
+Activity5, Activity6, Activity7, Activity8
+
+[ButtonMaps] 
+0 = ($1F, $15, $16, $17, $33, $1A, $1B, $1C, $1D, $1E), ($07, $05, $08), ($06, $04), 
+     $36, $22, $10, $2C, $2E, $2D, $2F, $30, $24, $26, $35, $25, $27, $23, $0B, $0E, 
+	 $0C, $0D, $20, $0F, $0A, $18, $AB, $AC, $AD, $AE, $AF, $B0, $B1, $B2, $B3, $B4, 
+	 $B5, $B6, $B7, $B8, $B9, $BA, $BB, $BC, $BD, $BE, $BF, $C0, $C1, $C2, $C3, $C4, 
+	 $C5, $C6, $C7, $C8, $9F, $A0, $A1
+1 = ($1F, $15, $16, $17, $33, $1A, $1B, $1C, $1D, $1E), ($07, $05, $08), ($06, $04), 
+     $36, $22, $10, $2C, $2E, $2D, $2F, $30, $24, $26, $35, $25, $27, $23, $0B, $0E, 
+	 $0C, $0D, $20, $0F, $0A, $18, $AB, $AC, $AD, $AE, $AF, $B0, $B1, $B2, $B3, $B4, 
+	 $B5, $B6, $B7, $B8, $B9, $BA, $BB, $BC, $BD, $BE, $BF, $C0, $C1, $C2, $C3, $C4, 
+	 $C5, $C6, $C7, $C8, $9F, $A0, $A1
+2 = ($1F, $15, $16, $17, $33, $1A, $1B, $1C, $1D, $1E), ($07, $05, $08), ($06, $04), 
+     $36, $22, $10, $2C, $2E, $2D, $2F, $30, $24, $26, $35, $25, $27, $23, $0B, $0E, 
+	 $0C, $0D, $20, $0F, $0A, $18, $AB, $AC, $AD, $AE, $AF, $B0, $B1, $B2, $B3, $B4, 
+	 $B5, $B6, $B7, $B8, $B9, $BA, $BB, $BC, $BD, $BE, $BF, $C0, $C1, $C2, $C3, $C4, 
+	 $C5, $C6, $C7, $C8, $9F, $A0, $A1
+3 = ($1F, $15, $16, $17, $33, $1A, $1B, $1C, $1D, $1E), ($07, $05, $08), ($06, $04), 
+     $36, $22, $10, $2C, $2E, $2D, $2F, $30, $24, $26, $35, $25, $27, $23, $0B, $0E, 
+	 $0C, $0D, $20, $0F, $0A, $18, $AB, $AC, $AD, $AE, $AF, $B0, $B1, $B2, $B3, $B4, 
+	 $B5, $B6, $B7, $B8, $B9, $BA, $BB, $BC, $BD, $BE, $BF, $C0, $C1, $C2, $C3, $C4, 
+	 $C5, $C6, $C7, $C8, $9F, $A0, $A1
+4 = ($1F, $15, $16, $17, $33, $1A, $1B, $1C, $1D, $1E), ($07, $05, $08), ($06, $04), 
+     $36, $22, $10, $2C, $2E, $2D, $2F, $30, $24, $26, $35, $25, $27, $23, $0B, $0E, 
+	 $0C, $0D, $20, $0F, $0A, $18, $AB, $AC, $AD, $AE, $AF, $B0, $B1, $B2, $B3, $B4, 
+	 $B5, $B6, $B7, $B8, $B9, $BA, $BB, $BC, $BD, $BE, $BF, $C0, $C1, $C2, $C3, $C4, 
+	 $C5, $C6, $C7, $C8, $9F, $A0, $A1
+5 = ($1F, $15, $16, $17, $33, $1A, $1B, $1C, $1D, $1E), ($07, $05, $08), ($06, $04), 
+     $36, $22, $10, $2C, $2E, $2D, $2F, $30, $24, $26, $35, $25, $27, $23, $0B, $0E, 
+	 $0C, $0D, $20, $0F, $0A, $18, $AB, $AC, $AD, $AE, $AF, $B0, $B1, $B2, $B3, $B4, 
+	 $B5, $B6, $B7, $B8, $B9, $BA, $BB, $BC, $BD, $BE, $BF, $C0, $C1, $C2, $C3, $C4, 
+	 $C5, $C6, $C7, $C8, $9F, $A0, $A1

@@ -16,6 +16,7 @@ ImageMap=URC-8603.map
 SetupValidation=Warn
 AdvCodeFormat=EFC
 ActivityMapIndex=1
+16BitSetupCode=Y
 
 [DeviceTypes+] 
 TV         = 0,T 
@@ -30,6 +31,8 @@ CD         = 0,D
 Media      = 0,M
 HomeAuto   = 0,H
 HomeOFA    = 0,Q
+DAT        = 0,J
+Tape       = 0,K
 
 
 [DeviceTypes] 
@@ -45,12 +48,14 @@ CD         = 0
 Media      = 0
 HomeAuto   = 0
 HomeOFA    = 0
+DAT        = 0
+Tape       = 0
 
 [DeviceTypeAliases]
 TV         = TV
 Cable      = Cable
 SAT        = SAT
-DVD        = DVD,Tape,Laserdisc,DAT
+DVD        = DVD,Laserdisc
 VCR        = VCR,PVR
 Receiver   = Tuner
 Audio      = Misc Audio,Phono,Amp
@@ -59,6 +64,8 @@ HomeOFA    = OEM Mode
 HomeAuto   = Home Auto
 Media      = Media
 VideoAcc   = Video Acc
+DAT        = DAT
+Tape       = Tape
 
 [DeviceButtons] 
 Dev1 = $50 0
@@ -107,7 +114,7 @@ Dev7, Dev8, Dev9, Dev10, Dev11, Dev12,
 Dev13, Dev14, Dev15, Dev16, Dev17, Dev18,
 Activity0=$F0:groupActivity+AllBind, Activity1, Activity2, Activity3,
 Activity4, Activity5, Activity6, Activity7, Activity8, Activity9,
-Activity10, Activity11, Activity12, Activity13,
+Activity10, Activity11, Activity12, Activity13, Activity14,
 Null=$FF:All
 
 [ButtonMaps] 
