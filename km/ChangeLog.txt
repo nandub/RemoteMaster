@@ -1,3 +1,10 @@
+Changes for v2.05
+-- Private build 1
+- Added MAXQ executor for Apple protocol to protocols.ini (Graham)
+- Updated digitmaps.bin to 689 (Dave Reed)
+- Added RDF, map and image for Monster Revolution 200 (Graham)
+- Updated RDFs for XSight/Nevo remotes (Graham)
+
 Changes for v2.04
 -- Private build 1
 - Add new checksum class, Xor16Checksum, and new RDF syntax for it (Graham)
@@ -121,8 +128,6 @@ Changes for v2.04
 - Make the test for case error in Verify option be active only in admin mode (Graham)
 - Fix bug that gave error when deleting learned signals in certain exceptional circumstances (Graham)
 -- Private build 43
-- Added MAXQ executor for Apple protocol to protocols.ini (Graham)
-- Updated digitmaps.bin to 689 (Dave Reed)
 - Added facility to disconnect and reconnect remote in XSight firmware update when automatic reconnection fails (Graham)
 
 Changes for v2.03

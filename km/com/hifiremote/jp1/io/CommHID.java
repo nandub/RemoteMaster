@@ -58,7 +58,7 @@ public class CommHID extends IO
    *          or responding that the file is absent. (RemoveFile)
    *    19  Request length of named file.  Response is a type 01 packet giving length
    *          or responding that the file is absent. (GeteFileSize)
-   *    20  Request for the remote to enter update mode.  It carries no data
+   *    20  Request for the remote to enter upgrade mode.  It carries no data
    *          and the response is a type 01 packet with no data, but the remote
    *          then disconnects its USB port followed by a reconnection. (StartUpdate)
    *    27  Request a 6-byte value that is possibly the complement of a hex serial
@@ -1324,7 +1324,7 @@ public class CommHID extends IO
                             "There is a firmware revision available that will upgrade some files\n"
                             + "but downgrade others.  You should take advice from the JP1 forum\n"
                             + "before installing it, but you may do so if you wish.\n\n";
-          message += "A firmware update should preserve the current setup, but it is\n" 
+          message += "A firmware upgrade should preserve the current setup, but it is\n" 
               + "recommended that you save the current setup as a .rmir file before\n"
               + "upgrading.\n\n";
           if ( RemoteMaster.ioNeedsPowerManagementCheck( this ) )
@@ -1332,7 +1332,7 @@ public class CommHID extends IO
             message += "You appear to be using Windows 8.1 or later, which support Enhanced\n"
                 + "Power Management.  This may cause issues during a firmware upgrade.\n"
                 + "You should make sure that you know how to use regedit to edit the\n"
-                + "Windows registry before proceeding.  If registry changes are neeeded\n"
+                + "Windows registry before proceeding.  If registry changes are needed\n"
                 + "then messages will pop up to tell you exactly what change to make and\n"
                 + "how to proceed after making them.\n\n";
           }
@@ -1351,7 +1351,7 @@ public class CommHID extends IO
                 + "processor and a series of support files.  Sometimes that of the central\n"
                 + "processor is already up to date and only the support files need updating.\n"
                 + "In that case the upgrade runs to completion as a single process.  If the\n"
-                + "processor firmware needs updating, however, the upgrade takes place as a\n"
+                + "processor firmware needs upgrading, however, the upgrade takes place as a\n"
                 + "series of stages, during which the remote will restart twice.  Each restart\n"
                 + "involves the remote disconnecting from the PC then reconnecting.  Usually\n"
                 + "this reconnection takes place automatically. However, with some remotes\n"
@@ -1379,7 +1379,6 @@ public class CommHID extends IO
 
           if ( response == JOptionPane.YES_OPTION )
           {
-            System.err.println( "Proceeding with firmware revision" );
             if ( remoteType == RemoteType.XZITE )
             {
               if ( !upgradeXZITE( upgNeeds, changed, newFiles ) )
@@ -1427,7 +1426,7 @@ public class CommHID extends IO
       setProgressName( "ENTERING UPGRADE MODE:" );
       if ( progressUpdater != null )
         progressUpdater.updateProgress( 0 );
-      // Test the MCUFirmware update file for validity
+      // Test the MCUFirmware upgrade file for validity
       try
       {
         ZipFile zipIn = new ZipFile( sysFile );
@@ -1459,8 +1458,8 @@ public class CommHID extends IO
         }
         if ( progressUpdater != null )
           progressUpdater.updateProgress( 20 );
-        // Put remote into update mode with type 0x20 packet.
-        // Change packet type to 0x27 for testing without entering update mode.
+        // Put remote into upgrade mode with type 0x20 packet.
+        // Change packet type to 0x27 for testing without entering upgrade mode.
         writeTouchUSBReport( new byte[]{0x20}, 1 );
         if ( readTouchUSBReport( ssdIn ) < 0 || ssdIn[ 2 ] != 0 )
         {
@@ -1510,6 +1509,7 @@ public class CommHID extends IO
           }
           return false;
         }
+        System.err.println( "Exited upgrade mode" );
       } // try
       catch( Exception e )
       {
@@ -1888,7 +1888,7 @@ public class CommHID extends IO
       }
       pos += size;
       count++;
-      System.err.println( "Packet " + count + " sent" );
+//      System.err.println( "Packet " + count + " sent" );
     }
     System.err.println( "Bytes written to " + name + ": " + pos );
     return true;
@@ -2064,7 +2064,10 @@ public class CommHID extends IO
           System.err.println( "Error in reopen attempt" );
           return false;
         }
-        waitForMillis( 3000 );
+        if ( devHID == null )
+        {
+          waitForMillis( 3000 );
+        }
       } // while ( devHID == null )
     }
 
@@ -2081,7 +2084,7 @@ public class CommHID extends IO
             + "where EnhancedPowerManagementEnabled needs to be changed from 1 to 0.\n"
             + "Right-click the entry and select Modify, enter the new value 0 and press\n"
             + "OK.  After making this change, you need to disconnect and reconnect the\n"
-            + "remote and run the update process again.\n\n"
+            + "remote and run the upgrade process again.\n\n"
             + "If the remote is still in Update Mode then remove and reinsert the\n"
             + "batteries to exit Update Mode.  The remote will then be as it was before\n"
             + "you started the upgrade procedure.  You may repeat the upgrade process now\n"
