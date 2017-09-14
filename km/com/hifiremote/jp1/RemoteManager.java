@@ -137,19 +137,25 @@ public class RemoteManager
 
   private void addRemote( Remote remote )
   {
-    remotes.put( remote.getName(), remote );
     List< Remote > list = remotesBySignature.get( remote.getSignature() );
     if ( list == null )
     {
       list = new ArrayList< Remote >();
       remotesBySignature.put( remote.getSignature(), list );
     }
-    list.add( remote );
-    for ( int j = 1; j < remote.getNameCount(); j++ )
+    for ( int j = 0; j < remote.getNameCount(); j++ )
     {
       Remote dupRemote = new Remote( remote, j );
-      remotes.put( dupRemote.getName(), dupRemote );
-      list.add( dupRemote );
+      if ( dupRemote.getName().equals( remote.getName() ) )
+      {
+        remotes.put( remote.getName(), remote );
+        list.add( remote );
+      }
+      else
+      {
+        remotes.put( dupRemote.getName(), dupRemote );
+        list.add( dupRemote );
+      }
     }
   }
   
@@ -158,7 +164,15 @@ public class RemoteManager
     List< Remote > list = remotesBySignature.get( oldRemote.getSignature() );
     if ( list != null )
     {
-      list.remove( oldRemote );
+      for ( int j = 0; j < oldRemote.getNameCount(); j++ )
+      {
+        String name = ( new Remote( oldRemote, j ) ).getName();
+        Remote remote = remotes.get( name );
+        if ( remote != null )
+        {
+          list.remove( remote );
+        }
+      }
     }
     addRemote( newRemote );
   }

@@ -4,6 +4,11 @@ Changes for v2.05
 - Updated digitmaps.bin to 689 (Dave Reed)
 - Added RDF, map and image for Monster Revolution 200 (Graham)
 - Updated RDFs for XSight/Nevo remotes (Graham)
+-- Release build 2
+- Added support for firmware upgrades for XSight Lite/Plus and Monster remotes (Graham)
+- Fix bug that created duplicates in list when download offered choice of remotes (Graham)
+- Fix bug in analyzer of MAXQ protocols (Graham)
+- Updated CommHID version number to 1.0 to reflect increase in functionality (Graham)
 
 Changes for v2.04
 -- Private build 1

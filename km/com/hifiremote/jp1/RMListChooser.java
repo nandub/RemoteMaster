@@ -64,7 +64,7 @@ public class RMListChooser extends JDialog implements ListSelectionListener, Act
     setModal( true );
     this.io = io;
     setModel( write );
-    String fwVersion = io.getTouchVersion( null );
+    String fwVersion = io.getXZITEVersion( null );
     String heading = "Remote = " + remote.getName() + ".\nFirmware version = ";
     heading += ( fwVersion != null ? fwVersion : "Unknown" ) + "\n\n";
     heading += write

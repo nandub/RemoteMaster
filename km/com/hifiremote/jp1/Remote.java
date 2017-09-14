@@ -787,6 +787,13 @@ public class Remote implements Comparable< Remote >
     return signature.startsWith( "USB" ) && processor.getName().equals( "S3F80" );
   }
   
+  public boolean isFDRA()
+  {
+    load();
+    List< String > pids = Arrays.asList( "8008", "8009", "8010", "8011", "0007" );
+    return signature.startsWith( "USB" ) && pids.contains( signature.substring( 3 ) );
+  }
+  
   public boolean hasProfiles()
   {
     return isSSD();
@@ -829,6 +836,7 @@ public class Remote implements Comparable< Remote >
    */
   public int getBaseAddress()
   {
+    load();
     return baseAddress;
   }
 

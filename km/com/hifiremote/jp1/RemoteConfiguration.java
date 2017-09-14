@@ -1923,7 +1923,8 @@ public class RemoteConfiguration
     int segLength = 0;
     int segType = 0;
     segmentLoadOrder.addAll( remote.getSegmentTypes() );
-    while ( pos < remote.getEepromSize() && ( segLength = Hex.get( data, pos ) ) <= remote.getEepromSize() - pos  )
+    while ( pos < remote.getEepromSize() && ( segLength = Hex.get( data, pos ) ) <= remote.getEepromSize() - pos
+        && segLength >= 4 )
     {
       segType = data[ pos + 2 ];
       int segFlags = data[ pos + 3 ];
@@ -3280,13 +3281,13 @@ public class RemoteConfiguration
         Items items = new Items();
         if ( regionFilename == null )
         {
-          short[] filedata = hid.readTouchFile( "system.xcf" );
+          short[] filedata = hid.readXZITEFile( "system.xcf" );
           List< String > tagNames = getBXMLtagnames( "system.xcf", filedata, 0 );
           int start = filedata[ 14 ] + 0x100 * filedata[ 15 ] + 17;
           parseXCFFile( items, 1, filedata, start, tagNames, true );
         }
         items.codes = new ArrayList< Integer >();
-        items.irdb = hid.readTouchFile( "irdb.bin" );
+        items.irdb = hid.readXZITEFile( "irdb.bin" );
         List< String > tagNames = getBXMLtagnames( "irdb.bin", items.irdb, 0 );
         if ( tagNames == null )
         {
@@ -3295,7 +3296,7 @@ public class RemoteConfiguration
         int start = items.irdb[ 14 ] + 0x100 * items.irdb[ 15 ] + 17;
         parseXCFFile( items, -1, items.irdb, start, tagNames, true );
         
-        short[] filedata = hid.readTouchFile( regionFilename );
+        short[] filedata = hid.readXZITEFile( regionFilename );
         tagNames = getBXMLtagnames( regionFilename, filedata, 0 );
         if ( tagNames == null )
         {

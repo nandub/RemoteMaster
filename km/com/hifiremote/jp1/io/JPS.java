@@ -21,8 +21,10 @@ import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileSystemView;
 
 import com.hifiremote.jp1.ProgressUpdater;
+
 import org.apache.commons.lang3.StringEscapeUtils;
 
+import com.hifiremote.jp1.RemoteMaster.Use;
 import com.hifiremote.jp1.Scanner;
 import com.hifiremote.jp1.RemoteMaster;
 import com.hifiremote.jp1.settings.SettingFactory;
@@ -167,6 +169,8 @@ public class JPS extends IO
       e.printStackTrace();
     }
 
+    if ( progressUpdater != null && getUse() == Use.UPLOAD )
+      progressUpdater.updateProgress( 0 );
     byte[] data = new byte[ 0x40 ];
     s.read( 0, data );
     int len = getInt32( data, 2 );
@@ -332,6 +336,7 @@ public class JPS extends IO
       FileChannel o = FileChannel.open( Paths.get( filePath ), StandardOpenOption.WRITE, StandardOpenOption.SYNC );
       int dataWritten = 0, total = bao.size(), dataLeft = total, chunkSize;
       byte[] data = bao.toByteArray();
+      setProgressName( "UPLOADING:" );
       if ( progressUpdater != null )
         progressUpdater.updateProgress( 0 );
       while ( dataLeft > 0 )

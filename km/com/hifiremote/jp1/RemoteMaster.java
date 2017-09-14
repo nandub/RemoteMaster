@@ -29,7 +29,6 @@ import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.net.URL;
@@ -41,7 +40,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
-import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -118,7 +116,29 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
 
   /** Description of the Field. */
   public final static String version = "v2.05";
-  public final static int buildVer = 1;
+  public final static int buildVer = 2;
+  
+  public static class LanguageDescriptor
+  {
+    public String name = null;
+    public Integer code = null;
+    
+    public LanguageDescriptor( String name, Integer code )
+    {
+      this.name = name;
+      this.code = code;
+    }
+    
+    @Override
+    public String toString()
+    {
+      return name;
+    }
+  }
+  
+  public static LanguageDescriptor defaultLanguage = new LanguageDescriptor( "Current", null );
+  
+  public static LinkedHashMap< Integer, LanguageDescriptor > languages = null;
   
   public static int getBuild()
   {
@@ -246,6 +266,8 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
   
   private static JMenuItem putSystemFileItem = null;
   
+  private static JMenuItem saveFDRAfirmware = null;
+  
   private static JMenuItem parseIRDBItem = null;
   
   private static JMenuItem xziteOpsItem = null;
@@ -254,11 +276,17 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
   
   private static JMenuItem verifyXZITEfilesItem = null;
   
+  private static JMenuItem upgradeSourceItem = null;
+  
   private static JMenu xziteOps = null;
+  
+  private static JMenu digitalOps = null;
   
   private static JMenuItem extractSSItem = null;
   
   public static JCheckBoxMenuItem forceUpgradeItem = null;
+  
+  public static JCheckBoxMenuItem forceFDRAUpgradeItem = null;
   
   private static JMenuItem analyzeMAXQprotocols = null;
 
@@ -695,6 +723,10 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
       System.err.println( "Number of bytes read  = $" + Integer.toHexString( count ).toUpperCase() );
       io.closeRemote();
       System.err.println( "Ending normal download" );
+      if ( count == 0 )
+      {
+        return null;
+      }
       if ( sigData != null )
       { 
         if ( !io.getInterfaceName().equals( "JPS" ) )
@@ -725,6 +757,14 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
         if ( rc != null )
         {
           remoteConfig = rc;
+        }
+        else
+        {
+          setInterfaceState( null );
+          String title = file != null ? "File load" : "Download";
+          String message = title + " aborted.";
+          JOptionPane.showMessageDialog( RemoteMaster.this, message, "Download", JOptionPane.WARNING_MESSAGE );
+          return;
         }
       } 
       catch ( InterruptedException ignore ) {}
@@ -803,20 +843,40 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
       }
       CommHID ioHID = ( CommHID )io;
 
-      if ( !op.equals( "Delete/Save" ) )
+      if ( !op.equals( "Delete/Save" ) && !op.equals( "FdraFirmware" ) )
       {
         File sysFile = RemoteMaster.getRmirSys();
+        String title = "XSight operation";
         String message = null;
-        if ( ioHID.setFileData( sysFile ) )
+        if ( forceUpgradeItem.isSelected() && op.equals( "Reformat" ) )
+        {
+          message = "You have checked the \"Force XSight Firmware Upgrade\" menu\n"
+                  + "item so the reformat and system file restore process will\n"
+                  + "be performed without checking that the MCU firmware is the\n"
+                  + "latest version.  If it is not the latest version then this\n"
+                  + "process may corrupt the remote.\n\n"
+                  + "Are you sure you wish to continue?";
+          int reply = JOptionPane.showConfirmDialog( RemoteMaster.this, message, title, JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE );
+          if ( reply == JOptionPane.YES_OPTION )
+          {
+            message = null;
+          }
+          else
+          {
+            setInterfaceState( null );
+            return null;
+          }
+        }
+        else if ( ioHID.setFileData( sysFile ) )
         {
           Hex upgVersion = ioHID.getUpgradeData().get( "MCUFIRMWARE" ).version;
           Hex remoteVersion = new Hex( 4 );
-          ioHID.getTouchVersion( remoteVersion );
+          ioHID.getXZITEVersion( remoteVersion );
           if ( !upgVersion.equals( remoteVersion ) )
           {
             message = "You do not have the latest firmware.  You need to\n"
                 + "upgrade to the latest version before you can use\n"
-                + "this option to upload individual system files."; 
+                + "this option."; 
           }
         }
         else
@@ -826,7 +886,6 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
         }
         if ( message != null )
         {
-          String title = "Upload XSight system file";
           JOptionPane.showMessageDialog( RemoteMaster.this, message, title, JOptionPane.INFORMATION_MESSAGE );
           setInterfaceState( null );
           return null;
@@ -864,6 +923,19 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
         }
         String title = "System file verification";
         JOptionPane.showMessageDialog( null, sb.toString(), title, JOptionPane.INFORMATION_MESSAGE );
+      }
+      else if ( op.equals( "FdraFirmware" ) )
+      {
+        String name = ioHID.saveFDRAfirmware();
+        ioHID.closeRemote();
+        String title = "Save FDRA Firmware";
+        String message = name != null ? 
+            "The firmware of the remote has been saved to a file named " + name
+            + "\n in the XSight subfolder of the RMIR installation folder.\n\n"
+            + "The \"Set upgrade source file...\" item may be used to select this\n"
+            + "file for reinstalling into the remote." :
+              "The Save FDRA Firmware operation failed.";
+        JOptionPane.showMessageDialog( RemoteMaster.this, message, title, JOptionPane.INFORMATION_MESSAGE );
       }
       setInterfaceState( null );
       return null;
@@ -1695,6 +1767,10 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
     learnedProgressBar.setString( "N/A" );
     extraStatus.add( learnedProgressBar );
     memoryStatus.add( extraStatus );
+    
+    languages = new LinkedHashMap< Integer, LanguageDescriptor >();
+    languages.put( 0, new LanguageDescriptor( "None", 0 ) );
+    languages.put( 9, new LanguageDescriptor( "Danish", 9 ) );
 
     String temp = properties.getProperty( "RMBounds" );
     if ( temp != null )
@@ -1723,6 +1799,11 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
   public static JP1Frame getFrame()
   {
     return frame;
+  }
+  
+  public static LanguageDescriptor getLanguage( int code )
+  {
+    return languages.get( code );
   }
   
   public boolean useSavedData()
@@ -1766,6 +1847,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
     if ( remote != null && remote.isSSD() )
     {
       xziteOps.setVisible( rmirSys.exists() );
+      digitalOps.setVisible( false );
       extractSSItem.setVisible( false );
       ZipFile zipfile = getSystemZipFile( remote );
       parseIRDBItem.setEnabled( zipfile != null && zipfile.getEntry( "irdb.bin" ) != null );
@@ -1776,8 +1858,17 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
       catch ( Exception e ){}
       return;
     }
+    if ( remote != null && remote.isFDRA() )
+    {
+      xziteOps.setVisible( false );
+      digitalOps.setVisible( rmirSys.exists() );
+      upgradeSourceItem.setVisible( admin || !remote.getSignature().equals( "USB0007" ) );
+      extractSSItem.setVisible( false );
+      return;
+    }
+    
     xziteOps.setVisible( false );
-    getSystemFilesItem.setSelected( false );
+    digitalOps.setVisible( false );
     extractSSItem.setVisible( admin && ( remote != null && remote.usesSimpleset() || rm.binLoaded() != null ) );
     extractSSItem.setEnabled( admin && rm.binLoaded() != null );
   }
@@ -2386,13 +2477,11 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
         + "reset state." );
     xziteReformatItem.addActionListener( this );
     xziteOps.add( xziteReformatItem );
-
-//    if ( admin ) 
-      xziteOps.addSeparator();
+ 
+    xziteOps.addSeparator();
     
     forceUpgradeItem = new JCheckBoxMenuItem( "Force XSight Firmware Upgrade" );
     forceUpgradeItem.setSelected( false );
-//    forceUpgradeItem.setVisible( admin );
     forceUpgradeItem.setToolTipText( "<html>Selecting this option will force download of an XSight<br>"
         + "Touch-style or Nevo remote to offer to upgrade the remote,<br>"
         + "even if the current firmware is up-to-date.</html>" );
@@ -2407,7 +2496,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
     getSystemFilesItem.setSelected( false );
     getSystemFilesItem.setVisible( admin );
     getSystemFilesItem.addActionListener( this );
-    xziteOps.add( getSystemFilesItem );
+    xziteOps.add( getSystemFilesItem ); 
     
     parseIRDBItem = new JMenuItem( "Extract from irdb.bin" );
     parseIRDBItem.setToolTipText( "<html>Extracts data for an RDF from the copy of the irdb.bin<br>"
@@ -2416,6 +2505,42 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
     parseIRDBItem.addActionListener( this );
     parseIRDBItem.setVisible( admin );
     xziteOps.add( parseIRDBItem );
+    
+    digitalOps = new JMenu( "XSight operations" );
+    menu.add( digitalOps );
+    digitalOps.setVisible( false );
+    
+    forceFDRAUpgradeItem = new JCheckBoxMenuItem( "Force XSight Firmware Upgrade" );
+    forceFDRAUpgradeItem.setSelected( false );
+    forceFDRAUpgradeItem.setToolTipText( "<html>Selecting this option will force download of any XSight<br>"
+        + "or Nevo remote to offer to upgrade the remote, even if<br>"
+        + "the current firmware is up-to-date.</html>" );
+    digitalOps.add( forceFDRAUpgradeItem );
+
+    saveFDRAfirmware = new JMenuItem( "Save FDRA firmware" );
+    saveFDRAfirmware.setToolTipText( "<html>Saves the firmware of XSight FDRA remote to a file in the XSight<br>"
+        + "subfolder of the installation folder, creating this subfolder<br>"
+        + "if it does not exist. The file name is Sys followed by the USB<br>"
+        + "PID of the remote, an underscore then the firmware version as<br>"
+        + "a 6-digit integer.  Further digits after a decimal point give<br>"
+        + "the version of the additional language support.</html>" );
+    saveFDRAfirmware.addActionListener( this );
+    saveFDRAfirmware.setVisible( admin );
+    digitalOps.add( saveFDRAfirmware );
+
+    upgradeSourceItem = new JMenuItem( "Set upgrade source file..." );
+    upgradeSourceItem.setToolTipText( admin ? 
+        "<html>Sets the source for XSight firmware upgrades for the<br>"
+        + "current remote, giving a choice between the system-supplied<br>"
+        + "upgrades and restoring firmware previously saved with the<br>"
+        + "\"Save FDRA firmware\" option.  Includes the ability to<br>"
+        + "install optional additional language support.</html>" : 
+          "<html>Sets the source for XSight firmware upgrades for the<br>"
+          + "current remote, giving in particular the ability to<br>"
+          + "install optional additional language support." );
+    upgradeSourceItem.addActionListener( this );
+    upgradeSourceItem.setVisible( admin );
+    digitalOps.add( upgradeSourceItem );
     
     extractSSItem = new JMenuItem( "Extract from simpleset binary" );
     extractSSItem.setToolTipText( "<html>Extracts data for an RDF from the currently loaded<br>"
@@ -3964,6 +4089,19 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
         setInterfaceState( "FORMATTING..." );
         ( new XziteFileTask( "Reformat" ) ).execute();
       }
+      else if ( source == saveFDRAfirmware )
+      {
+        setInterfaceState( "SAVING FIRMWARE..." );
+        ( new XziteFileTask( "FdraFirmware" ) ).execute();
+      }
+      else if ( source == upgradeSourceItem )
+      {
+        Remote remote = remoteConfig != null ? remoteConfig.getRemote() : null;
+        UpgradeSourceSelector selector = new UpgradeSourceSelector( this, remote, upgradeSource, upgradeLanguage );
+        selector.setVisible( true );
+        upgradeSource = selector.getSource();
+        upgradeLanguage = selector.getSelectedLanguage();
+      }
       else if ( source == setBaselineItem )
       {
         remoteConfig.setBaselineData();
@@ -4603,6 +4741,23 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
 
     return file;
   }
+
+  public static boolean isValidUpgradeSource( File f, Remote remote )
+  {
+    if ( remote == null )
+      return false;
+    if ( f.isDirectory() )
+      return true;
+    String name = f.getName();
+    String prefix = "Sys" + remote.getSignature().substring( 3 ) + "_";
+    if ( !name.startsWith( prefix ) || !name.endsWith( ".bin" ) )
+      return false;
+    String body = name.substring( 8, name.length() - 4 );
+    if ( !body.matches( "\\d{6}(\\.\\d+)??" ) )
+      return false;
+
+    return true;
+  }
   
   /**
    * 
@@ -4829,6 +4984,8 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
   
   private static File workDir = null;
   private static File rmirSys = null;
+  private static File upgradeSource = null;
+  private static LanguageDescriptor upgradeLanguage = defaultLanguage;
 
   public static File getWorkDir()
   {
@@ -4838,6 +4995,21 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
   public static File getRmirSys()
   {
     return rmirSys;
+  }
+
+  public static File getUpgradeSource()
+  {
+    return upgradeSource;
+  }
+
+  public static void clearUpgradeSource()
+  {
+    RemoteMaster.upgradeSource = null;
+  }
+
+  public static LanguageDescriptor getUpgradeLanguage()
+  {
+    return upgradeLanguage;
   }
 
   /** The Constant rmirEndings. */

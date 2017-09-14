@@ -5355,6 +5355,7 @@ public class MAXQ610data
         int[] rev = new int[ 4 ];
         reverseByte( val & 0xFF, rev );
         argList.add( "" + rev[ 0 ] );
+        Arrays.fill( rev, 0 );
         reverseByte( (val>>8) & 0xFF, rev );
         argList2.add( "" + rev[ 0 ] );
       }
@@ -5386,20 +5387,35 @@ public class MAXQ610data
       int dest = item.getHex().getData()[ 1 ];
       String var1 = argList.get(0);
       String var2 = irpLabel( getZeroLabel( dest + 1 ) );
-      OpTree ot1 = new OpTree( argList.get(1) );
-      OpTree ot2 = new OpTree( argList2.get(1));
-      if ( refList.contains( var1 ) )
+      if ( var2 != null )
       {
-        ot1 = ot1.doOp( "REV",  null );
+        OpTree ot1 = new OpTree( argList.get(1) );
+        OpTree ot2 = new OpTree( argList2.get(1));
+        if ( refList.contains( var1 ) )
+        {
+          ot1 = ot1.doOp( "REV",  null );
+        }
+        if ( refList.contains( var2 ) )
+        {
+          ot2 = ot2.doOp( "REV",  null );
+        }
+        varMap.remove( var1 );
+        varMap.remove( var2 );
+        varMap.put( var1, ot1 );  
+        varMap.put( var2, ot2 );
       }
-      if ( refList.contains( var2 ) )
+      else
       {
-        ot2 = ot2.doOp( "REV",  null );
+        int high = Integer.parseInt( argList.get(1) );
+        int low = Integer.parseInt( argList2.get(1) ); 
+        OpTree ot1 = new OpTree( Integer.toString( high * 0x100 + low ) );
+        if ( refList.contains( var1 ) )
+        {
+          ot1 = ot1.doOp( "REV",  null );
+        }
+        varMap.remove( var1 );
+        varMap.put( var1, ot1 ); 
       }
-      varMap.remove( var1 );
-      varMap.remove( var2 );
-      varMap.put( var1, ot1 );  
-      varMap.put( var2, ot2 );
     }
     else if ( op.equals( "MOVN" ) )
     {

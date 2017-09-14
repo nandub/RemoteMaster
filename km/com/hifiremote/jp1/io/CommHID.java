@@ -1,7 +1,9 @@
 package com.hifiremote.jp1.io;
 
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,10 +27,12 @@ import com.codeminders.hidapi.HIDManager;
 import com.codeminders.hidapi.HIDDevice;
 import com.codeminders.hidapi.HIDDeviceInfo;
 import com.hifiremote.jp1.Hex;
+import com.hifiremote.jp1.PropertyFile;
 import com.hifiremote.jp1.Remote;
 import com.hifiremote.jp1.RemoteConfiguration;
 import com.hifiremote.jp1.RemoteManager;
 import com.hifiremote.jp1.RemoteMaster;
+import com.hifiremote.jp1.RemoteMaster.LanguageDescriptor;
 import com.hifiremote.jp1.RemoteMaster.NegativeDefaultButtonJOptionPane;
 import com.hifiremote.jp1.RemoteMaster.Use;
  
@@ -38,7 +42,8 @@ public class CommHID extends IO
    *  Summary of XSight Touch packet types, hex numbering.  Packets are all 64 bytes,
    *  the first byte being the packet type and the last two being a CRC checksum.
    *  The structure of the remaining bytes depends on packet type and its use.
-   *  Official UEI names in brackets at end.
+   *  Official UEI names in brackets at end.  It appears that UEI only uses hex
+   *  values that are composed of decimal digits.
    *    01  General packet carrying data in response to a specific request or
    *          sent as an acknowledgement of receipt. (RSP)
    *    04  Request firmware version data (for all 33 firmware files).  Response
@@ -56,18 +61,29 @@ public class CommHID extends IO
    *    14  File content received or sent following type 12 or 13 packets. (FileData)
    *    15  Delete named file.  Response is a type 01 packet acknowledging success
    *          or responding that the file is absent. (RemoveFile)
+   *    16  Format the remote's file system.  This takes no parameters. (FormatFileSystem)
+   *    17  Request list the files in the remote's file system.  The list is returned
+   *          in a series of type 18 packets. (Ls)
+   *    18  Response packet giving names of files in the remote's file system.  (LsData)
    *    19  Request length of named file.  Response is a type 01 packet giving length
-   *          or responding that the file is absent. (GeteFileSize)
+   *          or responding that the file is absent. (GetFileSize)
    *    20  Request for the remote to enter upgrade mode.  It carries no data
    *          and the response is a type 01 packet with no data, but the remote
    *          then disconnects its USB port followed by a reconnection. (StartUpdate)
+   *    21  In upgrade mode, request to start update.  Takes length of firmware
+   *          file as parameter. (StartUpdate)
+   *    22  Following acknowledgement of a type 21 packet, the firmware update is
+   *          sent as a series of type 22 packets.  (SendUpdate)
+   *    23  Exit update mode.  Takes the overall CRC of the firmware as parameter.
+   *          Response is a type 01 packet followed by disconnection and
+   *          reconnection.  (ExitUpdate)
    *    27  Request a 6-byte value that is possibly the complement of a hex serial
    *          number, returned in a type 01 packet.  There are no known side effects.
    *          (ReadSerialNumber) 
    */
   
   /*  
-   *  Command Status Codes:
+   *  Command Status Codes, XSight Lite/Plus:
    *  Success = 0,
    *  InvalidCommand,
    *  ChecksumError,
@@ -104,6 +120,8 @@ public class CommHID extends IO
   int infoAddress;
   int E2address;
   int E2size;
+  int internalFlashSize;
+  int externalFlashSize;
   int addrSize;
   RemoteType remoteType = null;
   HIDDeviceInfo[] HIDinfo = new HIDDeviceInfo[10];
@@ -125,6 +143,7 @@ public class CommHID extends IO
   LinkedHashMap< String, Hex > upgradeFileVersions = new LinkedHashMap< String, Hex >();
   LinkedHashMap< String, FileData > upgradeData = new LinkedHashMap< String, FileData >();
   List< String > sysNames = null;
+  File sysFile = null;
 
   private int runningTotal = 0;
   
@@ -183,7 +202,7 @@ public class CommHID extends IO
   }
 
   public String getInterfaceVersion() {
-    return "0.5";
+    return "1.0";
   }
 
   public String[] getPortNames() {
@@ -194,11 +213,6 @@ public class CommHID extends IO
   public int getRemotePID() {
     return thisPID;
   }
-
-//  public String getDeviceID()
-//  {
-//    return deviceID;
-//  }
 
   byte jp12ComputeCheckSum( byte[] data, int start, int length ) {
     int sum = 0;
@@ -223,7 +237,11 @@ public class CommHID extends IO
     cmdBuff[addrSize+5] = jp12ComputeCheckSum(cmdBuff, 0, addrSize+5);
   }
   
-  boolean eraseFDRA_Lite( int startAddress, int endAddress ){
+  boolean eraseFDRA( int startAddress, int endAddress )
+  {
+    if ( startAddress > endAddress )
+      return true;
+    
     byte[] cmdBuff = new byte[2*addrSize + 4];
     cmdBuff[0] = (byte) 0x00;  //packet length
     cmdBuff[1] = (byte) (2*addrSize + 2);  //packet length
@@ -238,6 +256,10 @@ public class CommHID extends IO
     cmdBuff[2*addrSize + 2] = (byte)(endAddress & 0xff);
     cmdBuff[2*addrSize + 3] = jp12ComputeCheckSum(cmdBuff, 0, 2*addrSize + 3);
     System.arraycopy(cmdBuff, 0, outReport, 1, cmdBuff.length);
+    if ( RemoteMaster.admin )
+    {
+      System.err.println( bytesToString( outReport ).substring( 3 ) );
+    } 
     try {
       devHID.write(outReport);
     } catch (Exception e) {
@@ -254,19 +276,50 @@ public class CommHID extends IO
   private int enterService()
   {
     byte[] cmdBuff = {(byte)0x00, (byte)0x04, (byte)0x51, (byte)0x55,(byte)0xAA,(byte)0xAA };
+    int result = 0;
     if ( !writeFDRAcmdReport(cmdBuff) )
     {
-      return 1;
+      result = 1;
     }
-    if ( !readFDRAreport() )  
+    else if ( !readFDRAreport() )  
     {
-      return 2;
+      result = 2;
     }
-    if ( dataRead[0] != 0 || dataRead[1] < 2 || dataRead[2] != 0 )
+    else if ( dataRead[0] != 0 || dataRead[1] < 2 || dataRead[2] != 0 )
     {
-      return 3;
+      result = 3;
     }
-    return 0;
+    if ( RemoteMaster.admin )
+    {
+      System.err.println( "Enter service returned " + result );
+    }
+    return result;
+  }
+  
+  /**
+   *  Return codes: 0 = success, 1 = write failed, 2 = read failed, 3 = error returned 
+   */
+  private int exitBootstrap()
+  {
+    byte[] cmdBuff = {(byte)0x00, (byte)0x02, (byte)0x52, (byte)0x50 };
+    int result = 0;
+    if ( !writeFDRAcmdReport(cmdBuff) )
+    {
+      result = 1;
+    }
+    else if ( !readFDRAreport() )  
+    {
+      result = 2;
+    }
+    else if ( dataRead[0] != 0 || dataRead[1] < 2 || dataRead[2] != 0 )
+    {
+      result = 3;
+    }
+    if ( RemoteMaster.admin )
+    {
+      System.err.println( "Exit bootstrap returned " + result );
+    }
+    return result;
   }
 
   boolean writeFDRAblock( int address, int addrSize, byte[] buffer, int blockLength ) {
@@ -285,6 +338,10 @@ public class CommHID extends IO
       System.arraycopy(cmdBuff, 0, outReport, 1, cmdBuff.length);  //outReport must contain an index byte
       System.arraycopy(buffer, 0, outReport, cmdBuff.length + 1, blockLength);
       outReport[blockLength + cmdBuff.length + 1] = jp12ComputeCheckSum(outReport, 1, blockLength + cmdBuff.length);
+      if ( RemoteMaster.admin )
+      {
+        System.err.println( bytesToString( outReport ).substring( 3 ) );
+      } 
       try {
         devHID.write(outReport);
       } catch (Exception e) {
@@ -293,27 +350,37 @@ public class CommHID extends IO
       return true;
     }
 
-  boolean writeFDRAcmdReport(byte [] cmdBuff)  {
-      System.arraycopy(cmdBuff, 0, outReport, 1, cmdBuff.length);
-      try {
-        devHID.write(outReport);
-      } catch (Exception e) {
-        return false;
-      }
-      return true;
-  }
-  
-  boolean readFDRAreport()  {
+  boolean writeFDRAcmdReport(byte [] cmdBuff)  
+  {  
+    System.arraycopy(cmdBuff, 0, outReport, 1, cmdBuff.length);
+    if ( RemoteMaster.admin )
+    {
+      System.err.println( bytesToString( cmdBuff ) );
+    }
     try {
-      devHID.readTimeout(inReport, 3000);
-      System.arraycopy(inReport, 0, dataRead, 0, 64);
+      devHID.write(outReport);
     } catch (Exception e) {
       return false;
     }
     return true;
   }
   
-  boolean FDRA_ReopenRemote()
+  boolean readFDRAreport()  
+  {
+    try {
+      devHID.readTimeout(inReport, 15000);
+      System.arraycopy(inReport, 0, dataRead, 0, 64);
+      if ( RemoteMaster.admin )
+      {
+        System.err.println( "   " + bytesToString( inReport ) );
+      }
+    } catch (Exception e) {
+      return false;
+    }
+    return true;
+  }
+  
+  boolean reopenFDRARemote()
   {
     byte[] cmdBuff = {(byte)0x00, (byte)0x02, (byte)0x51, (byte)0x53 };
     if ( !writeFDRAcmdReport(cmdBuff) )
@@ -347,7 +414,7 @@ public class CommHID extends IO
     return addrFromBytes( buffer, 0 );
   }
   
-  boolean FDRA_USB_getInfoAndSig()  {
+  boolean getFDRAInfoAndSig()  {
     // Following is based on GetIcInfo() in HidIf/UEI.USB.FCom/HidComm.cs.
     // There appear to be three formats here for the signature block data, with
     // two different sets of data represented.  The data sets are AppInfo1 and
@@ -375,16 +442,29 @@ public class CommHID extends IO
     sigStart = isAppInfo2 ? newAppInfo2 ? 6 : 16 : 0;
     
     if (readFDRAnoUpdate(infoAddress, dataRead, infoSize ) != infoSize)
+    {
       return false;
+    }
     System.err.println( "Sig block read is:" );
     System.err.println( Hex.toString( dataRead, 32, 0, infoSize ) );
-    try {
+    try 
+    {
       signature = new String(dataRead, sigStart, 6, "UTF-8");
-    } catch (UnsupportedEncodingException e) {
+    } 
+    catch (UnsupportedEncodingException e) 
+    {
+      System.err.println( "Error in reading signature block" );
+      return false;
     }
     if ( isAppInfo2 && newAppInfo2 )
     {
       infoCount = dataRead[ 42 ] & 0xFF;
+      if ( infoCount > 0x10 )
+      {
+        // There are not this many entries in any remote, so there is an error
+        System.err.println( "Error: number of signature block entries " + infoCount + " is too big" );
+        return false;
+      }
       firmwareEntry = addrFromBytes( dataRead, 43 );
       firmwareAddress = addrFromEntry( firmwareEntry );
       E2StartEntry = addrFromBytes( dataRead, 43 + 2*addrSize );
@@ -491,17 +571,26 @@ public class CommHID extends IO
       List< Remote > remotes = RemoteManager.getRemoteManager().findRemoteBySignature( getRemoteSignature() );
       if ( remotes.size() > 0 )
       {
-        // Value only used to test if RDF exists, to force testRemote(...) to be used
-        // on raw download for remotes without RDFs.
         remote = remotes.get( 0 );
       }
 
       if ( remote != null )
       {
+        File upgSource = RemoteMaster.getUpgradeSource();
+        if ( upgSource != null && !RemoteMaster.isValidUpgradeSource( upgSource, remote ) )
+        {
+          RemoteMaster.clearUpgradeSource();
+        }
+        
         if ( thisPID == 7 )
         {
           interfaceType = 6;
           remoteType = RemoteType.AVL;
+          sysNames = avlSysNames;
+          internalFlashSize = 0x10000;
+          externalFlashSize = 0;
+          isAppInfo2 = true;
+          newAppInfo2 = true;
         }
         else if ( thisPID >= 0x8001 && thisPID <= 0x8007 && thisPID != 0x8003 )
         {
@@ -514,6 +603,8 @@ public class CommHID extends IO
           interfaceType = 0x106;
           remoteType = RemoteType.DIGITAL;
           sysNames = digitalSysNames;
+          internalFlashSize = 0x20000;
+          externalFlashSize = 0x20000;
         }
       }
       else
@@ -526,38 +617,29 @@ public class CommHID extends IO
         return "HID";
       }
       
-
-//        remote.load();
-//        interfaceType = remote.isSSD() ? 0x201 : ( thisPID & 0x8000 ) == 0 ? 6 : 0x106;
-//      }
-//      else
-//      {
-//        // Unknown remote.
-//        remote = null;
-//        E2address = 0;   // This will be changed on testing
-//        E2size = 0x400;  // Seek to read 1K during testing
-//        interfaceType = 0x10;  // Let this value signify "unknown"; it needs to be > 0
-//        return "HID";
-//      }
-      
       if ( interfaceType == 0x106 || interfaceType == 6 )
       {
         if ( interfaceType == 0x106 && portName != null && portName.equals( "UPG" ) )
         {
-          return FDRA_ReopenRemote() ? "UPG" : "";
+          return reopenFDRARemote() ? "UPG" : "";
         }
-        FDRA_ReopenRemote();
+        reopenFDRARemote();
         if ( progressUpdater != null )
           progressUpdater.updateProgress( 70 );  
         waitForMillis( 200 );
-        if ( FDRA_USB_getInfoAndSig() && E2address > 0 )
+        // In the Monster remote, getInfoAndSig can only be used in Service mode
+        if ( interfaceType != 6 && getFDRAInfoAndSig() && E2address > 0 )
         {
-          System.err.println( "GetInfoAndSig succeeded" );
+          System.err.println( "GetInfoAndSig succeeded." );
         }
         else
         {
-          System.err.println( "GetInfoAndSig failed" );
-          return "";
+          if ( interfaceType != 6 )
+          {
+            System.err.println( "GetInfoAndSig failed.  Taking E2 data from RDF." );
+          }
+          E2address = remote.getBaseAddress();
+          E2size = remote.getEepromSize();
         } 
       }
       else // if ( interfaceType == 0x201 )
@@ -615,7 +697,7 @@ public class CommHID extends IO
     return interfaceType;
   }
   
-  public String getTouchVersion( Hex version )
+  public String getXZITEVersion( Hex version )
   {
     Hex hex = firmwareFileVersions.get( "MCUFirmware" );
     if ( hex == null && getVersionsFromRemote( false ) )
@@ -668,8 +750,8 @@ public class CommHID extends IO
   {
     LinkedHashMap< String, Integer > listing = new LinkedHashMap< String, Integer >();   
     List< String > fileList = new ArrayList< String >();
-    int written = writeTouchUSBReport( new byte[]{0x17}, 1 );  // Ls
-    if ( written != 65 || readTouchUSBReport( ssdIn ) < 0 )
+    int written = writeXZITEUSBReport( new byte[]{0x17}, 1 );  // Ls
+    if ( written != 65 || readXZITEUSBReport( ssdIn ) < 0 )
     {
       System.err.println( "List files failed to initiate" );
       return null;
@@ -682,7 +764,7 @@ public class CommHID extends IO
     while ( more )
     {
       // Read type 18 firmware version packet.
-      if ( readTouchUSBReport( ssdIn ) < 0 )
+      if ( readXZITEUSBReport( ssdIn ) < 0 )
       {
         System.err.println( "Read of file list failed" );
         return null;
@@ -709,13 +791,13 @@ public class CommHID extends IO
       }
       o[1] = ssdIn[ 1 ];
       // Send acknowledgement.
-      writeTouchUSBReport( o, 2 );
+      writeXZITEUSBReport( o, 2 );
       count++;
     }
     Collections.sort( fileList );
     for ( String name : fileList )
     {
-      byte[] sizeData = readTouchFileBytes( name, true );
+      byte[] sizeData = readXZITEFileBytes( name, true );
       Integer size = sizeData.length == 4 ? intFromHex( new Hex( sizeData ), 0, true ) : null;
       listing.put( name, size );
     }
@@ -728,9 +810,9 @@ public class CommHID extends IO
     if ( progressUpdater != null )
       progressUpdater.updateProgress( 0 );
     String title = "Formatting XSight";
-    int written = writeTouchUSBReport( new byte[]{0x16}, 1 );
+    int written = writeXZITEUSBReport( new byte[]{0x16}, 1 );
     upgradeSuccess = written == 65;
-    int read = readTouchUSBReport(ssdIn, 5000);
+    int read = readXZITEUSBReport(ssdIn, 5000);
     if ( read != 64 || ssdIn[ 2 ] != 0 )
     {
       upgradeSuccess = false;
@@ -866,7 +948,83 @@ public class CommHID extends IO
     return comments;
   }
 
-
+  /**
+   *   Saves the firmware to a file whose name is SysPPPP_VVVVVV.bin or
+   *   SysPPPP_VVVVVV.AAA.bin where PPPP is the USB PID of the remote, VVVVVV is the
+   *   6-digit version number of the Application block in the firmware and AAA, if
+   *   present, is the last three digits of the ALF block in the firmware (the first
+   *   three always being 500).  The version numbers are read from the remote with
+   *   the version command, not extracted from the firmware file.
+   */
+  public String saveFDRAfirmware()
+  {
+    Hex appVersion = null;
+    Hex alfVersion = null;
+    if ( enterService() != 0 )
+    {
+      return null;
+    }
+    if ( ( appVersion = getVersionFromFDRAremote( 0 ) ) == null
+        || remoteType == RemoteType.DIGITAL && ( alfVersion = getVersionFromFDRAremote( 3 ) ) == null )
+    {
+      appVersion = new Hex( new short[]{0x30,0x30,0x30,0x30,0x30,0x30} );
+    }
+    if ( !getFDRAInfoAndSig() )
+    {
+      firmwareAddress = remoteType == RemoteType.DIGITAL ? 0x1600 : 0x846;
+    }
+    int firmwareSize = Math.min( internalFlashSize, E2address ) - firmwareAddress;
+    String name = String.format( "Sys%04X", thisPID ) + "_" + appVersion.subString( 0, 6 );
+    if ( alfVersion != null )
+    {
+      name += "." + alfVersion.subString( 3, 3 );
+    }
+    name += ".bin";
+    File outputDir = new File( RemoteMaster.getWorkDir(), "XSight" );
+    outputDir.mkdirs();
+    File file = new File( outputDir, name );
+    BufferedOutputStream out = null;
+    try
+    {
+      out = new BufferedOutputStream( new FileOutputStream( file, false ));
+      byte[] buffer = new byte[ internalFlashSize ];
+      int read = readFDRAfirmware( firmwareAddress, buffer, firmwareSize );
+      if ( read != firmwareSize )
+      {
+        out.close();
+        return null;
+      }
+      out.write( buffer, 0, firmwareSize );
+      if ( E2address > internalFlashSize )
+      {
+        int size = E2address - internalFlashSize;
+        read = readFDRAfirmware( internalFlashSize, buffer, size );
+        if ( read != size )
+        {
+          out.close();
+          return null;
+        }
+        out.write( buffer, 0, size );
+        Arrays.fill( buffer, 0, E2size, ( byte )0xFF );
+        out.write( buffer, 0, E2size );
+        size = internalFlashSize + externalFlashSize - E2address - E2size;
+        read = readFDRAfirmware( E2address + E2size, buffer, size );
+        if ( read != size )
+        {
+          out.close();
+          return null;
+        }
+        out.write( buffer, 0, size );
+      }
+      out.close();
+    }
+    catch( Exception e )
+    {
+      return null;
+    }
+    return name;
+  }
+  
   private int testRemote( byte[] buffer, int length )
   {
     if ( RemoteMaster.admin )
@@ -879,7 +1037,6 @@ public class CommHID extends IO
     }
     String title = "Unknown remote";
     String message = null;
-    int numRead = 0;
     System.err.println();
     System.err.println( "Starting diagnostics for unknown USB remote with PID = " + String.format( "%04X", thisPID ) );
     boolean identified = false;
@@ -891,7 +1048,7 @@ public class CommHID extends IO
         message = "RMIR has found an XSight Touch style of remote with the following data:"
             + "\n    Signature = " + getRemoteSignature()
             + "\n    Processor = S3F80"
-            + "\n    Firmware version = " + getTouchVersion( null );
+            + "\n    Firmware version = " + getXZITEVersion( null );
         if ( RemoteMaster.admin )
         {
           message += "\n\nDo you want to run further tests in Upgrade mode?";
@@ -917,7 +1074,8 @@ public class CommHID extends IO
     else if ( thisPID > 0x8007 && thisPID <= 0x8011 || thisPID == 0x0007 )
     {
       System.err.println( "XSight FDRA remote" );
-      if ( FDRA_USB_getInfoAndSig() && E2address > 0 )
+      enterService();
+      if ( getFDRAInfoAndSig() && E2address > 0 )
       {
         identified = true;
         Hex version = getVersionFromFDRAremote( 0 );
@@ -1059,6 +1217,14 @@ public class CommHID extends IO
     return readFDRAnoUpdate( address, buffer, length );
   }
   
+  private int readFDRAfirmware( int address, byte[] buffer, int length )
+  {
+    setProgressName( "READING FIRMWARE:" );
+    if ( progressUpdater != null )
+      progressUpdater.updateProgress( 0 );
+    return readFDRAnoUpdate( address, buffer, length );
+  }
+  
   private int readFDRAnoUpdate( int address, byte[] buffer, int length )
   {
     byte[] chunkBuffer = new byte[ chunkSize ];
@@ -1108,15 +1274,19 @@ public class CommHID extends IO
         // Set timeout to 200ms for testing unknown remote, but 3000ms in normal operation
         int timeout = remoteType == RemoteType.UNKNOWN ? 200 : 3000;
         int numRead = devHID.readTimeout(inReport, timeout);
+        if ( RemoteMaster.admin )
+        {
+          System.err.println( "   " + bytesToString( inReport ) );
+        }
         if ( numRead == 0 )
         {
-          System.err.println( "Read attempt timed out for FDRA report " + i + " of " + numReports );
+          System.err.println( "Read attempt timed out for FDRA report " + ( i + 1 ) + " of " + numReports );
           success = false;
           break;
         }
         else if ( numRead != 64 )
         {
-          System.err.println( "Incomplete read of FDRA report " + i + " of " + numReports + ", " + numRead + " bytes of 64 read" );;
+          System.err.println( "Incomplete read of FDRA report " + ( i + 1 ) + " of " + numReports + ", " + numRead + " bytes of 64 read" );;
           success = false;
           // return -1;
         }
@@ -1149,12 +1319,22 @@ public class CommHID extends IO
       if ( progressUpdater != null )
         progressUpdater.updateProgress( (int)((double)( delta + progress) / total * 100 ) );
     }
-    return success ? length : totalRead;
+    return success ? length : totalRead - 3;
   }
   
+  /**
+   *   The erase argument determines both whether each block is erased before being written
+   *   and whether the address range is checked to be within the E2 area.  This is set
+   *   to true when writing to E2 area and false when updating firmware, as the erase is
+   *   performed as a separate step during the updating process.
+   */
   private int writeFDRA( int address, byte[] buffer, int length, boolean erase )
   {
-    setProgressName( "UPLOADING:" );
+    if ( length == 0 )
+      return 0;
+    if ( erase && ( ( address < E2address) || (address + length > E2address + E2size) ) )
+      return -1;
+    setProgressName( erase ? "UPLOADING:" : "WRITING NEW FIRMWARE:" );
     if ( progressUpdater != null )
       progressUpdater.updateProgress( 0 );
     byte[] chunkBuffer = new byte[ chunkSize ];
@@ -1176,22 +1356,26 @@ public class CommHID extends IO
         break;
       }
     }
+    if ( RemoteMaster.admin )
+    {
+      System.err.println( "writeFDRA lengths: In " + length + ", Out " + pos );
+    }
     return pos;
   }
   
   int writeFDRAchunk( int address, int delta, byte[] buffer, int length, int total, boolean erase )  {
     address += delta;
+    System.err.println();
+    System.err.println( "Starting FDRA write of $" + Integer.toHexString( length ).toUpperCase() + " bytes at $" + String.format( "%05X", address ) );   
     int writeBlockSize = 0x3C - addrSize;
     int erasePageSize = 0x200;
     int offset, endAdr;
     int blockLength = writeBlockSize;
     byte tempBuf[] = new byte[65];
-    if ((address < E2address) || (address + length > E2address + E2size) )
-      return -1;
-    if ((length % erasePageSize) != 0)
+    if ( erase && ( (length % erasePageSize) != 0 || (address % erasePageSize) != 0 ) )
       return -1;
     endAdr = address + length - 1;
-    if ( erase && !eraseFDRA_Lite( address, endAdr ) )
+    if ( erase && !eraseFDRA( address, endAdr ) )
       return -1;
     offset = 0;
     do {
@@ -1235,8 +1419,7 @@ public class CommHID extends IO
     }
     
     forceUpgrade = false;
-    boolean noUpgrade = RemoteMaster.noUpgradeItem.isSelected() || isPortUpg
-        || remoteType != RemoteType.XZITE ;
+    boolean noUpgrade = RemoteMaster.noUpgradeItem.isSelected() || isPortUpg;
     
     if ( getUse() == Use.DOWNLOAD && !noUpgrade )
     {
@@ -1244,13 +1427,25 @@ public class CommHID extends IO
       {
         System.err.println( "Read dialog starts:");
       }
-      forceUpgrade = RemoteMaster.forceUpgradeItem.isSelected();
+      forceUpgrade = remoteType == RemoteType.XZITE && RemoteMaster.forceUpgradeItem.isSelected()
+          || remoteType != RemoteType.XZITE && RemoteMaster.forceFDRAUpgradeItem.isSelected();
+      String title = forceUpgrade ? "Forced upgrade" : "Firmware upgrade";
+      sysFile = RemoteMaster.getUpgradeSource();
+      if ( sysFile == null )
+      {
+        sysFile = RemoteMaster.getRmirSys();
+      }
+      else
+      {
+        title += " from " + sysFile.getName();
+      }
+      
       // Read firmware file versions from remote
       setProgressName( "CHECKING FOR UPGRADE:" );
       if ( progressUpdater != null )
         progressUpdater.updateProgress( 0 );
       firmwareFileVersions.clear();
-      if ( !getVersionsFromRemote( true ) ) 
+      if ( !forceUpgrade && !getVersionsFromRemote( true ) ) 
       {
         return 0;
       }
@@ -1258,8 +1453,6 @@ public class CommHID extends IO
         progressUpdater.updateProgress( 30 );
       // Test if system file required for upgrading is present
       boolean doUpgradeTest = false;
-      String title = "Firmware upgrade";
-      File sysFile = RemoteMaster.getRmirSys();
       if ( sysFile.exists() )
       {
         System.err.println( "Version numbers from remote:" );
@@ -1299,7 +1492,7 @@ public class CommHID extends IO
       }
 
       if ( doUpgradeTest )
-      {
+      {     
         // Test for upgrade and perform it if required
         List< String > changed = new ArrayList< String >();
         List< String > newFiles = new ArrayList< String >();
@@ -1308,6 +1501,14 @@ public class CommHID extends IO
         int[] upgNeeds = testForUpgrade( changed, newFiles );
         if ( progressUpdater != null )
           progressUpdater.updateProgress( 100 ); 
+//        if ( upgNeeds[ 1 ] == 0 && changed.contains( "alf.img" ) 
+//            && RemoteMaster.noLanguageUpgradeItem.isSelected() )
+//        {
+//          upgNeeds[ 0 ] = upgNeeds[ 2 ] = 0;
+//          changed.clear();
+//        }
+        
+
         if ( upgNeeds[ 0 ] > 0 )
         {
           String message = upgNeeds[ 2 ] == 1 ? 
@@ -1347,25 +1548,51 @@ public class CommHID extends IO
 
           if ( response == 1 )
           {
-            message =  "A firmware upgrade involves updating both the firmware of the central\n"
-                + "processor and a series of support files.  Sometimes that of the central\n"
-                + "processor is already up to date and only the support files need updating.\n"
-                + "In that case the upgrade runs to completion as a single process.  If the\n"
-                + "processor firmware needs upgrading, however, the upgrade takes place as a\n"
-                + "series of stages, during which the remote will restart twice.  Each restart\n"
-                + "involves the remote disconnecting from the PC then reconnecting.  Usually\n"
-                + "this reconnection takes place automatically. However, with some remotes\n"
-                + "and/or PCs a pop-up will ask the user to disconnect and then reconnect the USB\n"
-                + "cable in the course of the upgrade and to press OK to continue when you have\n"
-                + "done so.  Please follow any such instructions that appear on the PC.\n\n"
-                + "If you get a message from Windows saying \"USB device not recognised\" or\n"
-                + "something similar while the progress bar is saying \"Waiting for reconnection\",\n"
-                + "please wait for the progress bar to reach its end, taking at most one minute.\n"
-                + "The pop-up about disconnection and reconnection will then appear, and doing so\n"
-                + "will resolve the problem.\n\n"
-                + "Do you still want to continue with the firmware upgrade?";
-            response = JOptionPane.showConfirmDialog( null, message, title, 
-                JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE );
+            if ( remoteType == RemoteType.XZITE )
+            {
+              message =  "A firmware upgrade involves updating both the firmware of the central\n"
+                  + "processor and a series of support files.  Sometimes that of the central\n"
+                  + "processor is already up to date and only the support files need updating.\n"
+                  + "In that case the upgrade runs to completion as a single process.  If the\n"
+                  + "processor firmware needs upgrading, however, the upgrade takes place as a\n"
+                  + "series of stages, during which the remote will restart twice.  Each restart\n"
+                  + "involves the remote disconnecting from the PC then reconnecting.  Usually\n"
+                  + "this reconnection takes place automatically. However, with some remotes\n"
+                  + "and/or PCs a pop-up will ask the user to disconnect and then reconnect the USB\n"
+                  + "cable in the course of the upgrade and to press OK to continue when you have\n"
+                  + "done so.  Please follow any such instructions that appear on the PC.\n\n"
+                  + "If you get a message from Windows saying \"USB device not recognised\" or\n"
+                  + "something similar while the progress bar is saying \"Waiting for reconnection\",\n"
+                  + "please wait for the progress bar to reach its end, taking at most one minute.\n"
+                  + "The pop-up about disconnection and reconnection will then appear, and doing so\n"
+                  + "will resolve the problem.\n\n"
+                  + "Do you still want to continue with the firmware upgrade?";
+              response = JOptionPane.showConfirmDialog( null, message, title, 
+                  JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE );
+            }
+            else if ( remoteType == RemoteType.DIGITAL )
+            {
+              if ( !newFiles.isEmpty() )
+              {
+                String defaultFile = newFiles.get( 0 );
+                changed.add( defaultFile );
+                int defaultLangCode = Integer.parseInt( defaultFile.substring( 3, 4 ) );
+
+                String defaultStr = defaultLangCode == 0 ? "without additional" : "with " 
+                    + RemoteMaster.getLanguage( defaultLangCode ).name;
+//                String title = "Language support";
+                message = "The additional language support currently installed is not available\n"
+                    + "for this firmware upgrade.  If you continue, the upgrade will be\n"
+                    + "installed " + defaultStr + " language support.\n\n"
+                    + "Do you want to continue with the upgrade?";
+                response = NegativeDefaultButtonJOptionPane.showConfirmDialog( null, message, title, 
+                    JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE );
+              }
+            }
+            else
+            {
+              response = JOptionPane.YES_OPTION;
+            }
           }
           else
           {
@@ -1379,24 +1606,45 @@ public class CommHID extends IO
 
           if ( response == JOptionPane.YES_OPTION )
           {
+            message = null;
             if ( remoteType == RemoteType.XZITE )
             {
               if ( !upgradeXZITE( upgNeeds, changed, newFiles ) )
               {
+                message = "Upgrade failed.";
+                JOptionPane.showMessageDialog( null, message, title, JOptionPane.ERROR_MESSAGE );
+                return 0;
+              }
+            }
+            else if ( remoteType == RemoteType.DIGITAL || remoteType == RemoteType.AVL )
+            {
+              if ( !upgradeFDRA( upgNeeds, changed ) )
+              {
+                message = "Upgrade failed.";
+                JOptionPane.showMessageDialog( null, message, title, JOptionPane.ERROR_MESSAGE );
                 return 0;
               }
             }
             else
             {
               RemoteMaster.forceUpgradeItem.setSelected( false );
-              message = "Firmware upgrade for this remote is not yet implemented.\n"
-                  + "Continuing with normal download.";
-              JOptionPane.showMessageDialog( null, message, title, JOptionPane.INFORMATION_MESSAGE );
+              message = "Firmware upgrade for this remote is not yet implemented.\n\n";
+            }
+            
+            if ( message == null )
+            {
+              message = "Upgrade succeeded.\n\n";
+            }
+            message += "Do you want to continue with a normal download?";
+            int reply = JOptionPane.showConfirmDialog( null, message, title, JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE );
+            if ( reply != JOptionPane.YES_OPTION )
+            {
+              return 0;
             }
           }  // if ( response == JOptionPane.YES_OPTION )
         } // if ( upgNeeds[ 0 ] > 0 )
       } // if ( doUpgradeTest )
-    } // if ( getUse() == Use.DOWNLOAD )
+    } // if ( getUse() == Use.DOWNLOAD )null
 
     if ( remoteType == RemoteType.DIGITAL )
     {
@@ -1404,7 +1652,7 @@ public class CommHID extends IO
     }
     else if ( remoteType == RemoteType.XZITE )
     { 
-      bytesRead = readTouch( buffer );
+      bytesRead = readXZITE( buffer );
     }
     else if ( remoteType == RemoteType.AVL )
     {
@@ -1419,16 +1667,17 @@ public class CommHID extends IO
     System.err.println( "Proceeding with firmware revision" );
     String title = "Firmware upgrade";
     String message = null;
-    File sysFile = RemoteMaster.getRmirSys();
+//    File sysFile = RemoteMaster.getRmirSys();
     upgradeSuccess = true;
     if ( upgNeeds[ 1 ] > 0 )
     {
       setProgressName( "ENTERING UPGRADE MODE:" );
       if ( progressUpdater != null )
         progressUpdater.updateProgress( 0 );
-      // Test the MCUFirmware upgrade file for validity
+      
       try
       {
+        // Test the MCUFirmware upgrade file for validity
         ZipFile zipIn = new ZipFile( sysFile );
         String zName = upgradeData.get( "MCUFIRMWARE" ).zName;
         ZipEntry entry = zipIn.getEntry( zName );
@@ -1460,8 +1709,8 @@ public class CommHID extends IO
           progressUpdater.updateProgress( 20 );
         // Put remote into upgrade mode with type 0x20 packet.
         // Change packet type to 0x27 for testing without entering upgrade mode.
-        writeTouchUSBReport( new byte[]{0x20}, 1 );
-        if ( readTouchUSBReport( ssdIn ) < 0 || ssdIn[ 2 ] != 0 )
+        writeXZITEUSBReport( new byte[]{0x20}, 1 );
+        if ( readXZITEUSBReport( ssdIn ) < 0 || ssdIn[ 2 ] != 0 )
         {
           System.err.println( "Request to disconnect failed" );
           message = "Upgrade failed.  Request to disconnect failed.\n"
@@ -1473,8 +1722,8 @@ public class CommHID extends IO
           progressUpdater.updateProgress( 40 );
         waitForMillis( 7000 );
         boolean success = false;
-        if ( waitForTouchReconnection()
-            && writeFirmwareFile( data ) )
+        if ( waitForReconnection()
+            && writeXZITEFirmwareFile( data ) )
         {
           setProgressName( "CLOSING UPGRADE MODE:" );
           if ( progressUpdater != null )
@@ -1485,9 +1734,9 @@ public class CommHID extends IO
           ssdOut[ 3 ] = ( byte )( ( crc >> 8 ) & 0xFF );
           int n = -1;
           do {
-            int written = writeTouchUSBReport( ssdOut, 62 );
+            int written = writeXZITEUSBReport( ssdOut, 62 );
             success = written == 65;
-            int read = readTouchUSBReport(ssdIn);
+            int read = readXZITEUSBReport(ssdIn);
             if ( read != 64 || ssdIn[ 2 ] != 0 )
             {
               success = false;
@@ -1502,7 +1751,7 @@ public class CommHID extends IO
           if ( powerStatus != 1 )
           {
             System.err.println( "Writing of upgraded MCU firmware failed" );
-            message = "Upgrade failed.  Unable to write MCU firmware.\n\n"
+            message = "Unable to write MCU firmware.\n\n"
                 + "Please disconnect the remote, remove the batteries, put them\n"
                 + "back in, reconnect the remote and repeat the upgrade process.";
             JOptionPane.showMessageDialog( null, message, title, JOptionPane.ERROR_MESSAGE );
@@ -1521,7 +1770,7 @@ public class CommHID extends IO
       waitForMillis( 7000 );
     }   // if ( upgNeeds[ 1 ] > 0 )
 
-    if ( ( upgNeeds[ 1 ] == 0 || waitForTouchReconnection() ) &&
+    if ( ( upgNeeds[ 1 ] == 0 || waitForReconnection() ) &&
         getVersionsFromRemote( false ) &&
         testForUpgrade( changed, newFiles ) != null &&
         writeSystemFiles( sysFile, changed, 1 ) &&
@@ -1535,8 +1784,7 @@ public class CommHID extends IO
         getVersionsFromRemote( false ) &&
         upgradeSuccess )
     {
-      message = "Upgrade succeeded.  Continuing with normal download.";
-      JOptionPane.showMessageDialog( null, message, title, JOptionPane.INFORMATION_MESSAGE );
+      return true;
     }
     else
     {
@@ -1550,6 +1798,283 @@ public class CommHID extends IO
       }
       return false;
     }
+  }
+  
+  private boolean upgradeFDRA( int[] upgNeeds, List< String > changed )
+  {
+    System.err.println( "Proceeding with firmware revision" );
+    upgradeSuccess = true;
+    int firmwareAddress = 0;
+    int firmwareSize = 0;
+    int alfStart = 0;
+    byte[] data = null;      // The full binary data of app.img
+    byte[] alfData = null;   // The binary data of the alf.img file if present
+    if ( upgNeeds[ 0 ] > 0 )
+    {
+      setProgressName( "PREPARING THE UPGRADE:" );
+      if ( progressUpdater != null )
+        progressUpdater.updateProgress( 0 );
+      
+      try
+      {
+        // Test the app.img and alf.img (if present) upgrade files for validity
+        int eLength = 0;
+        InputStream in = null;
+        ZipFile zipIn = null;        
+        if ( sysFile.getName().endsWith( ".sys" ) )
+        {
+          zipIn = new ZipFile( sysFile );
+          String zName = upgradeData.get( "app.img" ).zName;
+          ZipEntry entry = zipIn.getEntry( zName );
+          eLength = ( int )entry.getSize();
+          in = zipIn.getInputStream( entry );
+          data = RemoteMaster.readBinary( in, eLength );
+          if ( !changed.isEmpty() && !changed.get( 0 ).equals( "alf0.img" ) )
+          {
+            zName = upgradeData.get( changed.get( 0 ) ).zName;
+            if ( zName != null )
+            {
+              entry = zipIn.getEntry( zName );
+              int alfLength = ( int )entry.getSize();
+              in = zipIn.getInputStream( entry );
+              alfData = RemoteMaster.readBinary( in, alfLength );
+            }
+          }         
+          zipIn.close();
+        }
+        else
+        {
+          eLength = ( int )sysFile.length();
+          in = new FileInputStream( sysFile );
+          data = RemoteMaster.readBinary( in, eLength );
+          in.close();
+        }
+        
+        // Calculate firmware address and size, as if existing firmware
+        // is corrupt, they cannot be read from the remote.
+        firmwareSize = eLength - externalFlashSize;
+        firmwareAddress = Math.min( internalFlashSize, E2address ) - firmwareSize;
+  
+        Hex hex = new Hex( data );
+        if ( sysFile.getName().endsWith( ".sys" ) )
+        {
+          RemoteConfiguration.decryptObjcode( hex );
+          data = hex.toByteArray();
+          if ( alfData != null )
+          {
+            // Overwrite the ALF block from app.img with data from alf.img.  This is
+            // used when there is an MCU firmware update, to ensure the correct
+            // language setting.
+            Hex alfHex = new Hex( alfData );
+            RemoteConfiguration.decryptObjcode( alfHex );
+            alfData = alfHex.toByteArray();
+            alfStart = upgradeData.get( blockNames[ 3 ] ).address;
+            System.arraycopy( alfData, 0, data, alfStart - firmwareAddress, alfData.length );
+            hex = new Hex( data );
+          }
+        }
+        if ( alfData == null && upgradeData.get( blockNames[ 4 ] ) != null )
+        {
+          // Copy the ALF block from app.img to alfData.  This is used when only the
+          // ALF block is updated.  This copying takes place in all cases for
+          // sysFile ending in .bin, and when alf0.img is required for sysFile
+          // ending in .sys.  For this sysFile and other language settings, alfData
+          // has already been copied from the relevant alf.img file.
+          alfStart = upgradeData.get( blockNames[ 3 ] ).address;
+          int alfEnd = upgradeData.get( blockNames[ 4 ] ).address;
+          alfData = Arrays.copyOfRange( data, alfStart - firmwareAddress, alfEnd - firmwareAddress );
+        }
+        
+        // Verify checksums of app.img
+        int pos = 0;
+        while ( pos < firmwareSize + externalFlashSize )
+        {
+          if ( pos == E2address - firmwareAddress )
+          {
+            pos += E2size;
+            continue;
+          }
+          int len = intFromHex( hex, pos + 2, false );
+          short sum = 0;
+          Hex stored = hex.subHex( pos, 2 );
+          if ( remoteType == RemoteType.AVL && pos == 0 )
+          {
+            // Need to exclude the RAM area $1800-$182B from the checksum, but make
+            // sure that the whole region beyond this is included and that the first
+            // two bytes are not skipped.
+            sum = jp12ComputeCheckSum( data, pos + 2, 0x1800 - firmwareAddress - pos - 2 );
+            pos += 0x182C - firmwareAddress - 2;
+            len -= 0x1800 - firmwareAddress - 2;
+          }
+          sum ^= jp12ComputeCheckSum( data, pos + 2, len - 2 );
+          Hex calc = new Hex( new short[]{ sum, ( short )( ~sum & 0xFF ) } );
+          if ( !calc.equals( stored ) )
+          {
+            return false;
+          }
+          pos += len;
+        }
+        if ( alfData != null )
+        {
+          // Verify checksum of alf.img
+          short sum = jp12ComputeCheckSum( alfData, 2, alfData.length - 2 );
+          Hex calc = new Hex( new short[]{ sum, ( short )( ~sum & 0xFF ) } );
+          Hex stored = new Hex( Arrays.copyOf( alfData, 2 ) );
+          if ( !calc.equals( stored ) )
+          {
+            return false;
+          }
+        }
+      }
+      catch ( Exception e )
+      {
+        System.err.println( "Error in firmware upgrade data" );
+        return false;
+      }
+    }
+      
+    RemoteMaster.forceFDRAUpgradeItem.setSelected( false );
+    if ( upgNeeds[ 1 ] > 0 )  // > 2 is for TESTING, > 0 is normal use
+    {
+      try
+      {
+        byte[] dataE2 = null;
+        boolean success = false;
+        
+        int i = 0;        
+        while ( !( success = enterService() == 0 ) 
+            && i++ < 3 && waitForReconnection( 7000 ) ){};
+        System.err.println( "Enter service on attempt " + ( i + 1 ) + " : " + success );
+        if ( !success ) return false;
+
+        if ( remoteType == RemoteType.DIGITAL )
+        {
+          // For RemoteType.AVL the E2 area is not erased and so does not have to be saved.
+          i = 0;
+          dataE2 = new byte[ E2size ];
+          while ( !( success = readFDRAnoUpdate( E2address, dataE2, E2size ) == E2size )
+              && i++ < 3 && waitForReconnection( 7000 ) && enterService() == 0 ){};
+          System.err.println( "Read E2 on attempt " + ( i + 1 ) + " : " + success );
+          if ( !success ) return false;
+          
+          // RemoteType.AVL does not have external flash
+          i = 0;
+          while( !( success = eraseFDRA( internalFlashSize, internalFlashSize + externalFlashSize - 1 ) )
+              && i++ < 3 && waitForReconnection( 7000 ) && enterService() == 0 ){};
+          System.err.println( "Erase external flash on attempt " + ( i + 1 ) + " : " + success );
+          if ( !success ) return false;
+          
+          // RemoteType.AVL needs special handling of erasure of firmware, due to the 
+          // high RAM block in the middle of its address range
+          i = 0;
+          while ( !( success = eraseFDRA( firmwareAddress, firmwareAddress + firmwareSize - 1 ) )
+              && i++ < 3 && waitForReconnection( 7000 ) && enterService() == 0 ){};
+          System.err.println( "Erase MCU firmware on attempt " + ( i + 1 ) + " : " + success );
+        }
+        else // remoteType == RemoteType.AVL
+        {
+          // For HCS08 processor the firmware erasure is performed as two blocks separated by
+          // the high RAM at $1800-$182B.
+          while ( !( success = eraseFDRA( firmwareAddress, 0x17FF ) )
+              && i++ < 3 && waitForReconnection( 7000 ) && enterService() == 0 ){};
+          System.err.println( "Erase MCU lower firmware on attempt " + ( i + 1 ) + " : " + success );
+          if ( !success ) return false;
+          
+          i = 0;
+          while ( !( success = eraseFDRA( 0x182C, firmwareAddress + firmwareSize - 1 ) )
+              && i++ < 3 && waitForReconnection( 7000 ) && enterService() == 0 ){};
+          System.err.println( "Erase MCU upper firmware on attempt " + ( i + 1 ) + " : " + success );
+        }
+        if ( !success ) return false;
+        
+        byte[] dataFirmware = new byte[ firmwareSize ];
+        System.arraycopy( data, 0, dataFirmware, 0, firmwareSize );
+//        Hex test = new Hex( dataFirmware );
+        
+        i = 0;
+        while ( !( success = writeFDRA( firmwareAddress, dataFirmware, firmwareSize, false ) == firmwareSize )
+            && i++ < 3 && waitForReconnection( 7000 ) && enterService() == 0 ){};
+        System.err.println( "Write MCU firmware on attempt " + ( i + 1 ) + " : " + success );
+        if ( !success ) return false;
+        
+        if ( remoteType == RemoteType.DIGITAL )
+        {
+          // For RemoteType.AVL there is no external flash
+          byte[] dataExtFlash = new byte[ externalFlashSize ];
+          System.arraycopy( data, internalFlashSize - firmwareAddress, dataExtFlash, 0, externalFlashSize );
+//          Hex test = new Hex( dataExtFlash );
+          
+          i = 0;
+          while ( !( success = writeFDRA( internalFlashSize, dataExtFlash, externalFlashSize, false ) == externalFlashSize )
+              && i++ < 3 && waitForReconnection( 7000 ) && enterService() == 0 ){};
+          System.err.println( "Write external flash on attempt " + ( i + 1 ) + " : " + success );
+          if ( !success ) return false;
+        
+          // For RemoteType.AVL the E2 area is not erased and so does not have to be rewritten.
+          i = 0;
+          while ( !( success = writeFDRA( E2address, dataE2, E2size, false ) == E2size )
+              && i++ < 3 && waitForReconnection( 7000 ) && enterService() == 0 ){};
+          System.err.println( "Write E2 on attempt " + ( i + 1 ) + " : " + success );
+          if ( !success ) return false;
+        }
+        else
+        {
+          // The file HidIf/UEI.USB.FCom/MonsterUsbApp.cs shows an 18 second delay
+          // after writing the firmware, before exiting.
+          setProgressName( "COMPLETING UPGRADE:" );
+          if ( progressUpdater != null )
+            progressUpdater.updateProgress( 0 );
+          for ( i = 0; i < 90; i++ )
+          {
+            waitForMillis( 200, true );
+            if ( progressUpdater != null )
+              progressUpdater.updateProgress( (int)((double)(i+1)/90 * 100 ) );
+          }
+        }
+        
+        i = 0;
+        while ( !( success = ( exitBootstrap() == 0 && waitForReconnection( 7000 ) ) ) 
+            && i++ < 3 ){};
+        System.err.println( "Exit upgrade on attempt " + ( i + 1 ) + " : " + success );
+        reopenFDRARemote();
+        if ( !success ) return false;
+      }
+      catch ( Exception e )
+      {
+        System.err.println( "Firmware upgrade error" );
+        return false;
+      }
+    }
+    else if ( !changed.isEmpty() && changed.get( 0 ).startsWith( "alf" ) && alfData != null )
+    {
+      boolean success = false;
+      
+      int i = 0;        
+      while ( !( success = enterService() == 0 ) 
+          && i++ < 3 && waitForReconnection( 7000 ) ){};
+      System.err.println( "Enter service on attempt " + ( i + 1 ) + " : " + success );
+      if ( !success ) return false;
+      
+      i = 0;
+      while( !( success = eraseFDRA( alfStart, alfStart + alfData.length - 1 ) )
+          && i++ < 3 && waitForReconnection( 7000 ) && enterService() == 0 ){};
+      System.err.println( "Erase ALF block on attempt " + ( i + 1 ) + " : " + success );
+      if ( !success ) return false;
+      
+      i = 0;
+      while ( !( success = writeFDRA( alfStart, alfData, alfData.length, false ) == alfData.length )
+          && i++ < 3 && waitForReconnection( 7000 ) && enterService() == 0 ){};
+      System.err.println( "Write ALF block on attempt " + ( i + 1 ) + " : " + success );
+      if ( !success ) return false;
+      
+      i = 0;
+      while ( !( success = ( exitBootstrap() == 0 && waitForReconnection( 7000 ) ) ) 
+          && i++ < 3 ){};
+      System.err.println( "Exit upgrade on attempt " + ( i + 1 ) + " : " + success );
+      reopenFDRARemote();
+      if ( !success ) return false;
+    }
+    
     return true;
   }
 
@@ -1631,7 +2156,7 @@ public class CommHID extends IO
     return ssdIn[ 2 ];
   }
   
-  int writeTouch( byte[] buffer )
+  int writeXZITE( byte[] buffer )
   {
     if ( RemoteMaster.admin )
     {
@@ -1661,9 +2186,9 @@ public class CommHID extends IO
       {
         ssdOut[ 4 + i ] = ( byte )name.charAt( i );
       }
-      writeTouchUSBReport( ssdOut, 62 );
+      writeXZITEUSBReport( ssdOut, 62 );
       int check = -1;
-      if ( readTouchUSBReport( ssdIn ) < 0 || ( check = ssdInCheck() ) < 0 
+      if ( readXZITEUSBReport( ssdIn ) < 0 || ( check = ssdInCheck() ) < 0 
           || ( check & 0xEF ) != 0 )
       {
         // Only valid values for check are 0x00 and 0x10
@@ -1677,7 +2202,7 @@ public class CommHID extends IO
     int dataEnd = ( buffer[ 2 ] & 0xFF ) | ( ( buffer[ 3 ] & 0xFF ) << 8 ) | ( ( buffer[ 1 ] & 0xF0 ) << 12 );
     int pos = 4;
     int index = -1;
-    setProgressName( "UPLOADING" );
+    setProgressName( "UPLOADING:" );
     if ( progressUpdater != null )
       progressUpdater.updateProgress( 0 );
     while ( pos < dataEnd )
@@ -1702,9 +2227,9 @@ public class CommHID extends IO
       {
         ssdOut[ 7 + i ] = ( byte )name.charAt( i );
       }
-      int written = writeTouchUSBReport( ssdOut, 62 );
+      int written = writeXZITEUSBReport( ssdOut, 62 );
       System.err.println( "File header packet sent" );
-      int read = readTouchUSBReport(ssdIn, 5000);
+      int read = readXZITEUSBReport(ssdIn, 5000);
       boolean success = written == 65 && read == 64 && ssdInCheck() == 0;
       if ( !success )
       {
@@ -1720,7 +2245,7 @@ public class CommHID extends IO
         ssdOut[ 3 ] = ( byte )( ( count >> 8 ) & 0xFF );
         ssdOut[ 4 ] = ( byte )size;
         System.arraycopy( buffer, pos, ssdOut, 6, size );
-        if ( !writeTouchBufferOut() )
+        if ( !writeXZITEBufferOut() )
         {
           System.err.println( "Error: terminating at hex position " + Integer.toHexString( pos ) );
           return pos;
@@ -1823,9 +2348,9 @@ public class CommHID extends IO
       {
         ssdOut[ 4 + i ] = ( byte )name.charAt( i );
       }
-      writeTouchUSBReport( ssdOut, 62 );
+      writeXZITEUSBReport( ssdOut, 62 );
       int check = -1;
-      if ( readTouchUSBReport( ssdIn ) < 0 || ( check = ssdInCheck() ) < 0 
+      if ( readXZITEUSBReport( ssdIn ) < 0 || ( check = ssdInCheck() ) < 0 
           || ( check & 0xEF ) != 0 )
       {
         // Only valid values for check are 0x00 and 0x10
@@ -1858,9 +2383,9 @@ public class CommHID extends IO
     {
       ssdOut[ 7 + i ] = ( byte )name.charAt( i );
     }
-    int written = writeTouchUSBReport( ssdOut, 62 );
+    int written = writeXZITEUSBReport( ssdOut, 62 );
     System.err.println( "File header packet sent" );
-    int read = readTouchUSBReport(ssdIn, 5000);
+    int read = readXZITEUSBReport(ssdIn, 5000);
     boolean success = written == 65 && read == 64 && ssdInCheck() == 0;
     if ( !success )
     {
@@ -1881,7 +2406,7 @@ public class CommHID extends IO
       ssdOut[ 3 ] = ( byte )( ( count >> 8 ) & 0xFF );
       ssdOut[ 4 ] = ( byte )size;
       System.arraycopy( data, pos, ssdOut, 6, size );
-      if ( !writeTouchBufferOut() )
+      if ( !writeXZITEBufferOut() )
       {
         System.err.println( "Error: terminating at hex position " + Integer.toHexString( pos ) );
         return false;
@@ -1894,7 +2419,7 @@ public class CommHID extends IO
     return true;
   }
   
-  private boolean writeFirmwareFile( byte[] data )
+  private boolean writeXZITEFirmwareFile( byte[] data )
   {
     if ( data == null )
     {
@@ -1921,9 +2446,9 @@ public class CommHID extends IO
       long waitStart = Calendar.getInstance().getTimeInMillis();
       for ( int i = 0 ; i < 4; i++ )
       {
-        int written = writeTouchUSBReport( ssdOut, 62 );
+        int written = writeXZITEUSBReport( ssdOut, 62 );
         System.err.println( "Firmware header packet " + ( i+1 ) + " sent" );
-        int read = readTouchUSBReport(ssdIn, 5000);
+        int read = readXZITEUSBReport(ssdIn, 5000);
         long delay = Calendar.getInstance().getTimeInMillis() - waitStart; 
         System.err.println( "Response to header " + ( i+1 ) + " received after wait of " + delay + "ms" );
 
@@ -1944,7 +2469,7 @@ public class CommHID extends IO
         String message = "Please disconnect the USB cable from the remote,\n"
             + "connect it again and then press OK to continue";
         JOptionPane.showMessageDialog( null, message, title, JOptionPane.INFORMATION_MESSAGE );
-        waitForTouchReconnection();
+        waitForReconnection();
       }
     }
 
@@ -1964,7 +2489,7 @@ public class CommHID extends IO
       ssdOut[ 3 ] = ( byte )( ( count >> 8 ) & 0xFF );
       ssdOut[ 5 ] = ( byte )size;
       System.arraycopy( data, pos + 8, ssdOut, 6, size );
-      if ( !writeTouchBufferOut() )
+      if ( !writeXZITEBufferOut() )
       {
         System.err.println( "Error: Write of firmware terminating at hex position " + Integer.toHexString( pos ) );
         return false;
@@ -1980,7 +2505,15 @@ public class CommHID extends IO
   
   boolean waitForMillis( int waitTime )
   {
-    System.err.println( "Waiting for " + waitTime + "ms" );
+    return waitForMillis( waitTime, false );
+  }
+  
+  boolean waitForMillis( int waitTime, boolean quiet )
+  {
+    if ( !quiet )
+    {
+      System.err.println( "Waiting for " + waitTime + "ms" );
+    }
     long waitStart = Calendar.getInstance().getTimeInMillis();
     long delay = 0;
     while ( delay < waitTime )
@@ -1990,7 +2523,17 @@ public class CommHID extends IO
     return true;
   }
   
-  boolean waitForTouchReconnection()
+  boolean waitForReconnection()
+  {
+    return waitForReconnection( 2000 );
+  }
+  
+  /**
+   *   The wait parameter is the delay between closing the device and starting to look
+   *   if it has reconnected.  This needs to be longer when closing the device is forcing
+   *   disconnection than when the disconnection has already taken place from the remote.
+   */
+  boolean waitForReconnection( int wait )
   {
     powerStatus = -1;
     setProgressName( "WAITING FOR RECONNECTION:" );
@@ -2004,12 +2547,11 @@ public class CommHID extends IO
     }
     catch ( Exception e )
     {
-      System.err.println( "Error in closing device after disconnection" );
-      return false;
+      System.err.println( "Closing device failed" );
     }
     
     devHID = null;
-    waitForMillis( 2000 );
+    waitForMillis( wait );
     int n = 0;
     long timeOut = 60000;
     while ( ( n & 1 ) == 0 )
@@ -2123,93 +2665,17 @@ public class CommHID extends IO
         + "            " + deviceID + "\n"
         + "              Device Parameters";
   }
-
-//    boolean wasAbsent = false;
-//    while ( true )
-//    {
-//      long delay = Calendar.getInstance().getTimeInMillis() - waitStart; 
-//      if ( delay > 60000 )
-//      {
-//        System.err.println( "Reconnection maximum wait exceeded" );
-//        return false;
-//      }
-//      boolean present = false;
-//      try
-//      {
-//        HIDinfo = hid_mgr.listDevices();
-//        HIDdevice = null;
-//        int count = HIDinfo == null ? 0 : HIDinfo.length;
-//        if ( count != lastCount )
-//        {
-//          System.err.println( "Number of devices = " + count + " after delay of " + delay + "ms" );
-//          lastCount = count;
-////          if ( HIDinfo != null )
-////          {
-////            System.err.println( "Devices are:" );
-////            for (int i = 0; i<HIDinfo.length; i++)
-////            {
-////              System.err.println( "  Device " + i + ": " + HIDinfo[i] );
-////            }
-////          }
-//        }
-//        if ( HIDinfo != null )
-//        {
-//          for ( int i = 0; i<HIDinfo.length; i++ )
-//          {
-//            if ( HIDinfo[i] != null && HIDinfo[i].getVendor_id() == 0x06E7 ) 
-//            {
-//              HIDdevice = HIDinfo[i];
-//              System.err.println( "Remote is connected" );
-//              present = true;
-//              if ( devHID != null && !wasAbsent )
-//              {
-//                System.err.println( "Closing connection" );              
-//                try
-//                {
-//                  devHID.close();
-//                }
-//                catch ( IOException e )
-//                {
-//                  System.err.println( "IOException on attempting close" );
-//                }
-//                devHID = null;
-//              }
-//              break;
-//            }
-//          }
-//        }
-//        if ( !wasAbsent && !present )
-//        {
-//          System.err.println( "Disconnected after wait of " + delay + "ms" );
-//          wasAbsent = true;
-//        }
-//
-//        if ( present && wasAbsent )
-//        {
-//          System.err.println( "Reconnected after wait of " + delay + "ms" );
-////          devHID = hid_mgr.openById(0x06E7, thisPID, null);
-//          devHID = HIDdevice.open();
-//          if ( devHID != null )
-//          {
-//            System.err.println( "Connection opened" );
-//            devHID.enableBlocking();
-//            return true;
-//          }
-//          else
-//          {
-//            System.err.println( "Connection failed to open" );
-//            return false;
-//          }
-//        }
-//        waitForMillis( 500 );
-//      }
-//      catch ( Exception e )
-//      {
-//        e.printStackTrace();
-//        return false;        
-//      }
-//    }
-//  }
+  
+  private String getFDRAlangFile()
+  {
+    Integer langCode = RemoteMaster.getUpgradeLanguage().code;
+    if ( langCode == null )
+    {
+      // Request is to keep current additional language
+      langCode = firmwareFileVersions.get( blockNames[ 3 ] ).getData()[ 3 ] - 0x30;
+    }
+    return "alf" + langCode + ".img"; 
+  }
   
   /**
    *  return array elements are:
@@ -2223,41 +2689,110 @@ public class CommHID extends IO
     newFiles.clear();   
     if ( forceUpgrade )
     {
-      changed.addAll( Arrays.asList( "lang.en", "lang.fr", "lang.ge", "lang.it",
-          "lang.sp", "lang.no", "lang.se", "Splash.xmg" ) );
-      newFiles.addAll( Arrays.asList("lang.dk", "lang.fi", "lang.nl" ) );
+      if ( remoteType == RemoteType.XZITE )
+      {
+        changed.addAll( Arrays.asList( "lang.en", "lang.fr", "lang.ge", "lang.it",
+            "lang.sp", "lang.no", "lang.se", "Splash.xmg" ) );
+        newFiles.addAll( Arrays.asList("lang.dk", "lang.fi", "lang.nl" ) );
+      }
       return new int[]{1,1,1};
     }
+    
+//    // TESTING
+//    // This creates essentially the same file versions as in firmware 1.3.7 and
+//    // should result in the same return values as forceUpgrade=true, but by running
+//    // the test code rather than directly setting the result.
+//    firmwareFileVersions.remove( "lang.dk" );
+//    firmwareFileVersions.remove( "lang.fi" );
+//    firmwareFileVersions.remove( "lang.nl" );
+//    for ( String name : firmwareFileVersions.keySet() )
+//    {
+//      if ( name.startsWith( "lang" ) || name.equals( "Splash.xmg" ) || name.equals( "MCUFirmware" ) )
+//      {
+//        Hex ver = firmwareFileVersions.get( name );
+//        ver.set( (short)0, 2 );
+//        firmwareFileVersions.put( name, ver );
+//      }
+//    }
+//    // END TESTING
 
     int[] out = new int[]{ 0, 0, 0 };
     int upgradeType = 0;
     List< String > fwNames = new ArrayList< String >();
     for ( String name : firmwareFileVersions.keySet() )
     {
+      // The name values are those returned by the version command for XZITE remotes
+      // or the names taken from the blockNames[] array for DIGITAL and AVL remotes.
+      
+      // For comparison purposes, fwNames holds the upper case form of the names.
       fwNames.add( name.toUpperCase() );
       if ( name.equalsIgnoreCase( "BlasterFirmware" ) )
       {
-        // We are currently unable to update BlasterFirmware
+        // We are currently unable to update BlasterFirmware, although we have
+        // the firmware for certain XZITE remotes.
         continue;
       }
       Hex currentVersion = firmwareFileVersions.get( name );
-      String fdName = name;
-      int currentOffset = 2;
+      String fdName = name;   // The form of the name in the upgradeData map
+      int currentOffset = 2;  // The offset of the version as hex within currentVersion
       int[] testOrder = new int[]{ 0,1,2,3,4,5 };
       if ( remoteType == RemoteType.XZITE )
       {
+        // For XZITE remotes the name in the upgradeData map is always upper case
         fdName = name.toUpperCase();
+        // The hex version is 4 bytes, little-endian
         testOrder = new int[]{ 3,2,1,0 };
       }
       else
       {
-        currentOffset = 0;
-        if ( name.equals( "ALF" ) && upgradeData.get( "alf.img" ) != null )
+        // For DIGITAL and AVL remotes the hex version is 6 bytes, big-endian, as
+        // initially set.  The upgradeData and firmwareFileVersions maps use the same
+        // name form, taken from blockNames[], so no change required.  However,
+        // additional language support requires special treatment of the ALF block.
+        currentOffset = 0;  // Offset is 0 for DIGITAL and AVL remotes
+        if ( name.equals( blockNames[ 3 ] ) )
         {
-          // The alf.img file, when present, is a later version than that included in app.img
-          name = fdName = "alf.img";
+          // If the requested language support is not available, add the available
+          // file to newFiles.  If it is available, add the requested file to changedFiles.
+          // If it is available but differs from current language then do not check
+          // version, treat as an upgrade in any case.
+          String langFile = getFDRAlangFile();  // The requested language file
+          name = fdName = langFile;  // Set to requested language file
+          if ( upgradeData.get( langFile ) == null )
+          {
+            // The requested language support is not available.
+            int appImgLangCode = upgradeData.get( blockNames[ 3 ] ).version.getData()[ 3 ] - 0x30;
+            String defaultFile = "alf" + appImgLangCode + ".img";
+            newFiles.add( defaultFile );
+            out[ 0 ] = 1;  // Upgrade required
+            upgradeType = upgradeType >= 0 ? 1 : -2;  // Treat as upgrade
+            continue;  // Go to next block
+          }
+          else
+          {
+            changed.add( langFile );
+            int currentLangCode = firmwareFileVersions.get( blockNames[ 3 ] ).getData()[ 3 ] - 0x30;
+            String currentLangFile = "alf" + currentLangCode + ".img";
+            if ( !langFile.equals( currentLangFile ) )
+            {
+              out[ 0 ] = 1;  // Upgrade required
+              upgradeType = upgradeType >= 0 ? 1 : -2;  // Treat as upgrade
+              continue;  // Go to next block
+            }
+          }
         }
       }
+
+      // For the ALF block of DIGITAL remotes, continue only when old and new
+      // languages are the same. The name of the language file is already in
+      // changed list in any case.  If another block needs upgrading then a
+      // full firmware upgrade is required, out[0] and out[1] will be set to 1
+      // by that need and the changed value specifies the language to include.
+      // If no other block needs upgrading but this current language does, then
+      // that need will set out[0] to 1 but leave out[1] at 0 so only the language
+      // upgrade will take place.  If nothing needs upgrading then out[0] will be
+      // left at 0 and so no upgrade will take place, despite the changed list
+      // being non-empty.
       FileData fd = upgradeData.get( fdName );
       if ( fd == null )
       {
@@ -2266,7 +2801,7 @@ public class CommHID extends IO
             + "be retained unchanged" );
         continue;
       }
-      
+
       Hex upgradeVersion = fd.version;
       int diff = 0;
       for ( int i : testOrder )
@@ -2274,14 +2809,20 @@ public class CommHID extends IO
         diff = upgradeVersion.getData()[ i ] - currentVersion.getData()[ i + currentOffset ];
         if ( diff != 0 )
         {
-          out[ 0 ] = 1;
+          out[ 0 ] = 1;  // An upgrade is required
           if ( name.equalsIgnoreCase( "MCUFirmware" ) 
-              || remoteType != RemoteType.XZITE && !name.equals( "alf.img" ) )
+              || remoteType != RemoteType.XZITE && !name.startsWith( "alf" ) )
           {
+            // An upgrade of the MCU firmware is required.  For XZITE remotes this is the
+            // single MCUFirmware entry, for other remotes a version difference in any block
+            // normally needs an entire firmware upgrade as all blocks are in a single file.
+            // The one exception is the ALF block when a separate alf.img file is available.
             out[ 1 ] = 1;
           }
           else
           {
+            // For DIGITAL remotes, the only name that can be added here is that of the
+            // current language when an upgrade of it is required
             changed.add( name );
           }
           break;
@@ -2296,7 +2837,7 @@ public class CommHID extends IO
                     : diff < 0 && upgradeType > -2 ? -1 : -2;
       }
     }
-    if ( remoteType != RemoteType.XZITE )
+    if ( remoteType == RemoteType.XZITE )
     {
       for ( String name : sysNames )
       {
@@ -2317,10 +2858,11 @@ public class CommHID extends IO
       }
     }
     out[ 2 ] = upgradeType;
+    
     return out;
   }
   
-  int readTouch( byte[] buffer )
+  int readXZITE( byte[] buffer )
   {
     int status = 0;
     setProgressName( getUse() == Use.DOWNLOAD ? "DOWNLOADING:" : "VERIFYING UPLOAD:" );
@@ -2338,8 +2880,8 @@ public class CommHID extends IO
       {
         ssdOut[ 4 + i ] = ( byte )name.charAt( i );
       }
-      writeTouchUSBReport( ssdOut, 62 );
-      if ( readTouchUSBReport( ssdIn ) < 0 )
+      writeXZITEUSBReport( ssdOut, 62 );
+      if ( readXZITEUSBReport( ssdIn ) < 0 )
       {
         System.err.println( "Length of file " + name + " is unavailable" );
         return 0;
@@ -2363,7 +2905,7 @@ public class CommHID extends IO
     for ( int n = 0; n < total; n++ )
     {
       String name = Remote.userFilenames[ n ];
-      byte[] data = readTouchFileBytes( name, false );
+      byte[] data = readXZITEFileBytes( name, false );
       if ( progressUpdater != null )
         progressUpdater.updateProgress( 10 + (int)((double)(n+1)/total * 90));
       if ( data == null )
@@ -2407,10 +2949,10 @@ public class CommHID extends IO
     return buffer.length;
   }
   
-  public short[] readTouchFile( String name )
+  public short[] readXZITEFile( String name )
   {
     runningTotal = 0;
-    byte[] bBuffer = readTouchFileBytes( name, false );
+    byte[] bBuffer = readXZITEFileBytes( name, false );
     if ( bBuffer == null )
     {
       return null;
@@ -2423,7 +2965,7 @@ public class CommHID extends IO
     return sBuffer;
   }
   
-  public byte[] readTouchFileBytes( String name, boolean sizeOnly )
+  public byte[] readXZITEFileBytes( String name, boolean sizeOnly )
   {
     /* There seems to be an issue with reading the system file AC_conn.  I don't
     know what this file is, but if it is related to the USB connection then it
@@ -2438,7 +2980,7 @@ public class CommHID extends IO
     byte[] result = null;
     while ( result == null && attempt++ < 4 )
     {
-      result = readTouchFileBytesOnce( name, sizeOnly );
+      result = readXZITEFileBytesOnce( name, sizeOnly );
     }
     if ( attempt > 1 && result != null )
     {
@@ -2447,7 +2989,7 @@ public class CommHID extends IO
     return result;
   }
   
-  private byte[] readTouchFileBytesOnce( String name, boolean sizeOnly )
+  private byte[] readXZITEFileBytesOnce( String name, boolean sizeOnly )
   {
     Arrays.fill( ssdOut, ( byte )0 );
     ssdOut[ 0 ] = ( byte )( sizeOnly ? 0x19 : 0x12 );
@@ -2458,9 +3000,9 @@ public class CommHID extends IO
       ssdOut[ offset + i ] = ( byte )name.charAt( i );
     }
     // Initialize file read
-    writeTouchUSBReport( ssdOut, 62 );
+    writeXZITEUSBReport( ssdOut, 62 );
     // First type 01 packet returned gives file length or sets absence flag.
-    if ( readTouchUSBReport( ssdIn ) < 0 )
+    if ( readXZITEUSBReport( ssdIn ) < 0 )
     {
       System.err.println( "Unable to read file \"" + name + "\"" );
       return null;
@@ -2489,33 +3031,11 @@ public class CommHID extends IO
     while ( total < count )
     {
       // Read next segment of file data
-      if ( readTouchUSBReport( ssdIn ) < 0 )
+      if ( readXZITEUSBReport( ssdIn ) < 0 )
       {
         System.err.println( "Read error before end of file \"" + name + "\"" );
         return null;
       }
-//      // *** TESTING
-//      // This was a failed attempt to emulate getting a repeat of the previous
-//      // packet by reporting an incorrect sequence number (Status valus 0x11)    
-//      int n = 0;
-//      if ( n == 0 && name.equals( "lang.fr" ) && sequenceNumber == 10 )
-//      {
-//        // pretend packet not received
-//        ssdOut[ 1 ] = ( byte )(packetID );
-//        ssdOut[ 2 ] = 0x11;
-//        ssdOut[ 3 ] = (byte)( ( sequenceNumber ) & 0xFF );
-//        ssdOut[ 4 ] = (byte)( ( sequenceNumber >> 8 ) & 0xFF );
-//        waitForMillis( 250 );
-//        writeTouchUSBReport( ssdOut, 5 );
-//        n++;
-//        ssdOut[ 2 ] = 0;
-//        for ( int i = 0; i < name.length(); i++ )
-//        {
-//          ssdOut[ 3 + i ] = ( byte )name.charAt( i );
-//        }
-//        continue;
-//      }
-//      // *** END TESTING
       
       packetID = ssdIn[ 1 ];
       sequenceNumber = ( ssdIn[ 2 ] & 0xFF ) | ( ( ssdIn[ 3 ] & 0xFF ) << 8 ); 
@@ -2526,7 +3046,7 @@ public class CommHID extends IO
       // Set packet serial in acknowledgement.
       ssdOut[ 1 ] = ( byte )packetID;
       // Send acknowledgement packet.
-      writeTouchUSBReport( ssdOut, 62 );
+      writeXZITEUSBReport( ssdOut, 62 );
     }
     if ( runningTotal >= 0 )
     {
@@ -2540,7 +3060,7 @@ public class CommHID extends IO
   public byte[] readSystemFile( String name )
   {
     runningTotal = -1;
-    return readTouchFileBytes( name, false );
+    return readXZITEFileBytes( name, false );
   }
   
   private boolean readSystemFiles()
@@ -2706,11 +3226,22 @@ public class CommHID extends IO
     return enabled;
   }
   
+  /**
+   *   getVersionsFromRemote(...) uses the version command of the remote to get the
+   *   versions of the MCU firmware and system files in the case of XZITE remotes,
+   *   or of the blocks of the firmware block structure of the DIGITAL and AVL remotes.
+   *   It populates the firmwareFileVersions map with the hex version in the form 
+   *   returned by the command, the key being the name returned by the command in
+   *   the case of XZITE remotes, or the name taken from blockNames[] array in the
+   *   case of DIGITAL and AVL remotes.  
+   */
   boolean getVersionsFromRemote( boolean getSerial )
   {
-    if ( remoteType == RemoteType.DIGITAL )
+    firmwareFileVersions.clear();
+    if ( remoteType == RemoteType.DIGITAL || remoteType == RemoteType.AVL )
     {
-      for ( int index = 0; index < 7; index++ )
+      int limit = remoteType == RemoteType.AVL ? 3 : 7;
+      for ( int index = 0; index < limit; index++ )
       {
         if ( index == 2 )
         {
@@ -2725,16 +3256,13 @@ public class CommHID extends IO
       }
       return true;
     }
-    if ( remoteType == RemoteType.AVL )
-    {
-      return false;  // Not yet implemented
-    }
+
     // Continue for remoteType == RemoteType.XZITE
     byte[] o = new byte[2];
     o[0]=1;
     // Initiate read of firmware file versions.
-    writeTouchUSBReport( new byte[]{4}, 1 );
-    if ( readTouchUSBReport( ssdIn ) < 0 )
+    writeXZITEUSBReport( new byte[]{4}, 1 );
+    if ( readXZITEUSBReport( ssdIn ) < 0 )
     {
       System.err.println( "Read versions from remote failed to initiate" );
       return false;
@@ -2745,23 +3273,23 @@ public class CommHID extends IO
     for ( int i = 0; i < firmwareFileCount; i++ )
     {
       // Read type 05 firmware version packet.
-      if ( readTouchUSBReport( ssdIn ) < 0 )
+      if ( readXZITEUSBReport( ssdIn ) < 0 )
       {
         System.err.println( "Read versions from remote failed on file " + ( i+1 ) + " of " + firmwareFileCount );
         return false;
       }
-      saveVersionData();
+      saveXZITEVersionData();
       // Get packet serial and set it in acknowledgement packet.
       o[1] = ssdIn[ 1 ];
       // Send acknowledgement.
-      writeTouchUSBReport( o, 2 );
+      writeXZITEUSBReport( o, 2 );
     }
     if ( !getSerial )
     {
       return true;
     }
-    writeTouchUSBReport( new byte[]{0x27}, 1 );
-    if ( readTouchUSBReport( ssdIn ) < 0 )
+    writeXZITEUSBReport( new byte[]{0x27}, 1 );
+    if ( readXZITEUSBReport( ssdIn ) < 0 )
     {
       System.err.println( "Reading of serial number failed" );
       return false;
@@ -2775,7 +3303,7 @@ public class CommHID extends IO
     return true;
   }
   
-  void saveVersionData()
+  void saveXZITEVersionData()
   {
     boolean absent = true;
     Hex hex = new Hex( 12 );
@@ -2804,18 +3332,18 @@ public class CommHID extends IO
   public int writeRemote( int address, byte[] buffer, int length ) {  //if Touch, must be 62 bytes or less
     int bytesWritten = -1;
     if ( interfaceType == 6 || interfaceType == 0x106 )
-      bytesWritten = writeFDRA(address, buffer, length, true);
+      bytesWritten = writeFDRA(address, buffer, length, true );
     else if ( interfaceType == 0x201 )
-      bytesWritten = writeTouch( buffer );
+      bytesWritten = writeXZITE( buffer );
     return bytesWritten;
   }
   
-  int readTouchUSBReport(byte[] buffer)
+  int readXZITEUSBReport(byte[] buffer)
   {
-    return readTouchUSBReport( buffer, 3000 );
+    return readXZITEUSBReport( buffer, 3000 );
   }
   
-  int readTouchUSBReport(byte[] buffer, int timeout ) 
+  int readXZITEUSBReport(byte[] buffer, int timeout ) 
   { 
     int bytesRead = -1;
     try {
@@ -2847,7 +3375,7 @@ public class CommHID extends IO
 //    return 64;
   }
   
-  int writeTouchUSBReport( byte[] buffer, int length ) {  //buffer must be <=62 bytes
+  int writeXZITEUSBReport( byte[] buffer, int length ) {  //buffer must be <=62 bytes
     if ( RemoteMaster.admin )
     {
       System.err.println( bytesToString( buffer ) );
@@ -2874,14 +3402,14 @@ public class CommHID extends IO
 //    return 65;
   }
   
-  boolean writeTouchBufferOut()
+  boolean writeXZITEBufferOut()
   {
     int n = 0;
     boolean success = false;
     do {
-      int written = writeTouchUSBReport( ssdOut, 62 );
+      int written = writeXZITEUSBReport( ssdOut, 62 );
       success = written == 65;
-      int read = readTouchUSBReport(ssdIn);
+      int read = readXZITEUSBReport(ssdIn);
       if ( read != 64 )
       {
         success = false;
@@ -3024,66 +3552,92 @@ public class CommHID extends IO
       verifyFileVersions( zipOut );
     }
     
+/**
+ *  setFileData(...) populates the map upgradeData with pairs ( name, fileData ) where
+ *    name = the name portion of the UEI upgrade files for the current remote (case unchanged,
+ *      which is upper case for XZITE remotes and lower case for all other remotes; in the
+ *      case of alf.img files the name body is postfixed with the 4th digit of the version
+ *      number, which is the language identifier, as there may be multiple alf.img files
+ *      for different languages;
+ *    fileData.zName is the encrypted name as in RMIR.sys;
+ *    fileData.versionNum is the version number from the UEI file name as a long integer;
+ *    fileData.version is the hex form of the version number as stored in the file itself,
+ *      which is a little-endian 4-byte integer for XZITE remotes, a 6-byte ASCII string
+ *      for DIGITAL and AVL remotes;
+ *    fileData.address is left unset for these entries.
+ *  When sysFile is a .bin file rather than RMIR.sys, an equivalent map is created with
+ *  one or two entries. There is always an entry for app.img, and also one for alf.img if
+ *  an ALF block is present in the file.  The fileData.zName is unset for these entries.
+ */
     public boolean setFileData( File sysFile )
     {
       List< String > ucSysNames = new ArrayList< String >();
+      upgradeData.clear();
       for ( String name : sysNames )
       {
         ucSysNames.add( name.toUpperCase() );
       }
       try
       {
-        ZipFile zipIn = new ZipFile( sysFile );
-        Enumeration< ? extends ZipEntry > zipEnum = zipIn.entries();
-        String prefix = getPrefix( getRemoteSignature() );
-        int i = 0;
-//        System.err.println( "Reconverted names:");
-        while ( zipEnum.hasMoreElements() ) 
-        { 
-          ZipEntry entryIn = ( ZipEntry ) zipEnum.nextElement();
-          String nameIn = entryIn.getName();
-          String nameOut = convertName( nameIn, i, false );
-          i++;
-          if ( !nameOut.startsWith( prefix ) )
-          {
-            continue;
+        if ( sysFile.getName().endsWith( ".sys" ) )
+        {
+          ZipFile zipIn = new ZipFile( sysFile );
+          Enumeration< ? extends ZipEntry > zipEnum = zipIn.entries();
+          String prefix = getPrefix( getRemoteSignature() );
+          int i = 0;
+          // System.err.println( "Reconverted names:");
+          while ( zipEnum.hasMoreElements() ) 
+          { 
+            ZipEntry entryIn = ( ZipEntry ) zipEnum.nextElement();
+            String nameIn = entryIn.getName();
+            String nameOut = convertName( nameIn, i, false );
+            i++;
+            if ( !nameOut.startsWith( prefix ) )
+            {
+              continue;
+            }
+            nameOut = nameOut.substring( prefix.length() + 1 );
+            int pos = nameOut.lastIndexOf( '_' );
+            String versionStr = nameOut.substring( pos + 1, nameOut.length() - 4 );
+            nameOut = nameOut.substring( 0, pos );
+            if ( !ucSysNames.contains( nameOut.toUpperCase() ) )
+            {
+              System.err.println( "File " + nameOut + " in upgrade but not in sysNames" );
+            }
+            if ( nameOut.equals( "alf.img" ) )
+            {
+              // Add the language identifier digit into the name body
+              nameOut = "alf" + versionStr.substring( 3, 4 ) + ".img";
+            }
+            FileData fileData = new FileData();
+            fileData.zName = nameIn;
+            setFileVersion( fileData, versionStr );
+            upgradeData.put( nameOut, fileData );
+            // System.err.println( nameOut + "   " + versionStr );
           }
-          nameOut = nameOut.substring( prefix.length() + 1 );
+          zipIn.close();
+        }
+        else if ( sysFile.getName().endsWith( ".bin" ) )
+        {
+          // RemoteType.DIGITAL and RemoteType.AVL only
+          FileData fileData = new FileData();
+          String nameOut = sysFile.getName();
           int pos = nameOut.lastIndexOf( '_' );
           String versionStr = nameOut.substring( pos + 1, nameOut.length() - 4 );
-          nameOut = nameOut.substring( 0, pos );
-          if ( !ucSysNames.contains( nameOut.toUpperCase() ) )
+          setFileVersion( fileData, versionStr.substring( 0, 6 ) );
+          upgradeData.put( "app.img", fileData );
+          if ( versionStr.length() > 7 )
           {
-            System.err.println( "File " + nameOut + " in upgrade but not in sysNames" );
+            // The end part of the version number of the included alf.img block is postfixed
+            // to the app.img version string
+            fileData = new FileData();
+            String aux = versionStr.substring( 7 );
+            versionStr = "500000".substring( 0, 6 - aux.length() ) + aux;
+            setFileVersion( fileData, versionStr.substring( 0, 6 ) );
+            nameOut = "alf" + versionStr.substring( 3, 4 ) + ".img";
+            upgradeData.put( nameOut, fileData );
           }
-          FileData fileData = new FileData();
-          fileData.zName = nameIn;
-          long versionNum = Long.parseLong( versionStr );
-          fileData.versionNum = versionNum;
-          if ( remoteType == RemoteType.XZITE )
-          {
-            short[] versionShort = new short[ 4 ];
-            for ( int k = 0; k < 4; k++ )
-            {
-              versionShort[ k ] = ( short )( versionNum & 0xFF );
-              versionNum >>= 8;
-            }
-            fileData.version = new Hex( versionShort );
-          }
-          else if ( remoteType == RemoteType.DIGITAL )
-          {
-            short[] versionShort = new short[ 6 ];
-            for ( int k = 0; k < 6; k++ )
-            {
-              versionShort[ 5 - k ] = ( short )( 0x30 + ( versionNum % 10 ) );
-              versionNum /= 10;
-            }
-            fileData.version = new Hex( versionShort );
-          }
-          upgradeData.put( nameOut, fileData );
-          //          System.err.println( nameOut + "   " + versionStr );
         }
-        zipIn.close();
       }
       catch( Exception e )
       {
@@ -3093,11 +3647,11 @@ public class CommHID extends IO
       boolean ok = true;
       for ( String name : ucSysNames )
       {
-        if ( remoteType == RemoteType.DIGITAL )
+        if ( remoteType != RemoteType.XZITE )
         {
           name = name.toLowerCase();
         }
-        if ( !upgradeData.containsKey( name ) )
+        if ( !upgradeData.containsKey( name ) && !name.equals( "alf.img" ) )
         {
           System.err.println( "File " + name + " in sysNames but not in upgrade" );
           // BlasterFirmware is the only file that is not present in the set of 
@@ -3109,6 +3663,37 @@ public class CommHID extends IO
         }
       }
       return ok;
+    }
+    
+    /**
+     *   setFileVersion(...) takes a version as a string of digits extracted from an
+     *   upgrade filename and sets the corresponding fileData.versionNum long integer and 
+     *   fileData.version hex parameters in the supplied fileData.
+     */
+    private void setFileVersion( FileData fileData, String versionStr )
+    {
+      long versionNum = Long.parseLong( versionStr );
+      fileData.versionNum = versionNum;
+      if ( remoteType == RemoteType.XZITE )
+      {
+        short[] versionShort = new short[ 4 ];
+        for ( int k = 0; k < 4; k++ )
+        {
+          versionShort[ k ] = ( short )( versionNum & 0xFF );
+          versionNum >>= 8;
+        }
+        fileData.version = new Hex( versionShort );
+      }
+      else
+      {
+        short[] versionShort = new short[ 6 ];
+        for ( int k = 0; k < 6; k++ )
+        {
+          versionShort[ 5 - k ] = ( short )( 0x30 + ( versionNum % 10 ) );
+          versionNum /= 10;
+        }
+        fileData.version = new Hex( versionShort );
+      }
     }
     
     public LinkedHashMap< String, FileData > getUpgradeData()
@@ -3127,17 +3712,33 @@ public class CommHID extends IO
       return n;
     }
     
+/**
+ *   setFileContentData(...) takes as input the hex data of the app.img file of the upgrade
+ *   for a DIGITAL or AVL remote and returns further entries for the upgradeData map created
+ *   by setFileData(...).  It locates the signature block in the file and reads the list of
+ *   pointers from that block, skipping the E2 area.  Each pointer gives a new entry in
+ *   the returned list, the name being taken from the blockNames[] array and with
+ *     fileData.versionNum and fileData.zName unset;
+ *     fileData.version = hex value given in the block concerned;
+ *     fileData.address = address of block within the remote's flash memory. 
+ */
     private LinkedHashMap< String, FileData > setFileContentData( Hex appImg )
     {
-      // Only applies to type DIGITAL
-      if ( remoteType != RemoteType.DIGITAL )
+      // Only applies to type DIGITAL and AVL remotes
+      if ( remoteType == RemoteType.XZITE )
       {
         return null;
       }
       LinkedHashMap< String, FileData > additions = new LinkedHashMap< String, FileData >();
       int sigOffset = intFromHex( appImg, 2, false );
+      if ( remoteType == RemoteType.AVL )
+      {
+        // For HCS08 processor, need to add the length of the RAM block $1800-$182B
+        sigOffset += 0x2C;
+      }
       int numEntries = appImg.getData()[ sigOffset + 0x2A ] & 0xFF;
-      int start = intFromHex( appImg, sigOffset + 0x2B, false );
+      byte[] data = appImg.toByteArray();
+      int start = addrFromBytes( data, sigOffset + 0x2B );
       for ( int i = 0; i < numEntries; i++ )
       {
         if ( i == 2 )
@@ -3145,7 +3746,7 @@ public class CommHID extends IO
           continue;  // skip E2 area
         }
         FileData fd = new FileData();
-        int addr = intFromHex( appImg, sigOffset + 0x2B + i * addrSize, false );
+        int addr = addrFromBytes( data, sigOffset + 0x2B + i * addrSize );
         if ( addr < 0 )
         {
           addr = intFromHex( appImg, ( addr & 0x7FFFFFFF ) - start, false );
@@ -3153,6 +3754,15 @@ public class CommHID extends IO
         fd.address=addr;
         fd.version = appImg.subHex( addr - start + 6, 6 );
         additions.put( blockNames[ i ], fd );
+        if ( i == 3 )
+        {
+          int appLangCode = fd.version.getData()[ 3 ] - 0x30;
+          String appLangName = "alf" + appLangCode + ".img";
+          if ( !upgradeData.containsKey( appLangName ) )
+          {
+            additions.put( appLangName, fd );
+          }
+        }
       }
       return additions;
     }
@@ -3173,53 +3783,95 @@ public class CommHID extends IO
       return crc;
     }
     
+    /**
+     *   verifyFileVersions(...) tests each file in the upgrade to see if the version number
+     *   given in the file name agrees with that in the file data, the former being taken
+     *   from the upgradeData map.  If all agrees, then for DIGITAL and AVL remotes it adds
+     *   additional entries to the upgradeData map corresponding to the various data blocks
+     *   in the app.img file, these entries being extracted by setFileContentData(...).
+     */
     private boolean verifyFileVersions( File sysFile )
     {
       LinkedHashMap< String, FileData > additions = null;
       try
       {
-        ZipFile zipIn = new ZipFile( sysFile );
-//        System.err.println( "File versions from upgrade files:" );
-        for ( String name : upgradeData.keySet() )
-        {         
-          FileData fd = upgradeData.get( name );
-          if ( fd.zName == null )
-          {
-            continue;
+        if ( sysFile.getName().endsWith( ".sys" ) )
+        {
+          ZipFile zipIn = new ZipFile( sysFile );
+          // System.err.println( "File versions from upgrade files:" );
+          for ( String name : upgradeData.keySet() )
+          {         
+            FileData fd = upgradeData.get( name );
+            if ( fd.zName == null )
+            {
+              continue;
+            }
+            // System.err.println( "zName = " + fd.zName );
+            ZipEntry entry = zipIn.getEntry( fd.zName );
+            InputStream zip = zipIn.getInputStream( entry );
+            Hex fileVersion = null;
+            Hex hex = null;
+            if ( remoteType == RemoteType.XZITE )
+            {
+              byte[] data = RemoteMaster.readBinary( zip, 4, true );
+              fileVersion = new Hex( data );
+              RemoteConfiguration.decryptObjcode( fileVersion );
+            }
+            else if ( remoteType == RemoteType.DIGITAL || remoteType == RemoteType.AVL )
+            {
+              int len = name.equals( "app.img" ) ? ( int )entry.getSize() : 12;
+              byte[] data = RemoteMaster.readBinary( zip, len, true );
+              hex = new Hex( data );
+              RemoteConfiguration.decryptObjcode( hex );
+              fileVersion = hex.subHex( 6, 6 );
+            }
+
+            // System.err.println( fileVersion + "  " + name );
+            if ( !fileVersion.equals( fd.version ) )
+            {
+              zipIn.close();
+              return false;
+            };
+            if ( name.equals( "app.img" ) )
+            {
+              additions = setFileContentData( hex );
+            }
           }
-//          System.err.println( "zName = " + fd.zName );
-          ZipEntry entry = zipIn.getEntry( fd.zName );
-          InputStream zip = zipIn.getInputStream( entry );
-          Hex fileVersion = null;
-          Hex hex = null;
-          if ( remoteType == RemoteType.XZITE )
-          {
-            byte[] data = RemoteMaster.readBinary( zip, 4, true );
-            fileVersion = new Hex( data );
-            RemoteConfiguration.decryptObjcode( fileVersion );
-          }
-          else if ( remoteType == RemoteType.DIGITAL )
-          {
-            int len = name.equals( "app.img" ) ? ( int )entry.getSize() : 12;
-            byte[] data = RemoteMaster.readBinary( zip, len, true );
-            hex = new Hex( data );
-            RemoteConfiguration.decryptObjcode( hex );
-            fileVersion = hex.subHex( 6, 6 );
-          }
-          
-//          System.err.println( fileVersion + "  " + name );
+          System.err.println( "Upgrade file versions verified" );
+          zipIn.close();
+        }
+        else if ( sysFile.getName().endsWith( ".bin" ) )
+        {
+          // RemoteType.DIGITAL and RemoteType.AVL only
+          FileInputStream fileIn = new FileInputStream( sysFile );
+          int len = ( int )sysFile.length();
+          byte[] data = RemoteMaster.readBinary( fileIn, len, true );
+          fileIn.close();
+          Hex hex = new Hex( data );
+          Hex fileVersion = hex.subHex( 6, 6 );
+          FileData fd = upgradeData.get( "app.img" );
           if ( !fileVersion.equals( fd.version ) )
           {
-            zipIn.close();
             return false;
           };
-          if ( name.equals( "app.img" ) )
+          additions = setFileContentData( hex );
+          FileData alfFile = additions.get( blockNames[ 3 ] );
+          FileData alfImg = null;
+          for ( String s : upgradeData.keySet() )
           {
-            additions = setFileContentData( hex );
+            // Handle the fact that the file name in upgradeData has a language
+            // identifier digit postfixed to name body
+            if ( s.startsWith( "alf" ) )
+            {
+              alfImg = upgradeData.get( s );
+              break;
+            }
+          }
+          if ( alfImg != null && !alfImg.version.equals( alfFile.version ) )
+          {
+            return false;
           }
         }
-        System.err.println( "Upgrade file versions verified" );
-        zipIn.close();
       }
       catch( Exception e )
       {
@@ -3256,6 +3908,8 @@ public class CommHID extends IO
     private final static List< String > digitalSysNames = Arrays.asList(
         "app.img", "alf.img" );
     
+    private final static List< String > avlSysNames = Arrays.asList(
+        "app.img" );
     
     private final static String libraryName = "hidapi";
     private final static String alphas = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz_.";
