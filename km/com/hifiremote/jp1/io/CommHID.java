@@ -1570,24 +1570,21 @@ public class CommHID extends IO
               response = JOptionPane.showConfirmDialog( null, message, title, 
                   JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE );
             }
-            else if ( remoteType == RemoteType.DIGITAL )
+            else if ( remoteType == RemoteType.DIGITAL && !newFiles.isEmpty())
             {
-              if ( !newFiles.isEmpty() )
-              {
-                String defaultFile = newFiles.get( 0 );
-                changed.add( defaultFile );
-                int defaultLangCode = Integer.parseInt( defaultFile.substring( 3, 4 ) );
+              String defaultFile = newFiles.get( 0 );
+              changed.add( defaultFile );
+              int defaultLangCode = Integer.parseInt( defaultFile.substring( 3, 4 ) );
 
-                String defaultStr = defaultLangCode == 0 ? "without additional" : "with " 
-                    + RemoteMaster.getLanguage( defaultLangCode ).name;
-//                String title = "Language support";
-                message = "The additional language support currently installed is not available\n"
-                    + "for this firmware upgrade.  If you continue, the upgrade will be\n"
-                    + "installed " + defaultStr + " language support.\n\n"
-                    + "Do you want to continue with the upgrade?";
-                response = NegativeDefaultButtonJOptionPane.showConfirmDialog( null, message, title, 
-                    JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE );
-              }
+              String defaultStr = defaultLangCode == 0 ? "without additional" : "with " 
+                  + RemoteMaster.getLanguage( defaultLangCode ).name;
+              //                String title = "Language support";
+              message = "The additional language support currently installed is not available\n"
+                  + "for this firmware upgrade.  If you continue, the upgrade will be\n"
+                  + "installed " + defaultStr + " language support.\n\n"
+                  + "Do you want to continue with the upgrade?";
+              response = NegativeDefaultButtonJOptionPane.showConfirmDialog( null, message, title, 
+                  JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE );
             }
             else
             {
