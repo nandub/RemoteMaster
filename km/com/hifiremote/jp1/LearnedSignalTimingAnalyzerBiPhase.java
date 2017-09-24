@@ -320,7 +320,6 @@ public class LearnedSignalTimingAnalyzerBiPhase extends LearnedSignalTimingAnaly
     for ( int d: durations )
     {
       if ( d== 0 ) continue;
-
       //if ( p == null )
       //  System.err.println( "CurrentPair = (), Next = " + d );
       //else
@@ -329,6 +328,9 @@ public class LearnedSignalTimingAnalyzerBiPhase extends LearnedSignalTimingAnaly
       // starting a new pair
       if ( p == null )
       {
+        if ( Math.abs( d ) != _Unit )
+          return null;
+        
         p = new int[2];
         p[0] = d;
       }
@@ -340,16 +342,24 @@ public class LearnedSignalTimingAnalyzerBiPhase extends LearnedSignalTimingAnaly
         //System.err.println( "Adding pair ( " + p[0] + ", " + p[1] + " )" );
         p = null;
       }
-      // next needs to be split to finish our pair and start the next
-      else if ( Math.abs( p[0] ) < Math.abs( d ) && Math.abs( d ) % Math.abs( p[0] ) == 0 )
+      else if ( d == - 2*p[0])
       {
-        p[1] = -p[0];
-        result.add( p );
-        //System.err.println( "Adding pair ( " + p[0] + ", " + p[1] + " )" );
-        d += p[0];
+        p[1] = d/2;
+        result.add(p);
         p = new int[2];
-        p[0] = d;
+        p[0] = d/2;
       }
+      
+//      // next needs to be split to finish our pair and start the next
+//      else if ( Math.abs( p[0] ) < Math.abs( d ) && Math.abs( d ) % Math.abs( p[0] ) == 0 )
+//      {
+//        p[1] = -p[0];
+//        result.add( p );
+//        //System.err.println( "Adding pair ( " + p[0] + ", " + p[1] + " )" );
+//        d += p[0];
+//        p = new int[2];
+//        p[0] = d;
+//      }
       // error...unable to parse input durations as bi-phase
       else
       {

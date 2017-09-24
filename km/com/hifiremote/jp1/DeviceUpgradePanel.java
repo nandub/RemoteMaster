@@ -256,14 +256,18 @@ public class DeviceUpgradePanel extends RMTablePanel< DeviceUpgrade >
   public void editRowProtocol( int row )
   {
     DeviceUpgrade du = model.getRow( row );
-    Protocol p = du.getProtocol().editProtocol( remoteConfig.getRemote(), this );
-    if ( p != null )
+    Protocol p = du.getProtocol();
+    Protocol result = p.editProtocol( remoteConfig.getRemote(), this );
+    if ( result != null )
     {
-      du.setProtocol( p );
-      model.propertyChangeSupport.firePropertyChange( "data", null, null );
+      if ( p.getClass() == ManualProtocol.class )
+      {
+        p = result;
+      }
+      // Column 5 may become effective column 5,6 or 7, but these are all treated
+      // the same by model.setValueAt(...).
+      model.setValueAt( p, row, 5 );
     }
-//    model.getRow( row ).getProtocol().editProtocol( remoteConfig.getRemote(), this );
-    model.fireTableDataChanged();
   }
 
   public void endEdit( DeviceUpgradeEditor editor, Integer row )

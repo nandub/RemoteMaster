@@ -9,6 +9,10 @@ Changes for v2.05
 - Fix bug that created duplicates in list when download offered choice of remotes (Graham)
 - Fix bug in analyzer of MAXQ protocols (Graham)
 - Updated CommHID version number to 1.0 to reflect increase in functionality (Graham)
+-- Private build 3
+- Fix bug in operation of Edit Protocol button on Devices tab (Graham)
+- Add radio buttons to Timing Summary to allow choice of raw and analyzed timings (Graham)
+- Add further features to Timing Summary, including conversion of burst pairs to user-specified code strings (Graham)
 
 Changes for v2.04
 -- Private build 1

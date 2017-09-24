@@ -110,7 +110,7 @@ public abstract class LearnedSignalTimingAnalyzerBase
     return false;
   }
 
-  private void analyze()
+  public void analyze()
   {
     synchronized (this)
     {

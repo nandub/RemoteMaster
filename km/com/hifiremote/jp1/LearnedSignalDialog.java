@@ -239,7 +239,7 @@ public class LearnedSignalDialog extends JDialog implements ActionListener, Docu
     advancedAreaControls = new JPanel( new FlowLayout( FlowLayout.LEFT, 1, 1 ) );
     advancedAreaControls.add( new JLabel( " Round To: " ) );
     advancedAreaControls.add( burstRoundBox );
-    advancedAreaControls.add( new JLabel( "  Anaylzer: ") );
+    advancedAreaControls.add( new JLabel( "  Analyzer: ") );
     advancedAreaControls.add( analyzerBox );
     advancedAreaControls.add( new JLabel( "  Analysis: ") );
     advancedAreaControls.add( analysisBox );
@@ -320,15 +320,22 @@ public class LearnedSignalDialog extends JDialog implements ActionListener, Docu
   
   DocumentListener dl = new DocumentListener() {
     public void changedUpdate(DocumentEvent e) {
-      signalTextChanged();
+      roundingChanged();
     }
     public void removeUpdate(DocumentEvent e) {
-      signalTextChanged();
+      roundingChanged();
     }
     public void insertUpdate(DocumentEvent e) {
-      signalTextChanged();
+      roundingChanged();
     }
   };
+  
+  private void roundingChanged()
+  {
+//    signalTextChanged();
+    setAdvancedAreaTextFields();
+    applyButton.setEnabled( true );
+  }
 
   /**
    * Sets the learned signal.
@@ -431,8 +438,9 @@ public class LearnedSignalDialog extends JDialog implements ActionListener, Docu
       analysisBox.setModel( new DefaultComboBoxModel( timingAnalyzer.getSelectedAnalyzer().getAnalysisNames() ) );
       analysisBox.setSelectedItem( timingAnalyzer.getSelectedAnalysisName() );
       burstRoundBox.setText( Integer.toString( timingAnalyzer.getSelectedAnalyzer().getRoundTo() ) );
-      // setting burst text will trigger this so not called here
-      //setAdvancedAreaTextFields();
+      // Vyrolan wrote:  setting burst text will trigger this so next line not called here.
+      // Graham says:  that doesn't seem to happen, at least not always, so I have uncommented the next line.
+      setAdvancedAreaTextFields();
     }
     else
     {
