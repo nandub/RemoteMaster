@@ -7,6 +7,11 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -22,8 +27,10 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
@@ -214,9 +221,12 @@ public class LearnedSignalTimingSummaryDialog extends JDialog implements ActionL
     dialog.display = 0;
     dialog.translation[ 0 ].clear();
     dialog.translation[ 1 ].clear();
+    dialog.paritySettings = new int[]{ 0, 0 };
+    dialog.roundSettings = new String[]{ null, null };
     dialog.burstRoundBox.setText( null );
     dialog.parityBox.setSelectedIndex( 0 );
     dialog.rawButton.setSelected( true );
+    dialog.notePanel.setVisible( !RemoteMaster.suppressTimingSummaryInfo.isSelected() );
     dialog.generateSummary();
     dialog.pack();
     dialog.setLocationRelativeTo( locationComp );
@@ -241,7 +251,7 @@ public class LearnedSignalTimingSummaryDialog extends JDialog implements ActionL
     JComponent contentPane = ( JComponent )getContentPane();
     contentPane.setBorder( BorderFactory.createEmptyBorder( 5, 5, 5, 5 ) );
 
-    JPanel notePanel = new JPanel( new BorderLayout() );
+    notePanel = new JPanel( new BorderLayout() );
     notePanel.setBorder( BorderFactory.createCompoundBorder( BorderFactory.createEmptyBorder( 0, 0, 5, 0 ),
         BorderFactory.createLineBorder( Color.GRAY ) ) );
     JTextArea noteTextArea = new JTextArea();
@@ -259,7 +269,8 @@ public class LearnedSignalTimingSummaryDialog extends JDialog implements ActionL
       + "column in the Coding table gives an ordered list of all distinct burst pairs in the display.\n"
       + "The Parity and Round To boxes override the default settings but are overridden for individual "
       + "signals by the Advanced Details editor if rounding has been set there.  These boxes, and the Coding "
-      + "table, can be edited only in Data mode." );
+      + "table, can be edited only in Data mode.\n" 
+      + "Use the \"Options > Suppress messages\" menu to suppress this message in future.");
     notePanel.add( noteTextArea, BorderLayout.CENTER );
     contentPane.add( notePanel, BorderLayout.PAGE_START );
     
@@ -280,6 +291,7 @@ public class LearnedSignalTimingSummaryDialog extends JDialog implements ActionL
     notes.add( new JLabel( "Notes: Parity and rounding here does not override selected analysis settings." ) );
     notes.add( new JLabel( "Also analyzed signals will only change if the new settings yields a valid analysis." ) );
 
+    parityBox = new JComboBox< String >( parityList );
     buttonPanel.add( notes );
     buttonPanel.add( new JLabel( "  Parity:" ) );
     buttonPanel.add( parityBox );
@@ -314,6 +326,9 @@ public class LearnedSignalTimingSummaryDialog extends JDialog implements ActionL
     analyzedButton.setToolTipText( "Display the selected analysis for each signal" );
     analyzedCodedButton.addActionListener( this );
     analyzedCodedButton.setToolTipText( "Display analysis with burst pairs converted to codes" );
+    saveButton.addActionListener( this );
+    saveButton.setToolTipText( "Save Summary as .csv file" );
+    buttonPanel.add( saveButton );
     okButton.addActionListener( this );
     okButton.setToolTipText( "Close the Summary" );
     buttonPanel.add( okButton );
@@ -366,7 +381,7 @@ public class LearnedSignalTimingSummaryDialog extends JDialog implements ActionL
       }
       else
       {
-        summary.append( "\n\t\t\t\t\tMore:\t" );
+        summary.append( "\n\t\t\t\t\t\tMore:\t" );
       }
       if ( display < 2 )
       {
@@ -385,6 +400,8 @@ public class LearnedSignalTimingSummaryDialog extends JDialog implements ActionL
   {
     int r = 1;
     String roundText = burstRoundBox.getText();
+    roundSettings[ display & 1 ] = roundText;
+    int parity = paritySettings[ display & 1 ];
     boolean roundingSet = false;
     if ( roundText != null && !roundText.isEmpty() )
     {
@@ -416,7 +433,7 @@ public class LearnedSignalTimingSummaryDialog extends JDialog implements ActionL
       display == 1 ? "SELECTED DATA ANALYSES:\n" :
         display == 2 ? "CODED RAW DATA:\n" :
         "CODED ANALYSES:\n" );
-    summary.append( "#\tDevice\tKey\tNotes\tFreq\t" );
+    summary.append( "#\tName\tDevice\tKey\tNotes\tFreq\t" );
     summary.append( display == 0 ? "Raw Timing Data\n" :
       display == 1 ? "Analyzed Timing Data\n" :
         display == 2 ? "Raw Timing Data with Coding\n" :
@@ -426,6 +443,8 @@ public class LearnedSignalTimingSummaryDialog extends JDialog implements ActionL
     {
       UnpackLearned ul = s.getUnpackLearned();
       summary.append( i++ );
+      summary.append( '\t' );
+      summary.append( s.getName() );
       summary.append( '\t' );
       summary.append( remote.getDeviceButton( s.getDeviceButtonIndex() ).getName() );
       summary.append( '\t' );
@@ -438,14 +457,13 @@ public class LearnedSignalTimingSummaryDialog extends JDialog implements ActionL
         summary.append( ul.frequency );
         summary.append( '\t' );
 
-        String parity = ( String )parityBox.getSelectedItem();
         LearnedSignalTimingAnalyzer lsta = s.getTimingAnalyzer();
         LearnedSignalTimingAnalyzerBase analyzer = ( display & 1 ) == 0 ? lsta.getAnalyzer( "Raw Data" )
             : lsta.getSelectedAnalyzer();
         LearnedSignalTimingAnalysis analysis = null;
         boolean autoCode = analyzer.getName().equals( "Bi-Phase" );
      
-        if ( ( roundingSet || !parity.equals( "Default" ) ) && !analyzer.getIsRoundingLocked() )
+        if ( ( roundingSet || parity > 0 ) && !analyzer.getIsRoundingLocked() )
         {
           // Either or both of rounding and parity is being forced.  We obey these settings only if
           // rounding has not been set through Advanced Details.
@@ -453,20 +471,20 @@ public class LearnedSignalTimingSummaryDialog extends JDialog implements ActionL
           analyzer.setRoundTo( r );
           String displayAnalysisName = lsta.getSelectedAnalysisName();
           String[] analysisNames = analyzer.getAnalysisNames();
-          if ( !parity.equals( "Default" ) && ( ( display & 1 ) == 0 || !displayAnalysisName.toUpperCase().contains( parity.toUpperCase() ) ) )
+          if ( parity > 0 && ( ( display & 1 ) == 0 || !displayAnalysisName.toUpperCase().contains( parityList[ parity ].toUpperCase() ) ) )
           {
             // When parity is set, this covers all cases except that where the analyzer is the selected one
             // but the selected analysis has correct parity, when we can simply display the selected analysis
             // in the selected analyzer.
             if ( analyzer.getName().equals( "Raw Data" ) )
             {
-              displayAnalysisName = parity;
+              displayAnalysisName = parityList[ parity ];
             }
             else
             {
               for ( String name : analysisNames )
               {
-                if ( name.toUpperCase().contains( parity.toUpperCase() )  )
+                if ( name.toUpperCase().contains( parityList[ parity ].toUpperCase() )  )
                 {
                   displayAnalysisName = name;
                   break;
@@ -474,7 +492,7 @@ public class LearnedSignalTimingSummaryDialog extends JDialog implements ActionL
               }
             }
           }
-          else if ( parity.equals( "Default" ) && ( display & 1 ) == 0 
+          else if ( parity == 0 && ( display & 1 ) == 0 
               && !lsta.getSelectedAnalyzer().getName().equals( "Raw Data" ) )
           {
             // When parity is default, the case not covered here is when the analyzer is the selected
@@ -498,7 +516,7 @@ public class LearnedSignalTimingSummaryDialog extends JDialog implements ActionL
         if ( ul.oneTime > 0 && ul.extra > 0 && ul.repeat == 0 )
         {
           appendDurations( summary, analysis.getOneTimeDurationStringList(), autoCode, "Once:\t" );
-          appendDurations( summary, analysis.getExtraDurationStringList(), autoCode, "\t\t\t\t\tMore:\t" );
+          appendDurations( summary, analysis.getExtraDurationStringList(), autoCode, "\t\t\t\t\t\tMore:\t" );
         }
         else
         {
@@ -506,12 +524,12 @@ public class LearnedSignalTimingSummaryDialog extends JDialog implements ActionL
           if ( ul.oneTime > 0 )
           {
             appendDurations( summary, analysis.getOneTimeDurationStringList(), autoCode, prefix+"Once:\t" );
-            prefix = "\t\t\t\t\t";
+            prefix = "\t\t\t\t\t\t";
           }
           if ( ul.repeat > 0 )
           {
             appendDurations( summary, analysis.getRepeatDurationStringList(), autoCode, prefix+"Repeat:\t" );
-            prefix = "\t\t\t\t\t";
+            prefix = "\t\t\t\t\t\t";
           }
           if ( ul.extra > 0 )
             appendDurations( summary, analysis.getExtraDurationStringList(), autoCode, prefix+"Extra:\t" );
@@ -521,7 +539,8 @@ public class LearnedSignalTimingSummaryDialog extends JDialog implements ActionL
         summary.append( "** No signal **\n" );
     }
     model.set();
-    summaryTextArea.setText( summary.toString() );
+    summaryText = summary.toString();
+    summaryTextArea.setText( summaryText );
     dialog.validate();
     javax.swing.SwingUtilities.invokeLater( new Runnable()
     {
@@ -531,6 +550,24 @@ public class LearnedSignalTimingSummaryDialog extends JDialog implements ActionL
       }
     } );
   }
+  
+  private void save( File file )
+  {
+    PrintWriter out;
+    try
+    {
+      out = new PrintWriter( new BufferedWriter( new FileWriter( file ) ) );
+      String temp = summaryText.replaceAll( "\"", "\"\"" );
+      temp = temp.replaceAll( "\t", "\",\"" );
+      temp = temp.replaceAll( "\n", "\"\n\"" );
+      out.print( "\"" + temp + "\"" );
+      out.close();
+    }
+    catch ( IOException e )
+    {
+      e.printStackTrace();
+    }
+  }
 
   public void actionPerformed( ActionEvent event )
   {
@@ -539,28 +576,72 @@ public class LearnedSignalTimingSummaryDialog extends JDialog implements ActionL
     {
       setVisible( false );
     }
+    else if ( source == saveButton )
+    {
+      String[] endings = { ".csv" };
+      PropertyFile properties = JP1Frame.getProperties();
+      File dir = properties.getFileProperty( "IRPath" );       
+      RemoteMaster rm = ( RemoteMaster )SwingUtilities.getAncestorOfClass( RemoteMaster.class, this );
+
+      if ( fileChooser == null )
+      {
+        fileChooser = new RMFileChooser( dir );
+        fileChooser.setFileFilter( new EndingFileFilter( "Comma-separated values (*.csv)", endings ) );
+      }
+      int returnVal = fileChooser.showSaveDialog( rm );
+      if ( returnVal == RMFileChooser.APPROVE_OPTION )
+      {
+        String name = fileChooser.getSelectedFile().getAbsolutePath();
+        if ( !name.toLowerCase().endsWith( ".csv" ) )
+        {
+          name = name + ".csv";
+        }
+        File file = new File( name );
+        dir = file.getParentFile();
+        properties.setProperty( "IRPath", dir );
+        int rc = JOptionPane.YES_OPTION;
+        if ( file.exists() )
+        {
+          rc = JOptionPane.showConfirmDialog( rm, file.getName() + " already exists.  Do you want to replace it?",
+              "Replace existing file?", JOptionPane.YES_NO_OPTION );
+        }
+        if ( rc == JOptionPane.YES_OPTION )
+        {
+          save( file );
+        }
+      }
+    }
     else if ( source == rawButton && rawButton.isSelected() )
     {
       display = 0;
+      burstRoundBox.setText( roundSettings[ 0 ] );
+      parityBox.setSelectedIndex( paritySettings[ 0 ] );
       generateSummary();
     }
     else if ( source == analyzedButton && analyzedButton.isSelected() )
     {
       display = 1;
+      burstRoundBox.setText( roundSettings[ 1 ] );
+      parityBox.setSelectedIndex( paritySettings[ 1 ] );
       generateSummary();
     }
     else if ( source == rawCodedButton && rawCodedButton.isSelected() )
     {
       display = 2;
+      burstRoundBox.setText( roundSettings[ 0 ] );
+      parityBox.setSelectedIndex( paritySettings[ 0 ] );
       generateSummary();
     }
     else if ( source == analyzedCodedButton && analyzedCodedButton.isSelected() )
     {
       display = 3;
+      burstRoundBox.setText( roundSettings[ 1 ] );
+      parityBox.setSelectedIndex( paritySettings[ 1 ] );
       generateSummary();
     }
     else if ( source == parityBox )
     {
+      paritySettings[ display & 1 ] = parityBox.getSelectedIndex();
       generateSummary();
     }
   }
@@ -589,7 +670,7 @@ public class LearnedSignalTimingSummaryDialog extends JDialog implements ActionL
           {
             burstList.add( bp );
           }
-          if ( autoCode && p2 == -p1 )
+          if ( autoCode && p2 == -p1 && translation[ display & 1 ].get( bp ) == null )
           {
             translation[ display & 1 ].put( bp, p1 < 0 ? "0" : "1" );
           }
@@ -658,7 +739,7 @@ public class LearnedSignalTimingSummaryDialog extends JDialog implements ActionL
   private RemoteConfiguration config = null;
 
   private JTextField burstRoundBox = new JTextField();
-  private JComboBox< String > parityBox = new JComboBox< String >( new String[]{ "Default", "Even", "Odd" } );
+  private JComboBox< String > parityBox = null;
   private JRadioButton rawButton = new JRadioButton( "Raw Data" );
   private JRadioButton analyzedButton = new JRadioButton( "Analyzed Data" );
   private JRadioButton rawCodedButton = new JRadioButton( "Raw Coded" );
@@ -670,12 +751,19 @@ public class LearnedSignalTimingSummaryDialog extends JDialog implements ActionL
   private TranslationTableModel model = null;
   private JTableX codingTable = null;
   private JScrollPane summaryScrollPane = null;
+  private JPanel notePanel = null;
   /** The ok button. */
   private JButton okButton = new JButton( "OK" );
+  private JButton saveButton = new JButton ( "Save" );
+  private String[] roundSettings = null;
+  private int[] paritySettings = null;
+  private String summaryText = null;
 
   private JTextArea summaryTextArea = new JTextArea( 30, 80 );
+  private RMFileChooser fileChooser = null;
 
   /** The dialog. */
   private static LearnedSignalTimingSummaryDialog dialog = null;
+  private static String[] parityList = { "Default", "Even", "Odd" };
 
 }

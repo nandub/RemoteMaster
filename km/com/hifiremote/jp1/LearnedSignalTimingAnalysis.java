@@ -59,44 +59,53 @@ public class LearnedSignalTimingAnalysis
 
   public String getBurstString()
   {
-    return durationsToString( getBursts(), _Separator, _SeparatorFirst, _SeparatorInterval );
+    return durationsToString( getBursts(), _Separator, -2, 2 );
   }
   public String getOneTimeDurationString()
   {
-    return durationsToString( joinDurations( getOneTimeDurations() ), _Separator, _SeparatorFirst, _SeparatorInterval );
+    return joinedDurationsToString( getOneTimeDurations(), _Separator, _SeparatorFirst, _SeparatorInterval );
   }
   public String getRepeatDurationString()
   {
-    return durationsToString( joinDurations( getRepeatDurations() ), _Separator, _SeparatorFirst, _SeparatorInterval );
+    return joinedDurationsToString( getRepeatDurations(), _Separator, _SeparatorFirst, _SeparatorInterval );
   }
   public String getExtraDurationString()
   {
-    return durationsToString( joinDurations( getExtraDurations() ), _Separator, _SeparatorFirst, _SeparatorInterval );
+    return joinedDurationsToString( getExtraDurations(), _Separator, _SeparatorFirst, _SeparatorInterval );
   }
-
-  public static int[] joinDurations( int[][] durations )
-  {
-    if ( durations == null || durations.length == 0 )
-      return null;
-
-    int num = 0;
-    for ( int[] d: durations )
-      num += d.length;
-
-    int r = 0;
-    int[] result = new int[num];
-    for ( int[] duration: durations )
-      for ( int d: duration )
-        result[r++] = d;
-
-    return result;
-  }
-
-  public static String durationsToString( int[] data, String sep, int sepFirst, int sepInterval )
+  
+  /**
+   *  To handle the case where data[] is incomplete, with its lead-in missing, this now
+   *  by default overrides the given value of sepFirst for such bi-phase analyses. To
+   *  prevent overriding, give sepFirst as a negative value or zero.
+   */
+  public String durationsToString( int[] data, String sep, int sepFirst, int sepInterval )
   {
     StringBuilder str = new StringBuilder();
     if ( data != null && data.length != 0 )
     {
+      int unit = 0;
+      if ( _Name.startsWith( "LI" ) && sepFirst > 0 )
+      {
+        // Analysis is bi-phase and overriding is permitted.  Get the unit.
+        int ndx = _Message.lastIndexOf( ' ' );
+        String u = _Message.substring( ndx + 1, _Message.length() - 1 );
+        unit = Integer.parseInt( u );
+        if ( ( data[ 0 ] == unit || data[ 0 ] == 2 * unit ) && ( data[ 1 ] == - unit || data[ 1 ] == - 2 * unit ) )
+        {
+          // Lead-in missing so override sepFirst
+          for ( int i = 0; i < data.length - 1; i++ )
+          {
+            if ( data[ i ] == data[ i + 1 ] )
+            {
+              sepFirst = data[ i ] > 0 ? 1 : 2;
+              break;
+            }
+          }
+        }
+      }
+      
+      sepFirst = Math.abs( sepFirst );
       boolean isSigned = false;
       for ( int d: data )
         if ( d < 0 )
@@ -122,5 +131,25 @@ public class LearnedSignalTimingAnalysis
       return "** No signal **";
 
     return str.toString();
+  }
+  
+  /**
+   *  To handle the case where data sections are incomplete, with lead-in missing, this
+   *  by default overrides the given value of sepFirst for bi-phase sections with this issue. To
+   *  prevent overriding, give sepFirst as a negative value or zero.  The return value is the
+   *  concatenation of the strings corresponding to the individual sections of the data.
+   */
+  public String joinedDurationsToString( int[][] data, String sep, int sepFirst, int sepInterval )
+  {
+    if ( data == null )
+      return "** No signal **";
+    StringBuilder sb = new StringBuilder();
+    for ( int[] d : data )
+    {
+      if ( sb.length() > 0 )
+        sb.append( ' ' );
+      sb.append( durationsToString( d, sep, sepFirst, sepInterval ) );
+    }
+    return sb.toString();
   }
 }

@@ -116,7 +116,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
 
   /** Description of the Field. */
   public final static String version = "v2.05";
-  public final static int buildVer = 3;
+  public final static int buildVer = 4;
   
   public static class LanguageDescriptor
   {
@@ -287,6 +287,8 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
   public static JCheckBoxMenuItem forceUpgradeItem = null;
   
   public static JCheckBoxMenuItem forceFDRAUpgradeItem = null;
+  
+  public static JCheckBoxMenuItem suppressTimingSummaryInfo = null;
   
   private static JMenuItem analyzeMAXQprotocols = null;
 
@@ -2682,6 +2684,13 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
     RMTablePanel.suppressDeletePrompts = bval;
     item.addActionListener( listener );
     suppressSubMenu.add( item );
+    
+    item = new JCheckBoxMenuItem( "Timing summary info" );
+    item.setActionCommand( "SuppressTimingSummaryInfo" );
+    item.setSelected( Boolean.parseBoolean( properties.getProperty( item.getActionCommand(), "false" ) ) );
+    item.addActionListener( listener );
+    suppressSubMenu.add( item );
+    suppressTimingSummaryInfo = item;
   }
 
   private void createToolbar()

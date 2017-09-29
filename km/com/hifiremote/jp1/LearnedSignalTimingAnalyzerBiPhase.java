@@ -23,17 +23,27 @@ public class LearnedSignalTimingAnalyzerBiPhase extends LearnedSignalTimingAnaly
   {
     int[] durations = getUnpacked().getDurations( roundTo, true );
     HashMap<Integer,Integer> hist = new HashMap<Integer,Integer>();
+    
+    // Determine the unit with this rounding, in order to be able to test whether a lead-out test
+    // is real or is a result of a missing lead-in.
+    int unit = Integer.MAX_VALUE;
+    for ( int d: durations )
+      if ( Math.abs( d ) < unit )
+        unit = Math.abs( d );
 
     int leadIn1 = durations[0];
     int leadIn2 = durations[1];
+    boolean leadInSpurious = ( leadIn1 == unit || leadIn1 == 2 * unit ) && ( leadIn2 == - unit || leadIn2 == - 2 * unit );
     for ( int i = 2; i < durations.length - 2; i++ )
     {
       int value = durations[i];
       int absValue = Math.abs( value );
       if ( !hist.containsKey( absValue ) )
       {
-        // check for a lead out
-        if ( value < 0 && durations[i+1] == leadIn1 && durations[i+2] == leadIn2 )
+        // Check for a lead out.  If true lead-in is missing then any SPACE longer than two units
+        // is a potential lead-out.
+        if ( value < 0 && ( !leadInSpurious && durations[i+1] == leadIn1 && durations[i+2] == leadIn2 
+            || leadInSpurious && absValue > 2 * unit ) )
         {
           i += 2;
           continue;
@@ -45,6 +55,40 @@ public class LearnedSignalTimingAnalyzerBiPhase extends LearnedSignalTimingAnaly
     }
 
     return hist;
+  }
+  
+  private int[][] getDurationSplit( int[] durations )
+  {
+    if ( durations == null || durations.length < 4 )
+      return null;
+    
+    boolean leadInMissing = ( durations[ 0 ] == _Unit || durations[ 0 ] == 2 * _Unit ) && ( durations[ 1 ] == - _Unit || durations[ 1 ] == - 2 * _Unit );
+    if ( !leadInMissing )
+    {
+      return splitDurationsBeforeLeadIn( durations );
+    }
+    else
+    {
+      // Split durations after each candidate lead-out.
+      // First identify these candidates (as in getDurationHistogram(...).
+      ArrayList< Integer > list = new ArrayList< Integer >();
+      for ( int d : durations )
+      {
+        int dAbs = Math.abs( d );
+        if ( d < 0 && dAbs > 2 * _Unit )
+        {
+          list.add( d );
+        }
+      }
+      // Create a separator for splitDurations(...) from these values
+      int[][] sep = new int[ list.size() ][];
+      for ( int i = 0; i < list.size(); i++ )
+      {
+        sep[ i ] = new int[]{ list.get( i ) };
+      }
+      // Create the split.
+      return splitDurations( durations, sep, true );
+    }
   }
 
   @Override
@@ -85,7 +129,7 @@ public class LearnedSignalTimingAnalyzerBiPhase extends LearnedSignalTimingAnaly
       return 0; // obviously no good
 
     for ( int d: hist.keySet() )
-      if ( d % min != 0 )
+      if ( d % min != 0 || d / min > 2 )
         return 0;
 
     // so we might good...but we dunno until we try...
@@ -134,19 +178,32 @@ public class LearnedSignalTimingAnalyzerBiPhase extends LearnedSignalTimingAnaly
 
     String preferredCode = null;
     String preferredName = null;
+    
+    boolean allAlt = true;
+    for ( String code: codes.keySet() )
+    {
+      if ( !code.startsWith( "?" ) )
+      {
+        allAlt = false;
+        break;
+      }
+    }
 
     // codes.keySet() is all the unique analysis codes
     for ( String code: codes.keySet() )
     {
-      boolean valid = ( oneTime == null || oneTime.containsKey( code ) );
-      valid = valid && ( repeat == null || repeat.containsKey( code ) );
-      valid = valid && ( extra == null || extra.containsKey( code ) );
+      if ( !allAlt && code.startsWith( "?" ) )
+        continue;
+      String altCode = "?,?" + code.substring( code.lastIndexOf( ',' ) );
+      boolean valid = ( oneTime == null || oneTime.containsKey( code ) || oneTime.containsKey( altCode ) );
+      valid = valid && ( repeat == null || repeat.containsKey( code ) || repeat.containsKey( altCode ) );
+      valid = valid && ( extra == null || extra.containsKey( code ) || extra.containsKey( altCode ) );
 
       if ( valid )
       {
-        int[][] tempOneTime = ( oneTime == null ? null : oneTime.get( code ) );
-        int[][] tempRepeat = ( repeat == null ? null : repeat.get( code ) );
-        int[][] tempExtra = ( extra == null ? null : extra.get( code ) );
+        int[][] tempOneTime = ( oneTime == null ? null : oneTime.get( code ) != null ? oneTime.get( code ) : oneTime.get( altCode ) );
+        int[][] tempRepeat = ( repeat == null ? null : repeat.get( code ) != null ? repeat.get( code ) : repeat.get( altCode ) );
+        int[][] tempExtra = ( extra == null ? null : extra.get( code ) != null ? extra.get( code ) : extra.get( altCode ) );
 
         String[] codeSplit = code.split( "," );
 
@@ -167,14 +224,18 @@ public class LearnedSignalTimingAnalyzerBiPhase extends LearnedSignalTimingAnaly
     System.err.println( "BiPhaseAnalyzer: analyzeImpl complete yielding " + getAnalyses().size() + " analyses preferring '" + _PreferredName + "'." );    
   }
 
-  // return is dictionary of analysis codes to a set of analyzed durations from the split signal
-  // analysis codes are of form "i,s,o":
-  //  i = number of units taken from lead in off time to produce first pair
-  //  s = ( separateOdd ? 1 : 0 )
-  //  o has following meaning:
-  //    0 = analysis ended in complete pairs, lead out unchanged
-  //    1 = off time for final pair was taken from lead out
-  //    2 = final on time was used as part of lead out
+  /** return is dictionary of analysis codes to a set of analyzed durations from the split signal
+   *  analysis codes are of form "i,s,o":
+   *   i = number of units taken from lead in off time to produce first pair
+   *   s = ( separateOdd ? 1 : 0 )
+   *   o has following meaning:
+   *     0 = analysis ended in complete pairs, lead out unchanged
+   *     1 = off time for final pair was taken from lead out
+   *     2 = final on time was used as part of lead out
+   *  Where a lead-in is missing, the true i and s values are indeterminate, so are replaced with '?'.
+   *  Note that if the duration list has a missing lead-in then any code starting with ? can only
+   *  have one component and codes not starting with ? will have first component null. 
+   */ 
   private HashMap<String,int[][]> AnalyzeDurationSet( int[] durations )
   {
     /*
@@ -186,10 +247,11 @@ public class LearnedSignalTimingAnalyzerBiPhase extends LearnedSignalTimingAnaly
       System.err.println( "BiPhaseAnalyzer: AnalyzeDurationSet with set of " + durations.length + " durations..." );
     */
 
-    if ( durations == null || durations.length < 4 )
+    int[][] temp = getDurationSplit( durations );
+    if ( temp == null )
       return null;
-
-    int[][] temp = splitDurationsBeforeLeadIn( durations );
+    
+    boolean leadInMissing = ( durations[ 0 ] == _Unit || durations[ 0 ] == 2 * _Unit ) && ( durations[ 1 ] == - _Unit || durations[ 1 ] == - 2 * _Unit );
     HashMap<String,int[][]> results = new HashMap<String,int[][]>();
 
     int i = 0;
@@ -203,26 +265,54 @@ public class LearnedSignalTimingAnalyzerBiPhase extends LearnedSignalTimingAnaly
         results.clear();
         return results;
       }
+        
       for ( String k: tempResults.keySet() )
       {
-        if ( !results.containsKey( k ) )
-          results.put( k, new int[temp.length][] );
-        results.get( k )[i] = tempResults.get( k );
+        String m = k;
+        // Only the first split component can actually have a missing lead-in
+        if ( i == 0 && leadInMissing )
+        {
+          // i and s parts of code are unreliable
+          m = "?,?" + k.substring( k.lastIndexOf( ',' ) );
+        }
+        if ( !results.containsKey( m ) )
+          results.put( m, new int[temp.length][] );
+        results.get( m )[i] = tempResults.get( k );
       }
       i++;
+    }
+    
+    ArrayList< String > codes = new ArrayList< String>();
+    for ( String k: results.keySet() )
+    {
+      codes.add( k );
+    }
+    
+    for ( String code : codes )
+    {
+      if ( code.startsWith( "?" ) )
+        continue;
+      String altCode = "?,?" + code.substring( code.lastIndexOf( ',' ) );
+      if ( results.get( altCode ) != null )
+      {
+        results.get( code )[ 0 ] = results.get( altCode )[ 0 ];
+      }
     }
 
     return results;
   }
 
-  // return is dictionary of analysis codes to durations for a single split component of the signal
-  // analysis codes are of form "i,s,o":
-  //  i = number of units taken from lead in off time to produce first pair
-  //  s = ( separateOdd ? 1 : 0 )
-  //  o has following meaning:
-  //    0 = analysis ended in complete pairs, lead out unchanged
-  //    1 = off time for final pair was taken from lead out
-  //    2 = final on time was used as part of lead out
+  /** Input is a list of durations ending with a lead-out, or at least a value to be treated as such.
+   *  This is one component from a possible multi-component list of durations split at possible lead-outs.
+   *  Return is dictionary of analysis codes to durations for a single split component of the signal.
+   *  Analysis codes are of form "i,s,o":
+   *  i = number of units taken from lead in off time to produce first pair
+   *  s = ( separateOdd ? 1 : 0 )
+   *  o has following meaning:
+   *     0 = analysis ended in complete pairs, lead out unchanged
+   *     1 = off time for final pair was taken from lead out
+   *     2 = final on time was used as part of lead out
+   */     
   private HashMap<String,int[]> AnalyzeDurations( int[] durations )
   {
     /*
@@ -349,17 +439,6 @@ public class LearnedSignalTimingAnalyzerBiPhase extends LearnedSignalTimingAnaly
         p = new int[2];
         p[0] = d/2;
       }
-      
-//      // next needs to be split to finish our pair and start the next
-//      else if ( Math.abs( p[0] ) < Math.abs( d ) && Math.abs( d ) % Math.abs( p[0] ) == 0 )
-//      {
-//        p[1] = -p[0];
-//        result.add( p );
-//        //System.err.println( "Adding pair ( " + p[0] + ", " + p[1] + " )" );
-//        d += p[0];
-//        p = new int[2];
-//        p[0] = d;
-//      }
       // error...unable to parse input durations as bi-phase
       else
       {

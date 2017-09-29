@@ -103,8 +103,11 @@ public abstract class LearnedSignalTimingAnalyzerBase
       // If most end up using it, then that should be done so subclasses can maintain their internal state
       // while doing this but don't cause an extra re-analyze.
     }
-    // swallowing exceptions...they should never happen, right?   Sorry in advance.
-    catch ( Exception e ) { }
+    // trace exceptions...they should never happen, right?   Sorry in advance.
+    catch ( Exception e )
+    { 
+      e.printStackTrace();
+    }
 
     // should never get here... famous last words
     return false;

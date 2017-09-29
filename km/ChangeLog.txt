@@ -13,6 +13,8 @@ Changes for v2.05
 - Fix bug in operation of Edit Protocol button on Devices tab (Graham)
 - Add radio buttons to Timing Summary to allow choice of raw and analyzed timings (Graham)
 - Add further features to Timing Summary, including conversion of burst pairs to user-specified code strings (Graham)
+-- Private build 4
+- Debugging and improvements to Learned Signal analysis and timing summary (Graham)
 
 Changes for v2.04
 -- Private build 1

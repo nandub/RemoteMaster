@@ -97,9 +97,13 @@ public class LearnedSignalDialog extends JDialog implements ActionListener, Docu
     JComponent contentPane = ( JComponent )getContentPane();
     contentPane.setBorder( BorderFactory.createEmptyBorder( 5, 5, 5, 5 ) );
 
-    JPanel topPanel = new JPanel( new BorderLayout() );
-    contentPane.add( topPanel, BorderLayout.PAGE_START );
+    // Create box to hold panels that always show
+    Box box = Box.createVerticalBox();
+    contentPane.add( box, BorderLayout.PAGE_START );
     
+    JPanel topPanel = new JPanel( new BorderLayout() );
+    box.add( topPanel );
+ 
     // Add the signal name (when used) and the bound device and key controls
     JPanel idPanel = new JPanel( new FlowLayout( FlowLayout.LEFT, 0, 0 ) );
     namePanel = new JPanel( new FlowLayout( FlowLayout.LEFT, 5, 1 ) );
@@ -230,10 +234,18 @@ public class LearnedSignalDialog extends JDialog implements ActionListener, Docu
     table.initColumns( model );
     scrollPane = new JScrollPane( table );
     scrollPane.setBorder( BorderFactory.createCompoundBorder( BorderFactory.createTitledBorder( "Decodes" ), scrollPane.getBorder() ) );
-    contentPane.add( scrollPane, BorderLayout.CENTER );
+    box.add( scrollPane );
     
-    advancedArea = Box.createVerticalBox();
+    // End of box for panels that always show.
+    // Now create advanced area that shows only when requested.  The duration panels
+    // in this need to be able to expand, with scroll bars as required, when the dialog
+    // is expanded or contracted.
+    advancedArea = new JPanel( new BorderLayout() );
     advancedArea.setBorder( BorderFactory.createTitledBorder( "Advanced Details" ) );
+    Dimension dim = advancedArea.getPreferredSize();
+    dim.height = 300;
+    advancedArea.setPreferredSize( dim );
+    contentPane.add( advancedArea, BorderLayout.CENTER);
 
     // add panel with rounding/analysis controls
     advancedAreaControls = new JPanel( new FlowLayout( FlowLayout.LEFT, 1, 1 ) );
@@ -245,7 +257,7 @@ public class LearnedSignalDialog extends JDialog implements ActionListener, Docu
     advancedAreaControls.add( analysisBox );
     advancedAreaControls.add( new JLabel( "  ") );
     advancedAreaControls.add( analysisMessageLabel );
-    advancedArea.add( advancedAreaControls );
+    advancedArea.add( advancedAreaControls, BorderLayout.PAGE_START );
 
     // setup analyzer/analysis boxes and message label
     analysisMessageLabel.setText( null );
@@ -262,13 +274,17 @@ public class LearnedSignalDialog extends JDialog implements ActionListener, Docu
     // setup round to box
     burstRoundBox.setColumns( 4 );
     burstRoundBox.getDocument().addDocumentListener( dl );
-
+    
+    // End of advanced area controls.  Now create box to hold the duration panels
+    box = Box.createVerticalBox();
+    advancedArea.add( box, BorderLayout.CENTER );
+    
     burstTextArea.setEditable( false );
     burstTextArea.setLineWrap( true );
     burstTextArea.setWrapStyleWord( true );
     scrollPane = new JScrollPane( burstTextArea );
     scrollPane.setBorder( BorderFactory.createCompoundBorder( BorderFactory.createTitledBorder( "Bursts" ), scrollPane.getBorder() ) );
-    advancedArea.add( scrollPane );
+    box.add( scrollPane );
     // temporarily hiding bursts...may remove entirely
     burstTextArea.getParent().getParent().setVisible( false );
 
@@ -277,29 +293,25 @@ public class LearnedSignalDialog extends JDialog implements ActionListener, Docu
     onceDurationTextArea.setWrapStyleWord( true );
     scrollPane = new JScrollPane( onceDurationTextArea );
     scrollPane.setBorder( BorderFactory.createCompoundBorder( BorderFactory.createTitledBorder( "Sent Once" ), scrollPane.getBorder() ) );
-    advancedArea.add( scrollPane );
+    box.add( scrollPane );
 
     repeatDurationTextArea.setEditable( false );
     repeatDurationTextArea.setLineWrap( true );
     repeatDurationTextArea.setWrapStyleWord( true );
     scrollPane = new JScrollPane( repeatDurationTextArea );
     scrollPane.setBorder( BorderFactory.createCompoundBorder( BorderFactory.createTitledBorder( "Sent Repeatedly" ), scrollPane.getBorder() ) );
-    advancedArea.add( scrollPane );
+    box.add( scrollPane );
 
     extraDurationTextArea.setEditable( false );
     extraDurationTextArea.setLineWrap( true );
     extraDurationTextArea.setWrapStyleWord( true );
     scrollPane = new JScrollPane( extraDurationTextArea );
     scrollPane.setBorder( BorderFactory.createCompoundBorder( BorderFactory.createTitledBorder( "Sent on Release" ), scrollPane.getBorder() ) );
-    advancedArea.add( scrollPane );
-
-    Box bottomBox = Box.createVerticalBox();
-    contentPane.add( bottomBox, BorderLayout.PAGE_END );
-    bottomBox.add( advancedArea );
+    box.add( scrollPane );
     
-    // Add the action buttons
+    // End of duration panels. Now add the action buttons.
     JPanel buttonPanel = new JPanel( new FlowLayout( FlowLayout.RIGHT ) );
-    bottomBox.add( buttonPanel );
+    advancedArea.add( buttonPanel, BorderLayout.PAGE_END );
     
     applyButton.addActionListener( this );
     applyButton.setEnabled( false );
@@ -791,7 +803,7 @@ public class LearnedSignalDialog extends JDialog implements ActionListener, Docu
   
   private JButton advancedButton = new JButton();
   
-  private Box advancedArea = null;
+  private JPanel advancedArea = null;
 
   private boolean advancedAreaUpdating = false;
   private boolean analysisUpdating = false;
