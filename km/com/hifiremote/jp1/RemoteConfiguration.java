@@ -464,6 +464,9 @@ public class RemoteConfiguration
   private Property loadBuffer( PropertyReader pr ) throws IOException
   {
     String signature = null;
+    Remote currentRemote = null;
+    if ( owner.getRemoteConfiguration() != null )
+      currentRemote = owner.getRemoteConfiguration().getRemote();
     List< short[] > values = new ArrayList< short[] >();
     Property property = pr.nextProperty();
     
@@ -563,7 +566,21 @@ public class RemoteConfiguration
       }
       signature = signature2;
       Remote.prelimLoad = true;
-      remote = filterRemotes( remotes, signature, eepromSize, data, sigData, true );
+      if ( owner.sameSigSameRemote() && currentRemote != null && currentRemote.getSignature().equals( signature ) )
+      {
+        for ( Remote r : remotes )
+        {
+          if ( currentRemote.compareTo( r ) == 0 )
+          {
+            remote = r;
+            break;
+          }
+        }
+      }
+      else
+      {
+        remote = filterRemotes( remotes, signature, eepromSize, data, sigData, true );
+      }
       Remote.prelimLoad = false;
       if ( remote == null )
       {

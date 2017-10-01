@@ -186,6 +186,13 @@ public abstract class RMTablePanel< E > extends RMPanel implements ActionListene
         + "(For DEL key, table must have the focus.)</html>");
     deleteButton.setEnabled( false );
     buttonPanel.add( deleteButton );
+    
+    deleteAllButton = new JButton( "Delete All" );
+    deleteAllButton.addActionListener( this );
+    deleteAllButton.setToolTipText( "Delete all items");
+    deleteAllButton.setVisible( false );
+    deleteAllButton.setEnabled( false );
+    buttonPanel.add( deleteAllButton );
 
     upButton = new JButton( "Up" );
     upButton.addActionListener( this );
@@ -429,18 +436,21 @@ public abstract class RMTablePanel< E > extends RMPanel implements ActionListene
     {
       editRowProtocol( modelRow );
     }    
-    else if ( source == deleteButton || source == deleteItem )
+    else if ( source == deleteButton || source == deleteItem || source == deleteAllButton )
     {
-      int count = source == deleteButton ? table.getSelectedRowCount() : 1;
-      String message = "<html>Are you sure you want to delete the selected entr"
-          + ( count > 1 ? "ies?" : "y?" )
+      int count = source == deleteButton ? table.getSelectedRowCount() 
+          : source == deleteAllButton ? table.getRowCount() : 1;
+      String message = "<html>Are you sure you want to delete "
+          + ( source == deleteAllButton ? "all the entr" : "the selected entr" )
+          + ( source == deleteAllButton || count > 1 ? "ies?" : "y?" )
           + "<br><br>To suppress this message in future, select the menu item"
           + "<br>Options/Suppress Messages/All table deletes.</html>";
       String title = "Confirm Deletion";
       if ( suppressDeletePrompts || JOptionPane.showConfirmDialog( this, message, title, 
           JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE ) == JOptionPane.YES_OPTION )
       {
-        for ( int n = row + count - 1; n >= row; n-- )
+        int top = source == deleteAllButton ? 0 : row;
+        for ( int n = top + count - 1; n >= top; n-- )
         {
           deleteRow( n, select );
         }
@@ -590,6 +600,19 @@ public abstract class RMTablePanel< E > extends RMPanel implements ActionListene
         }
       }
       deleteButton.setEnabled( rows.length > 0 && deleteAllowed );
+      if ( deleteAllButton.isVisible() )
+      {
+        deleteAllowed = true;
+        for ( int row = 0; row < table.getRowCount(); row++ )
+        {
+          if ( !canDelete( model.getRow( sorter.modelIndex( row ) ) ) )
+          {
+            deleteAllowed = false;
+            break;
+          }
+        }
+        deleteAllButton.setEnabled( table.getRowCount() > 0 && deleteAllowed );
+      }
     }
   }
 
@@ -650,6 +673,7 @@ public abstract class RMTablePanel< E > extends RMPanel implements ActionListene
 
   /** The delete button. */
   protected JButton deleteButton = null;
+  protected JButton deleteAllButton = null;
 
   /** The up button. */
   protected JButton upButton = null;

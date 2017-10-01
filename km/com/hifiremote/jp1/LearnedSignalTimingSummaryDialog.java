@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedWriter;
@@ -27,7 +28,6 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
-import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -230,6 +230,10 @@ public class LearnedSignalTimingSummaryDialog extends JDialog implements ActionL
     dialog.generateSummary();
     dialog.pack();
     dialog.setLocationRelativeTo( locationComp );
+    if ( bounds != null )
+    {
+      dialog.setBounds( bounds );
+    }
     dialog.setVisible( true );
   }
 
@@ -274,6 +278,8 @@ public class LearnedSignalTimingSummaryDialog extends JDialog implements ActionL
     notePanel.add( noteTextArea, BorderLayout.CENTER );
     contentPane.add( notePanel, BorderLayout.PAGE_START );
     
+    int rows = RemoteMaster.suppressTimingSummaryInfo.isSelected() ? 25 : 21;
+    summaryTextArea = new JTextArea( rows, 80 );
     summaryTextArea.setEditable( false );
     summaryTextArea.setLineWrap( false );
     summaryScrollPane = new JScrollPane( summaryTextArea );
@@ -361,9 +367,10 @@ public class LearnedSignalTimingSummaryDialog extends JDialog implements ActionL
       column.setMaxWidth( width );
       column.setPreferredWidth( width );
     }
-    codingTable.doLayout();
-    Dimension d = codingTable.getPreferredScrollableViewportSize();
-    d.width = codingTable.getPreferredSize().width;
+
+//    int sbWidth = scrollPane.getVerticalScrollBar().getPreferredSize().width;
+    Dimension d = codingTable.getPreferredSize();
+    d.width -= scrollPane.getVerticalScrollBar().getPreferredSize().width;
     codingTable.setPreferredScrollableViewportSize( d );
     translation[ 0 ] = new LinkedHashMap< BurstPair, String >();
     translation[ 1 ] = new LinkedHashMap< BurstPair, String >();
@@ -557,7 +564,8 @@ public class LearnedSignalTimingSummaryDialog extends JDialog implements ActionL
     try
     {
       out = new PrintWriter( new BufferedWriter( new FileWriter( file ) ) );
-      String temp = summaryText.replaceAll( "\"", "\"\"" );
+      String temp = summaryText.substring( summaryText.indexOf( '#' ) );
+      temp = temp.replaceAll( "\"", "\"\"" );
       temp = temp.replaceAll( "\t", "\",\"" );
       temp = temp.replaceAll( "\n", "\"\n\"" );
       out.print( "\"" + temp + "\"" );
@@ -574,6 +582,7 @@ public class LearnedSignalTimingSummaryDialog extends JDialog implements ActionL
     Object source = event.getSource();
     if ( source == okButton )
     {
+      bounds = getBounds();
       setVisible( false );
     }
     else if ( source == saveButton )
@@ -759,11 +768,12 @@ public class LearnedSignalTimingSummaryDialog extends JDialog implements ActionL
   private int[] paritySettings = null;
   private String summaryText = null;
 
-  private JTextArea summaryTextArea = new JTextArea( 30, 80 );
+  private JTextArea summaryTextArea = null;
   private RMFileChooser fileChooser = null;
 
   /** The dialog. */
   private static LearnedSignalTimingSummaryDialog dialog = null;
-  private static String[] parityList = { "Default", "Even", "Odd" };
+  private static String[] parityList = { "", "Even", "Odd" };
+  private static Rectangle bounds = null;
 
 }

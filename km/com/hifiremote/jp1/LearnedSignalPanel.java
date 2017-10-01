@@ -87,6 +87,8 @@ public class LearnedSignalPanel extends RMTablePanel< LearnedSignal >
     };
     table.setTransferHandler( th );
     
+    deleteAllButton.setVisible( true );
+    
     copyButton = new JButton( "Copy" );
     copyButton.addActionListener( this );
     copyButton.setToolTipText( "Copy to clipboard for pasting to Functions tab of a device upgrade" );

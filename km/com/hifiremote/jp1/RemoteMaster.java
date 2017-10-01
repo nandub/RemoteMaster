@@ -116,7 +116,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
 
   /** Description of the Field. */
   public final static String version = "v2.05";
-  public final static int buildVer = 4;
+  public final static int buildVer = 5;
   
   public static class LanguageDescriptor
   {
@@ -628,6 +628,18 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
           {
             // There is only one remote with current signature so this must be the download remote.
             remote = remotes.get( 0 );
+          }
+          else if ( sameSigSameRemote() )
+          {
+            // We are required to assume it is the same remote as it has the same signature
+            for ( Remote r : remotes )
+            {
+              if ( remoteConfig.getRemote().compareTo( r ) == 0 )
+              {
+                remote = r;
+                break;
+              }
+            }
           }
         }
       }
@@ -2651,6 +2663,12 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
     item.addActionListener( listener );
     advancedSubMenu.add( item );
     
+    item = new JCheckBoxMenuItem( "Same sig = same remote" );
+    item.setActionCommand( "SameSigSameRemote" );
+    item.setSelected( Boolean.parseBoolean( properties.getProperty( item.getActionCommand(), "false" ) ) );
+    item.addActionListener( listener );
+    advancedSubMenu.add( item );
+    
     advancedSubMenu.addSeparator();
     
     item = new JCheckBoxMenuItem( "Learned Signal Timing Analysis" );
@@ -3688,6 +3706,11 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
   public boolean usesNonModalDeviceEditor()
   {
     return Boolean.parseBoolean( properties.getProperty( "NonModalDeviceEditor", "false" ) );
+  }
+  
+  public boolean sameSigSameRemote()
+  {
+    return Boolean.parseBoolean( properties.getProperty( "SameSigSameRemote", "false" ) );
   }
   
   public void setNonModalWarning( boolean warn, DeviceUpgradeEditor duEditor )
