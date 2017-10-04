@@ -24,6 +24,7 @@ import java.util.StringTokenizer;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.ButtonGroup;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -221,10 +222,12 @@ public class LearnedSignalTimingSummaryDialog extends JDialog implements ActionL
     dialog.display = 0;
     dialog.translation[ 0 ].clear();
     dialog.translation[ 1 ].clear();
-    dialog.paritySettings = new int[]{ 0, 0 };
+    
+    dialog.paritySettings = new int[]{ 0, 0 };    // TESTING  comment out these four
     dialog.roundSettings = new String[]{ null, null };
     dialog.burstRoundBox.setText( null );
     dialog.parityBox.setSelectedIndex( 0 );
+    
     dialog.rawButton.setSelected( true );
     dialog.notePanel.setVisible( !RemoteMaster.suppressTimingSummaryInfo.isSelected() );
     dialog.generateSummary();
@@ -297,6 +300,9 @@ public class LearnedSignalTimingSummaryDialog extends JDialog implements ActionL
     notes.add( new JLabel( "Notes: Parity and rounding here does not override selected analysis settings." ) );
     notes.add( new JLabel( "Also analyzed signals will only change if the new settings yields a valid analysis." ) );
 
+    paritySettings = new int[]{ 0, 0 };
+    roundSettings = new String[]{ null, null };
+    
     parityBox = new JComboBox< String >( parityList );
     buttonPanel.add( notes );
     buttonPanel.add( new JLabel( "  Parity:" ) );
@@ -451,7 +457,7 @@ public class LearnedSignalTimingSummaryDialog extends JDialog implements ActionL
       UnpackLearned ul = s.getUnpackLearned();
       summary.append( i++ );
       summary.append( '\t' );
-      summary.append( s.getName() );
+      summary.append( s.getName() != null ? s.getName() : "" );
       summary.append( '\t' );
       summary.append( remote.getDeviceButton( s.getDeviceButtonIndex() ).getName() );
       summary.append( '\t' );
@@ -489,6 +495,7 @@ public class LearnedSignalTimingSummaryDialog extends JDialog implements ActionL
             }
             else
             {
+              displayAnalysisName = null;
               for ( String name : analysisNames )
               {
                 if ( name.toUpperCase().contains( parityList[ parity ].toUpperCase() )  )
@@ -507,6 +514,10 @@ public class LearnedSignalTimingSummaryDialog extends JDialog implements ActionL
             displayAnalysisName = "Even";
           }
           analysis = analyzer.getAnalysis( displayAnalysisName );
+          if ( analysis == null )
+          {
+            analysis = analyzer.getPreferredAnalysis();
+          }
           analyzer.restoreState();
         }
         else
@@ -519,13 +530,17 @@ public class LearnedSignalTimingSummaryDialog extends JDialog implements ActionL
             displayAnalysisName = "Even";
           }
           analysis = analyzer.getAnalysis( displayAnalysisName );
+          if ( analysis == null )
+          {
+            analysis = analyzer.getPreferredAnalysis();
+          }
         }
-        if ( ul.oneTime > 0 && ul.extra > 0 && ul.repeat == 0 )
+        if ( analysis != null && ul.oneTime > 0 && ul.extra > 0 && ul.repeat == 0 )
         {
           appendDurations( summary, analysis.getOneTimeDurationStringList(), autoCode, "Once:\t" );
           appendDurations( summary, analysis.getExtraDurationStringList(), autoCode, "\t\t\t\t\t\tMore:\t" );
         }
-        else
+        else if ( analysis != null )
         {
           String prefix= "";
           if ( ul.oneTime > 0 )
@@ -541,6 +556,8 @@ public class LearnedSignalTimingSummaryDialog extends JDialog implements ActionL
           if ( ul.extra > 0 )
             appendDurations( summary, analysis.getExtraDurationStringList(), autoCode, prefix+"Extra:\t" );
         }
+        else
+          summary.append( "** No valid analysis **\n" );
       }
       else
         summary.append( "** No signal **\n" );

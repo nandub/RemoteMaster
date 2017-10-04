@@ -82,7 +82,10 @@ public class LearnedSignalTimingAnalyzer
       if ( _AnalyzerNames[i].equals( name ) )
       {
         _SelectedAnalyzer = i;
-        setSelectedAnalysisName( getSelectedAnalyzer().getPreferredAnalysis().getName() );
+        if ( getSelectedAnalyzer().getPreferredAnalysis() != null )
+        {
+          setSelectedAnalysisName( getSelectedAnalyzer().getPreferredAnalysis().getName() );
+        }      
         return;
       }
   }

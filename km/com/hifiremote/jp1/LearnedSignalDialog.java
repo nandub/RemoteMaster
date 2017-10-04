@@ -313,6 +313,12 @@ public class LearnedSignalDialog extends JDialog implements ActionListener, Docu
     JPanel buttonPanel = new JPanel( new FlowLayout( FlowLayout.RIGHT ) );
     advancedArea.add( buttonPanel, BorderLayout.PAGE_END );
     
+    unlockButton.addActionListener( this );
+    unlockButton.setEnabled( false );
+    unlockButton.setToolTipText( "<html>Release lock that passes rounding set here to Timing summary.<br>"
+        + "When button is disabled, rounding is unlocked." );
+    buttonPanel.add( unlockButton );
+    
     applyButton.addActionListener( this );
     applyButton.setEnabled( false );
     applyButton.setToolTipText( "Apply edits made in the Signal Data panel without closing dialog" );
@@ -421,7 +427,7 @@ public class LearnedSignalDialog extends JDialog implements ActionListener, Docu
       analyzerBox.setSelectedItem( timingAnalyzer.getSelectedAnalyzer().getName() );
       analysisBox.setModel( new DefaultComboBoxModel( timingAnalyzer.getSelectedAnalyzer().getAnalysisNames() ) );
       analysisBox.setSelectedItem( timingAnalyzer.getSelectedAnalysisName() );
-      analysisMessageLabel.setText( timingAnalyzer.getSelectedAnalysis().getMessage() );
+      analysisMessageLabel.setText( timingAnalyzer.getSelectedAnalysis() != null ? timingAnalyzer.getSelectedAnalysis().getMessage() : "No valid analysis" );
       burstRoundBox.setText( Integer.toString( timingAnalyzer.getSelectedAnalyzer().getRoundTo() ) );
 
       // the accesses above will have initialized the timing analyzer to last selcted or preferred analyzer/analysis, so we save the state
@@ -486,10 +492,21 @@ public class LearnedSignalDialog extends JDialog implements ActionListener, Docu
         analyzer.unlockRounding();
         analyzer.setRoundTo( r );
         analyzer.lockRounding();
+        unlockButton.setEnabled( true );
       }
 
       analysis = this.learnedSignal.getTimingAnalyzer().getSelectedAnalysis();
-      analysisMessageLabel.setText( analysis.getMessage() );
+      if ( analysis == null )
+      {
+        LearnedSignalTimingAnalyzer timingAnalyzer = this.learnedSignal.getTimingAnalyzer();
+        analysis = timingAnalyzer.getSelectedAnalyzer().getPreferredAnalysis();
+        analysisBox.setModel( new DefaultComboBoxModel( timingAnalyzer.getSelectedAnalyzer().getAnalysisNames() ) );
+        if ( analysis != null )
+        {
+          analysisBox.setSelectedItem( analysis.getName() );
+        }
+      }
+      analysisMessageLabel.setText( analysis != null ? analysis.getMessage() : "No valid analysis" );
     }
     else
     {
@@ -497,21 +514,21 @@ public class LearnedSignalDialog extends JDialog implements ActionListener, Docu
       analysis = this.learnedSignal.getTimingAnalyzer().getAnalyzer( "Raw Data" ).getAnalysis( "Even" );
     }
 
-    String temp = analysis.getBurstString();
+    String temp = analysis != null ? analysis.getBurstString() : "** No signal **";
     burstTextArea.setText( temp );
     burstTextArea.setRows( (int)Math.ceil( (double)temp.length() / 75.0 ) );
 
-    temp = analysis.getOneTimeDurationString();
+    temp = analysis != null ? analysis.getOneTimeDurationString() : "** No signal **";
     onceDurationTextArea.setText( temp );
     onceDurationTextArea.setRows( (int)Math.ceil( (double)temp.length() / 75.0 ) );
     onceDurationTextArea.getParent().getParent().setVisible( !temp.equals( "** No signal **" ) );
 
-    temp = analysis.getRepeatDurationString();
+    temp = analysis != null ? analysis.getRepeatDurationString() : "** No signal **";
     repeatDurationTextArea.setText( temp );
     repeatDurationTextArea.setRows( (int)Math.ceil( (double)temp.length() / 75.0 ) );
     repeatDurationTextArea.getParent().getParent().setVisible( !temp.equals( "** No signal **" ) );
 
-    temp = analysis.getExtraDurationString();
+    temp = analysis != null ? analysis.getExtraDurationString() : "** No signal **";
     extraDurationTextArea.setText( temp );
     extraDurationTextArea.setRows( (int)Math.ceil( (double)temp.length() / 75.0 ) );
     extraDurationTextArea.getParent().getParent().setVisible( !temp.equals( "** No signal **" ) );
@@ -706,6 +723,11 @@ public class LearnedSignalDialog extends JDialog implements ActionListener, Docu
       learnedSignal = null;
       setVisible( false );
     }
+    else if ( source == unlockButton )
+    {
+      learnedSignal.getTimingAnalyzer().getSelectedAnalyzer().unlockRounding();
+      unlockButton.setEnabled( false );
+    }
     else if ( source == advancedButton )
     {
       advancedArea.setVisible( ! advancedArea.isVisible() );
@@ -800,7 +822,7 @@ public class LearnedSignalDialog extends JDialog implements ActionListener, Docu
   private JButton cancelButton = new JButton( "Cancel" );
   
   private JButton applyButton = new JButton( "Apply" );
-  
+  private JButton unlockButton = new JButton( "Unlock" );
   private JButton advancedButton = new JButton();
   
   private JPanel advancedArea = null;

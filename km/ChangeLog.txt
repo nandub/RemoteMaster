@@ -19,6 +19,10 @@ Changes for v2.05
 - Further improvements to Learned Signal analysis and timing summary (Graham)
 - Add Delete All button to RMTablePanel and activate it for Learned Signal Panel (Graham)
 - Add new option "Same sig = same remote" in Options > Advanced, preventing need to choose RDF when repeatedly downloading same remote (Graham)
+-- Private build 6
+- Further debugging of Vyrolan's code for learned signal analysis (Graham)
+- Add button to Advanced Details section of learned signal edit panel to unlock rounding after it has been set (Graham)
+- Add further option to Suppress Messages menu to suppress the most common confirmation messages (Graham)
 
 Changes for v2.04
 -- Private build 1

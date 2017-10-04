@@ -116,7 +116,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
 
   /** Description of the Field. */
   public final static String version = "v2.05";
-  public final static int buildVer = 5;
+  public final static int buildVer = 6;
   
   public static class LanguageDescriptor
   {
@@ -289,6 +289,8 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
   public static JCheckBoxMenuItem forceFDRAUpgradeItem = null;
   
   public static JCheckBoxMenuItem suppressTimingSummaryInfo = null;
+  
+  public static JCheckBoxMenuItem suppressConfirmPrompts = null;
   
   private static JMenuItem analyzeMAXQprotocols = null;
 
@@ -1021,7 +1023,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
               + "safe to upload to a remote when the signatures do not match.\n\n"
               + "How would you like to proceed?";
         }
-        else
+        else if ( !suppressConfirmPrompts.isSelected() )
         {
           message = "An upload overwrites the entire memory area for setup data in the remote and cannot\n"
               + "be undone.  Are you sure that you want to do this?";
@@ -1030,14 +1032,17 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
           {
             "Upload to the remote", "Cancel the upload"
           };
-        int rc = JOptionPane.showOptionDialog( RemoteMaster.this, message,
-            "Upload Confirmation", JOptionPane.DEFAULT_OPTION,
-            JOptionPane.WARNING_MESSAGE, null, options, options[ 1 ] );
-        if ( rc == 1 || rc == JOptionPane.CLOSED_OPTION )
+        if ( message != null )
         {
-          io.closeRemote();
-          setInterfaceState( null );
-          return null;
+          int rc = JOptionPane.showOptionDialog( RemoteMaster.this, message,
+              "Upload Confirmation", JOptionPane.DEFAULT_OPTION,
+              JOptionPane.WARNING_MESSAGE, null, options, options[ 1 ] );
+          if ( rc == 1 || rc == JOptionPane.CLOSED_OPTION )
+          {
+            io.closeRemote();
+            setInterfaceState( null );
+            return null;
+          }
         }
       }
       AutoClockSet autoClockSet = remote.getAutoClockSet();
@@ -1217,7 +1222,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
                          + "that are not visible in RMIR whose initial values are not correctly set by File > New.\n"
                          + "These may adversely affect the operation of the remote when a setup created this way\n"
                          + "is uploaded.\n\nDo you wish to continue?";
-          if ( JOptionPane.showConfirmDialog( RemoteMaster.this, message, title, JOptionPane.YES_NO_OPTION, 
+          if ( !suppressConfirmPrompts.isSelected() && JOptionPane.showConfirmDialog( RemoteMaster.this, message, title, JOptionPane.YES_NO_OPTION, 
               JOptionPane.WARNING_MESSAGE ) == JOptionPane.NO_OPTION )
           {
             return;
@@ -2702,6 +2707,13 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
     RMTablePanel.suppressDeletePrompts = bval;
     item.addActionListener( listener );
     suppressSubMenu.add( item );
+    
+    item = new JCheckBoxMenuItem( "Confirmation prompts" );
+    item.setActionCommand( "SuppressConfirmPrompts" );
+    item.setSelected( Boolean.parseBoolean( properties.getProperty( item.getActionCommand(), "false" ) ) );
+    item.addActionListener( listener );
+    suppressSubMenu.add( item );
+    suppressConfirmPrompts = item;
     
     item = new JCheckBoxMenuItem( "Timing summary info" );
     item.setActionCommand( "SuppressTimingSummaryInfo" );
@@ -5166,7 +5178,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
   
   public boolean promptToSave( boolean doExit ) throws IOException
   {
-    if ( !changed )
+    if ( suppressConfirmPrompts.isSelected() || !changed )
     {
       return true;
     }

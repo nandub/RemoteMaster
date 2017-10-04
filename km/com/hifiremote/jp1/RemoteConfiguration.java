@@ -8638,6 +8638,7 @@ public class RemoteConfiguration
     SpecialFunctionDialog.reset();
     FavScanDialog.reset();
     LearnedSignalDialog.reset();
+    LearnedSignalTimingSummaryDialog.reset();
     RMListChooser.reset();
   }
   
