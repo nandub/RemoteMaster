@@ -23,6 +23,11 @@ Changes for v2.05
 - Further debugging of Vyrolan's code for learned signal analysis (Graham)
 - Add button to Advanced Details section of learned signal edit panel to unlock rounding after it has been set (Graham)
 - Add further option to Suppress Messages menu to suppress the most common confirmation messages (Graham)
+-- Private build 7
+- Add pid: 00FD executor to protocols.ini (Graham)
+- Add Onkyo Combo entry to protocols.ini (Rob Crowe)
+- Fix bug when loading .rmir file with a protocol missing from protocols.ini, which caused error in number of fixed bytes (Graham)
+- Further improve the learned signal analysis (Graham)
 
 Changes for v2.04
 -- Private build 1

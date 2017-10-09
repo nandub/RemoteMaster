@@ -315,21 +315,22 @@ public class LearnedSignalDialog extends JDialog implements ActionListener, Docu
     
     unlockButton.addActionListener( this );
     unlockButton.setEnabled( false );
-    unlockButton.setToolTipText( "<html>Release lock that passes rounding set here to Timing summary.<br>"
-        + "When button is disabled, rounding is unlocked." );
+    unlockButton.setToolTipText( "<html>Release lock that makes Timing summary use rounding set here for<br>"
+        + "this signal and analysis.  When button is disabled, rounding is unlocked.</html>" );
     buttonPanel.add( unlockButton );
     
     applyButton.addActionListener( this );
     applyButton.setEnabled( false );
-    applyButton.setToolTipText( "Apply edits made in the Signal Data panel without closing dialog" );
+    applyButton.setToolTipText( "<html>Apply edits made in the Signal Data panel without closing dialog.<br>"
+        + "Save the current analysis settings.</html>" );
     buttonPanel.add( applyButton );
 
     okButton.addActionListener( this );
-    okButton.setToolTipText( "Apply all edits and exit dialog" );
+    okButton.setToolTipText( "Apply all Signal Data edits, save current analysis settings and exit dialog." );
     buttonPanel.add( okButton );
 
     cancelButton.addActionListener( this );
-    cancelButton.setToolTipText( "Abandon all edits and exit dialog" );
+    cancelButton.setToolTipText( "Abandon all edits since they were last applied, then exit dialog." );
     buttonPanel.add( cancelButton );
     
     advancedArea.setVisible( false );
@@ -455,9 +456,9 @@ public class LearnedSignalDialog extends JDialog implements ActionListener, Docu
       timingAnalyzer.setSelectedAnalyzer( analyzerBox.getSelectedItem().toString() ); // will auto select preferred analysis
       analysisBox.setModel( new DefaultComboBoxModel( timingAnalyzer.getSelectedAnalyzer().getAnalysisNames() ) );
       analysisBox.setSelectedItem( timingAnalyzer.getSelectedAnalysisName() );
+      burstRoundBox.getDocument().removeDocumentListener( dl );
       burstRoundBox.setText( Integer.toString( timingAnalyzer.getSelectedAnalyzer().getRoundTo() ) );
-      // Vyrolan wrote:  setting burst text will trigger this so next line not called here.
-      // Graham says:  that doesn't seem to happen, at least not always, so I have uncommented the next line.
+      burstRoundBox.getDocument().addDocumentListener( dl );
       setAdvancedAreaTextFields();
     }
     else
@@ -487,6 +488,7 @@ public class LearnedSignalDialog extends JDialog implements ActionListener, Docu
         catch (NumberFormatException e) { r = 1; }
 
       LearnedSignalTimingAnalyzerBase analyzer = this.learnedSignal.getTimingAnalyzer().getSelectedAnalyzer();
+      unlockButton.setEnabled( analyzer.getIsRoundingLocked() );
       if ( r != analyzer.getRoundTo() )
       {
         analyzer.unlockRounding();

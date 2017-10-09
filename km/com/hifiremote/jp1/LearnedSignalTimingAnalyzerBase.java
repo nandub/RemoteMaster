@@ -7,6 +7,7 @@ public abstract class LearnedSignalTimingAnalyzerBase
 {
   // collection of successful analyses
   private HashMap<String,LearnedSignalTimingAnalysis> _Analyses;
+  protected void clearAnalyses() { _Analyses = null; }
 
   // data from the learned signal
   private UnpackLearned _Unpacked;

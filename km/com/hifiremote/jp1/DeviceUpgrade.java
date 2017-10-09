@@ -2631,14 +2631,14 @@ public class DeviceUpgrade extends Highlight
             int cmdLength = 0;
             int fixedDataLength = 0;
             String temp = props.getProperty( "Function.0.hex" );
-            if ( temp != null )
+            if ( temp != null && temp.length() != 0 )
             {
               cmdLength = ( new Hex( temp ) ).length();
             }
-            temp = props.getProperty( "ProtocolParms" );
-            if ( temp != null )
+            temp = props.getProperty( "FixedData" );
+            if ( temp != null && temp.length() != 0 )
             {
-              fixedDataLength = stringToValueArray( temp ).length;
+              fixedDataLength = ( new Hex( temp ) ).length();
             }
             if ( cmdLength > 0 )
             {

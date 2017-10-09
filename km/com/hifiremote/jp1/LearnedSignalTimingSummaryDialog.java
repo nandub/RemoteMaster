@@ -219,16 +219,6 @@ public class LearnedSignalTimingSummaryDialog extends JDialog implements ActionL
     if ( dialog == null )
       dialog = new LearnedSignalTimingSummaryDialog( locationComp );
     dialog.config = config;
-    dialog.display = 0;
-    dialog.translation[ 0 ].clear();
-    dialog.translation[ 1 ].clear();
-    
-    dialog.paritySettings = new int[]{ 0, 0 };    // TESTING  comment out these four
-    dialog.roundSettings = new String[]{ null, null };
-    dialog.burstRoundBox.setText( null );
-    dialog.parityBox.setSelectedIndex( 0 );
-    
-    dialog.rawButton.setSelected( true );
     dialog.notePanel.setVisible( !RemoteMaster.suppressTimingSummaryInfo.isSelected() );
     dialog.generateSummary();
     dialog.pack();
@@ -374,7 +364,6 @@ public class LearnedSignalTimingSummaryDialog extends JDialog implements ActionL
       column.setPreferredWidth( width );
     }
 
-//    int sbWidth = scrollPane.getVerticalScrollBar().getPreferredSize().width;
     Dimension d = codingTable.getPreferredSize();
     d.width -= scrollPane.getVerticalScrollBar().getPreferredSize().width;
     codingTable.setPreferredScrollableViewportSize( d );
@@ -476,65 +465,87 @@ public class LearnedSignalTimingSummaryDialog extends JDialog implements ActionL
         LearnedSignalTimingAnalysis analysis = null;
         boolean autoCode = analyzer.getName().equals( "Bi-Phase" );
      
-        if ( ( roundingSet || parity > 0 ) && !analyzer.getIsRoundingLocked() )
+        if ( !analyzer.getIsRoundingLocked() )
         {
-          // Either or both of rounding and parity is being forced.  We obey these settings only if
-          // rounding has not been set through Advanced Details.
+          // Rounding is not locked, so use rounding set here if set, otherwise use
+          // autocalculated rounding.  We need to clear analyses explicitly as
+          // setRoundTo(...) does so only if setting to a value different from the
+          // current one and we need to force reanalysis in all cases.
           analyzer.saveState();
-          analyzer.setRoundTo( r );
-          String displayAnalysisName = lsta.getSelectedAnalysisName();
-          String[] analysisNames = analyzer.getAnalysisNames();
-          if ( parity > 0 && ( ( display & 1 ) == 0 || !displayAnalysisName.toUpperCase().contains( parityList[ parity ].toUpperCase() ) ) )
+          analyzer.clearAnalyses();
+          analyzer.setRoundTo( roundingSet ? r : analyzer.calcAutoRoundTo() );
+        }
+        // Get the name of the current analysis for the signal.  This is the default
+        // name to use to select the analysis to display, though reanalysis may change
+        // the actual analysis selected by this name.
+        String displayAnalysisName = lsta.getSelectedAnalysisName();
+
+        // Get names of analyses, after reanalysis if rounding was not locked.  If
+        // rounding was locked then this does not prompt reanalysis, which is why
+        // the analyzer state is saved only when rounding not locked.
+        String[] analysisNames = analyzer.getAnalysisNames();
+
+        // We cannot use the default analysis name (a) if it is for the wrong analyzer,
+        // or (b) it conflicts with parity set here, or (c) there is no longer an analysis
+        // with this name.  Case (a) can only occur when the selected analyzer for the
+        // signal is bi-phase and the analyzer selected for display here is raw.  
+        // We deal first with cases (a) and (b) together.  We need to take into account 
+        // that the parity name is as in the parity list for raw analyses but in 
+        // upper case for bi-phase analyses.
+        String currentParity = parityList[ parity ];
+        if ( parity > 0 && ( ( display & 1 ) == 0 || !displayAnalysisName.toUpperCase().contains( parityList[ parity ].toUpperCase() ) ) )
+        {
+          // Parity is set and either (d) analyzer is raw or (e) it conflicts with 
+          // default analysis name.  This is case (b) above together with the subcase
+          // of (a) where parity is set.  It also includes the situation where raw is
+          // the right analysis, parity is set but there is no conflict.  In this case
+          // we merely re-set the existing display analysis name.
+          if ( analyzer.getName().equals( "Raw Data" ) )
           {
-            // When parity is set, this covers all cases except that where the analyzer is the selected one
-            // but the selected analysis has correct parity, when we can simply display the selected analysis
-            // in the selected analyzer.
-            if ( analyzer.getName().equals( "Raw Data" ) )
+            // For raw analysis we can always use the set parity
+            displayAnalysisName = currentParity;
+          }
+          else
+          {
+            // For bi-phase analysis we need to check if the reanalysis has given us
+            // an analysis with the set parity.  If so, we select the first such analysis
+            // if there is more than one.
+            displayAnalysisName = null;
+            for ( String name : analysisNames )
             {
-              displayAnalysisName = parityList[ parity ];
-            }
-            else
-            {
-              displayAnalysisName = null;
-              for ( String name : analysisNames )
+              if ( name.toUpperCase().contains( currentParity.toUpperCase() )  )
               {
-                if ( name.toUpperCase().contains( parityList[ parity ].toUpperCase() )  )
-                {
-                  displayAnalysisName = name;
-                  break;
-                }
+                displayAnalysisName = name;
+                break;
               }
             }
+            // Note that we are left with a null name if there is no bi-phase analysis
+            // with the set parity.
           }
-          else if ( parity == 0 && ( display & 1 ) == 0 
-              && !lsta.getSelectedAnalyzer().getName().equals( "Raw Data" ) )
-          {
-            // When parity is default, the case not covered here is when the analyzer is the selected
-            // one and this is the raw one.  In this case we can display the selected analysis.
-            displayAnalysisName = "Even";
-          }
-          analysis = analyzer.getAnalysis( displayAnalysisName );
-          if ( analysis == null )
-          {
-            analysis = analyzer.getPreferredAnalysis();
-          }
+        }
+        else if ( parity == 0 && ( display & 1 ) == 0 
+            && !lsta.getSelectedAnalyzer().getName().equals( "Raw Data" ) )
+        {
+          // This is case (a) above where parity is not set.  We use the default
+          // raw analysis.
+          displayAnalysisName = "Even";
+        }
+
+        // We have now changed the display analysis name if needed to meet (a) or (b),
+        // (b) possibly resulting in a null name if condition cannot be met. Now
+        // see if there actually is an analysis with the name as modified.
+        analysis = analyzer.getAnalysis( displayAnalysisName );
+        if ( analysis == null )
+        {
+          // If there isn't one then get the preferred analysis for this analyzer.
+          analysis = analyzer.getPreferredAnalysis();
+        }
+        if ( !analyzer.getIsRoundingLocked() )
+        {
+          // State was saved only when rounding is not locked.
           analyzer.restoreState();
         }
-        else
-        {
-          // Neither rounding nor parity is being forced, but we have to obey the raw/analyzed choice.
-          // If raw is chosen but this is not the selected one, we use Even parity.
-          String displayAnalysisName = lsta.getSelectedAnalysisName();
-          if ( ( display & 1 ) == 0  && !lsta.getSelectedAnalyzer().getName().equals( "Raw Data" ) )
-          {
-            displayAnalysisName = "Even";
-          }
-          analysis = analyzer.getAnalysis( displayAnalysisName );
-          if ( analysis == null )
-          {
-            analysis = analyzer.getPreferredAnalysis();
-          }
-        }
+
         if ( analysis != null && ul.oneTime > 0 && ul.extra > 0 && ul.repeat == 0 )
         {
           appendDurations( summary, analysis.getOneTimeDurationStringList(), autoCode, "Once:\t" );
