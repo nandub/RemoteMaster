@@ -16,6 +16,7 @@ ImageMap=URC-8603.map
 SetupValidation=Warn
 AdvCodeFormat=EFC
 ActivityMapIndex=1
+16BitSetupCode=Y
 
 [DeviceTypes+] 
 TV         = 0,T 
@@ -30,6 +31,9 @@ CD         = 0,D
 Media      = 0,M
 HomeAuto   = 0,H
 HomeOFA    = 0,Q
+DAT        = 0,J
+Tape       = 0,K
+Laserdisc  = 0,L
 
 
 [DeviceTypes] 
@@ -45,12 +49,15 @@ CD         = 0
 Media      = 0
 HomeAuto   = 0
 HomeOFA    = 0
+DAT        = 0
+Tape       = 0
+Laserdisc  = 0
 
 [DeviceTypeAliases]
 TV         = TV
 Cable      = Cable
 SAT        = SAT
-DVD        = DVD,Tape,Laserdisc,DAT
+DVD        = DVD
 VCR        = VCR,PVR
 Receiver   = Tuner
 Audio      = Misc Audio,Phono,Amp
@@ -59,6 +66,9 @@ HomeOFA    = OEM Mode
 HomeAuto   = Home Auto
 Media      = Media
 VideoAcc   = Video Acc
+DAT        = DAT
+Tape       = Tape
+Laserdisc  = Laserdisc
 
 [DeviceButtons] 
 Dev1 = $50 0

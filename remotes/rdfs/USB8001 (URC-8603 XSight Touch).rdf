@@ -33,6 +33,7 @@ HomeAuto   = 0,H
 HomeOFA    = 0,Q
 DAT        = 0,J
 Tape       = 0,K
+Laserdisc  = 0,L
 
 
 [DeviceTypes] 
@@ -50,12 +51,13 @@ HomeAuto   = 0
 HomeOFA    = 0
 DAT        = 0
 Tape       = 0
+Laserdisc  = 0
 
 [DeviceTypeAliases]
 TV         = TV
 Cable      = Cable
 SAT        = SAT
-DVD        = DVD,Laserdisc
+DVD        = DVD
 VCR        = VCR,PVR
 Receiver   = Tuner
 Audio      = Misc Audio,Phono,Amp
@@ -66,6 +68,7 @@ Media      = Media
 VideoAcc   = Video Acc
 DAT        = DAT
 Tape       = Tape
+Laserdisc  = Laserdisc
 
 [DeviceButtons] 
 Dev1 = $50 0
