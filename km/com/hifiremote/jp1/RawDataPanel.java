@@ -2,6 +2,7 @@ package com.hifiremote.jp1;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
@@ -83,6 +84,10 @@ public class RawDataPanel extends RMPanel
     panel.add( p, BorderLayout.LINE_START );
 
     infoBox.add( signatureLabel );
+    infoBox.add( strut1 );
+    infoBox.add( regionLabel );
+    infoBox.add( strut2 );
+    infoBox.add( languageLabel );
     infoBox.add( Box.createVerticalStrut( 5 ) );
     infoBox.add( processorLabel );
     infoBox.add( Box.createVerticalStrut( 5 ) );
@@ -155,6 +160,30 @@ public class RawDataPanel extends RMPanel
         sig = remote.getSignature();
       }
       signatureLabel.setText( "Signature:  " + sig );
+      String region = remoteConfig.getRegionDisplayName();
+      if ( region != null )
+      {
+        strut1.setVisible( true );
+        regionLabel.setVisible( true );
+        regionLabel.setText( "Region:  " + region );
+      }
+      else
+      {
+        strut1.setVisible( false );
+        regionLabel.setVisible( false );
+      }
+      String language = remoteConfig.getLanguageDisplayName();
+      if ( language != null )
+      {
+        strut2.setVisible( true );
+        languageLabel.setVisible( true );
+        languageLabel.setText( "Language:  " + language );
+      }
+      else
+      {
+        strut2.setVisible( false );
+        languageLabel.setVisible( false );
+      }
       processorLabel.setText( "Processor:  " + remote.getProcessorDescription() );
       interfaceLabel.setText( "Interface:  " + remote.getInterfaceType() );
       versionLabel1.setText( "" );
@@ -214,13 +243,17 @@ public class RawDataPanel extends RMPanel
   RawDataTableModel model = null;
   UnsignedByteRenderer byteRenderer = new UnsignedByteRenderer();
   
-  JLabel signatureLabel = new JLabel();  
+  JLabel signatureLabel = new JLabel();
+  JLabel regionLabel = new JLabel();
+  JLabel languageLabel = new JLabel();
   JLabel processorLabel = new JLabel();  
   JLabel interfaceLabel = new JLabel();  
   JLabel versionLabel1 = new JLabel( "" );
   JLabel versionLabel2 = new JLabel( "" );
   JLabel infoLabel1 = new JLabel( "Values in black: RMIR data displayed" );
   JLabel infoLabel2 = new JLabel( "Values in blue: Original data displayed" );
+  Component strut1 = Box.createVerticalStrut( 5 );
+  Component strut2 = Box.createVerticalStrut( 5 );
   
   Box infoBox = null;
   JPanel choicePanel = null;

@@ -28,6 +28,10 @@ Changes for v2.05
 - Add Onkyo Combo entry to protocols.ini (Rob Crowe)
 - Fix bug when loading .rmir file with a protocol missing from protocols.ini, which caused error in number of fixed bytes (Graham)
 - Further improve the learned signal analysis (Graham)
+-- Private build 8
+- Add display of region and language to Raw Data Panel for XSight Touch/Color and Nevo remotes (Graham)
+- Fix bug with Code Selector Panel for XSight Touch/Color and Nevo remotes that left progress bar showing after connection completed (Graham)
+- Change default width of Hex column on Functions tab of Device Upgrade Editor to show 4 bytes rather than 2 (Graham)
 
 Changes for v2.04
 -- Private build 1

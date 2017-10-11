@@ -27,12 +27,10 @@ import com.codeminders.hidapi.HIDManager;
 import com.codeminders.hidapi.HIDDevice;
 import com.codeminders.hidapi.HIDDeviceInfo;
 import com.hifiremote.jp1.Hex;
-import com.hifiremote.jp1.PropertyFile;
 import com.hifiremote.jp1.Remote;
 import com.hifiremote.jp1.RemoteConfiguration;
 import com.hifiremote.jp1.RemoteManager;
 import com.hifiremote.jp1.RemoteMaster;
-import com.hifiremote.jp1.RemoteMaster.LanguageDescriptor;
 import com.hifiremote.jp1.RemoteMaster.NegativeDefaultButtonJOptionPane;
 import com.hifiremote.jp1.RemoteMaster.Use;
  

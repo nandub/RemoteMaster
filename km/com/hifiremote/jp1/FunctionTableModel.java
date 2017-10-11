@@ -393,7 +393,7 @@ public class FunctionTableModel extends KMTableModel< Function >
     else if ( col == efc5col )
       rc = "00000";
     else if ( col == hexCol )
-      rc = "CC CC";
+      rc = "CC CC CC CC";
     else if ( col == iconCol )
       rc = "Icon?_";
     else if ( col == notesCol )

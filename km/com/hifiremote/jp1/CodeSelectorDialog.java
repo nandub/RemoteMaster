@@ -319,6 +319,7 @@ public class CodeSelectorDialog extends JDialog implements ActionListener
           hid.closeRemote();
         }
       }
+      owner.setInterfaceState( null );
       if ( done )
       {
         ( ( CardLayout )bottomPanel.getLayout() ).show( bottomPanel, "ON" );

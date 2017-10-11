@@ -1110,13 +1110,7 @@ public class RemoteConfiguration
         // Needed here for processing of iconref
         items.key = new Key();
       }
-      
-      if ( dbOnly )
-      {
-        return true;
-      }
- 
-      if ( tag.equals( "language") )
+      else if ( tag.equals( "language") )
       {
         items.lastTag = "language";
         language = getString8( data, pos );
@@ -1139,7 +1133,13 @@ public class RemoteConfiguration
         }
         items.lastTag = null;
       }
-      else if ( tag.equals( "favorites" ) )
+      
+      if ( dbOnly )
+      {
+        return true;
+      }
+ 
+      if ( tag.equals( "favorites" ) )
       {
         items.activity = remote.getFavKey() != null ? activities.get( remote.getButton( remote.getFavKey().getKeyCode() ) ) : null;
       }
@@ -3304,6 +3304,7 @@ public class RemoteConfiguration
           parseXCFFile( items, 1, filedata, start, tagNames, true );
         }
         items.codes = new ArrayList< Integer >();
+        temp.getProgressUpdater().updateProgress( 70 );
         items.irdb = hid.readXZITEFile( "irdb.bin" );
         List< String > tagNames = getBXMLtagnames( "irdb.bin", items.irdb, 0 );
         if ( tagNames == null )
@@ -3313,6 +3314,7 @@ public class RemoteConfiguration
         int start = items.irdb[ 14 ] + 0x100 * items.irdb[ 15 ] + 17;
         parseXCFFile( items, -1, items.irdb, start, tagNames, true );
         
+        temp.getProgressUpdater().updateProgress( 85 );
         short[] filedata = hid.readXZITEFile( regionFilename );
         tagNames = getBXMLtagnames( regionFilename, filedata, 0 );
         if ( tagNames == null )
@@ -3322,6 +3324,7 @@ public class RemoteConfiguration
         start = filedata[ 14 ] + 0x100 * filedata[ 15 ] + 17;
         parseXCFFile( items, -2, filedata, start, tagNames, true );
         result = true;
+        temp.getProgressUpdater().updateProgress( 100 );
         break;
       }
     }
@@ -8389,6 +8392,47 @@ public class RemoteConfiguration
   public String getRegion()
   {
     return region == null ? "this region" : region;
+  }
+  
+  /**
+   *  The region name, and region filename, in system.xcf is in lower case.
+   *  For display purposes we want the region name in a more readable mixed case.
+   *  This extracts that form from the list of system filenames in CommHID.
+   */
+  public String getRegionDisplayName()
+  {
+    if ( remote.isSSD() && regionFilename != null )
+    {
+      List< String > ucSysNames = new ArrayList< String >();
+      for ( String name : CommHID.xziteSysNames )
+      {
+        ucSysNames.add( name.toUpperCase() );
+      }
+      int ndx = ucSysNames.indexOf( regionFilename.toUpperCase() );
+      if ( ndx >= 0 )
+      {
+        String name = CommHID.xziteSysNames.get( ndx );
+        ndx = name.indexOf( '.' );
+        if ( ndx > 0 )
+        {
+          return name.substring( 0, ndx );
+        }
+      }
+    }
+    return null;
+  }
+  
+  /**
+   *  The language name in system.xcf is in lower case.  Capitalize the first
+   *  letter for display purposes.
+   */
+  public String getLanguageDisplayName()
+  {
+    if ( remote.isSSD() && language != null )
+    {
+      return language.substring( 0, 1 ).toUpperCase() + language.substring( 1 );
+    }
+    return null;
   }
 
   public LinkedHashMap< Integer, String > getDeviceCategories()

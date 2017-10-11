@@ -1067,9 +1067,8 @@ public class KeyMapMaster extends JP1Frame implements ActionListener, PropertyCh
             + "<p>RDFs loaded from <b>"
             + preferences.getRDFPath()
             + "</b></p>"
-            + "<p>Written primarily by <i>Greg Bush</i> (and now accepting donations "
-            + "at <a href=\"http://sourceforge.net/donate/index.php?user_id=735638\">http://sourceforge.net/donate/index.php?user_id=735638</a>), "
-            + "<br>with substantial additions and help from Graham&nbsp;Dixon</p>"
+            + "<p>Written primarily by Greg Bush with substantial additions<br>"
+            + "and help from Graham&nbsp;Dixon</p>"
             + "<p>Other contributors include:<blockquote>"
             + "John&nbsp;S&nbsp;Fine, Nils&nbsp;Ekberg, Jon&nbsp;Armstrong, Robert&nbsp;Crowe, "
             + "Mark&nbsp;Pauker, Mark&nbsp;Pierson, Mike&nbsp;England</blockquote></html>";
