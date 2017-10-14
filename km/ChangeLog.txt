@@ -32,6 +32,10 @@ Changes for v2.05
 - Add display of region and language to Raw Data Panel for XSight Touch/Color and Nevo remotes (Graham)
 - Fix bug with Code Selector Panel for XSight Touch/Color and Nevo remotes that left progress bar showing after connection completed (Graham)
 - Change default width of Hex column on Functions tab of Device Upgrade Editor to show 4 bytes rather than 2 (Graham)
+-- Release build 9
+- Add an AddOns folder to the installation folder (Graham)
+- Add an AddOns Path item to File > Set Directory menu to allow the default to be changed (Graham)
+- Extend ProtocolManager to process .prot files in the AddOns folder as extensions to protocols.ini (Graham)
 
 Changes for v2.04
 -- Private build 1

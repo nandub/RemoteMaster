@@ -57,6 +57,7 @@ import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JColorChooser;
 import javax.swing.JDialog;
 import javax.swing.JEditorPane;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -116,7 +117,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
 
   /** Description of the Field. */
   public final static String version = "v2.05";
-  public final static int buildVer = 8;
+  public final static int buildVer = 9;
   
   public static class LanguageDescriptor
   {
@@ -205,8 +206,8 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
   protected RMAction highlightAction = null;
 
   private JMenuItem rdfPathItem = null;
-
   private JMenuItem mapPathItem = null;
+  private JMenuItem addonPathItem = null;
   private JMenuItem setBaselineItem = null;
   private JMenuItem clearBaselineItem = null;
 
@@ -2042,6 +2043,11 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
     mapPathItem.addActionListener( this );
     menuSetDirectory.add( mapPathItem );
 
+    addonPathItem = new JMenuItem( "AddOns Path..." );
+    addonPathItem.setMnemonic( KeyEvent.VK_A );
+    addonPathItem.addActionListener( this );
+    menuSetDirectory.add( addonPathItem );
+    
     menu.addSeparator();
 
     recentFiles = new JMenu( "Recent" );
@@ -2849,6 +2855,33 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
       }
     }
     chooser.removePropertyChangeListener( area );
+    return result;
+  }
+  
+  private File getAddonPathChoice()
+  {
+    File result = null;
+    File defaultDir = new File( workDir, "AddOns" );
+    File dir = properties.getFileProperty( "AddonPath", defaultDir );
+    RMDirectoryChooser chooser = new RMDirectoryChooser( dir, null, null );
+    chooser.setDialogTitle( "Select AddOns Directory" );
+    if ( chooser.showDialog( this, "OK" ) == RMDirectoryChooser.APPROVE_OPTION )
+    {
+      result = chooser.getSelectedFile();
+      if ( result.equals( dir ) )
+      {
+        result = null; // Not changed
+      }
+    }
+    if ( result != null && result.equals( defaultDir  ) )
+    {
+      properties.remove( "AddonPath" );
+      result = null;
+    }
+    else if ( result != null )
+    {
+      properties.setProperty( "AddonPath", result );
+    }
     return result;
   }
   
@@ -4286,6 +4319,19 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
         Remote remote = remoteConfig.getRemote();
         remote.resetImageMaps( path );
       }
+      else if ( source == addonPathItem )
+      {
+        File path = getAddonPathChoice();
+        if ( path != null )
+        {
+          String message = "The default path for Add-ons is the AddOns subfolder of the \n"
+              + "RMIR installation folder.  You have changed it to:\n\n"
+              + path.getAbsolutePath() + "\n\n"
+              + "This change will take place when you next open RMIR.";
+          String title = "Change of Add-ons Directory";
+          JOptionPane.showMessageDialog( this, message, title, JOptionPane.INFORMATION_MESSAGE );
+        }
+      }
       else if ( source == updateItem )
       {
         UpdateChecker.checkUpdateAvailable( this );
@@ -4941,6 +4987,8 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
         ex.printStackTrace( System.err );
       }
 
+      addonDir = properties.getFileProperty( "AddonPath", new File( workDir, "AddOns" ) );
+      
       RemoteManager.getRemoteManager().loadRemotes( properties );
 
       ProtocolManager.getProtocolManager().load( new File( workDir, "protocols.ini" ), properties );
@@ -5028,6 +5076,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
   
   private static File workDir = null;
   private static File rmirSys = null;
+  private static File addonDir = null;
   private static File upgradeSource = null;
   private static LanguageDescriptor upgradeLanguage = defaultLanguage;
 
@@ -5039,6 +5088,11 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
   public static File getRmirSys()
   {
     return rmirSys;
+  }
+
+  public static File getAddonDir()
+  {
+    return addonDir;
   }
 
   public static File getUpgradeSource()

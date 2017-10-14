@@ -2,6 +2,7 @@ package com.hifiremote.jp1;
 
 import java.io.File;
 import java.io.FileReader;
+import java.io.FilenameFilter;
 import java.io.LineNumberReader;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,6 +15,8 @@ import java.util.Set;
 import java.util.StringTokenizer;
 
 import javax.swing.JOptionPane;
+
+import com.hifiremote.jp1.RemoteManager.ExtensionFilter;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -69,92 +72,25 @@ public class ProtocolManager
         f = chooser.getSelectedFile();
       }
     }
-    LineNumberReader rdr = new LineNumberReader( new FileReader( f ) );
-    rdr.setLineNumber( 1 );
-    Properties props = null;
-    String name = null;
-    Hex id = null;
-    String type = null;
-    String variant = null;
-    boolean showSlingboxProtocols = Boolean.parseBoolean( properties.getProperty( "ShowSlingboxProtocols", "false" ) );
     extra = false;
-
-    while ( true )
+    showSlingboxProtocols = Boolean.parseBoolean( properties.getProperty( "ShowSlingboxProtocols", "false" ) );
+    loadProtocolFile( f, false );
+    File addonDir = RemoteMaster.getAddonDir();
+    if ( addonDir.exists() && addonDir.isDirectory() )
     {
-      String line = rdr.readLine();
-      if ( line == null )
+      File[] files = addonDir.listFiles( new FilenameFilter() 
       {
-        break;
-      }
-
-      line = line.trim();
-
-      if ( line.length() == 0 || line.charAt( 0 ) == '#' )
+        public boolean accept( File dir, String name )
+        {
+          return name.toLowerCase().endsWith( ".prot" );
+        }
+      } );
+      for ( File protFile : files )
       {
-        continue;
-      }
-
-      line = line.replaceAll( "\\\\n", "\n" );
-      line = line.replaceAll( "\\\\t", "\t" );
-      while ( line.endsWith( "\\" ) )
-      {
-        String temp = rdr.readLine().trim();
-        temp = temp.replaceAll( "\\\\n", "\n" );
-        temp = temp.replaceAll( "\\\\t", "\t" );
-        line = line.substring( 0, line.length() - 1 ) + temp;
-      }
-
-      if ( line.charAt( 0 ) == '[' ) // begin new protocol
-      {
-        variant = props != null ? props.getProperty( "VariantName", "" ) : "";
-        if ( name != null && ( showSlingboxProtocols || !variant.equalsIgnoreCase( "slingbox" ) ) )
-        {
-          Protocol protocol = ProtocolFactory.createProtocol( name, id, type, props );
-          if ( protocol != null )
-          {
-            add( protocol );
-          }
-        }
-        name = line.substring( 1, line.length() - 1 ).trim();
-        props = new Properties();
-        id = null;
-        type = "Protocol";
-      }
-      else
-      {
-        StringTokenizer st = new StringTokenizer( line, "=", true );
-        String parmName = st.nextToken().trim();
-        String parmValue = null;
-        st.nextToken(); // skip the =
-        if ( !st.hasMoreTokens() )
-        {
-          continue;
-        }
-        else
-        {
-          parmValue = st.nextToken( "" ); // .trim();
-        }
-
-        if ( parmName.equals( "PID" ) )
-        {
-          id = new Hex( parmValue );
-        }
-        else if ( parmName.equals( "Type" ) )
-        {
-          type = parmValue;
-        }
-        else
-        {
-          props.setProperty( parmName, parmValue );
-        }
+        loadProtocolFile( protFile, true );
       }
     }
-    rdr.close();
-    variant = props != null ? props.getProperty( "VariantName", "" ) : "";
-    if ( showSlingboxProtocols || !variant.equalsIgnoreCase( "slingbox" ) )
-    {
-      add( ProtocolFactory.createProtocol( name, id, type, props ) );
-    }
+    
     ManualProtocol manualProtocol = new ManualProtocol( new Hex( "FF FF" ), null );
     manualProtocol.setName( manualProtocol.getName() );
     add( manualProtocol );
@@ -177,6 +113,133 @@ public class ProtocolManager
     }
 
     loaded = true;
+  }
+  
+  private void loadProtocolFile( File f, boolean deleteConflicting )
+  {
+    Properties props = null;
+    String name = null;
+    Hex id = null;
+    String type = null;
+    String variant = null;
+    int lineNumber = 0;
+    extra = false;
+    
+    try
+    {
+      LineNumberReader rdr = new LineNumberReader( new FileReader( f ) );
+      rdr.setLineNumber( 1 );
+      while ( true )
+      {
+        String line = rdr.readLine();
+        lineNumber = rdr.getLineNumber();
+        if ( line == null )
+        {
+          break;
+        }
+
+        line = line.trim();
+
+        if ( line.length() == 0 || line.charAt( 0 ) == '#' )
+        {
+          continue;
+        }
+
+        line = line.replaceAll( "\\\\n", "\n" );
+        line = line.replaceAll( "\\\\t", "\t" );
+        while ( line.endsWith( "\\" ) )
+        {
+          String temp = rdr.readLine().trim();
+          temp = temp.replaceAll( "\\\\n", "\n" );
+          temp = temp.replaceAll( "\\\\t", "\t" );
+          line = line.substring( 0, line.length() - 1 ) + temp;
+        }
+
+        if ( line.charAt( 0 ) == '[' ) // begin new protocol
+        {
+          // Add the previous protocol, if any
+          variant = props != null ? props.getProperty( "VariantName", "" ) : "";
+          if ( name != null && ( showSlingboxProtocols || !variant.equalsIgnoreCase( "slingbox" ) ) )
+          {
+            Protocol protocol = ProtocolFactory.createProtocol( name, id, type, props );
+            if ( protocol != null )
+            { 
+              addWithConflictCheck( protocol, deleteConflicting );
+            }
+          }
+          // Now start the new one
+          name = line.substring( 1, line.length() - 1 ).trim();
+          props = new Properties();
+          id = null;
+          type = "Protocol";
+        }
+        else
+        {
+          StringTokenizer st = new StringTokenizer( line, "=", true );
+          String parmName = st.nextToken().trim();
+          String parmValue = null;
+          st.nextToken(); // skip the =
+          if ( !st.hasMoreTokens() )
+          {
+            continue;
+          }
+          else
+          {
+            parmValue = st.nextToken( "" ); // .trim();
+          }
+
+          if ( parmName.equals( "PID" ) )
+          {
+            id = new Hex( parmValue );
+          }
+          else if ( parmName.equals( "Type" ) )
+          {
+            type = parmValue;
+          }
+          else
+          {
+            props.setProperty( parmName, parmValue );
+          }
+        }
+      }
+      rdr.close();
+    }
+    catch ( Exception e )
+    {
+      System.err.println( "Error in reading protocol from file " + f.getName() + " at line " + lineNumber );
+      return;
+    }
+    
+    // Now add the final protocol
+    variant = props != null ? props.getProperty( "VariantName", "" ) : "";
+    if ( name != null && ( showSlingboxProtocols || !variant.equalsIgnoreCase( "slingbox" ) ) )
+    {
+      Protocol protocol = ProtocolFactory.createProtocol( name, id, type, props );
+      if ( protocol != null )
+      {
+        addWithConflictCheck( protocol, deleteConflicting );
+      }
+    }
+  }
+  
+  private void addWithConflictCheck( Protocol protocol, boolean deleteConflicting )
+  {
+    String name = protocol.getName();
+    if ( deleteConflicting && findByName( name ) != null )
+    {
+      for ( Protocol p : findByName( name ) )
+      {
+        for ( String codeName : protocol.getCode().keySet() )
+        {
+          if ( p.getCode().get( codeName ) != null )
+          {
+            remove( p );
+            break;
+          }
+        }
+      }
+    }
+    add( protocol );
   }
 
   /**
@@ -1047,6 +1110,7 @@ public class ProtocolManager
   private Hashtable< String, Hashtable< Hex, List< Protocol > > > byAltPIDRemote = new Hashtable< String, Hashtable< Hex, List<Protocol > > >();
 
   private boolean extra = true;
+  private boolean showSlingboxProtocols = false;
   
   private List< Protocol > extras = new ArrayList< Protocol >();
   

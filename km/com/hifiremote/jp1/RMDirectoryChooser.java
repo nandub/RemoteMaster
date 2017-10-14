@@ -32,6 +32,10 @@ public class RMDirectoryChooser extends JDirectoryChooser
     @Override
     public boolean accept( File dir, String name )
     {
+      if ( extension == null )
+      {
+        return true;
+      }
       int dot = name.lastIndexOf( '.' );
       if ( dot < 0 )
       {
@@ -45,7 +49,7 @@ public class RMDirectoryChooser extends JDirectoryChooser
   public void approveSelection() 
   {
     File[] files = getSelectedFile().listFiles( filter );
-    if ( files.length == 0 )
+    if ( extension != null && files.length == 0 )
     { 
       JOptionPane.showMessageDialog( null, 
           "There are no " + type + " files in this directory.  Please choose another.",
