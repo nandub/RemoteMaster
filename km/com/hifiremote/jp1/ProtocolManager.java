@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.io.LineNumberReader;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -16,12 +18,6 @@ import java.util.StringTokenizer;
 
 import javax.swing.JOptionPane;
 
-import com.hifiremote.jp1.RemoteManager.ExtensionFilter;
-
-// TODO: Auto-generated Javadoc
-/**
- * The Class ProtocolManager.
- */
 public class ProtocolManager
 {
 
@@ -122,8 +118,11 @@ public class ProtocolManager
     Hex id = null;
     String type = null;
     String variant = null;
+    boolean suppress = false;
     int lineNumber = 0;
     extra = false;
+    StringWriter sw = new StringWriter();
+    PrintWriter pw = new PrintWriter( sw );
     
     try
     {
@@ -132,6 +131,7 @@ public class ProtocolManager
       while ( true )
       {
         String line = rdr.readLine();
+        String rawLine = line;
         lineNumber = rdr.getLineNumber();
         if ( line == null )
         {
@@ -144,12 +144,20 @@ public class ProtocolManager
         {
           continue;
         }
-
+        suppress = line.startsWith( "Code." ) || line.startsWith( "[" )
+            || line.startsWith( "PID" ) || line.startsWith( "VariantName" );
+        
         line = line.replaceAll( "\\\\n", "\n" );
         line = line.replaceAll( "\\\\t", "\t" );
         while ( line.endsWith( "\\" ) )
         {
-          String temp = rdr.readLine().trim();
+          String temp = rdr.readLine();
+          if ( !suppress )
+          {
+            pw.println( rawLine );
+            rawLine = temp;
+          }
+          temp = temp.trim();
           temp = temp.replaceAll( "\\\\n", "\n" );
           temp = temp.replaceAll( "\\\\t", "\t" );
           line = line.substring( 0, line.length() - 1 ) + temp;
@@ -162,12 +170,20 @@ public class ProtocolManager
           if ( name != null && ( showSlingboxProtocols || !variant.equalsIgnoreCase( "slingbox" ) ) )
           {
             Protocol protocol = ProtocolFactory.createProtocol( name, id, type, props );
+            protocol.iniIntro = sw.toString();
+            pw.close();
             if ( protocol != null )
             { 
               addWithConflictCheck( protocol, deleteConflicting );
             }
           }
           // Now start the new one
+          sw = new StringWriter();
+          pw = new PrintWriter( sw );
+          if ( !suppress )
+          {
+            pw.println( rawLine );
+          }
           name = line.substring( 1, line.length() - 1 ).trim();
           props = new Properties();
           id = null;
@@ -175,6 +191,10 @@ public class ProtocolManager
         }
         else
         {
+          if ( !suppress )
+          {
+            pw.println( rawLine );
+          }
           StringTokenizer st = new StringTokenizer( line, "=", true );
           String parmName = st.nextToken().trim();
           String parmValue = null;
@@ -468,6 +488,22 @@ public class ProtocolManager
      */
     return rc;
   }
+
+  public Hashtable< String, List< Protocol >> getByName()
+  {
+    return byName;
+  }
+  
+  public Hashtable< String, List< Protocol >> getByNameForRemote( Remote remote )
+  {
+    Hashtable< String, List< Protocol >> byNameForRemote = new Hashtable< String, List< Protocol >>();
+    for ( Protocol p : getProtocolsForRemote( remote ) )
+    {
+      byNameForRemote.put( p.getName(), Arrays.asList( p ) );
+    }
+    return byNameForRemote;
+  }
+  
 
   /**
    * Find by name.

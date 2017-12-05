@@ -24,6 +24,7 @@ public class AssemblerItem
   private AssemblerOpCode opCode = null;
   private int errorCode = 0;
   private int type = 0;
+  private boolean checked = true;  // Is hex correct?  This can be false for imported hex.
   
   public AssemblerItem(){};
   
@@ -38,6 +39,42 @@ public class AssemblerItem
   {
     this.address = address;
     this.hex = hex;
+  }
+  
+  public boolean isChecked()
+  {
+    return checked;
+  }
+
+  public void setChecked( boolean checked )
+  {
+    this.checked = checked;
+  }
+
+  public Object getElement( int index )
+  {
+    switch ( index )
+    {
+      case 0:
+        if ( address == 0 )
+          return "";
+        String hexStr = Integer.toHexString( address );
+        hexStr = "0000".substring( hexStr.length() ) + hexStr;
+        return hexStr.toUpperCase();
+      case 1:
+        return hex;
+      case 2:
+        return label;
+      case 3:
+        return operation;
+      case 4:
+        return argumentText;
+      case 5:
+        int n = errorCode;
+        return n > 0 ? getError( n ) : comments;
+      default:
+        return null;
+    }
   }
   
   public int disassemble( Processor p, LinkedHashMap< Integer, String > labels, DisasmState state  )
@@ -204,6 +241,7 @@ public class AssemblerItem
           format = format.replace( "#", "#-" );
         }
       }
+      checked = true;
     }
 
     // Create the formatted opcode argument
@@ -229,21 +267,45 @@ public class AssemblerItem
     hex = null;
     opCode = new AssemblerOpCode();
     errorCode = 0;
-    LinkedHashMap< String, AssemblerOpCode > opMap = p.getOpMap().get( operation );
+    String opStr = operation.toUpperCase();
+    String originalText = argumentText;
+    if ( p instanceof S3C80Processor && opStr.matches( "J(P|R)[A-Z]+" ) )
+    {
+      originalText = opStr.substring( 2 ) + "," + originalText;
+      opStr = opStr.substring( 0, 2 );
+    }
+
+    LinkedHashMap< String, AssemblerOpCode > opMap = p.getOpMap().get( opStr );
     if ( opMap == null )
     {
       errorCode = 1;
       return;
     }
-    Set< String > opModes = opMap.keySet();
-    OpArg args = p.getArgs( argumentText, labels );
-    List< String > argModes = p.getAddressModes( args );
-    Iterator< String > it = argModes.iterator();
-    while ( it.hasNext() )
-    {
-      if ( !opModes.contains( it.next() ) ) it.remove();
-    }
     
+    Set< String > opModes = opMap.keySet();
+    int count = 1;
+    List< String > argModes = null;
+    OpArg args = null;
+    if ( p instanceof S3C80Processor )
+    {
+      count = 5;
+    }
+    for ( int i = 0; i < count; i++ )
+    {
+      String alternateText = p.getAlternateArgument( originalText, i );
+      args = p.getArgs( alternateText, labels );
+      argModes = p.getAddressModes( args );
+      Iterator< String > it = argModes.iterator();
+      while ( it.hasNext() )
+      {
+        if ( !opModes.contains( it.next() ) ) it.remove();
+      }
+      if ( argModes.size() > 0 )
+      {
+        break;
+      }
+    }
+
     if ( argModes.size() == 0 )
     {
       errorCode = 2;
@@ -288,6 +350,7 @@ public class AssemblerItem
     }
     p.asmModify( mode.modifier, obj );
     hex = new Hex( opCode.getHex(), 0, opCode.getLength() + mode.length );
+    checked = true;
     int n = 0;
     for ( int i = 0; ( mode.nibbleMap >> i ) > 0; i++ )
     {

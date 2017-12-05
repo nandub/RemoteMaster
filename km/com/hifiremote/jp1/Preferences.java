@@ -36,9 +36,9 @@ public class Preferences
    * @param l
    *          the l
    */
-  public void load( JMenu recentFileMenu, ActionListener l )
+  public void load( JMenu recentFileMenu, String recentName, ActionListener l )
   {
-    file.populateFileMenu( recentFileMenu, "RecentUpgrades.", l );
+    file.populateFileMenu( recentFileMenu, recentName + ".", l );
   }
 
   /**
@@ -157,17 +157,17 @@ public class Preferences
    * @throws Exception
    *           the exception
    */
-  public void save( JMenu recentFileMenu ) throws Exception
+  public void save( JMenu recentFileMenu, String recentName ) throws Exception
   {
     for ( int i = 0; i < recentFileMenu.getItemCount(); i++ )
     {
       JMenuItem item = recentFileMenu.getItem( i );
-      file.setProperty( "RecentUpgrades." + i, item.getText() );
+      file.setProperty( recentName + "." + i, item.getText() );
     }
 
     file.save();
   }
-
+  
   /**
    * Gets the rDF path.
    * 
@@ -201,6 +201,16 @@ public class Preferences
     return path;
   }
   
+  public File getProtocolPath()
+  {
+    File path = file.getFileProperty( "RMPBPath" );
+    if ( path != null )
+      return path;
+    path = new File( file.getFile().getParentFile(), protocolDirectory );
+    setProtocolPath( path );
+    return path;
+  }
+  
   public File getUpgradeSavePath()
   {
     if ( getSeparateSaveFolder() )
@@ -225,6 +235,11 @@ public class Preferences
     file.setProperty( "UpgradePath", path );
   }
   
+  public void setProtocolPath( File path )
+  {
+    file.setProperty( "RMPBPath", path );
+  }
+  
   public boolean getSeparateSaveFolder()
   {
     return Boolean.parseBoolean( file.getProperty( "UpgradeSaveFolder", "false" ) );
@@ -239,6 +254,18 @@ public class Preferences
     else
     {
       setUpgradePath( path );
+    }
+  }
+  
+  public void setProtocolSavePath( File path )
+  {
+    if ( getSeparateSaveFolder() )
+    {
+      file.setProperty( "RMPBSavePath", path );
+    }
+    else
+    {
+      setProtocolPath( path );
     }
   }
 
@@ -285,6 +312,20 @@ public class Preferences
     bounds.height = Integer.parseInt( st.nextToken() );
     return bounds;
   }
+  
+  public Rectangle getPBBounds()
+  {
+    String temp = file.getProperty( "PBBounds" );
+    if ( temp == null )
+      return null;
+    Rectangle bounds = new Rectangle();
+    StringTokenizer st = new StringTokenizer( temp, "," );
+    bounds.x = Integer.parseInt( st.nextToken() );
+    bounds.y = Integer.parseInt( st.nextToken() );
+    bounds.width = Integer.parseInt( st.nextToken() );
+    bounds.height = Integer.parseInt( st.nextToken() );
+    return bounds;
+  }
 
   /**
    * Sets the bounds.
@@ -295,6 +336,11 @@ public class Preferences
   public void setBounds( Rectangle bounds )
   {
     file.setProperty( "KMBounds", "" + bounds.x + ',' + bounds.y + ',' + bounds.width + ',' + bounds.height );
+  }
+  
+  public void setPBBounds( Rectangle bounds )
+  {
+    file.setProperty( "PBBounds", "" + bounds.x + ',' + bounds.y + ',' + bounds.width + ',' + bounds.height );
   }
 
   /**
@@ -467,6 +513,6 @@ public class Preferences
   /** The file. */
   private PropertyFile file;
 
-  /** The Constant upgradeDirectory. */
   private final static String upgradeDirectory = "Upgrades";
+  private final static String protocolDirectory = "Protocols";
 }

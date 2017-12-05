@@ -38,7 +38,7 @@
 							<include name="toolbarButtonGraphics/general/Import24.gif"/>
 							<include name="toolbarButtonGraphics/general/Export24.gif"/>
 							<include name="toolbarButtonGraphics/general/Copy24.gif"/>
-							<include name="toolbarButtonGraphics/general/Paste.gif"/>
+							<include name="toolbarButtonGraphics/general/Paste24.gif"/>
 							<include name="toolbarButtonGraphics/general/New.gif"/>
 						</zipfileset> 
                         <zipfileset src="${lib.dir}/RMGraphics.jar"/>

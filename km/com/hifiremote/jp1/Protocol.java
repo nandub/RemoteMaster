@@ -3,7 +3,10 @@ package com.hifiremote.jp1;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.event.ActionEvent;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -1385,6 +1388,11 @@ public class Protocol
     return variantName;
   }
 
+  public void setVariantName( String variantName )
+  {
+    this.variantName = variantName;
+  }
+
   public String getVariantDisplayName( Processor processor )
   {
     String variant = variantName;
@@ -1434,6 +1442,11 @@ public class Protocol
     catch ( CloneNotSupportedException e )
     {}
     // Value[] parms = getDeviceParmValues();
+    if ( parms == null )
+    {
+      return temp;
+    }
+    
     if ( deviceTranslators != null )
     {
       for ( int i = 0; i < deviceTranslators.length; i++ )
@@ -1461,7 +1474,7 @@ public class Protocol
     Hex pid = null;
     try
     {
-      pid = ( Hex )getID( remote ).clone();
+      pid = ( Hex )( remote != null ? getID( remote ) : getID() ).clone();
     }
     catch ( CloneNotSupportedException e1 )
     {
@@ -1477,7 +1490,10 @@ public class Protocol
     }
 
     ManualProtocol convertedProtocol = new ManualProtocol( newName, pid, cmdType, "", 8, parms, new short[ 0 ], 8 );
-    convertedProtocol.setCode( customCode, remote.getProcessor() );
+    if ( remote != null )
+    {
+      convertedProtocol.setCode( customCode, remote.getProcessor() );
+    }
     return convertedProtocol;
   }
 
@@ -1832,6 +1848,7 @@ public class Protocol
       // This is just an auxiliary manual protocol so delete it from ProtocolManager
       pm.remove( mp );
       mp.setName( getName() + " (custom)" );
+      mp.iniIntro = iniIntro;
       if ( ProtocolManager.getProtocolManager().getBuiltinProtocolsForRemote( remote, mp.getID() ).contains( this )
           && getCodeTranslators( remote ) == null )
       {
@@ -1851,21 +1868,29 @@ public class Protocol
     }
 
     ManualSettingsDialog dialog = new ManualSettingsDialog( ( JFrame )SwingUtilities.getRoot( locator ), mp );
-    dialog.pid.setEditable( false );
-    dialog.pid.setEnabled( false );
+    ManualSettingsPanel settingsPanel = dialog.getManualSettingsPanel();
+    settingsPanel.pid.setEditable( false );
+    settingsPanel.pid.setEnabled( false );
     
     if ( getClass() != ManualProtocol.class )
     {
-      dialog.setForCustomCode();
-      dialog.setDisplayProtocol( this );
-      dialog.setDisplayRemote( remote );
+      settingsPanel.getDevicePanel().setForCustomCode();
+      settingsPanel.setDisplayProtocol( this );
+      settingsPanel.setProtocol( mp, false );
+      settingsPanel.setDisplayProcessor( processor );
+      settingsPanel.setSelectedCode( processor );
+      settingsPanel.getDeviceText().setText( settingsPanel.getProtocolText( true, false ) );
     }
-    if ( remote != null )
+    else
     {
-      dialog.setSelectedCode( remote.getProcessor() );
+      settingsPanel.setSelectedCode( processor );
+      settingsPanel.getDeviceText().setText( settingsPanel.getProtocolText( true, true ) );
     }
+    AssemblerPanel ap = settingsPanel.getAssemblerPanel();
+    ap.getEditorPanel().actionPerformed( new ActionEvent( ap.toAssemblerButton, ActionEvent.ACTION_PERFORMED, "" ) );
+    
     dialog.setMessage( this instanceof ManualProtocol ? 1 : 2 );
-    dialog.codeWhenNull = codeWhenNull;
+    settingsPanel.getTablePanel().getCodeModel().setCodeWhenNull( codeWhenNull );
     dialog.setVisible( true );
     Protocol result = dialog.getProtocol();
 
@@ -1918,6 +1943,11 @@ public class Protocol
       pm.add( this );
     }
     return result;
+  }
+  
+  public String getIniIntro()
+  {
+    return iniIntro;
   }
 
   /**
@@ -2025,6 +2055,9 @@ public class Protocol
 
   /** The variant name. */
   protected String variantName = null;
+  
+  /** The text of the protocols.ini entry excluding the code data. */
+  protected String iniIntro = null;
 
   /** The fixed data. */
   protected Hex defaultFixedData = null;
@@ -2060,9 +2093,9 @@ public class Protocol
   protected Importer[] devImporters = null;
 
   /** The code. */
-  protected HashMap< String, Hex > code = new HashMap< String, Hex >( 7 );
+  protected HashMap< String, Hex > code = new HashMap< String, Hex >( 8 );
 
-  protected HashMap< String, Hex > customCode = new HashMap< String, Hex >( 7 );
+  protected HashMap< String, Hex > customCode = new HashMap< String, Hex >( 8 );
 
   /** The code translator. */
   protected HashMap< String, Translate[] > codeTranslator = new HashMap< String, Translate[] >( 7 );

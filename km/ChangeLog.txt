@@ -36,6 +36,9 @@ Changes for v2.05
 - Add an AddOns folder to the installation folder (Graham)
 - Add an AddOns Path item to File > Set Directory menu to allow the default to be changed (Graham)
 - Extend ProtocolManager to process .prot files in the AddOns folder as extensions to protocols.ini (Graham)
+-- Private build 10
+- Corrected CODE to Code in two no-repeats protocols in protocol.ini (Graham)
+- Implemented RM Protocol Builder (RMPB) as a new application, currently hidden from use (Graham)
 
 Changes for v2.04
 -- Private build 1

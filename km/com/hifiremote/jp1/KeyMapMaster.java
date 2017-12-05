@@ -86,6 +86,8 @@ public class KeyMapMaster extends JP1Frame implements ActionListener, PropertyCh
   private JCheckBoxMenuItem showSlingboxProtocols = null;
 
   private JMenuItem editManualItem = null;
+  
+//  private JMenuItem cloneManualItem = null;
 
   private JMenuItem newManualItem = null;
 
@@ -222,7 +224,7 @@ public class KeyMapMaster extends JP1Frame implements ActionListener, PropertyCh
 
     createMenus();
 
-    preferences.load( recentFileMenu, this );
+    preferences.load( recentFileMenu, "RecentUpgrades", this );
 
     deviceUpgrade = new DeviceUpgrade( getCustomNames() );
     Remote r = null;
@@ -651,6 +653,11 @@ public class KeyMapMaster extends JP1Frame implements ActionListener, PropertyCh
     editManualItem.setMnemonic( KeyEvent.VK_E );
     editManualItem.addActionListener( this );
     menu.add( editManualItem );
+    
+//    cloneManualItem = new JMenuItem( "Clone Protocol..." );
+//    cloneManualItem.setMnemonic( KeyEvent.VK_C );
+//    cloneManualItem.addActionListener( this );
+//    menu.add( cloneManualItem );
 
     newManualItem = new JMenuItem( "New Manual Protocol..." );
     newManualItem.setMnemonic( KeyEvent.VK_M );
@@ -735,7 +742,7 @@ public class KeyMapMaster extends JP1Frame implements ActionListener, PropertyCh
       setExtendedState( Frame.NORMAL );
     }
     preferences.setBounds( getBounds() );
-    preferences.save( recentFileMenu );
+    preferences.save( recentFileMenu, "RecentUpgrades" );
   }
 
   /**
@@ -754,15 +761,34 @@ public class KeyMapMaster extends JP1Frame implements ActionListener, PropertyCh
       deviceUpgrade.setProtocol( edited );
     }
   }
+  
+//  private void cloneManualSettings()
+//  {
+//    Protocol p = deviceUpgrade.getProtocol();
+//    ManualProtocol mp = p.convertToManual( getRemote(), deviceUpgrade.getParmValues(), null );
+//    for ( String key : p.getCode().keySet() )
+//    {
+//      mp.getCode().put( key, new Hex( p.getCode().get( key ) ) );
+//    }
+//    mp.setName( p.getName() );
+//    mp.setVariantName( p.getVariantName() );
+//    ManualSettingsDialog d = new ManualSettingsDialog( this, mp, true );
+//    ManualSettingsPanel dp = d.getManualSettingsPanel();
+//    dp.setDisplayProtocol( p );
+//    d.setMessage( 3 );
+//    d.setVisible( true );
+//  }
 
   private void newManualSettings()
   {
+//    openProtocolEditor();
     ManualProtocol mp = new ManualProtocol( null, null );
     ManualSettingsDialog d = new ManualSettingsDialog( this, mp );
+    ManualSettingsPanel dp = d.getManualSettingsPanel();
     Remote remote = getRemote();
     if ( remote != null )
     {
-      d.setSelectedCode( remote.getProcessor() );
+      dp.setSelectedCode( remote.getProcessor() );
       d.setMessage( 0 );
     }
     d.setVisible( true );
@@ -772,6 +798,32 @@ public class KeyMapMaster extends JP1Frame implements ActionListener, PropertyCh
       ProtocolManager.getProtocolManager().add( mp );
     }
   }
+  
+//  private void openProtocolEditor()
+//  {
+//    ProtocolEditorSelector dialog = new ProtocolEditorSelector( this, getRemote(), deviceUpgrade );
+//    dialog.pack();
+//    dialog.setLocationRelativeTo( this );
+//    dialog.setVisible( true );
+//
+//    dialog.dispose();
+//    Protocol p = dialog.getProtocol();
+//    int editMode = dialog.getEditMode();
+//    switch ( editMode )
+//    {
+//      case 0:
+//        dialog.editManualSettings();
+//        break;
+//      case 1:
+//        dialog.newManualSettings();
+//        break;
+//      case 2:
+//      case 3:
+//        dialog.cloneManualSettings();
+//        break;
+//      default:  
+//    }
+//  }
 
   /*
    * (non-Javadoc)
@@ -919,6 +971,10 @@ public class KeyMapMaster extends JP1Frame implements ActionListener, PropertyCh
       {
         editManualSettings();
       }
+//      else if ( source == cloneManualItem )
+//      {
+//        cloneManualSettings();
+//      }
       else if ( source == newManualItem )
       {
         newManualSettings();

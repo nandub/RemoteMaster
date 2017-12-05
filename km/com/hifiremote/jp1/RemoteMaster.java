@@ -117,7 +117,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
 
   /** Description of the Field. */
   public final static String version = "v2.05";
-  public final static int buildVer = 9;
+  public final static int buildVer = 10;
   
   public static class LanguageDescriptor
   {
@@ -187,6 +187,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
 
   private RMAction newAction = null;
   private RMAction newUpgradeAction = null;
+  private RMAction newProtocolAction = null;
 
   private RMAction codesAction = null;
 
@@ -1189,6 +1190,26 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
       e.printStackTrace();
     }
   }
+  
+  private static void runPB( String filename )
+  {
+    File javaExe = getJreExecutable();
+    if ( javaExe == null )
+    {
+      System.err.println( "Unable to find java executable" );
+      return;
+    }
+    try
+    {
+      Runtime r = Runtime.getRuntime();
+      String classPath = System.getProperty( "java.class.path" );
+      r.exec( new String[] { javaExe.getCanonicalPath(), "-cp", classPath, "com.hifiremote.jp1.RemoteMaster", "-pb", "-home", workDir.getAbsolutePath(), filename } );
+    }
+    catch ( IOException e )
+    {
+      e.printStackTrace();
+    }
+  }
 
   protected class RMAction extends AbstractAction
   {
@@ -1279,6 +1300,11 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
           
 //          new KeyMapMaster( properties );
           runKM( "" );
+        }
+        else if ( command.equals( "NEWPROTOCOL" ) )
+        {
+          System.err.println( "RMIR opening new RMPB instance" );
+          runPB( "" );
         }
         else if ( command.equals( "OPEN" ) )
         {
@@ -1999,6 +2025,12 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
 
     newUpgradeAction = new RMAction( "Device Upgrade", "NEWDEVICE", null, "Create new Device Upgrade", KeyEvent.VK_D );
     newMenu.add( newUpgradeAction );
+
+    if ( rmpbIcon.exists() )
+    {
+      newProtocolAction = new RMAction( "Protocol", "NEWPROTOCOL", null, "Create new Protocol", KeyEvent.VK_P );
+      newMenu.add( newProtocolAction );
+    }
 
     openAction = new RMAction( "Open...", "OPEN", createIcon( "RMOpen24" ), "Open a file", KeyEvent.VK_O );
     menu.add( openAction ).setIcon( null );
@@ -2774,6 +2806,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
     chooser.addChoosableFileFilter( new EndingFileFilter( "IR files (*.ir)", irEndings ) );
     chooser.addChoosableFileFilter( new EndingFileFilter( "RM Device Upgrades (*.rmdu)", rmduEndings ) );
     chooser.addChoosableFileFilter( new EndingFileFilter( "KM Device Upgrades (*.txt)", txtEndings ) );
+    chooser.addChoosableFileFilter( new EndingFileFilter( "Protocol files (*.rmpb)", rmpbEndings ) );
     chooser.addChoosableFileFilter( new EndingFileFilter( "Simpleset files (*.bin)", binEndings ) );
     chooser.addChoosableFileFilter( new EndingFileFilter( "Sling Learned Signals (*.xml)", slingEndings ) );
     chooser.setFileFilter( irFilter );
@@ -2986,6 +3019,12 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
 //    km.loadUpgrade( file );
       
       runKM( file.getCanonicalPath() );
+      return;
+    }
+    
+    if ( ext.equals( ".rmpb" ) )
+    {
+      runPB( file.getCanonicalPath() );
       return;
     }
 
@@ -4886,20 +4925,30 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
     {
       workDir = getJarContainingFolder( RemoteMaster.class );
       rmirSys = new File( workDir, "RMIR.sys" );
+      rmpbIcon = new File( workDir, "RMPB.ico" );
       File propertiesFile = null;
       File errorsFile = null;
       File fileToOpen = null;
-      boolean launchRM = true;
+      boolean launchRMIR = true;
+      boolean launchPB = false;
       for ( int i = 0; i < args.size(); ++i )
       {
         String parm = args.get( i );
         if ( parm.equalsIgnoreCase( "-ir" ) )
         {
-          launchRM = true;
+          launchRMIR = true;
         }
         else if ( parm.equalsIgnoreCase( "-rm" ) )
         {
-          launchRM = false;
+          launchRMIR = false;
+        }
+        else if ( parm.equalsIgnoreCase( "-pb" ) )
+        {
+          if ( rmpbIcon.exists() )
+          {
+            launchRMIR = false;
+            launchPB = true;
+          }
         }
         else if ( parm.equalsIgnoreCase( "-admin" ) )
         {
@@ -4995,7 +5044,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
 
       DigitMaps.load( new File( workDir, "digitmaps.bin" ) );
 
-      if ( launchRM )
+      if ( launchRMIR )
       {
         RemoteMaster rm = new RemoteMaster( workDir, properties );
         if ( fileToOpen != null )
@@ -5003,6 +5052,12 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
           rm.openFile( fileToOpen );
         }
         frame = rm;
+      }
+      else if ( launchPB )
+      {
+        RMProtocolBuilder pb = new RMProtocolBuilder( properties );
+        pb.loadProtocol( fileToOpen );
+        frame = pb;
       }
       else
       {
@@ -5076,6 +5131,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
   
   private static File workDir = null;
   private static File rmirSys = null;
+  private static File rmpbIcon = null;
   private static File addonDir = null;
   private static File upgradeSource = null;
   private static LanguageDescriptor upgradeLanguage = defaultLanguage;
@@ -5110,19 +5166,21 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
     return upgradeLanguage;
   }
 
-  /** The Constant rmirEndings. */
   private final static String[] rmirEndings =
   {
     ".rmir"
   };
 
-  /** The Constant rmduEndings. */
   private final static String[] rmduEndings =
   {
     ".rmdu"
   };
+  
+  public final static String[] rmpbEndings =
+    {
+      ".rmpb"
+    };
 
-  /** The Constant irEndings. */
   private final static String[] irEndings =
   {
     ".ir"
@@ -5146,7 +5204,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
 
   private final static String[] allEndings =
   {
-      ".rmir", ".ir", ".rmdu", ".txt", ".xml", ".bin"
+      ".rmir", ".ir", ".rmdu", ".rmpb", ".txt", ".xml", ".bin"
   };
 
   private final static String[] allMergeEndings =

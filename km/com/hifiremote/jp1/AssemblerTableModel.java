@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 
+import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellEditor;
@@ -16,6 +17,7 @@ import javax.swing.table.TableCellRenderer;
 import com.hifiremote.jp1.AssemblerOpCode.AddressMode;
 import com.hifiremote.jp1.AssemblerOpCode.OpArg;
 import com.hifiremote.jp1.AssemblerOpCode.Token;
+import com.hifiremote.jp1.ProtocolDataPanel.Mode;
 import com.hifiremote.jp1.assembler.CommonData;
 
 public class AssemblerTableModel extends JP1TableModel< AssemblerItem >
@@ -43,7 +45,7 @@ public class AssemblerTableModel extends JP1TableModel< AssemblerItem >
   public AssemblerTableModel()
   {
     setData( itemList );
-    selectAllEditor.setClickCountToStart( 1 );
+    assemblerCellEditor.setClickCountToStart( 1 );
   }
 
   @Override
@@ -73,13 +75,13 @@ public class AssemblerTableModel extends JP1TableModel< AssemblerItem >
   @Override
   public boolean isCellEditable( int row, int col )
   {
-    return ( col > 1 && dialog.asmButton.isSelected() );
+    return ( col > 1 && settingsPanel.getMode() == Mode.ASM );
   }
   
   @Override
   public TableCellEditor getColumnEditor( int col )
   {
-    return selectAllEditor;
+    return assemblerCellEditor;
   }
   
   @Override
@@ -88,39 +90,25 @@ public class AssemblerTableModel extends JP1TableModel< AssemblerItem >
     return assemblerCellRenderer;
   }
   
-  public ManualSettingsDialog dialog = null;
+  public ManualSettingsPanel settingsPanel = null;
+  
+  public void setChanged( boolean changed )
+  {
+    settingsPanel.setChanged( changed );
+  }
   
   @Override
   public Object getValueAt( int row, int column )
   {
     AssemblerItem item = getRow( row );
-    switch ( column )
-    {
-      case 0:
-        if ( item.getAddress() == 0 )
-          return "";
-        String hexStr = Integer.toHexString( item.getAddress() );
-        hexStr = "0000".substring( hexStr.length() ) + hexStr;
-        return hexStr.toUpperCase();
-      case 1:
-        return item.getHex();
-      case 2:
-        return item.getLabel();
-      case 3:
-        return item.getOperation();
-      case 4:
-        return item.getArgumentText();
-      case 5:
-        int n = item.getErrorCode();
-        return n > 0 ? AssemblerItem.getError( n ) : item.getComments();
-      default:
-        return null;
-    }
+    return item.getElement( column );
   }
   
   @Override
   public void setValueAt( Object value, int row, int column )
   {
+    setChanged( true );
+    Processor processor = settingsPanel.getAssemblerPanel().getProcessor();
     if ( row == itemList.size() - 1 )
     {
       itemList.add( new AssemblerItem() );
@@ -136,6 +124,15 @@ public class AssemblerTableModel extends JP1TableModel< AssemblerItem >
         item.setLabel( text );
         return;
       case 3:
+        if ( !testBuildMode( processor ) )
+        {
+          String op = ( String )getValueAt( row, 3 );
+          if ( op.equalsIgnoreCase( "ORG" ) )
+          {
+            showOrgMessage();
+            return;
+          }
+        }
         item.setOperation( text );
         return;
       case 4:
@@ -183,7 +180,7 @@ public class AssemblerTableModel extends JP1TableModel< AssemblerItem >
     for ( AssemblerItem item : itemList )
     {
       if ( item.isCommentedOut() ) continue;
-      if ( item.getOperation().equals( "ORG" ) )
+      if ( item.getOperation().equalsIgnoreCase( "ORG" ) )
       {
         for ( Token t : OpArg.getArgs( item.getArgumentText(), null, null ) ) addr = t.value;
       }
@@ -192,7 +189,7 @@ public class AssemblerTableModel extends JP1TableModel< AssemblerItem >
     {
       processor = ProcessorManager.getProcessor( ( addr & 0xC000  ) == 0xC000 ? "S3F80" : "S3C80" );
     }
-    dialog.setProcessor( processor, addr );
+    settingsPanel.setProcessor( processor );
 
     LinkedHashMap< String, String > asmLabels = processor.getAsmLabels();
     
@@ -233,7 +230,7 @@ public class AssemblerTableModel extends JP1TableModel< AssemblerItem >
         item.setHex( new Hex() );
         continue;
       }
-      String op = item.getOperation();
+      String op = item.getOperation().toUpperCase();
       if ( op.isEmpty() )
       {
         continue;
@@ -286,7 +283,7 @@ public class AssemblerTableModel extends JP1TableModel< AssemblerItem >
         // Replace dummy label values with final ones
         if ( !item.getLabel().isEmpty() )
         {
-          String txt = item.getLabel();
+          String txt = item.getLabel().toUpperCase();
           if ( txt.endsWith( ":" )) txt = txt.substring( 0, txt.length() - 1 );
           asmLabels.put( txt, Integer.toString( addr ) );
         }
@@ -344,35 +341,43 @@ public class AssemblerTableModel extends JP1TableModel< AssemblerItem >
       return null;
     }
   }
-
+  
   public void disassemble( Hex hexD, Processor processor )
   {
+    disassemble( hexD, processor, null );
+  }
+
+  public void disassemble( Hex hexD, Processor processor, DisasmState state )
+  {
     itemList.clear();
-    if ( processor instanceof MAXQProcessor )
+    if ( processor.getDataStyle() < 0 )
     {
       fireTableDataChanged();
       return;
     }
     this.hex = ( hexD == null ) ? new Hex( 0 ) : new Hex( hexD );
     List< Integer > labelAddresses = new ArrayList< Integer >();
-    Arrays.fill( dialog.getBasicValues(), null );
-    Arrays.fill( dialog.getPfValues(), null );
-    Arrays.fill( dialog.getPdValues(), null );
+    Arrays.fill( settingsPanel.getProtDataPanel().getBasicValues(), null );
+    Arrays.fill( settingsPanel.getProtDataPanel().getPfValues(), null );
+    Arrays.fill( settingsPanel.getProtDataPanel().getPdValues(), null );
     pfCount = 0;
     pdCount = 0;
     codeIndex = 0;
     midFrameIndex = 0;
     forcedRptCount = 0;
     int addr = processor.getRAMAddress(); 
-    dialog.setDataStyle( processor.getDataStyle() );
-    dialog.setProcessor( processor, addr );
-    DisasmState state = new DisasmState();
-    state.useFunctionConstants = dialog.useFunctionConstants.isSelected();
-    state.useRegisterConstants = dialog.useRegisterConstants.isSelected();
-    state.toRC = dialog.rcButton.isSelected();
-    state.toW = dialog.wButton.isSelected();
-    dialog.setAbsUsed( state.absUsed );
-    dialog.setZeroUsed( state.zeroUsed );
+    settingsPanel.getProtDataPanel().setDataStyle( processor.getDataStyle() );
+    settingsPanel.setProcessor( processor );
+    if ( state == null )
+    {
+      state = new DisasmState();
+      state.useFunctionConstants = settingsPanel.getAssemblerPanel().useFunctionConstants.isSelected();
+      state.useRegisterConstants = settingsPanel.getAssemblerPanel().useRegisterConstants.isSelected();
+      state.toRC = settingsPanel.getAssemblerPanel().rcButton.isSelected();
+      state.toW = settingsPanel.getAssemblerPanel().wButton.isSelected();
+    }
+    settingsPanel.getFnMainPanel().setAbsUsed( state.absUsed );
+    settingsPanel.getFnMainPanel().setZeroUsed( state.zeroUsed );
 
     if ( hex != null && hex.length() > 0 )
     {
@@ -381,7 +386,7 @@ public class AssemblerTableModel extends JP1TableModel< AssemblerItem >
       {
         addr = S3C80Processor.newRAMAddress;  // S3C8+ code
         processor = ProcessorManager.getProcessor( "S3F80" );
-        dialog.setProcessor( processor, addr );
+        settingsPanel.setProcessor( processor );
       }
       
 //      // Add ORG statement
@@ -466,7 +471,7 @@ public class AssemblerTableModel extends JP1TableModel< AssemblerItem >
           pfCount = dbOut( index + 2, index + 2 + skip, addr, processor.getStartOffset(), processor );
           pdCount = skip + processor.getStartOffset() - pfCount - 3;
           codeIndex = itemList.size();
-          dialog.interpretPFPD();
+          settingsPanel.interpretPFPD();
           index += data[ 1 ];
         }
         index += opLength;
@@ -651,17 +656,17 @@ public class AssemblerTableModel extends JP1TableModel< AssemblerItem >
         switch ( i - ( p.getStartOffset() == 0 ? 2 : 0 ) )
         {
           case 0:
-            dialog.getBasicValues()[ 0 ] = data[ i ];
+            settingsPanel.getProtDataPanel().getBasicValues()[ 0 ] = data[ i ];
             time = ( data[ i ] + p.getCarrierOnOffset() ) * 1000000.0 / p.getOscillatorFreq();
             comments = data[ i ] == 0 ? "Unmodulated" : "Carrier ON: " + String.format( "%.3f", time ) + "uSec";
             break;
           case 1:
-            dialog.getBasicValues()[ 1 ] = data[ i ];
+            settingsPanel.getProtDataPanel().getBasicValues()[ 1 ] = data[ i ];
             time = ( data[ i ] + p.getCarrierTotalOffset() - p.getCarrierOnOffset() ) * 1000000.0 / p.getOscillatorFreq();
             comments = data[ i ] == 0 ? "" : "Carrier OFF: " + String.format( "%.3f", time ) + "uSec";
             break;
           case 2:
-            dialog.getBasicValues()[ 2 ] = data[ i ];
+            settingsPanel.getProtDataPanel().getBasicValues()[ 2 ] = data[ i ];
             comments = "dev " + ( data[ i ] >> 4 ) + ", cmd " + ( data[ i ] & 0x0F ) + " bytes";
             break;
         }
@@ -669,9 +674,9 @@ public class AssemblerTableModel extends JP1TableModel< AssemblerItem >
       else if ( i == pfIndex )
       {
         n = 1;
-        if ( i < dialog.getPfValues().length + 5 )
+        if ( i < settingsPanel.getProtDataPanel().getPfValues().length + 5 )
         {
-          dialog.getPfValues()[ i - 5 ] = data[ i ];
+          settingsPanel.getProtDataPanel().getPfValues()[ i - 5 ] = data[ i ];
         }
         comments = String.format( "pf%X: %s%02X", i - 5, rp, p.getZeroAddresses().get( "PF0" ) + i - 5 );
         if ( data[ i ] >> 7 == 1 )
@@ -689,9 +694,9 @@ public class AssemblerTableModel extends JP1TableModel< AssemblerItem >
       {
         int val = i - pfIndex - 1;
         int za = p.getZeroAddresses().get( "PD00" );
-        int pdLimit = dialog.getPdValues().length;
+        int pdLimit = settingsPanel.getProtDataPanel().getPdValues().length;
         int pdSize = p.getZeroSizes().get( "PD00" );
-        if ( val < pdLimit ) dialog.getPdValues()[ val ] = data[ i ];
+        if ( val < pdLimit ) settingsPanel.getProtDataPanel().getPdValues()[ val ] = data[ i ];
         if ( val == pdSize - 1 || i == end - 1 )
         {
           n = 1;
@@ -702,7 +707,7 @@ public class AssemblerTableModel extends JP1TableModel< AssemblerItem >
           n = 2;
           item.setOperation( "DW" );
           if ( val < pdSize - 1 ) comments = String.format( "pd%02X/pd%02X: %s%02X/%s%02X", val, val + 1, rp, za + val, rp, za + val + 1 );
-          if ( val < pdLimit - 1 ) dialog.getPdValues()[ val + 1 ] = data[ i + 1 ];
+          if ( val < pdLimit - 1 ) settingsPanel.getProtDataPanel().getPdValues()[ val + 1 ] = data[ i + 1 ];
         }
         pdIndex += n;
         if ( pdIndex > pfIndex + p.getZeroSizes().get( "PD00" ) )
@@ -788,7 +793,10 @@ public class AssemblerTableModel extends JP1TableModel< AssemblerItem >
     {
       Component c = super.getTableCellRendererComponent( table, value, isSelected, hasFocus, row, col );
       AssemblerTableModel model = ( AssemblerTableModel )table.getModel();
-      c.setForeground( model.getRow( row ).getErrorCode() == 0 ? Color.BLACK : Color.RED );
+      AssemblerItem item = model.getRow( row );
+      boolean valid = item.getErrorCode() == 0 && ( item.isChecked() || col != 1 );
+      c.setForeground( valid ? isSelected ? Color.WHITE : Color.BLACK 
+          : isSelected ? Color.YELLOW : Color.RED );
       return c;
     }
   }
@@ -819,8 +827,35 @@ public class AssemblerTableModel extends JP1TableModel< AssemblerItem >
     }
     return true;
   }
+  
+  private void showOrgMessage()
+  {
+    String title = "Assembler edit";
+    String message = "An ORG instruction can only be edited in Build mode, which is\n"
+        + "when the Assemble and Update buttons are disabled.";        
+    JOptionPane.showMessageDialog( settingsPanel.getAssemblerPanel(), message, title, JOptionPane.WARNING_MESSAGE );
+  }
+  
+  private class AssemblerCellEditor extends SelectAllCellEditor
+  {
+    @Override
+    public Component getTableCellEditorComponent( JTable table, Object value, boolean isSelected, int row, int column )
+    {
+      Processor processor = settingsPanel.getAssemblerPanel().getProcessor();
+      if ( !testBuildMode( processor ) )
+      {
+        String op = ( String )table.getValueAt( row, 3 );
+        if ( op.equalsIgnoreCase( "ORG" ) )
+        {
+          showOrgMessage();
+          return null;
+        }
+      }
+      return super.getTableCellEditorComponent( table, value, isSelected, row, column );
+    }
+  }
 
-  private SelectAllCellEditor selectAllEditor = new SelectAllCellEditor();
+  private AssemblerCellEditor assemblerCellEditor = new AssemblerCellEditor();
   private AssemblerCellRenderer assemblerCellRenderer = new AssemblerCellRenderer();
   
 }

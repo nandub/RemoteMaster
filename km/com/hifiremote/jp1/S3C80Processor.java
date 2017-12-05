@@ -2,6 +2,7 @@ package com.hifiremote.jp1;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.StringTokenizer;
 
 import com.hifiremote.jp1.AssemblerOpCode.AddressMode;
 import com.hifiremote.jp1.AssemblerOpCode.OpArg;
@@ -183,7 +184,7 @@ public class S3C80Processor
         super.addToMap( op1 );
         // run through
       case 0:
-      case 5:
+      case 5: 
         super.addToMap( op );
         if ( index < 2 ) break;
         AssemblerOpCode op2 = op.clone();
@@ -446,6 +447,38 @@ public class S3C80Processor
     outline = outline.replace( "RR%", "R%" );
     outline = outline.replace( "WW%", "W%" );
     return outline;
+  }
+  
+  @Override
+  public String getAlternateArgument( String argText, int n )
+  {
+    argText = super.getAlternateArgument( argText, 0 );
+    if ( n == 0 )
+    {
+      return argText;
+    }
+    StringTokenizer st = new StringTokenizer( argText, ",@[].", true );
+    StringBuilder sb = new StringBuilder();
+    String pattern = "(RRC|RC|WW|W)[0-9A-F]";
+    int i = 0;
+    while ( st.hasMoreTokens() )
+    {
+      String token = st.nextToken();
+      if ( token.matches( pattern ) )
+      {
+        int bit = ( ( n - 1 ) >> i++ ) & 1;
+        if ( bit == 0 )
+        {
+          token = token.replaceFirst( "RRC|RC", "W" );
+        }
+        else
+        {
+          token = token.replaceFirst( "WW|W", "RC" );
+        }
+      }
+      sb.append( token );
+    }
+    return sb.toString();
   }
 
 }

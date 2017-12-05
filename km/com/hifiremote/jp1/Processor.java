@@ -680,6 +680,13 @@ public abstract class Processor
     return modes;
   }
   
+  public String getAlternateArgument( String argText, int n )
+  {
+    // Overridden for S3C80 processors
+    argText = argText.replaceAll( "\\s", "" ).toUpperCase();
+    return argText;
+  }
+  
   public List< String > getHexPrefixes()
   {
     // This code handles 6805, 740 and HCS08 processors.  S3C80Processor class has an override.
@@ -810,7 +817,7 @@ public abstract class Processor
   private int addressLength = 2;
   
   /** Index to style of PF and PD data */
-  private int dataStyle = 0;
+  private int dataStyle = -1;  // Unset, indicates assembler/disassembler not available
   
   /** Whether relative addresses are relative to start of instruction.
    *  If not, then they are relative to their own location.

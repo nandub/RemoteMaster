@@ -256,7 +256,10 @@ public class ManualProtocol extends Protocol
     }
     else if ( id != null )
     {
-      return "PID " + id.toString();
+      return getDefaultName( id );
+      // I don't know the reason for the PID nnnn form but it seems inconsistently
+      // used, so have changed it as an attempt at consistency.
+      // return "PID " + id.toString();
     }
     else
     {
@@ -639,12 +642,16 @@ public class ManualProtocol extends Protocol
     return sw.toString();
   }
   
+  public PropertyReader getIniReader( boolean addName, boolean newName )
+  {
+    StringReader sr = new StringReader( getIniString( addName, newName ) );
+    BufferedReader in = new BufferedReader( sr );
+    return new PropertyReader( in );
+  }
+  
   public IniSection getIniSection()
   {
-    StringReader sr = new StringReader( getIniString( true, false ) );
-    BufferedReader in = new BufferedReader( sr );
-    PropertyReader pr = new PropertyReader( in );
-    return pr.nextSection();
+    return getIniReader( true, false ).nextSection();
   }
   
   public int getNameIndex()

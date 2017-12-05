@@ -23,6 +23,8 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableModel;
 
+import com.hifiremote.jp1.ProtocolDataPanel.DisplayArea;
+
 public class SegmentPanel extends RMPanel implements ActionListener, ListSelectionListener
 {
   private SegmentTableModel model = null;
@@ -75,11 +77,7 @@ public class SegmentPanel extends RMPanel implements ActionListener, ListSelecti
         + "and WILL be undone by leaving this tab or switching the display.\n\n"
         + "Upload will upload whichever of original or RMIR data is currently "
         + "selected.";
-    JTextArea note = new JTextArea( message );
-    note.setFont( ( new JLabel() ).getFont() );
-    note.setBackground( ( new JLabel() ).getBackground() );
-    note.setLineWrap( true );
-    note.setWrapStyleWord( true );
+    DisplayArea note = new DisplayArea( message, null );
     
     double b = 2;
     double c = 5;

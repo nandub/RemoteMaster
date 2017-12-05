@@ -56,12 +56,13 @@ public class ProtocolUpgradePanel extends RMTablePanel< ProtocolUpgrade >
     }
     
     ManualSettingsDialog d = new ManualSettingsDialog( remoteConfig.getOwner(), mp );
-    d.pid.setEditable( pidEditable );
-    d.pid.setEnabled( pidEditable );
-    d.remoteConfig = remoteConfig;
+    ManualSettingsPanel dp = d.getManualSettingsPanel();
+    dp.pid.setEditable( pidEditable );
+    dp.pid.setEnabled( pidEditable );
+    dp.remoteConfig = remoteConfig;
     if ( remote != null )
     {
-      d.setSelectedCode( remote.getProcessor() );
+      dp.setSelectedCode( remote.getProcessor() );
       d.setMessage( 0 );
     }
     d.setVisible( true );
