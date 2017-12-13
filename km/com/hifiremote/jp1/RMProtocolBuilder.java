@@ -26,11 +26,13 @@ import javax.swing.AbstractAction;
 import javax.swing.Box;
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.DefaultListCellRenderer;
 import javax.swing.ImageIcon;
 import javax.swing.JComboBox;
 import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -42,6 +44,7 @@ import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JToolBar;
+import javax.swing.ListCellRenderer;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
@@ -140,7 +143,7 @@ ChangeListener
        
     protNames.addActionListener( this );
     protList.addActionListener( this );
-    protList.setRenderer( ProtocolEditorSelector.protListRenderer );
+    protList.setRenderer( protListRenderer );
     
     String[] names = protocolManager.getNames().toArray( new String[ 0 ] );
     protNames.setModel( new DefaultComboBoxModel< String >( names ) );
@@ -162,6 +165,26 @@ ChangeListener
     }
     setVisible( true );
   }
+  
+  public static ListCellRenderer<? super Protocol > protListRenderer = new DefaultListCellRenderer()
+  {
+    @Override
+    public Component getListCellRendererComponent( JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus )
+    {
+      String text = null;
+      if ( value instanceof Protocol )
+      {
+        Protocol p = ( Protocol )value;
+        text = p.getID() != null ? p.getID().toString() : "<unset>";
+        String varName = p.getVariantName();
+        if ( varName != null && !varName.trim().isEmpty() )
+        {
+          text += " (" + varName + ")";
+        }
+      }
+      return super.getListCellRendererComponent( list, text, index, isSelected, cellHasFocus );
+    };
+  };
   
   public class PBAction extends AbstractAction
   {
