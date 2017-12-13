@@ -427,8 +427,9 @@ public class AssemblerPanel extends JPanel implements ListSelectionListener, Ite
         protDataPanel.pdMainPanel.set();
         protDataPanel.fnMainPanel.set();
         protDataPanel.setShowMessages( true );
+                
         assemblerModel.fireTableDataChanged();
-        
+        actionPerformed( new ActionEvent( assemble, ActionEvent.ACTION_PERFORMED, "" ) );
       }
     }
     

@@ -108,6 +108,8 @@ public class KeyMapMaster extends JP1Frame implements ActionListener, PropertyCh
   private Desktop desktop = null;
 
   private JMenuItem readmeItem = null;
+  
+  private JMenuItem rmpbReadmeItem = null;
 
   private JMenuItem tutorialItem = null;
 
@@ -700,6 +702,10 @@ public class KeyMapMaster extends JP1Frame implements ActionListener, PropertyCh
       tutorialItem = new JMenuItem( "Tutorial", KeyEvent.VK_T );
       tutorialItem.addActionListener( this );
       menu.add( tutorialItem );
+      
+      rmpbReadmeItem = new JMenuItem( "Using RMPB", KeyEvent.VK_U );
+      rmpbReadmeItem.addActionListener( this );
+      menu.add( rmpbReadmeItem );
 
       menu.addSeparator();
 
@@ -761,27 +767,9 @@ public class KeyMapMaster extends JP1Frame implements ActionListener, PropertyCh
       deviceUpgrade.setProtocol( edited );
     }
   }
-  
-//  private void cloneManualSettings()
-//  {
-//    Protocol p = deviceUpgrade.getProtocol();
-//    ManualProtocol mp = p.convertToManual( getRemote(), deviceUpgrade.getParmValues(), null );
-//    for ( String key : p.getCode().keySet() )
-//    {
-//      mp.getCode().put( key, new Hex( p.getCode().get( key ) ) );
-//    }
-//    mp.setName( p.getName() );
-//    mp.setVariantName( p.getVariantName() );
-//    ManualSettingsDialog d = new ManualSettingsDialog( this, mp, true );
-//    ManualSettingsPanel dp = d.getManualSettingsPanel();
-//    dp.setDisplayProtocol( p );
-//    d.setMessage( 3 );
-//    d.setVisible( true );
-//  }
 
   private void newManualSettings()
   {
-//    openProtocolEditor();
     ManualProtocol mp = new ManualProtocol( null, null );
     ManualSettingsDialog d = new ManualSettingsDialog( this, mp );
     ManualSettingsPanel dp = d.getManualSettingsPanel();
@@ -798,32 +786,6 @@ public class KeyMapMaster extends JP1Frame implements ActionListener, PropertyCh
       ProtocolManager.getProtocolManager().add( mp );
     }
   }
-  
-//  private void openProtocolEditor()
-//  {
-//    ProtocolEditorSelector dialog = new ProtocolEditorSelector( this, getRemote(), deviceUpgrade );
-//    dialog.pack();
-//    dialog.setLocationRelativeTo( this );
-//    dialog.setVisible( true );
-//
-//    dialog.dispose();
-//    Protocol p = dialog.getProtocol();
-//    int editMode = dialog.getEditMode();
-//    switch ( editMode )
-//    {
-//      case 0:
-//        dialog.editManualSettings();
-//        break;
-//      case 1:
-//        dialog.newManualSettings();
-//        break;
-//      case 2:
-//      case 3:
-//        dialog.cloneManualSettings();
-//        break;
-//      default:  
-//    }
-//  }
 
   /*
    * (non-Javadoc)
@@ -1089,6 +1051,11 @@ public class KeyMapMaster extends JP1Frame implements ActionListener, PropertyCh
         URL url = new URL(
             "http://www.hifi-remote.com/wiki/index.php?title=JP1_-_Just_How_Easy_Is_It%3F_-_RM-IR_Version" );
         desktop.browse( url.toURI() );
+      }
+      else if ( source == rmpbReadmeItem )
+      {
+        File rmpbReadme = new File( RemoteMaster.getWorkDir(), "RMPB_Readme.html" );
+        desktop.browse( rmpbReadme.toURI() );
       }
       else if ( source == homePageItem )
       {

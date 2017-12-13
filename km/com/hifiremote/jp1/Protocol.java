@@ -1847,7 +1847,8 @@ public class Protocol
       mp = pu.getManualProtocol( remote );
       // This is just an auxiliary manual protocol so delete it from ProtocolManager
       pm.remove( mp );
-      mp.setName( getName() + " (custom)" );
+      mp.setName( getName() );
+      mp.setVariantName( variantName == null || variantName.equals( "" ) ? "Custom" :  variantName + "-Custom" );
       mp.iniIntro = iniIntro;
       if ( ProtocolManager.getProtocolManager().getBuiltinProtocolsForRemote( remote, mp.getID() ).contains( this )
           && getCodeTranslators( remote ) == null )

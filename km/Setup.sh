@@ -56,14 +56,29 @@ StartupNotify=true
 Version=1.0
 EOF
 
+cat >$desktopRMPB << EOF
+[Desktop Entry]
+Comment=Edit JP1 protocols
+Categories=Application;Java
+Terminal=false
+Name=RMPB
+Exec=java -jar $rmprog -pb
+Type=Application
+Icon=$here/RMPB.ico
+StartupNotify=true
+Version=1.0
+EOF
+
 # Copy desktop files to desktopdir
 cp $desktopRMIR $desktopdir
 cp $desktopRM $desktopdir
+cp $desktopRMPB $desktopdir
 
 # Set executable permissions.
 chmod 775 $rmprog
 chmod 775 $desktopRMIR
 chmod 775 $desktopRM
+chmod 775 $desktopRMPB
 echo Desktop files created and executable permissions set.
 
 alldone()

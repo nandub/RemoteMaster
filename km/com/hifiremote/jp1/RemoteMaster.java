@@ -117,7 +117,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
 
   /** Description of the Field. */
   public final static String version = "v2.05";
-  public final static int buildVer = 10;
+  public final static int buildVer = 11;
   
   public static class LanguageDescriptor
   {
@@ -301,6 +301,8 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
   private JMenuItem updateItem = null;
 
   private JMenuItem readmeItem = null;
+  
+  private JMenuItem rmpbReadmeItem = null;
 
   private JMenuItem tutorialItem = null;
 
@@ -2624,6 +2626,10 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
       tutorialItem = new JMenuItem( "Tutorial", KeyEvent.VK_T );
       tutorialItem.addActionListener( this );
       menu.add( tutorialItem );
+      
+      rmpbReadmeItem = new JMenuItem( "Using RMPB", KeyEvent.VK_U );
+      rmpbReadmeItem.addActionListener( this );
+      menu.add( rmpbReadmeItem );
 
       learnedSignalItem = new JMenuItem( "Interpreting Decoded IR Signals", KeyEvent.VK_I );
       learnedSignalItem.addActionListener( this );
@@ -4464,6 +4470,11 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
         URL url = new URL(
             "http://www.hifi-remote.com/wiki/index.php?title=JP1_-_Just_How_Easy_Is_It%3F_-_RM-IR_Version" );
         desktop.browse( url.toURI() );
+      }
+      else if ( source == rmpbReadmeItem )
+      {
+        File rmpbReadme = new File( workDir, "RMPB_Readme.html" );
+        desktop.browse( rmpbReadme.toURI() );
       }
       else if ( source == learnedSignalItem )
       {

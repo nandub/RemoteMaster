@@ -39,6 +39,9 @@ Changes for v2.05
 -- Private build 10
 - Corrected CODE to Code in two no-repeats protocols in protocol.ini (Graham)
 - Implemented RM Protocol Builder (RMPB) as a new application, currently hidden from use (Graham)
+-- Private build 11
+- Added "Using RMPB" as a new Help menu item in each of RMIR, RM and RMPB (Graham)
+- Various bugfixes and tweaks to RMPB (Graham)
 
 Changes for v2.04
 -- Private build 1

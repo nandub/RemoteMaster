@@ -1,0 +1,611 @@
+<!-- Quirk on -->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<title>Using RM Protocol Builder (RMPB)</title>
+<link rel="stylesheet" type="text/css" href="style.css" media="screen">
+<!--[if IE]>
+<link rel="stylesheet" type="text/css" href="styleie.css" media="screen">
+<![endif]-->
+</head>
+<body>
+<div class="navigation">
+<ul>
+<li><a href="#whatis">What is RM Protocol Builder?</a></li>
+<li><a href="#whatcando">What can RMPB do?</a></li>
+<li><a href="#start">Getting Started</a></li>
+<li><a href="#basics">RMPB Basics</a>
+    <ul>
+        <li><a href="#toolbar">Toolbar</a></li>
+        <li><a href="#menus">Menus</a></li>
+        <li><a href="#tabbed">Tabbed Panes</a>
+<!--
+		<ul>
+            <li><a href="#assembler">Assembler</a></li>
+            <li><a href="#hexcode">Hex Code</a></li>
+			<li><a href="#disassembler">Disassembler</a></li>
+			<li><a href="#devicedata">Device Data</a></li>
+			<li><a href="#outputdata">Output Data</a></li>
+        </ul>
+-->
+		</li>
+	</ul>
+<li><a href="#further">Further information</a>
+	<ul>
+	<li><a href="#limitations">Limitations</a></li>
+	<li><a href="#protdataitems">Protocol Data items</a></li>
+<!--
+	<li><a href="#unimplemented">Unimplemented features of PB</a></li>
+-->
+	</ul>
+</li>
+	
+<li><a href="#proteditor">Use with RM and RMIR</a>
+	<ul>
+	<li><a href="#custommanual">Custom code and manual protocols</a></li>
+	<li><a href="#customnew">Creating custom code</a></li>
+	<li><a href="#manualnew">Creating a manual protocol</a></li>
+	<li><a href="#completenew">Testing a new protocol</a></li>
+	</ul>
+</li>
+</li>
+</ul>
+</div>
+<div class="content">
+<h1><a name="whatis"></a>What is RM Protocol Builder?</h1>
+<p>RM Protocol Builder (RMPB) is the third application in the Remote Master suite, supplementing the two earlier applications RM and RMIR.  It is available only in RM/RMIR v2.06 and later versions.  Just as RMIR and RM are intended as cross-platform Java replacements for the earlier applications IR that is a Windows executable and KeyMap Master (KM) that is a MS Excel spreadsheet program, so RMPB is intended as a replacement for the Excel-based Protocol Builder (PB) program.  Similarly, just as RMIR can open but not create the .ir files native to IR and RM can open but not create the .txt files native to KM, so RMPB can open but not create the .txt files native to PB.  These applications of the Remote Master suite each have their own native file formats, .rmir for RMIR, .rmdu for RM and now .rmpb for RMPB.</p>
+
+<p>RMPB is based heavily on PB, and in particular on the assembler in PB that was written by Mike England (mr_d_p_gumby).  It was developed from PB by Graham Dixon (mathdon), with the intention of making the transition from PB to RMPB relatively painless.  At present it can only build protocols for the processors used in remotes with the JP1.3 and earlier interfaces.  These are the Samsung S3F80 and S3C80 and Freescale (formerly Motorola) HCS80 which are still to be found in currently available remotes, together with the earlier Motorola 6805-C9 and 6805-RC16/18, the SST SST65 and Mitsubishi P8/740 processors.  The protocol structures used in these remotes are all broadly similar, which is what has enabled a single application to support them all.  More recent remotes use Maxim MAXQ 610, 612 or 622 processors or the Texas Instruments CC2541.  These too share a common protocol structure but that is totally different from that of the JP1.3 and earlier remotes.  At present the JP1 forum has no tools to assist the building of protocols for these processors.  The few that forum experts have created have been painstakingly constructed by hand.</p>
+
+<h1><a name="whatcando"></a>What can RMPB do?</h1>
+
+<p>Although named as a Protocol Builder, RMPB can be used to create custom versions of standard protocols as well as to build new ones.  It has a facility that allows you to select any protocol by name from protocols.ini and import it into RMPB for modification.  The modified protocol will keep the same device and command parameters and translators as the original, unless you edit them explicitly.  You can export the modified protocol as an add-on to protocols.ini in the form of a .prot file, where it will be available for use the next time you open RMIR or RM.  If you keep the same name, variant name and PID as the original then it will, for you, replace the original protocol in RMIR and RM without actually modifying the protocols.ini file.  Since the modified protocol is not stored within protocols.ini, that modification will be preserved when you upgrade RMIR to a later version, even if that upgrade replaces protocols.ini with a revised file.  If you want to keep both the original and modified forms available for your use, simply change the name and/or variant name and also the PID before exporting as a .prot file.</p>
+
+<p>Simple modifications to standard protocols, such as changing the frequency, changing the duty cycle from its typical value of around 30% to 50%, or tweaking the timings, can be made without any knowledge of how protocols are structured.  More elaborate modifications may require knowledge of the assembler language of the processor and an understanding of protocol structure.  When a standard protocol is imported into RMPB, it is automatically analyzed and displayed in two tables, one giving a human-readable interpretation of the data parameters in the hex code and the other a disassembly of the hex code ready for modification and reassembly if required.</p>
+
+<p>During development or modification, protocols can be saved in the native .rmpb format of RMPB for re-opening later.  The .rmpb format is, however, also designed for human readability.  It is a tab-separated text file that can be opened in a text editor (preferably one with adjustable tab stops) or loaded into MS Excel.  If you do this, make sure that you set the cell format for the first column to Text (rather than leaving it as General).  This is the Address  column and if you leave it as General it will display it as a right-justified integer if it is composed entirely of decimal digits and as a left-justified text field if it contain any of A-F.</p>
+
+<h1><a name="start"></a>Getting Started with RMPB</h1>
+
+<p>If you have RM/RMIR v2.06 or later then you already have RMPB.  If you are using Windows and have run the setup program Setup.vbs then it will have created a shortcut named RMPB in the folder Start > Programs > Remote Master in addition to those named RMIR (for RMIR) and Remote Master (for RM).  If you have sent the shortcuts to your Desktop or copied them to your Quick Launch toolbar, you will see that RMPB has an icon with the letters R M in Blue to complement those for RMIR and RM that have these letters in Red and Black respectively.  The setup program will also have created a file association for .rmpb files so that double-clicking such a file will open it in RMPB.  If you are using Linux and have run the setup script Setup.sh then it will have created a .desktop shortcut RMPB in your installation folder and also copied it to your $HOME/.local/share/applications folder to ensure that it appears on your Dash.</p>
+ 
+<p>You can open RMPB in several ways:</p>
+<ol>
+<li><p>by using the shortcut created by the setup program;</p>
+<li><p>by opening RMIR and selecting New > Protocol from the menu;<p>
+<li><p>from a command line with an argument -pb (instead of -ir for RMIR or -rm for RM), by issuing the command</p>
+<p>RemoteMaster.jar -pb</p>
+<p>from your RMIR installation  folder;</p>
+<li><p>if using Windows, then by double-clicking a .rmpb file.</p>
+</ol>
+
+<p>The RMPB frame has a menu bar and a toolbar, below which is a header panel and then a tabbed pane with five tabs.  The header panel shows the name, and variant name if any, of the protocol together with its PID and a drop-down box that selects the processor for which data is displayed in the tabbed pane.  The name, variant name and PID are all editable.  The processor drop-down selects between the supported processors, although the S3F80 appears to be missing.  This is because RM and RMIR automatically convert the hex code of a protocol to the appropriate form "on the fly", according to the processor of the selected remote.  The protocols.ini file has a single entry labelled S3C80 that covers both processors and the hex code of that entry can be that appropriate to either processor.  As the role of RMPB is to construct a protocol entry in the form used by protocols.ini, only the S3C80 is included in the drop-down box.  The assembler within RMPB is, however, capable of creating code for either processor.  The choice is made simply by including an appropriate ORG statement as the first line of the assembler code, as is explained in more detail below.</p>
+
+<p>The five tabs of the tabbed pane are Assembler, Hex Code, Disassembler, Device Data and Output Data.  The Assembler tab provides all the functionality required to construct the hex code for a protocol.  It handles one processor at a time, though you may switch back and forth between processors during protocol construction if you are constructing a protocol with executors for more than one processor.  The Hex Code tab displays the assembled hex code for all processors. It also has an advanced use in that it can be used to paste in hex code from elsewhere.  The Disassembler tab provides a disassembly of the code currently in the Hex Code panel, whether that code has been created by the Assembler or otherwise imported into RMPB.  The Device Data tab has no equivalent in PB.  It is used to create the translator section of a protocols.ini entry.  This is the section that determines how protocol parameters such as the OBC are converted into the fixed and variable data bytes of a device upgrade.  Finally the Output Data tab gives a preview of the two main output formats of RMPB.  These are the protocols.ini entry text that would be included in an exported .prot file and the hex code in the common format used for copying and pasting between PB, KM, RM and RMIR.  Output in these formats is performed with the toolbar buttons or their menu equivalents, so the Output Data tab is purely for information.</p>
+
+<h1><a name="basics"></a>RMPB Basics</h1>
+
+The toolbar, menus and tabs of the tabbed pane will now be described in more detail.
+
+<h2><a name="toolbar"></a>The toolbar</h2>
+
+<p>The toolbar has the buttons used to input and output protocol data with RMPB.  It has eight buttons, as follows.</p>
+
+<h3><a name="new"></a>New</h3>
+<p>This resets RMPB back to the state in which it opens, ready to develop a new protocol.  An implicit New is performed before any protocol is opened or imported with other input buttons.</p>
+
+<h3><a name="open"></a>Open</h3>
+<p>This opens a dialog box to select a file for opening in RMPB.  You can open either .rmpb files native to RMPB or .txt files created by the Excel PB program.  By default the display allows you to select either type, but the file type drop-down box allows you to restrict the files shown to either .rmpb or .txt files.</p>
+
+<p>When you open a PB .txt file it does a test assembly and if the assembled instructions differ between RMPB and PB then in the Assembler it displays a message and shows the PB version with the values that differ shown in RED.  If you press the Assemble button then it will perform a re-assembly to display the RMPB version.  Note that both versions may be valid, as there are some assembly instructions that have more than one valid encoding.  This is particularly so for the S3C80/S3F80 processors where some instructions that reference working registers have alternative forms with either 4-bit or 8-bit encoding of the register reference.  It is the intention of RMPB that it makes the same choice as does PB and I would like to be informed of cases where this does not appear to be so.</p>
+
+<h3><a name="save"></a>Save</h3>
+<p>This button is only enabled if a .rmpb file has been opened or if the current protocol has already been saved as a .rmpb file with the Save As button.  It saves the current protocol as a .rmpb file with the name and path used when the file was opened or previously saved.</p>
+
+<h3><a name="saveas"></a>Save As</h3>
+<p>This opens a dialog box to save the current protocol as a .rmpb file.</p>
+
+<h3><a name="import"></a>Import</h3>
+<p>This opens a dialog box to select a protocol from protocols.ini for import to RMPB.  You select the protocol initially by name, with further selection by variant name and/or PID if there is more than one entry in protocols.ini with the selected name.  To be more specific, the protocols offered for selection are actually those read in by the RMIR Protocol Manager.  This means that add-on protocols in .prot files are included, and Slingbox no-repeat protocols are included only if this option is selected in RMIR.<p>
+
+<p>This import process has two stages.  When you press OK, it imports the executors for all processors included in the protocols.ini entry and opens the Hex Code tab in RMPB to display their hex codes in a table.  At this stage none of them have been imported to the Assembler and made available for editing.  Their hex code is shown in Gray in the table.  You may, if you wish, view them in interpreted form in the Disassembler tab but to edit the executor for any processor you need first to import it to the Assembler.  Simply select the table entry or entries for the processor or processors you wish to edit and press the Import to Assembler button.  The entry for the selected processors will change from Gray to Black and they will be available in the Assembler for editing as desired.</p>
+
+<p>The reason for this two-stage process is that it is often desired to modify the executor for a single processor, or at least for fewer than the full set of processors included in the protocols.ini entry.  When the modified protocol is saved, or exported as a .prot file, only the code for the processors imported to the Assembler is included.  If the code for all processors was included then the protocol would be an undesirable mixture of executors with and without the modification concerned.</p>
+
+<h3><a name="export"></a>Export</h3>
+<p>This opens a simple dialog box for exporting the protocol as a .prot file, a protocols.ini add-on.  You cannot choose the folder as it is automatically selected to be the Add-Ons folder set in RMIR, either explicitly or by default.  You just give a name for the file.  The protocol will be available in RM and RMIR when they are next opened, without any further action.  It will also be available for selection with the Import button described above, though it is preferable also to save it as a .rmpb file for later re-opening.</p>
+
+<h3><a name="copy"></a>Copy</h3>
+<p>This copies the protocol to the clipboard in the exchange format used by PB, KM, RM and RMIR.  It can then be pasted into those applications or even back into RMPB if desired.</p> 
+
+<p>This is very useful during protocol development and testing.  A first version can be developed in RMPB and exported as a .prot file.  If RMIR is then opened, this first version can be selected as the protocol in a device upgrade developed for testing.  If you keep both RMIR and RMPB open then you can edit the protocol in RMPB, copy it to the clipboard, use the Edit Protocol button in the Device Upgrade Editor of RMIR to open the protocol editor and then paste the revised protocol in for another round of testing.</p>
+
+<h3><a name="paste"></a>Paste</h3>
+<p>This opens a dialog box in which you can paste a protocol in the exchange format of PB, KM, RM and RMIR.  This format can include code for more than one processor.  When you press OK, these are all imported into the Assembler for further editing as required.</p>
+
+<h2><a name="menus"></a>The menus</h2>
+<p>There are at present four menus, as follows.
+
+<h3><a name="file"></a>File</h3>
+<p>This has entries corresponding to the New, Open, Save and Save As toolbar buttons and in addition a Recent Files section that lists the files most recently opened, up to a maximum of 10 files.  Both native .rmpb file and PB .txt files are included in the list.  There is also an Exit entry for closing RMPB, though it is usual to use the OS-dependent button on the frame border to close it.</p>
+
+<h3><a name="protocol"></a>Protocol</h3>
+<p>This has entries corresponding to the Import, Export, Copy and Paste toolbar buttons.
+
+<h3><a name="options"></a>Options</h3>
+<p>There is at present only one option entry, for changing the Look and Feel.</p>
+
+<h3><a name="help"></a>Help</h3>
+<p>This has a selection of useful entries and links, including Check for Updates that is available also from RMIR and RM</p>
+
+<h2><a name="tabbed"></a>The tabbed panes</h2>
+<p>As mentioned above, the RMPB frame has a menu bar and a toolbar, below which is a header panel and then a tabbed pane with five tabs.  The functions of this pane when each tab is selected will now be described in more detail.
+
+<h3><a name="assembler"></a>Assembler</h3>
+<p>The Assembler pane is a split pane with a moveable divider.  The left side is for specifying the data section of the executor such as the frequency, the number of device and command bytes and the timing parameters.  The right side is for giving the assembler instructions of the executor.  The interaction between the two sides is controlled by three buttons, <i>Build</i>, <i>Update</i> and <i>Assemble</i>, at the bottom right of the pane.</p>
+
+<ul>
+<li><b>Build</b> creates the assembler code for a complete (basic) executor from the data in the left pane.
+<li><b>Update</b> updates the PB/PD bytes in the right pane from the data currently in the left pane, preserving the assembler instructions unchanged.
+<li><b>Assemble</b> creates the hex code from the data in the right pane, updating the left pane if the PB/PD bytes have been manually edited.
+</ul>
+
+<p>The left panel is itself a tabbed pane.  For the present we assume that the Protocol Data tab is selected.  The first step in building a new protocol is to set the data fields in this tab to the desired values and press Build.  Many of the data fields are self-explanatory but they are described in detail in the section <a href="#protdataitems">Protocol Data items</a> below.  You can simply accept the default values at first, if you wish, as they can be changed later but Build needs to be pressed before you continue.  This creates in the right panel the complete assembler listing for a simple protocol based on the the data values in the left panel and performs an implicit Assemble to create the hex code for this protocol.  In advanced use, however, there is one exception to the ability to update the data fields at a later stage.  If you are creating executors for more than one processor then the number of device and command bytes needs to be set correctly before starting on a second processor.  If this is not done then the <a href="#devicedata">Device Data pane</a> will not update correctly.</p>
+
+<p>You can now edit the assembler listing in the right panel as required, after which you need to press Assemble to update the hex code.  There are Insert, Delete, Copy, Cut and Paste buttons to assist in editing, and if you enter an instruction in the blank line at the bottom of the listing, a new blank line will automatically be added.  There is also a Select All button.  You can select a single line or a range of consecutive lines, and if a range is selected then Insert will insert that number of blank lines above the selection.  Paste inserts the copied selection at the insert point, pushing down all subsequent lines.  Note that you need to use these buttons, as the keystrokes Ctrl/C, Ctrl/V <i>etc.</i> are not equivalent actions.</p>
+
+<p>The assembler accepts the standard assembly language for the processor concerned, and is intended to be aligned with the Excel PB program in this regard.  This means that certain instructions can be input in more than one form, such as conditional jumps for the Samsung processors where the condition code can either be concatenated with the op code mnemonic or given as its first argument.  It also means that the assembler is not case-sensitive.  Hexadecimal values may be prefixed with $ or postfixed with H (or h).  Comments should be prefixed with a semicolon and labels ended with a colon.  These are not enforced, but if a protocol is saved as a .rmpb file and opened again in RMPB then any missing semicolons and colons will be added.  An entire line can be commented out by putting a semicolon as the first character in the Label column.</p>
+
+<p>The assembler also accepts the ORG and EQU directives.  The ORG directive, if given, must be the first instruction.  It is optional except for the S3F80 processor.  <i>To build code for the S3F80 processor you need to select the S3C80 processor and add a first instruction ORG FF00H in the right pane BEFORE the initial press of Build.</i>  EQU directives may be used to define alternative or additional constants beyond those listed on the Functions tab (described below).</p>
+
+<p>It is possible to edit the data section of the assembler listing, and if you do so then pressing Assemble will update the left panel to correspond to the edited values.  The recommended way, however, to change the data section once you have edited the assembly listing is to edit the values in the left panel and press Update.  This updates the data section without altering the assembler instructions, and it does so even if this changes the size of the data section.  As with the Build button, Update performs an implicit Assemble to update the hex code.  It is important to use Update rather than Build, as Build will replace the entire assembler listing with a fresh build as described above.</p>
+
+<p>The other tabs of the left pane, besides Protocol Data, provide information and/or alternative ways to edit the data shown in the Protocol Data tab. For all processors there is also a Functions tab.  This lists the predefined constants for register and function addresses that are recognised by the assembler for the selected processor. EQU directives may be used to specify user-defined constants to vary or add to this list.</p>
+
+<p>Values entered in the Protocol Data tab are encoded in the executor in the PF (protocol function) bytes and PD (protocol data) two-byte values.  For the S3C80/S3F80 and HCS08 processors there are also PF Details and PD Details tabs.  These show the encoding and the data shown there may be edited directly.  Any edit made in these tabs is immediately transferred back to the Protocol Data tab.  In the case of the PD details tab, either the raw value on the left or the encoded value on the right may be edited and the other will change accordingly.</p>
+
+<h3><a name="hexcode"></a>Hex Code</h3>
+<p>The Hex Code pane shows the assembled hex code for each processor.  In addition to being for information, however, this data can be edited by double-clicking any entry.  Editing can be used to paste in new raw hex code if required, in particular this is the only way to include hand-build executors for the MAXQ610 and TI2541 processors in an output protocol.</p>
+
+<p>Data in this pane is normally shown in <b>black</b>, but in some situations it is shown in <b>gray</b>.  Code in gray is has not been imported to the assembler for editing.  The main time that this occurs is when a protocol has been imported from protocols.ini.  Initially the code for all processors is gray, so the user can choose which ones to import for editing.</p>
+
+<p>To import any hex code into the assembler, simply select it and press the Import to Assembler button.  You need to do this after any manual change has been made to the hex code entries.  One or more entries can be selected for import and they need not be on consecutive rows.  Import will replace any assembler listing in the Assembler for that processor with a fresh listing created by disassembly of the hex code.  There are two checkboxes, labelled Register and Functions, that control the disassembly.  These determine whether the predefined constants shown on the Functions tab of the left pane are used where applicable in place of hex constants.  Both are checked by default but their settings are persistent, in the sense that they are preserved whenever RMPB is closed and reopened.</p> 
+
+<h3><a name="disassembler"></a>Disassembler</h3>
+<p>The disassembler pane is similar to the assembler pane in appearance, but it lacks the editing, building and assembling buttons.  Instead it has the same Register and Functions checkboxes as the Hex Code pane and in addition three radio buttons that are relevant only to the S3C80/S3F80 processors.</p>
+
+<p>Neither the left or right pane of the Disassembler is editable.  This tab is purely for information.  It displays a disassembly of any supported hex code shown in the Hex Code tab, regardless of whether or not it has been imported into the Assembler and/or created by it.  The qualification <i>supported</i> simply means that it does not handle the MAXQ610 and TI2541 processors that are not supported by RMPB.</p>
+
+<p>The checkboxes and radio buttons determine aspects of the disassembly and may be changed at any time.  The disassembly listing will immediately change to the new format.  The checkboxes have the same purpose as on the Hex Code pane, to determine whether or not predefined constants or raw hex values are used for registers and functions.  The radio buttons determine how working registers are represented for the S3C80/S3F80 processors.  The choice is between the 4-bit representation Wn where n is a hex digit or the 8-bit representation RCn where Cn is a two-digit hex value in the range C0-CF.  You can force one form or the other for all instructions or allow the choice to be made according to whether the hex code for the instruction encodes the 4-bit or 8-bit value.  The settings of the checkboxes are independent of those of the similar checkboxes on the Hex Code pane, but like those boxes, the settings of these and of the radio buttons are persistent.</p>
+
+<h3><a name="devicedata"></a>Device Data</h3>
+<p>The Device Data pane does not affect the hex code of the protocol executor.  Its purpose is to determine how the human-readable device and command parameter values set in a device upgrade are converted to the fixed and variable data bytes in the hex code of that upgrade.  It is these bytes that form the input data to the protocol executor.</p>
+
+<p>This conversion is specified in the protocols.ini entry for a protocol by the translator section of that entry.  This section appears only once, as it applies equally to the executors of that protocol for all processors.  This pane is another split pane with a moveable divider.  The left panel has two tables, one for Device Parameters and the other for Command Parameters.  The right panel is the actual text of the translator section as it will appear in the protocols.ini entry.  It is only the right panel that affects the output from RMPB.  The left panel provides the means to create a simple entry in the right panel without needing detailed understanding of its syntax, in the same way that the Build button of the Assembler creates a simple but complete protocol executor without needing detailed understanding of executor structure and assembly language.  The text in the right pane can be edited, or created afresh as required, to create a more elaborate translator section when needed.  It is not necessary to start with text created from the left panel, which can be ignored if its facilities are not required.  The syntax of translator sections is documented in a comments section at the start of the protocols.ini file.</p>  
+
+<p>The numbers of entries in the tables of the left panel are determined by the numbers of Device Bytes and Command Bytes set on the left panel of the Assembler.  The entries can be edited, however, to change the defaults for the parameter name, the number of bits of its value to encode in a device upgrade, whether the encoding is LSB (least significant bit first) or MSB (most significant bit first) and whether or not the value is complemented.  If the LSB box is unchecked, the encoding is MSB.  The number of bits determines the maximum allowed value for the parameter.  Pressing the <i>Create translators</i> button will replace the current content of the right panel, if any, with a translator entry representing the settings in the left panel.  The default value for each device parameter is 0.  This is the value given after the equals sign in the DevParms entry created in the right panel.  You can edit that panel to change the default values if desired.</p>
+
+<p>Besides the tables, there are two other entries in the left panel, <i>Default Fixed Data</i> below the Device Parameters table and <i>Command Index</i> below the Command Parameters table.  The Default Fixed Data has one byte per Device Parameter and it is the value specified that is modified by the device parameter encoding.  It is conventional to set this byte to the value corresponding to the default value for the device parameter concerned, but the value of this byte is actually only significant if the number of bits, <i>n</i> say, for the device parameter is set to less than 8. It is the left-most <i>n</i> bits (the most significant bits if thought of as a binary value) that are replaced by the device parameter encoding, which is the parameter value as an <i>n</i>-bit binary integer, reversed if LSB encoding and complemented if specified as such.  So the right-most (8-<i>n</i>) bits of the byte are unchanged but the executor can still reference them.  These can be used to generate different forms of a protocol from a single executor.  A good example of such behaviour is the NEC protocol, where the NEC1, NEC2 and other variants have the same executor and PID and are distinguished by the value of fixed data bits that are unaffected by the device parameters.</p>
+
+<p>The <i>Command Index</i> is only editable if the number of Command Parameters is more than one.  This is an index (starting at 0) that specifies which of the command parameters is regarded as the OBC.  This can be relevant when importing upgrade files from the Excel KM program but for most purposes it is just a naming issue.</p>
+
+<h3><a name="outputdata"></a>Output Data</h3>
+<p>The Output Data pane has two panels vertically above one another.  This pane is for information only.  There are no buttons that perform actions and the panels are not editable.  The upper panel shows the text of a protocols.ini entry for the protocol.  This is the text that will be written to a .prot file add-on to protocols.ini by the Export button on the toolbar or corresponding menu item.  The lower panel shows the text that will be copied to the clipboard by the Paste button or menu item in the exchange format used by PB, KM, RM and RMIR.  You do not have to have the Output Data tab selected in order to use these buttons, but it provides a preview that may indicate if some step of the construction process has been missed.</p> 
+
+<h1><a name="further"></a>Further information</h1>
+<p>Since RMPB is based heavily on the Excel PB spreadsheet application, much of the tutorial information included with that program is relevant also to RMPB.  This section is extracted largely verbatim from that information, for easier reference.</p>
+
+<h2><a name="limitations"></a>Limitations</h2>
+
+<p>There are some limitations, but many of these are general 
+limitations that apply to ANY protocol.</p>
+
+<ol>
+<li><p>The total number of bits cannot exceed the maximum allowed,
+and this would include bits created by bit doubling. This
+maximum varies depending on the processor used as follows:</p>
+<ul>
+   <li>HCS08 .............. 80 bits</li>
+   <li>S3C80 .............. 64 bits</li>
+   <li>SST ................. 48 bits</li>
+   <li>6805-RC16/18 .... 48 bits</li>
+   <li>P8/740 ............ 48 bits</li>
+   <li>6805-C9 ........... 40 bits</li>
+</ul>
+</li>
+
+<li><p>The total number of fixed bytes (Device) and variable bytes 
+(Command) cannot exceed 10.</p></li>
+
+<li><p>If there are more than two fixed (Device) or more than two 
+variable (Command) bytes, they MUST each be the SAME width in 
+bits as the other bytes in the fixed or variable category. For 
+example, you can have four bytes of Fixed data each 5-bits wide 
+and three bytes of Variable data each 7-bits wide.</p>
+
+<p>If there are two fixed (Device) bytes, they may each contain
+a different number of bits, if so specified.</p>
+
+<p>Only the S3C8 and HCS08 allow two variable (Command) bytes to
+have a different number of bits. All other types require all
+variable bytes to contain the same number of bits.</p></li>
+
+<li><p>All Fixed and Variable bytes are read starting at the left. In 
+LSB this doesn't require any special treatment since it means the 
+least significant bits are read first. In MSB whenever using less 
+than 8-bit wide fixed or variable bytes (where n<8 and is the 
+number of bits), then the fixed or variable data will need to 
+have (8-n) bits added. So, a four bit MSB device='1' (decimal) 
+would need to be '00010000' or decimal 16.</p></li>
+
+<li><p>On some remotes, learned signals and protocol upgrades cannot 
+be used on the same device key.</p></li>
+
+<li><p>Key Moves containing more than two variable bytes CANNOT be 
+used in the older remotes (i.e. URC-7800, RS 15-1994, RCU810, 
+URC-7560, etc). These remotes can use more than two variable 
+bytes within a device upgrade. Remotes using the new Key Move
+format (URC-6131, Atlas DVR) cannot directly use Key Moves
+requiring more than one byte.</p></li>
+
+<li><p>The IR engine in the 6805-C9 and P8/740 remotes is quite
+different from the one used in the other remote types. Some
+parameters have not been fully investigated, and, as a result,
+PB may not always generate correct results. For example, the
+"off" time periods are implemented as software delay loops,
+and calculating the fixed overhead outside of the loop itself
+is a complex matter. PB settles for calculating a typical
+value, but the actual time will vary based on other settings.
+In some cases, you may need to tweak the values in order to
+make the remote generate the correct delay.</p></li>
+</ol>
+
+<h2><a name="protdataitems"></a>Protocol Data items</h2>
+<p>Each of the items on the Protocol Data tab on the left panel of the Assembler will now be described in more detail.</p>
+
+<h3>Frequency (kHz)</h3>
+<p>Enter the appropriate Frequency used by the protocol. A 
+'0' Frequency is allowed, and results in a protocol that does
+not generate a carrier.</p>
+
+
+<h3>Duty Cycle %</h3>
+<p>Represents the percentage of unmodulated IR ON time that occurs 
+during modulated IR ON time. In almost all cases, you can safely 
+select 30% and not need to understand more than that. For some 
+very high frequencies you must select 50%. In theory, ordinary 
+signals will have slightly better range and worse battery life if 
+you pick a value above 30 (up to 50). We haven’t tested that 
+theory. A duty cycle above 50% will likely cause worse range AND 
+worse battery life. A '0' Duty Cycle % is allowed.</p>
+
+
+<h3>Signal Structure</h3>
+<p>RMPB can create protocols that send the IR data in a number of ways that differ in the order in which the data in the IR stream is 
+sent to the receiving device.  There are two different sets of options, dependent on the processor selected.</p>
+
+<p><b>HCS08, S3C80, SST and 6805-RC16/18 processors</b></p>
+
+<p>There are four alternatives for these processors:
+<ol>
+<li><p>"dev-cmd" is Device followed by Command.</p></li>
+
+<li><p>"dev-cmd-!dev-!cmd" is Device, Command, Device-Complemented, 
+Command-Complemented.</p></li>
+
+<li><p>"dev-!dev-cmd-!cmd" is Device, Device-Complemented, Command, 
+Command-Complemented.</p></li>
+
+<li><p>"cmd-dev" is Command followed by Device.</p></li>
+</ol>
+
+<p><b>P8/740 and M6805-C9 processors</b></p>
+<p>These processors have a longer list of options in which the following are combined in various ways:</p>
+<ul>
+<li>"dev"  - a single Device byte</li>
+<li>"cmd"  - a single Command byte</li>
+<li>"!dev" - a single Device byte complemented</li>
+<li>"!cmd" - a single Command byte complemented</li>
+<li>"devs" - all Device bytes</li>
+<li>"dev2" - a single Device byte, accesed indirectly through a pointer<br>
+         ("dev2" support in RMPB makes it equivalent to "dev")</li>
+</ul>
+
+<h3>Device Bytes</h3>
+<p>The number of Device ("fixed data") bytes in the IR data.  If only one executor is under construction, setting or changing this value also sets the number of entries in the Device Parameters table of the Device Data tab. If you wish to construct executors for more than one processor in the same protocol then this value must be set before the second executor is started.<p>
+
+
+<h3>Bits/Dev (Bits/Dev1, Bits/Dev2)</h3>
+<p>The number of bits in each Device Byte. If there are ONLY 2 
+Device Bytes, they may each have different bit lengths. However, 
+if there are more than 2 Device Bytes, they MUST be the SAME bit 
+length.</p>
+
+
+<h3>Dev Bit Doubling</h3>
+<p>There are 3 options for doubling Device data bits:</p>
+<ol>
+<li>"Insert a '0' after every bit"</li>
+<li>"Insert a '1' after every bit"</li>
+<li>"Double every bit"</li>
+</ol>
+
+<p>Assume you defined a <i>'0' Burst</i> as [A,-B] and a <i>'1' Burst</i> as 
+[C,-D].
+
+Choice (1) would mean '0's are actually sent as [A,-B,A,-B] and 
+'1's as [C,-D,A,-B] etc.</p>
+
+
+<h3>Command Bytes</h3>
+<p>The number of Command ("variable data") bytes in the IR data.  If only one executor is under construction, setting or changing this value also sets the number of entries in the Command Parameters table of the Device Data tab. If you wish to construct executors for more than one processor in the same protocol then this value must be set before the second executor is started.</p>
+
+
+<h3>Bits/Cmd (Bits/Cmd1, Bits/Cmd2)</h3>
+<p>The number of bits in each Command Byte. If there are ONLY 2 
+Command Bytes, they may each have different bit lengths. However, 
+if there are more than 2 Command Bytes, they MUST be the SAME bit 
+length. This option is only available with the HCS08 and S3C80
+types. All other types must have the same number of bits in all
+Command bytes.</p>
+
+
+<h3>Cmd Bit Doubling</h3>
+<p>There are 3 options for doubling Command data bits:</p>
+<ol>
+<li>"Insert a '0' after every bit"</li>
+<li>"Insert a '1' after every bit"</li>
+<li>"Double every bit"</li>
+</ol>
+
+<p>Assume you defined a <i>'0' Burst</i> as [A,-B] and a <i>'1' Burst</i> as 
+[C,-D].
+
+Choice (1) would mean '0's are actually sent as [A,-B,A,-B] and 
+'1's as [C,-D,A,-B] etc.</p>
+
+<h3>Repeat Type</h3>
+<p>This is the first of three settings that determine the way a signal repeats.  The others are "Hold" and "Count", described separately below.<p>
+
+<p>A Repeat Type of "Minimum" makes Count be the number of times the signal will 
+be repeated with each single button press. If you keep depressing 
+the button then you can get more repeats than the minimum. 
+Setting the Count value less than "3" with "Minimum" does NOT 
+override the 3 repeats in a macro.</p>
+
+<p>A "Forced" repeat makes Count be the exact number of repeats that are
+sent, regardless of how long you hold the button. When 
+selected, it will override the default of 3 when used in a macro. 
+For a manual key press, the "Forced" number of repeats will be 
+issued regardless of how long the button is held down.</p>
+
+<h3>Hold</h3>
+<p>This is the second of three settings that determine the way a signal repeats.</p>
+<p>For all processors except the 6805-C9 and 740, the Hold setting has four choices:
+<ol>
+<li>"No" indicates no Repeat is used.</li>
+
+<li>"Yes" indicates Repeat when button is held.</li>
+
+<li>"Ch+/-, Vol+/-, FF, Rew" determines "Yes" for the specified 
+buttons, "No" for all others.</li>
+
+<li>"No data bits in repeat" generates repeat frames that are very 
+different from normal frames and do NOT include the data portion. 
+These are like the NEC1 Protocol.</li>
+</ol>
+<p>For the 6805-C9 and 740 processors only the "No" and "Yes" options are available.</p>
+
+<h3>Count</h3>
+<p>This is the number of times that you want the remote to repeat 
+the command.  Whether it is a minimum or exact number is determined by the setting of the "Repeat Type" item.</p>
+
+<p>The proper number of Repeat commands is important for reliable 
+recognition in some hardware.  If a command is used in a macro, 
+then by default, it will be repeated 3 times, unless it is 
+specifically set to fewer or no Forced repeats, or is a non-repeating 
+key where repeats are specified only for certain keys.</p>
+
+<p>The Repeat parameters may require some experimentation. Certain 
+IR receivers want to see a repeated value. Some only want it for 
+certain commands. Sometimes, for example, the Volume UP or DOWN 
+increment may be too big or too small, so these are settings to 
+tinker with to get the behavior you want.</p>
+
+<h3>'1' Burst ON / OFF (uSec)<br>
+'0' Burst ON / OFF (uSec)</h3>
+<p>An IR signal is constructed as a series of time intervals with 
+the IR specified as ON or OFF for each interval. Most such 
+intervals are specified as "bursts", where a burst consists of an 
+ON interval and an OFF interval. Both of these intervals are 
+specified in microseconds.</p>
+
+<p>You MUST specify (in microseconds) a <i>'1' Burst</i> and <i>'0' Burst</i>
+pair for every protocol.  For some protocols you also specify (in microseconds) a 
+<i>Lead-In</i> ON and OFF time.  Whether this is needed, and how it is used, is determined
+by the <i>Lead-In Style</i> setting described below.</p>
+
+<p><i>NOTE 1: In IRP notation, ON times are typically referenced as 
+positive values, while OFF times are referenced as negative 
+values (e.g. [500,-1500]). In RMPB, you enter all times time as 
+positive values.</i></p>
+
+<p><i>NOTE 2: The P8/740 Generic and M6805-C9 protocols require a larger
+number of data bytes when the 0-burst and 1-burst ON intervals
+are different. In cases where they are the same, make sure you
+enter the exact same values for each in PB so that it will
+understand that they are the same.</i></p>
+
+<h3>Xmit '0' Reversed</h3>
+<p>A burst is normally generated as an ON interval followed by an 
+OFF interval.  Here you can specify that the <i>'0' Burst</i> pair be generated as OFF 
+followed by ON instead of the normal ON/OFF. This option is used 
+for encoding based on phase shift.</p>
+
+<p>When <i>'0'</i>s are reversed, or when one interval of any burst is 
+zero microseconds, the generated signal may have two (or more) 
+intervals in a row of the same state (rather than the more common 
+alternation of ON and OFF). Two intervals in a row of the same 
+state give the same result as one longer interval of that state.</p>
+
+
+<h3>Lead-In Style</h3>
+<p>Lead-In is the longer initial burst pair that wakes up the IR 
+receiver and lets it set its AGC and anticipate the data portion. 
+Not all protocols use a Lead-In. Some just start with the data 
+([Lead-In] Style = "None"). Protocol-builder can only deal with a 
+single burst pair as a Lead-In, but it can do some other things 
+with it.</p>
+
+<p>"Same every frame" sends the Lead-In burst pair before EVERY data 
+frame.</p>
+
+<p>"1st frame only" sends the Lead-In only once.</p>
+
+<p>"Half-size after 1st" is really the NEC1 signal style. After the 
+first frame, successive frames will not have any data in them, 
+and if the first Lead-In was [8000 -4000], the Lead-In for the 
+successive, non-data frames will be [8000 -2000].</p>
+
+<h3>Lead-In ON (uSec)</h3>
+<p>The time (in microseconds) of the [Lead-In] ON signal.</p>
+
+<h3>Lead-In OFF (uSec)</h3>
+<p>The time (in microseconds) of the [Lead-In] OFF signal.</p>
+
+<h3>Lead-Out Style</h3>
+<p>This is the long gap between repeat IR commands, or is used to 
+differentiate between two different IR commands. In some cases 
+there will be an ON pulse followed by a long OFF pulse. In 
+others, the last OFF may be extended for a long period that is 
+typical of bi-phase or Phase Width Modulation (PWM) commands 
+where 'One' and 'Zero' are differentiated by the length of the ON 
+times, like Sony.</p>
+
+<p>There are also Lead-Out repeat patterns typical of the NEC1 
+protocol, where this pattern, although it contains no data bits, 
+signifies that the key is still being held down, known as a "null 
+repeat pattern". These patterns consist most often of an initial 
+ON/OFF burst pair and then a repeating pattern, often the Lead-In 
+pulse followed by the Lead-Out (or Alt Lead-Out) burst pair.</p>
+
+<p>The Lead-Out is not the most critical part of the IR command to 
+get proper recognition, but getting the first ON pulse, if any, 
+and the timing of the long gap between frames are. If it is a 
+repeat pattern type Lead-Out, then a proper pattern becomes 
+important to get smooth volume control derived from sensing 
+whether the key is still depressed.</p> 
+
+<p>Finally, since this tool is going to be used by manually decoding 
+learned commands, the learned timings of Lead-Out's are always 
+hard for a learning remote to get right.
+
+So, if the commands are working, but inconsistently, then you 
+should probably just experiment with some variation of the [Lead-
+Out] Style, which has four choices:</p>
+
+<ul>
+<li><p>0 = [-LO]:<br>
+Adds the Lead-Out OFF time, or Alt Lead-Out if specified, to 
+whatever else would be generated by the protocol. This would be 
+typical of a bi-phase or Sony signal.</p></li>
+
+<li><p>1 = [LI], [-LO]:<br>
+A Lead-Out that has the Lead-In pattern but the final [Lead-Out] 
+OFF time added to the [Lead-In] OFF time. Assume the signal had a 
+[Lead-Out] OFF time of 50000 uSec, then it would be:<br>
+
+<br>[2000 -1000], Data, [2000 -(1000+50000)]
+<br>-or equivalently-
+<br>[2000 -1000], Data, [2000 -51000]</p></li>
+
+<li><p>2 = [OneOn, -LO]:
+This is the most common [Lead-Out] Style. It uses the <i>'1' Burst</i>
+ON time, followed by the [Lead-Out] OFF time.</p></li>
+
+<li><p>3 = [LI], [OneOn, -LO]:<br>
+Typical of the NEC-style pattern and is what the generic NEC2 
+commands do.</p></li>
+</ul>
+
+<h3>Lead-Out OFF (uSec)</h3>
+<p>The length (in microseconds) of the Lead-Out OFF time.</p>
+
+
+<h3>OFF as Total</h3>
+<p>When this is set to Yes, the specified Lead-Out OFF time is the duration of the entire frame, from the Lead-In to the end of the Lead-Out.  So the actual lead-out duration is variable, depending on that of the other bursts that comprise the signal. 
+When this is No, the specified Lead-Out OFF time is the actual duration of the lead-out.  This setting is not available for the 6805-C9 remotes.</p>
+
+<h3>Use Alt Lead-Out</h3>
+<p>When set to "Yes", a value may be set for an alternate lead-out duration that is used for repeat frames in place of the normal value.</p>
+
+
+<h3>Alt Lead-Out (uSec)</h3>
+<p>The length (in microseconds) of the alternate Lead-Out time.</p>
+
+<h3>Alt Freq (kHz)<br>
+Alt Duty %</h3>
+<p>The Alt Freq and Alt Duty % settings are required for signals that use frequency shift encoding.
+The remote uses the normal frequency and duty cycle for '1' bits and these alternate values for '0' bits.</p>
+
+<p>Note:  These settings cannot be used in the same protocol as an Alt Leadout as both use the same locations
+to store the values concerned.  A data bit is set elsewhere that determines which meaning the stored values have.</p>
+
+
+<h3>Burst Mid-Frame</h3>
+<p>This setting is only available in Build mode, which is the initial state when the Assemble and Update buttons are disabled.
+It determines whether the signal inserts a burst with the Lead-In ON and OFF timings at a certain position in the middle of the
+frame.  The position is determined by the <i>After # of Bits</i> setting.</p>
+
+<h3>After # of Bits</h3>
+<p>When set, the remote inserts the Lead-In ON and OFF burst values after the data bit 
+position specified regardless of the <i>Lead-In Style</i> setting. 
+Certain IR signals have a burst pair between the Device and 
+Command, for example.</p>
+
+<h2><a name="unimplemented"></a>Unimplemented features of PB</h2>
+<p>The Excel PB program has a few other settings that are not available in RMPB.  These are settings that automate
+the generation of assembler code for certain protocol features.  The features concerned are a toggle bit, a checksum
+and a mini-combiner.  Their absence in RMPB does not mean that protocols cannot be created with these features, but
+the user needs to write the necessary assembler code.  It is believed that new executors are now only being created
+by users sufficiently familiar with protocol construction that such automation is no longer required.</p>
+
+<h1><a name="proteditor"></a>The Protocol Editor in RM and RMIR</h1>
+<h2><a name="custommanual"></a>Custom code and manual protocols</h2>
+<p>Both RM and the Device Upgrade Editor of RMIR have a facility to open a Protocol Editor that is a modified version of RMPB for creating custom code for a standard protocol or a new manual protocol.  Before describing the editor, it is necessary first to explain what these terms mean.  To the remote, a protocol is an executor, a piece of code that determines how an IR signal is generated from a set of input data bytes.  To the remote, there are two types of protocol, built-in and add-on.  These differ only in the source of the executor.  A built-in executor is located in the fixed ROM installed by the manufacturer and is referenced simply by a hexadecimal PID (protocol identifier). An add-on executor is located in the EEPROM that holds the user setup.  It is installed there by RMIR, by a manufacturer upgrade or some other means.  It too has a PID.  If that PID is the same as that of a built-in executor then the remote uses the add-on one, so overriding the built-in one.<p>
+
+<p>So what is custom code or a manual protocol?  These terms concern the relationship between the remote and RMIR.  RMIR has a library of protocols in the protocols.ini file.  These are what we shall refer to as <i>standard protocols</i>.  Each entry has not only the executors for various processors but also a translator section that specifies how human-readable device and command parameters are translated into the fixed and variable bytes that comprise the input to the executor.  The entry gives a PID for the protocol, but the manufacturer often revises executors to add new features while keeping the same PID.  To cope with this, protocols.ini assigns a <i>variant name</i>, often just a single digit, to distinguish the variants.  The RDF for a remote lists the PIDs, and where applicable the variant name, for the built-in protocols of the remote so RMIR knows what is in the ROM.</p>
+
+<p>When RMIR downloads a remote, it analyzes any device upgrades in the download and tries to identify the protocol.  The data it has are the PID, the fixed and variable bytes for the signals in the upgrade, and the executor code if it is an add-on executor.  If there is no add-on executor then it should be built-in, so the RDF will identify which variant it is and so the identification is complete.</p>
+
+<p>When there is an add-on executor then the situation gets more complicated.  The PID may or may not be the PID of a built-in protocol.  If it is the PID of a built-in protocol then the executor overrides the built-in one.  This is <i>custom code</i> for the protocol.  Custom code is often used to make minor changes in behaviour, such as changing the duty cycle from 30% to 50%, tweaking the frequency or preventing keys from repeating.  RMIR interprets the protocol with the same translators as the built-in version.  If the PID is not one of a built-in protocol, there are still two possibilities.  The protocol may or may not be a standard one that is in protocols.ini.  This time there is no variant information available, so RMIR checks against all the variants, if any, of the standard protocols with the PID concerned, using an elaborate set of matching tests.  It is not possible just to see if the executor code is identical to that of one of the variants, as it may be custom code for one of those variants.  In this way it identifies the protocol and its variant, and whether the executor is the standard one or custom code.  In either case the translators are taken to be those the identified variant.</p>
+
+<p>The final situation is where the PID is not that of a standard protocol, or where the matching tests fail on all variants.  In this case RMIR has made no identification and so has not identified the translators to use.  It creates a <i>manual protocol</i>, which consists of the executor concerned together with a basic set of translators that treat each fixed byte as a device parameter and each variable byte as a command parameter.</i>
+
+<p>When a setup is stored as a .rmir file, or the upgrade as a .rmdu file, then it includes the identifications it has made, together with the custom code if present for any standard protocol.  For a manual protocol it stores the complete entry for the protocol in the form of a protocols.ini entry, including the simple translators it has constructed.</p>
+
+<p>There is in fact one further possibility.  The matching tests mentioned above test whether the translators are consistent with the fixed data, as well as looking at the executor code.  These tests are also applied in the case of a built-in protocol, so there is a possible situation in which the translators are not consistent with the fixed data of the device upgrade.  In this case the basic translators of a manual protocol are used in place of those of the protocols.ini entry for that built-in protocol. This creates a hybrid of manual protocol translators together with the built-in (and inaccessible) executor.  This situation is called a <i>derived protocol.</i></p>
+
+<h2><a name="customnew"></a>Creating custom code</h2>
+<p>To create custom code for a protocol in RM, select the protocol on the Setup tab and click the <i>Edit protocol...</i> entry on the <i>Advanced</i> menu.  To create it for the protocol of a device upgrade in RMIR, select the device upgrade on the Devices tab and press the <i>Edit Protocol</i> button.  In either case a modified version of RMPB opens as a Protocol Editor.  The menu bar and toolbar are absent, as is the Output Data tab, and the Name, PID and other fields in the top panel are read-only.  But there is a new button bar at the bottom, with Load and Save buttons on the left and Paste, OK and Cancel buttons on the right.</p>
+
+<p>The Save button will save the current state as a .rmpb file and the Load button will reload that file, both through appropriate dialog boxes.  The Paste button will be described later.  Pressing OK closes the editor and installs the hex code, as modified by the editor, as custom code for the protocol.  The Cancel button closes the editor, leaving the protocol unchanged.</p>
+
+<p>You edit the code by the usual means of RMPB as described above.  The Device Data tab panels are, however, not editable.  The <i>Data translators</i> panel shows the translators of the protocol concerned, which due to the nature of custom code cannot be changed.</p>
+
+<h2><a name="manualnew"></a>Creating a device upgrade with new manual protocol</h2>
+<p>You can use RM to create a device upgrade with a new manual protocol.  The upgrade as saved in a .rmdu file will include the executor and translators for this protocol so no separate .prot file is required.  In RM, select the remote concerned and on the <i>Advanced</i> menu select <i>New Manual Protocol...</i>.  Again the Protocol Editor opens.  Now you can enter a PID for the protocol in the top panel.  Doing so will automatically fill in the name as <i>Manual Settings:  nn nn</i> where <i>nn nn</i> is the PID.  You can now create the protocol as usual with RMPB, but you will find that the <i>Data translators</i> panel on the <i>Device Data</i> tab is not editable.  You have to create the data translators by editing the settings on the left panel as required and pressing the <i>Create translators</i> button.  This corresponds to the restricted nature of translators for a manual protocol, described above.  The Load and Save buttons can be used to save and reload the protocol if required.</p>
+
+<p>When you press OK after creating the protocol, the editor will close and the new manual protocol will be available for selection in RM at the bottom of the drop-down list.  Select it for the upgrade and then complete the upgrade as normal. You can re-edit the protocol by selecting the <i>Edit protocol...</i> menu item if required.</p>
+
+<h2><a name="completenew"></a>Creating and testing a complete new protocol</h2>
+<p>The creation of a complete new protocol with RMPB has been explained above.  What this section describes is how to use RMPB and RMIR together for a cycle of creating, testing, modifying and re-testing the protocol.</p>
+
+<p>For this, you first open RMPB and create a first version of the protocol.  Export it as a .prot file to the Add-Ons folder and then open RMIR, keeping RMPB also open.  Open a .rmir setup for the remote you wish to use for testing, or download that remote to RMIR.  Open the Devices tab and press the <i>New</i> button.  The protocol drop-down should now show the protocol you created, in its alphabetical order.  Select it and build the upgrade for testing.  Close the Device Upgrade Editor, upload the setup to the remote and test it.</p>
+
+<p>To make changes to the executor code, go back to RMPB and edit it as required.  This time, use the Copy button to copy the changed executor to the clipboard.  Go back to RMIR, select the testing upgrade and press the Edit Protocol button to open the modified RMPB as a protocol editor.  Press the Paste button on the button bar at the bottom and paste in the executor copied from RMPB.  Close the editor.  As far as RMIR is concerned, you have now put in the new executor as custom code for your new protocol.  Upload the setup, re-test and repeat as required.</p>
+
+<p>Finally, in RMPB save the protocol again as an add-on .prot file.  When you next open RMIR it will be available for selection with the final version of the executor.  Note that you can use a .prot file created this way in more ways than one.  It can be a private modified protocol for your own use that goes no further, it can be posted as a candidate for addition to the next version of protocols.ini, or it can be a sort of "super-manual protocol".  This means that it is distributed with a device upgrade that uses it, giving greater flexibility in the construction of translators than does a manual protocol but without the wider appeal needed for it to be a candidate for addition to protocols.ini as a new standard protocol.</p>
+
+</div>
+</body>

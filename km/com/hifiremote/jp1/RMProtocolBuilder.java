@@ -124,16 +124,8 @@ ChangeListener
     manualSettingsPanel.getProtocolName().setText( null );
     manualSettingsPanel.getAssemblerPanel().setRmpbSaveAsAction( saveAsAction );
     tabbedPane = editorPanel.getTabbedPane();
-//    JPanel devicePanel = manualSettingsPanel.getDevicePanel();
     deviceText = manualSettingsPanel.getDeviceText();
     tabbedPane.addTab( "Output Data", manualSettingsPanel.getOutputPanel() );
-    
-//    translationButton = new JButton( "Create translators" );
-//    translationButton.setToolTipText( "Set Data translators panel to represent the above parameters" );
-//    translationButton.addActionListener( this );
-//    JPanel buttonPanel = new JPanel( new FlowLayout( FlowLayout.CENTER ) );
-//    buttonPanel.add( translationButton );
-//    editorPanel.getDevicePanel().add( buttonPanel, "1, 9, 3, 9" );
     
     String note = "Code imported from protocols.ini with the Import button on the toolbar "
         + "(or the Protocol > Import... menu item) is initially shown in GRAY.  To complete "
@@ -430,15 +422,11 @@ ChangeListener
     {
       desktop = Desktop.getDesktop();
 
-//      readmeItem = new JMenuItem( "Readme", KeyEvent.VK_R );
-//      readmeItem.addActionListener( this );
-//      menu.add( readmeItem );
-//
-//      tutorialItem = new JMenuItem( "Tutorial", KeyEvent.VK_T );
-//      tutorialItem.addActionListener( this );
-//      menu.add( tutorialItem );
-//
-//      menu.addSeparator();
+      rmpbReadmeItem = new JMenuItem( "Using RMPB", KeyEvent.VK_U );
+      rmpbReadmeItem.addActionListener( this );
+      menu.add( rmpbReadmeItem );
+
+      menu.addSeparator();
 
       homePageItem = new JMenuItem( "Home Page", KeyEvent.VK_H );
       homePageItem.addActionListener( this );
@@ -507,21 +495,11 @@ ChangeListener
           protList.setModel( new DefaultComboBoxModel< Protocol >() );
         }
       }
-//      else if ( source == translationButton )
-//      {
-//        if ( !deviceText.getText().trim().isEmpty() )
-//        {
-//          String title = "Data translation";
-//          String message = "<html>This will overwrite the text that is now in the "
-//                  + "Data translators panel.<br>Do you wish to proceed?</html>";          
-//          if ( JOptionPane.showConfirmDialog( this, message, title, JOptionPane.YES_NO_OPTION, 
-//              JOptionPane.WARNING_MESSAGE ) != JOptionPane.YES_OPTION )
-//          {
-//            return;
-//          };
-//        }
-//        deviceText.setText( manualSettingsPanel.getProtocolText( true, true ) );
-//      }
+      else if ( source == rmpbReadmeItem )
+      {
+        File rmpbReadme = new File( RemoteMaster.getWorkDir(), "RMPB_Readme.html" );
+        desktop.browse( rmpbReadme.toURI() );
+      }
       else if ( source == homePageItem )
       {
         URL url = new URL( "http://controlremote.sourceforge.net/" );
@@ -641,7 +619,7 @@ ChangeListener
     }
     else
     {
-      filter = new EndingFileFilter( "All device upgrade files", anyEndings );
+      filter = new EndingFileFilter( "All protocol files", anyEndings );
       chooser.addChoosableFileFilter( filter );
       chooser.addChoosableFileFilter( new EndingFileFilter( "RMPB files", RemoteMaster.rmpbEndings ) );
       chooser.addChoosableFileFilter( new EndingFileFilter( "Excel PB files", pbEndings ) );
@@ -811,6 +789,7 @@ ChangeListener
 //  private JButton translationButton = null;
   private JMenu recentFileMenu = null;
   
+  private JMenuItem rmpbReadmeItem = null;
   private JMenuItem homePageItem = null;
   private JMenuItem forumItem = null;
   private JMenuItem wikiItem = null;

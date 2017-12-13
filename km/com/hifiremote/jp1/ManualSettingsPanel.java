@@ -206,17 +206,14 @@ ChangeListener, ListSelectionListener, ItemListener
     name.setText( protocol.getName() );
     name.setEditable( isClone );
     name.setEnabled( isClone );
-
-    if ( isClone )
+    
+    if ( protocol.getVariantName() != null )
     {
       variantName.setText( protocol.getVariantName() );
-      variantName.setEditable( true );
-      variantName.setEnabled( true );
     }
-    else
-    {
-      variantName.setEnabled( false );;
-    }
+    variantName.setEditable( isClone );
+    variantName.setEnabled( isClone );
+    
     devicePanel.setProtocol( protocol );
     Hex id = protocol.getID();
     pid.setValue( id );
@@ -370,6 +367,7 @@ ChangeListener, ListSelectionListener, ItemListener
       Processor p = ProcessorManager.getProcessor( ident[ 3 ] );
       procBox.setSelectedItem( p );
       deviceText.setText( getProtocolText( true, true ) );
+      outputPanel.updatePBOutput();
     }
   }
   
@@ -1138,6 +1136,10 @@ ChangeListener, ListSelectionListener, ItemListener
 
   public void setMode( Mode mode )
   {
+    if ( this.mode == mode )
+    {
+      return;
+    }
     JTableX codeTable = tablePanel.getCodeTable();
     this.mode = mode;
     if ( mode == Mode.DISASM )

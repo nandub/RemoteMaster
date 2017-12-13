@@ -51,21 +51,25 @@ End If
 if objFs.FileExists( sJavaw ) Then 
 	sRunRMIR = """" & sJavaw & """ -jar """ & sCurrDir & "\RemoteMaster.jar"" -h """ & sCurrDir & """"
 	sRunRM = sRunRMIR & " -rm" 
+	sRunRMPB = sRunRMIR & " -pb" 
 
     'Make shortcuts in the Start menu
 	call makeShortcut( sRMFolder & "\Remote Master.LNK", sJavaw,                               "-jar RemoteMaster.jar -rm", "RemoteMaster", sCurrDir & "\RM.ICO",   sCurrDir )
 	call makeShortcut( sRMFolder & "\RMIR.LNK",          sJavaw,                               "-jar RemoteMaster.jar",     "RMIR",         sCurrDir & "\RMIR.ICO", sCurrDir )
+	call makeShortcut( sRMFolder & "\RMPB.LNK",          sJavaw,                               "-jar RemoteMaster.jar -pb", "RMPB",         sCurrDir & "\RMPB.ICO", sCurrDir )
 	call makeShortcut( sRMFolder & "\Read Me.LNK",       sCurrDir & "\Readme.html",            "",                          "Read Me",      Null,                   sCurrDir )
 '	call makeShortcut( sRMFolder & "\Tutorial.LNK",      sCurrDir & "\tutorial\tutorial.html", "",                          "Tutorial",     Null,                   sCurrDir & "\tutorial" )
 	
 	'Make shortcuts in the installation folder as well
 	call makeShortcut( sCurrDir & "\Remote Master.LNK", sJavaw,                               "-jar RemoteMaster.jar -rm", "RemoteMaster", sCurrDir & "\RM.ICO",   sCurrDir )
 	call makeShortcut( sCurrDir & "\RMIR.LNK",          sJavaw,                               "-jar RemoteMaster.jar",     "RMIR",         sCurrDir & "\RMIR.ICO", sCurrDir )
+	call makeShortcut( sCurrDir & "\RMPB.LNK",          sJavaw,                               "-jar RemoteMaster.jar -pb", "RMPB",         sCurrDir & "\RMPB.ICO", sCurrDir )
 	call makeShortcut( sCurrDir & "\Read Me.LNK",       sCurrDir & "\Readme.html",            "",                          "Read Me",      Null,                   sCurrDir )
 '	call makeShortcut( sCurrDir & "\Tutorial.LNK",      sCurrDir & "\tutorial\tutorial.html", "",                          "Tutorial",     Null,                   sCurrDir & "\tutorial" )
 
 	call associate( "RMDeviceUpgrade", "Remote Master Device Upgrade",       sCurrDir & "\RM.ico",   sRunRM & " ""%1""", ".rmdu" )
 	call associate( "RMRemoteConfig",  "Remote Master Remote Configuration", sCurrDir & "\RMIR.ico", sRunRMIR & " ""%1""", ".rmir" )
+	call associate( "RMProtocolBuilder",  "Remote Master Protocol Builder", sCurrDir & "\RMPB.ico", sRunRMPB & " ""%1""", ".rmpb" )
 	WScript.Echo "Program shortcuts created successfully."
 Else
 	WScript.Echo "Program shortcuts were not created because javaw.exe was not found."

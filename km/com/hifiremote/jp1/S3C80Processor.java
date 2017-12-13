@@ -461,12 +461,17 @@ public class S3C80Processor
     StringBuilder sb = new StringBuilder();
     String pattern = "(RRC|RC|WW|W)[0-9A-F]";
     int i = 0;
+    // The map has been added so that W->R conversions start at the second
+    // argument rather than the first, which is what PB appears to do. To
+    // revert to the original procedure, change the map to { 0,1,2,3 }.
+    int[] map = { 0,2,1,3 };
+    n = n < 5 ? map[ n - 1 ] : n - 1;
     while ( st.hasMoreTokens() )
     {
       String token = st.nextToken();
       if ( token.matches( pattern ) )
       {
-        int bit = ( ( n - 1 ) >> i++ ) & 1;
+        int bit = ( n >> i++ ) & 1;
         if ( bit == 0 )
         {
           token = token.replaceFirst( "RRC|RC", "W" );

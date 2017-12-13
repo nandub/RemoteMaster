@@ -36,7 +36,7 @@ public class ManualSettingsDialog extends JDialog implements ActionListener
    */
   public ManualSettingsDialog( JDialog owner, ManualProtocol protocol )
   {
-    super( owner, "Manual Settings", true );
+    super( owner, "Protocol Editor", true );
     createGui( owner, protocol );
   }
 
@@ -50,7 +50,7 @@ public class ManualSettingsDialog extends JDialog implements ActionListener
    */
   public ManualSettingsDialog( JFrame owner, ManualProtocol protocol )
   {
-    super( owner, "Manual Settings", true );
+    super( owner, "Protocol Editor", true );
     createGui( owner, protocol );
   }
 
@@ -74,14 +74,17 @@ public class ManualSettingsDialog extends JDialog implements ActionListener
     JPanel buttonPanel = new JPanel();
     buttonPanel.setLayout( new BoxLayout( buttonPanel, BoxLayout.LINE_AXIS ) );
     load = new JButton( "Load" );
+    load.setToolTipText( "Opens dialog to select a previously saved .rmpb file for loading." );
     load.addActionListener( this );
     buttonPanel.add( load );
     save = new JButton( "Save" );
+    save.setToolTipText( "Opens dialog to save assembler listing as a .rmpb file." );
     save.setEnabled( false );
     save.addActionListener( this );
     buttonPanel.add( save );
     buttonPanel.add( Box.createHorizontalGlue() );
     paste = new JButton( "Paste" );
+    paste.setToolTipText( "Opens text box for pasting from clipboard a PB/KM/RM-style protocol entry" );
     paste.addActionListener( this );
     buttonPanel.add( paste );
     buttonPanel.add( Box.createHorizontalStrut( 10 ) );
@@ -96,12 +99,12 @@ public class ManualSettingsDialog extends JDialog implements ActionListener
     
     editorPanel = new ManualEditorPanel( this );
     manualSettingsPanel = editorPanel.getManualSettingsPanel(); 
+    manualSettingsPanel.reset();
     manualSettingsPanel.getDeviceText().setEditable( false );
     manualSettingsPanel.setProtocol( protocol, false );
     manualSettingsPanel.getProcBox().setSelectedIndex( 0 );
     manualSettingsPanel.setMode( Mode.ASM );
     manualSettingsPanel.getAssemblerPanel().setDialogSaveButton( save );
-    manualSettingsPanel.reset();
     contentPane.add( editorPanel, BorderLayout.CENTER );
     
     pack();

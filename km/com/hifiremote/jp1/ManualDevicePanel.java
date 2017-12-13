@@ -231,6 +231,18 @@ public class ManualDevicePanel extends JPanel implements ChangeListener, Documen
   {
     return settingsDialog;
   }
+  
+  public void stopEditing()
+  {
+    if ( commandTable.getCellEditor() != null )
+    {
+      commandTable.getCellEditor().stopCellEditing();
+    }
+    if ( deviceTable.getCellEditor() != null )
+    {
+      deviceTable.getCellEditor().stopCellEditing();
+    }
+  }
 
   private ParameterTableModel deviceModel = null;
   private JTableX deviceTable = null;

@@ -108,6 +108,7 @@ public class ManualEditorPanel extends JPanel implements ActionListener, ChangeL
     JTextArea deviceText = manualSettingsPanel.getDeviceText();
     if ( source == translationButton )
     {
+      devicePanel.stopEditing();
       if ( !deviceText.getText().trim().isEmpty() )
       {
         String title = "Data translation";
