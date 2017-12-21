@@ -27,6 +27,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.StringTokenizer;
 
@@ -397,11 +398,43 @@ ChangeListener, ListSelectionListener, ItemListener
   
   public void writeProtFile( String protText )
   {
+    File addOnDir = RemoteMaster.getAddonDir();
+    if ( !addOnDir.isDirectory() )
+    {
+      System.err.println( "Add-on folder is not a directory" );
+      return;
+    }
+    List< String > protNames = new ArrayList< String >();
+    for ( File f : addOnDir.listFiles() )
+    {
+      String fName = f.getName();
+      if ( fName.endsWith( ".prot" ) )
+      {
+        protNames.add( fName.substring( 0, fName.length() - 5 ) );
+      }
+    }
+    Collections.sort( protNames );
+    
+    String title = "Save as Add-on protocol";
     String message = 
-        "The protocol will be saved in the AddOns folder in a\n"
-            + "file with a .prot extension.  Enter a name for the file\n"
-            + "(without this extension).";
-    String name = JOptionPane.showInputDialog( this, message, null );
+        "<html>The protocol will be saved in the AddOns folder in a<br>"
+            + "file with a .prot extension.  The drop-down box lists<br>"
+            + "the names of the existing add-on files.  To replace a<br>"
+            + "file, select its name.  To create a new file, enter a<br> "
+            + "name for it (without the extension).</html>";
+    Box box = Box.createVerticalBox();
+    JPanel panel = new JPanel( new FlowLayout( FlowLayout.LEFT ) );
+    panel.add( new JLabel( message ) );
+    box.add( panel );
+    JComboBox< String > fileBox = new JComboBox< String >( protNames.toArray( new String[ 0 ] ) );
+    fileBox.setEditable( true );
+    box.add( fileBox );
+    int result = JOptionPane.showConfirmDialog( this, box, title, JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE );
+    if ( result != JOptionPane.OK_OPTION )
+    {
+      return;
+    }
+    String name = ( String )fileBox.getSelectedItem();
     if ( name.toLowerCase().endsWith( ".prot" ) )
     {
       name = name.substring( 0, name.length() - 5 );
@@ -411,7 +444,7 @@ ChangeListener, ListSelectionListener, ItemListener
     {
       message = "File " + file.getAbsolutePath() + " already exists.\n"
           + "Do you wish to replace it?";
-      int result = JOptionPane.showConfirmDialog( this, message, "File conflict", 
+      result = JOptionPane.showConfirmDialog( this, message, "File conflict", 
           JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE );
       if ( result != JOptionPane.YES_OPTION )
       {

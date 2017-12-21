@@ -44,8 +44,11 @@
 <p>Remote Master (aka RM/RMIR) was originally designed and developed primarily by Greg Bush, with significant contributions from John S Fine, Nils Ekberg, Graham Dixon and others.  It is currently maintained by Graham Dixon (mathdon).</p>
 <p>RM/RMIR is a Java application.  That means that in order to run it, you must have either the Java Developer Kit (JDK) or
 the Java Runtime Environment (JRE) installed, version 7.0 or later.  Either of these can be downloaded for free from the <a href="http://java.sun.com/javase/downloads/index.jsp">J2SE Downloads</a> page.  Prior to RM/RMIR v2.04, only version 6.0 of Java was required but RM/RMIR v2.04 and later requires Java version 7.0 or later.</p>
+
+<p>Remote Master was originally a single program (RM) designed as a cross-platform Java-based replacement for the MS Excel spreadsheet program Keymap Master (KM).  Later, the same Java application gained a second mode of operation known as RMIR, which is a replacement for the MS Windows application IR.exe.  These are two of the three programs originally developed by the JP1 team for developing IR Protocols and Device Upgrades and for developing and uploading complete setups to remote controls manufactured by UEI.  As of version 2.06 of Remote Master, it now includes a third mode of operation known as RM Protocol Builder (RMPB) that is a replacement for the MS Excel spreadsheet program Protocol Builder (PB).  The different modes of operation are opened by arguments -rm, -ir and -pb on a command line, but more easily in Windows and Linux by shortcuts created by setup programs included in the package.</p>
+
 <p>The Remote Master user interface makes extensive use of context menus. Context menus are accessed by clicking the right mouse button in an area when you want to do something.  RemoteMaster also often provides multiple ways to accomplish the same task.</p>
-<p>Take, for example, the Layout panel, which shows an image of the remote being used on the left, and a list of the available functions on the right.  There are 3 different ways to assign a function to a button:
+<p>Take, for example, the Layout panel of RM, which shows an image of the remote being used on the left, and a list of the available functions on the right.  There are 3 different ways to assign a function to a button:
 <ol>
 <li>Drag and drop the desired function onto the desired button.
 <li>Double-click on a button and select the desired function from the context menu
@@ -58,19 +61,19 @@ the Java Runtime Environment (JRE) installed, version 7.0 or later.  Either of t
 <li><p>As of RM/RMIR version 2.03, it is no longer necessary to download RDF files or Maps and Images as these are included in the full RM/RMIR zip package and updates for them are included in the update package.</p>
 </li>
 <li>If you are using a version of Windows (XP/Vista/Windows 7,8,8.1 or 10), double-click on <b>Setup.vbs</b>.  
-<p>This will create shortcuts in Start > Programs > Remote Master for your use.  Feel free to send them to you Desktop or copy them to your Quick Launch toolbar.  File associations are also created for .rmdu and .rmir file, so you can just double-click on them directly.</p></li>
+<p>This will create shortcuts in Start > Programs > Remote Master for your use.  Feel free to send them to you Desktop or copy them to your Quick Launch toolbar.  File associations are also created for .rmdu, .rmir and .rmpb files, so you can just double-click on them directly.</p></li>
 <li>If you are using Linux, run <b>setup.sh</b> from Terminal as a shell script.
-<p>This creates two .desktop shortcuts, one for RMIR and the other (named RemoteMaster) for RM. They will be created in your installation folder, but they are also copied to your $HOME/.local/share/applications folder to ensure that they appear on your Dash. Setup.sh will also add you to the dialout group of users, if you are not already in it. If you need to be added, then it will ask you for your sudo password as this step needs to be run with root privileges. This step is needed to enable RMIR to access USB serial ports without RMIR itself being run as root.</p>
+<p>This creates three .desktop shortcuts, one each for RMIR and RMPB and the other (named RemoteMaster) for RM. They will be created in your installation folder, but they are also copied to your $HOME/.local/share/applications folder to ensure that they appear on your Dash. Setup.sh will also add you to the dialout group of users, if you are not already in it. If you need to be added, then it will ask you for your sudo password as this step needs to be run with root privileges. This step is needed to enable RMIR to access USB serial ports without RMIR itself being run as root.</p>
 <p>There is also a file linux_xsight.rules in the installation package.  Linux users with XSight or Nevo remotes may need to copy this file to the directory /etc/udev/rules.d/ of their Linux installation.  For more about this point, see <a href="http://www.hifi-remote.com/forums/viewtopic.php?p=125301#125301">this JP1 posting</a> and the following discussion.</p></li>
 <li>If you are using Mac OS X, there is no setup script to run.</li>
 </ol>
-<p>That's it, RM and RMIR are now ready for your use!  There are a few different ways to start them:
+<p>That's it, all three programs RMIR, RM and RMPB are now ready for your use!  There are a few different ways to start them:
 <ol>
-<li>With all three OS's, RMIR can be opened without using a shortcut by double-clicking or otherwise running the Java file RemoteMaster.jar.  RM can be opened from RMIR with the menu item File > New > Device Upgrade.</li>
+<li>With all three OS's, RMIR can be opened without using a shortcut by double-clicking or otherwise running the Java file RemoteMaster.jar.  RM can be opened from RMIR with the menu item File > New > Device Upgrade and RMPB with the item File > New > Protocol.</li>
 <li><p>Windows and Linux users can use the shortcuts created when the setup script was run.</p></li>
-<li><p>Windows users can double-click on a .rmdu or .rmir file.</p></li>
+<li><p>Windows users can double-click on a .rmir, .rmdu or .rmpb file.</p></li>
 </ol>
-<p>There is a short tutorial available for RMIR.  See <a href="http://www.hifi-remote.com/wiki/index.php?title=JP1_-_Just_How_Easy_Is_It%3F_-_RM-IR_Version">JP1 - Just How Easy Is It? - RMIR version</a>.  Tutorial information on RM is given in the remainder of this article.</p>
+<p>There is a short tutorial available for RMIR.  See <a href="http://www.hifi-remote.com/wiki/index.php?title=JP1_-_Just_How_Easy_Is_It%3F_-_RM-IR_Version">JP1 - Just How Easy Is It? - RMIR version</a>.  Tutorial information on RM is given in the remainder of this article.  For a tutorial on the use of the newest program, RMPB, see the article "Using RMPB" that has a link on the Help menus of all three programs.</p>
 <h1><a name="main"></a>Using Remote Master</h1>
 <p>Remote Master (RM) was loosely based on Keymap Master, so there are many similarities between the two.  Anyone familiar with Keymap Master will have no trouble using Remote Master.  Similarly RMIR was loosely based on IR.exe and has a similar user interface.</p>
 <p>However, because Remote Master is a true application, while Keymap Master is a spreadsheet that behaves like an application, the Remote Master user interface does have some significant differences from Keymap Master.  Although IR.exe is a true (Windows-only) application, its design prevented it from being extended to the interfaces used by UEI for recent remotes.  So IR.exe supports remotes only up to the JP1.3 interface.  RMIR supports all these but adds JP1.4, JP1.4N, JP2, JP2N, JP2.1, JP3, JP3.1, XSight and Simpleset remotes to its support.</p>
