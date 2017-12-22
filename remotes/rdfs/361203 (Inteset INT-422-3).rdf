@@ -12,6 +12,7 @@ ImageMap=INT-422-2.map
 SetupValidation=Warn
 BlockFormat=No
 LearnedFormat=3
+PunchThru=VC
 
 [SpecialProtocols]
 DSM=Internal:0
