@@ -404,6 +404,8 @@ ChangeListener, ListSelectionListener, ItemListener
       System.err.println( "Add-on folder is not a directory" );
       return;
     }
+    PropertyFile properties = JP1Frame.getProperties();
+    String lastName = properties.getProperty( "ProtFile" );
     List< String > protNames = new ArrayList< String >();
     for ( File f : addOnDir.listFiles() )
     {
@@ -414,7 +416,10 @@ ChangeListener, ListSelectionListener, ItemListener
       }
     }
     Collections.sort( protNames );
-    
+    if ( lastName != null && !protNames.contains( lastName ) )
+    {
+      lastName = null;
+    }
     String title = "Save as Add-on protocol";
     String message = 
         "<html>The protocol will be saved in the AddOns folder in a<br>"
@@ -428,6 +433,10 @@ ChangeListener, ListSelectionListener, ItemListener
     box.add( panel );
     JComboBox< String > fileBox = new JComboBox< String >( protNames.toArray( new String[ 0 ] ) );
     fileBox.setEditable( true );
+    if ( lastName != null )
+    {
+      fileBox.setSelectedItem( lastName );
+    }
     box.add( fileBox );
     int result = JOptionPane.showConfirmDialog( this, box, title, JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE );
     if ( result != JOptionPane.OK_OPTION )
@@ -459,8 +468,11 @@ ChangeListener, ListSelectionListener, ItemListener
     }
     catch ( IOException ex )
     {
-      ex.printStackTrace();
+      title = "File write error";
+      message = "Attempt to write to file " + file.getName() + " failed.";
+      JOptionPane.showMessageDialog( this, message, title, JOptionPane.ERROR_MESSAGE );
     }
+    properties.setProperty( "ProtFile", name );
   }
   
   public void loadPB( File loadFile )

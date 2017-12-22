@@ -116,8 +116,8 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
   private static JP1Frame frame = null;
 
   /** Description of the Field. */
-  public final static String version = "v2.05";
-  public final static int buildVer = 11;
+  public final static String version = "v2.06";
+  public final static int buildVer = 1;
   
   public static class LanguageDescriptor
   {
