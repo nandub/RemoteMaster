@@ -471,6 +471,7 @@ ChangeListener, ListSelectionListener, ItemListener
       title = "File write error";
       message = "Attempt to write to file " + file.getName() + " failed.";
       JOptionPane.showMessageDialog( this, message, title, JOptionPane.ERROR_MESSAGE );
+      return;
     }
     properties.setProperty( "ProtFile", name );
   }

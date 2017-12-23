@@ -25,6 +25,7 @@ fi
 # Construct paths to the new files and to the jar file. 
 desktopRMIR=$here/RMIR.desktop
 desktopRM=$here/RemoteMaster.desktop
+desktopRMPB=$here/RMPB.desktop
 rmprog=$here/RemoteMaster.jar
 desktopdir=$HOME/.local/share/applications
 [ -d $desktopdir ] || mkdir -p $desktopdir
