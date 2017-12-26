@@ -70,7 +70,7 @@ public class RMPBOutputPanel extends JPanel
     String variant = msp.getVariantName().getText().trim();
     if ( !variant.equals( "" ) )
     {
-      sbRMPB.append( "VariantName=" + msp.getVariantName() + ls );
+      sbRMPB.append( "VariantName=" + variant + ls );
     }
     String intro = msp.getDeviceText().getText().replaceFirst("\\s++$", "").replaceAll( "\\r", "" ).replaceAll( "\\n", ls );
     sbRMPB.append( intro + ls );

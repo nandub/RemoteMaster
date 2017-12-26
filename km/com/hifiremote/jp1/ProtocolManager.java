@@ -235,6 +235,8 @@ public class ProtocolManager
     if ( name != null && ( showSlingboxProtocols || !variant.equalsIgnoreCase( "slingbox" ) ) )
     {
       Protocol protocol = ProtocolFactory.createProtocol( name, id, type, props );
+      protocol.iniIntro = sw.toString();
+      pw.close();
       if ( protocol != null )
       {
         addWithConflictCheck( protocol, deleteConflicting );

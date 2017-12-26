@@ -2,6 +2,8 @@ Changes for v2.06
 -- Release build 1
 - Tweaked RMPB and included it as a publicly available new application (Graham)
 - Added "Using RMPB" to the Help menus of each of RMIR, RM and RMPB (Graham)
+-- Release build 2
+- Fix two bugs in RMPB import from protocols.ini (Graham)
 
 Changes for v2.05
 -- Private build 1
