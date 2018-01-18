@@ -892,7 +892,21 @@ public class Remote implements Comparable< Remote >
         list.add( type );
       }
     }
-    return list.toArray( new DeviceType[ 0 ] ); 
+    for ( DeviceType type : types )
+    {
+      if ( type == null )
+      {
+        // This is the case where the type numbers are not consecutive, such as XSight
+        // remotes that use letters instead of numbers (with the type number being the
+        // ASCII value).  In this case return the device types in the order listed in
+        // the RDF.
+        return list.toArray( new DeviceType[ 0 ] ); 
+      }
+    }
+    // Here the type numbers are consecutive from 0.  Return the device types in the
+    // order of their type numbers.  This is needed for key move support to work
+    // correctly.
+    return types; 
   }
 
   public DeviceType[] getAllDeviceTypes()
