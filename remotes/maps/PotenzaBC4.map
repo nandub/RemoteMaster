@@ -1,0 +1,73 @@
+#$MTIMFH
+#$-:Image Map file created by Map THIS!
+#$-:Map THIS! free image map editor by Todd C. Wilson
+#$-:Please do not edit lines starting with "#$"
+#$VERSION:1.30
+#$TITLE:PotenzaBC4
+#$DATE:Mon Jun 12 20:13:56 2017
+#$PATH:C:\Users\Dave\Documents\Remotes\RemoteMaster\Images\
+#$GIF:PotenzaBC4.jpg
+#$FORMAT:ncsa
+#$EOH
+circle TV  36,41 43,48
+circle VCR  84,27 91,34
+circle STB  95,41 102,48
+circle DVD  66,23 73,30
+circle AUD  48,26 55,33
+circle Setup  34,62 40,68
+circle Live  97,61 103,67
+circle Skip_Back  46,79 54,87
+circle List  66,71 74,79
+circle Skip_Fwd  86,79 94,87
+poly Rewind 44,90 29,90 26,92 24,95 24,99 26,102 30,104 44,104 44,90 44,90
+circle Play  66,99 77,110
+poly Fast_Fwd 84,91 99,91 103,94 104,99 102,104 99,105 84,105 84,91 84,91
+circle Stop  45,118 53,126
+circle Pause  66,120 74,128
+circle Record  87,117 95,125
+circle Menu  31,138 40,147
+circle Info  99,136 108,145
+poly Left 40,189 35,182 33,171 35,160 40,153 50,162 47,169 47,175 50,182 40,189 40,189
+poly Right 89,189 94,182 96,171 94,160 89,153 79,162 82,169 82,175 79,182 89,189 89,189
+poly Up 54,155 46,146 53,141 64,140 75,141 83,146 75,155 68,152 59,152 54,155 54,155
+poly Down 55,186 47,195 54,200 65,201 76,200 84,195 76,186 69,189 60,189 55,186 55,186
+circle Ok  66,171 78,183
+circle Guide  30,206 39,215
+circle Exit  100,204 109,213
+poly Page+ 60,221 59,213 62,210 65,209 69,210 72,213 71,221 69,224 62,224 60,221 60,221
+poly Page- 61,230 59,233 58,240 60,243 64,244 69,243 71,240 70,233 68,230 61,230 61,230
+circle Day-  48,228 55,235
+circle Day+  82,228 89,235
+poly Red 30,239 23,251 36,251 31,241 30,239 30,239
+rect Green 48,254 59,265
+circle Yellow  79,260 86,267
+poly Blue 100,238 92,246 100,254 107,246 100,238 100,238
+poly Vol+ 22,287 22,271 24,267 28,265 34,265 37,267 39,271 39,287 22,287 22,287
+poly Vol- 22,288 22,304 24,308 28,310 34,310 37,308 39,304 39,288 22,288 22,288
+circle Mute  31,323 39,331
+circle OnDemand  65,303 82,309
+circle Fav  66,323 79,331
+poly Ch+ 91,288 91,272 93,268 97,266 103,266 106,268 108,272 108,288 91,288 91,288
+poly Ch- 91,289 91,305 93,309 97,311 103,311 106,309 108,305 108,289 91,289 91,289
+circle Last  100,323 108,331
+circle 1  34,343 45,349
+circle 2  66,343 77,349
+circle 3  97,343 108,349
+circle 4  34,362 45,368
+circle 5  66,362 77,368
+circle 6  97,362 108,368
+circle 7  33,380 44,386
+circle 8  66,380 77,386
+circle 9  97,380 108,386
+circle 0  66,399 77,405
+circle *  33,399 44,405
+circle #  98,399 109,405
+circle PIP_On/Off  31,422 41,428
+circle PIP_Swap  54,423 64,429
+circle PIP_Move  76,422 86,428
+circle PIP_Ch+  98,422 108,428
+circle PIP_Ch-  99,438 109,444
+circle Input  32,439 42,445
+circle Macro1  54,439 64,445
+circle Macro2  77,439 87,445
+circle Power  65,43 84,51
