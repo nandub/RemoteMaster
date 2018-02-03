@@ -6,7 +6,7 @@ BaseAddr=$6200
 SegmentTypes=$13 $00 $1A $01 $07 $08 $10
 Shift=0
 DeviceSelection=N
-PunchThru=none
+PunchThru=V
 SoftDev=SetupCodesOnly  
 RDFSync=5 
 ImageMap=ATT-S30-S1B.map
@@ -27,9 +27,9 @@ TV     = TV
 Audio  = CD,Tuner,Home Auto,Misc Audio,Phono,Amp
 
 [DeviceButtons] 
-STB   = $A1 $A3 0 0
-TV    = $A2 0 0 0
-Audio = $A3 0 0 0
+STB   = $A1 0
+TV    = $A2 0
+Audio = $A3 0
 
 [Buttons]
 Power=$01, OnDemand, Interactive,MyMultimedia,

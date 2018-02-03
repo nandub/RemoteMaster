@@ -36,11 +36,11 @@ Audio=$92 0
 DVR=$82 0
  
 [Buttons] 
-Setup=$01,
-Red=$1A, 
-Green=$12,
-Yellow=$0A,
-Blue=$02,  
+Setup=$01, 
+Red=$1A:Shift,TV_dev=$9A:AllMacroBind, 
+Green=$12:Shift,Audio_dev=$92:AllMacroBind, 
+Yellow=$0A:Shift,STB_dev=$8A:AllMacroBind, 
+Blue=$02:Shift,DVR_dev=$82:AllMacroBind,  
 Exit=$03,
 display:Info=$04, 
 "Channel up":Ch+=$05,
