@@ -9,6 +9,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.HashMap;
 
+import javax.swing.JOptionPane;
+
 /**
  * @author Greg
  */
@@ -62,7 +64,17 @@ public class LibraryLoader
       if ( libraryName.equals( "hidapi" ) && !libraryFile.exists() )
       {
         System.err.println( "LibraryLoader: Attempting to copy hidapi library to library folder" );
-        copyHIDLibrary( libraryFile );
+        boolean success = copyHIDLibrary( libraryFile );
+        System.err.println( "LibraryLoader: Attempt to copy hidapi library " + ( success ? "succeeded" : "failed" ) );
+        if ( !success )
+        {
+          String title = "Setup error";
+          String message = "RMIR was unable to set up the library required for USB HID communication.\n"
+            + "This may mean that you have installed RMIR in a read-only folder.  If so,\n"
+            + "some features of RMIR will not work correctly.  You are strongly advised\n"
+            + "to reinstall it in a folder that is not read-only.";
+          JOptionPane.showMessageDialog( null, message, title, JOptionPane.ERROR_MESSAGE );
+        }
       }
       System.err.println( "LibraryLoader: Attempting to load '" + libraryName + "' from '" + libraryFile.getAbsolutePath() + "'..." );
       try
@@ -93,13 +105,13 @@ public class LibraryLoader
     }
   }
   
-  private static void copyHIDLibrary( File libFile )
+  private static boolean copyHIDLibrary( File libFile )
   {
     // Based on com.codeminders.hidapi.ClassPathLibraryLoader, modified to
     // load required library to RMIR library folder
     if ( hidIndex < 0 )
     {
-      return;
+      return false;
     }
     String path = HID_LIB_NAMES[ hidIndex ];
     try {
@@ -124,9 +136,9 @@ public class LibraryLoader
         }
       }                 
     } 
-    catch ( Exception e ) {} // ignore 
-    catch ( UnsatisfiedLinkError e ) {} // ignore
-    return;
+    catch ( Exception e ) { return false; }
+    catch ( UnsatisfiedLinkError e ) { return false; }
+    return true;
   }
 
   public static String getLibraryFolder()

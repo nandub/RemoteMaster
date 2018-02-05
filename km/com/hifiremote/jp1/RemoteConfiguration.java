@@ -2250,7 +2250,7 @@ public class RemoteConfiguration
         DeviceUpgrade upgrade = new DeviceUpgrade();
         try
         {
-          if ( dev != 0 )
+          if ( remote.hasDeviceDependentUpgrades() > 0 && dev != 0 )
           {
             DeviceButton devBtn = remote.getDeviceButton( dev );
             if ( devBtn != null )
@@ -7325,7 +7325,7 @@ public class RemoteConfiguration
           dev.addProtocolMemoryUsage( dev.getCode().length() + 4 );
         }
       }
-      if ( dev.getButtonRestriction() != DeviceButton.noButton )
+      if ( remote.hasDeviceDependentUpgrades() > 0 && dev.getButtonRestriction() != DeviceButton.noButton )
       {
         devDependent.add( dev );
 //        if ( hasSegments() && dev.getSegment() != null )
@@ -7384,8 +7384,24 @@ public class RemoteConfiguration
               code = null;
             }
           }
-          int size = hex.length() + ( ( code != null ) ? code.length() : 0 );
-          size += ( remote.doForceEvenStarts() && ( size & 1 ) == 0 ) ? 10 : 9;          
+          int codeOffset = 0;
+//        Simpleset.com appears to require protocol code to start on a boundary with same modulus as a segment.
+//        The commented-out code below implements this, but practical testing seems to show that it is
+//        not necessary.  The code is left here in case situations are found in future in which this is
+//        required.
+
+//          if ( code != null )
+//          {
+//            codeOffset = hex.length() + 5;
+//            codeOffset += ( remote.doForceEvenStarts() && ( codeOffset & 1 ) == 0 ) ? 0 : 1;
+//            int lenMod = codeOffset & ( remote.getForceModulus() - 1 );
+//            codeOffset += remote.doForceEvenStarts() && lenMod > 0 ? remote.getForceModulus() - lenMod : 0;
+//            codeOffset -= hex.length() + 5;
+//          }
+          
+          // Now round entire segment size to required modulus
+          int size = hex.length() + ( ( code != null ) ? codeOffset + code.length() : 0 );
+          size += ( remote.doForceEvenStarts() && ( size & 1 ) == 0 ) ? 10 : 9;
           int lenMod = size & ( remote.getForceModulus() - 1 );
           size += remote.doForceEvenStarts() && lenMod > 0 ? remote.getForceModulus() - lenMod : 0;           
           Hex segData = new Hex( size );
@@ -7398,7 +7414,7 @@ public class RemoteConfiguration
           }
           if ( code != null )
           {
-            segData.put( hex.length() + 5, 2 );
+            segData.put( hex.length() + 5 + codeOffset, 2 );
           }
           segData.set( ( short )dev.getDeviceType().getNumber(), 4 );
           segData.put( dev.getSetupCode(), 5 );
@@ -7407,7 +7423,7 @@ public class RemoteConfiguration
           segData.put( hex, 9 );
           if ( code != null )
           {
-            segData.put( code, hex.length() + 9 );
+            segData.put( code, hex.length() + 9 + codeOffset );
           }
           if ( upgType == 0x0E )
           {
@@ -7421,7 +7437,7 @@ public class RemoteConfiguration
           }
           segments.get( upgType ).add( new Segment( upgType, flags, segData, dev ) );
 
-          if ( dev.getButtonRestriction() != DeviceButton.noButton && code != null )
+          if ( remote.hasDeviceDependentUpgrades() > 0 && dev.getButtonRestriction() != DeviceButton.noButton && code != null )
           {
             dev.addProtocolMemoryUsage( code.length() );
           }

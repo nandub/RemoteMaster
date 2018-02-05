@@ -339,7 +339,10 @@ public class DeviceUpgradeTableModel extends JP1TableModel< DeviceUpgrade > impl
             }
           }
         }
-        if ( ( device.getButtonRestriction() != DeviceButton.noButton ) && device.needsProtocolCode() )
+        // Now do the same for the device-dependent section where it exists.  These are
+        // distinguished by value of remote.hasDeviceDependentUpgrades().
+        if ( ( device.getButtonRestriction() != DeviceButton.noButton ) && device.needsProtocolCode()
+            && remote.hasDeviceDependentUpgrades() == 2 )
         {
           short[] data = remoteConfig.getData();
           int offset = device.getDependentOffset();
