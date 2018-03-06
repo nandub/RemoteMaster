@@ -3,10 +3,12 @@ package com.hifiremote.jp1;
 import java.util.*;
 
 import com.hifiremote.jp1.assembler.HCS08data;
+import com.hifiremote.jp1.assembler.JP2CommonData;
 import com.hifiremote.jp1.assembler.MAXQ610data;
 import com.hifiremote.jp1.assembler.P6805data;
 import com.hifiremote.jp1.assembler.P740data;
 import com.hifiremote.jp1.assembler.S3C80data;
+import com.hifiremote.jp1.assembler.TI2541data;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -138,11 +140,16 @@ public class ProcessorManager
     p.setStartOffset( 0 );
     add( p );
     
+    String jp2Array[][][] = { JP2CommonData.Instructions };
+    
     p = new MAXQProcessor( "MAXQ610" );
-    p.setAddressModes( MAXQ610data.AddressModes );
-    String MAXQArray[][][] = { MAXQ610data.Instructions };
-    p.setInstructions( MAXQArray );
-    p.setAbsLabels( MAXQ610data.absLabels );
+    p.setAddressModes( JP2CommonData.AddressModes );
+    p.setInstructions( jp2Array );
+    p.setAbsLabels( JP2CommonData.absLabels );
+    p.setBaseZeroLabels( MAXQ610data.zeroLabels );
+    p.setOscillatorData( MAXQ610data.oscData );
+    p.setDcBufStart( 0xD0 );
+    p.setNativeProcessorName( "MAXQNative" );
     add( p );
     
     p = new MAXQProcessor( "MAXQ612" );
@@ -153,7 +160,19 @@ public class ProcessorManager
     p.setAddressLength( 4 );
     add( p );
     
-    p = new LittleEndianProcessor( "TI2541" );
+    p = new MAXQProcessor( "MAXQNative" );
+    p.setAddressModes( MAXQ610data.AddressModes );
+    p.setRelativeToOpStart( true );
+    add( p );
+    
+    p = new TI2541Processor( "TI2541" );
+    p.setAddressModes( JP2CommonData.AddressModes );
+    p.setInstructions( jp2Array );
+    p.setAbsLabels( JP2CommonData.absLabels );
+    p.setBaseZeroLabels( TI2541data.zeroLabels );
+    p.setOscillatorData( TI2541data.oscData );
+    p.setDcBufStart( 0x02 );
+    p.setProtocolHeaderSize( 5 );
     add( p );
   }
 
@@ -168,6 +187,10 @@ public class ProcessorManager
    */
   public static Processor getProcessor( String name, String version )
   {
+    if ( name == null )
+    {
+      return null;
+    }
     String lookup = name;
     if ( version != null )
       lookup = name + '-' + version;
@@ -183,6 +206,10 @@ public class ProcessorManager
    */
   public static Processor getProcessor( String text )
   {
+    if ( text == null )
+    {
+      return null;
+    }
     String name = "";
     if ( text.startsWith( "S3C8" ))
       name = "S3C80";

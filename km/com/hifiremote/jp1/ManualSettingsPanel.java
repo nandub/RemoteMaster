@@ -109,7 +109,7 @@ ChangeListener, ListSelectionListener, ItemListener
     JPanel midPanel = new JPanel( new BorderLayout() );
     tablePanel.add( midPanel, BorderLayout.PAGE_END );
     
-    JPanel buttonPanel = new JPanel();
+    buttonPanel = new JPanel();
     buttonPanel.setLayout( new BoxLayout( buttonPanel, BoxLayout.LINE_AXIS ));
     midPanel.add( buttonPanel, BorderLayout.CENTER );
 
@@ -160,8 +160,9 @@ ChangeListener, ListSelectionListener, ItemListener
 
     useFunctionConstants.addItemListener( this );
     useRegisterConstants.addItemListener( this );
-    setMode( mode.DISASM );
+    setMode( Mode.DISASM );
 
+    analyzerPanel = new JP2AnalyzerPanel();
     outputPanel = new RMPBOutputPanel( this );
 
     // To remove constraints on position of divider in the split pane, set minimum size to 0.
@@ -927,7 +928,14 @@ ChangeListener, ListSelectionListener, ItemListener
     Hex hex = protocol.getCode( proc );
     if ( ( hex == null || hex.length() == 0 ) && displayProtocol != null )
       hex = displayProtocol.getCode( proc );
+    if ( proc.getDataStyle() < 0 )
+    {
+      buttonPanel.setVisible( false );
+      analyzerPanel.set( proc, hex );
+      return;
+    }
     
+    buttonPanel.setVisible( true );
     Hex oldHex = null;
     if ( processor != null )
     {
@@ -972,7 +980,12 @@ ChangeListener, ListSelectionListener, ItemListener
     assemblerPanel.getEditorPanel().setAssemblerButtons( false );
     int tabCount = tabbedPane.getTabCount();
     String procName = proc.toString();
-    setProcessor( proc );  // TESTING - DIDN'T SEEM TO SET "processor"
+        
+//    setProcessor( proc );  // TESTING - DIDN'T SEEM TO SET "processor"
+//  Re above line: the field "processor" IS set, correctly, by assemblerModel.disassemble(...)
+//  above, taking proper account of the difference between S3C80 and S3F80.  This "correction"
+//  sets only S3C80 and so needs to be removed.
+    
     if ( !procName.equals( "S3C80" ) && !procName.equals( "HCS08" ) )// && tabCount > 2 )
     {
       tabbedPane.remove( pfMainPanel );
@@ -1309,6 +1322,11 @@ ChangeListener, ListSelectionListener, ItemListener
     return devicePanel;
   }
 
+  public JP2AnalyzerPanel getAnalyzerPanel()
+  {
+    return analyzerPanel;
+  }
+
   public RMPBOutputPanel getOutputPanel()
   {
     return outputPanel;
@@ -1358,6 +1376,8 @@ ChangeListener, ListSelectionListener, ItemListener
   private ManualCodePanel tablePanel = null;
   private ManualDevicePanel devicePanel = null;
   private RMPBOutputPanel outputPanel = null;
+  private JP2AnalyzerPanel analyzerPanel = null;
+  private JPanel buttonPanel = null;
   private JTextField name = null;
   private JTextField variantName = null;
   public JFormattedTextField pid = null;

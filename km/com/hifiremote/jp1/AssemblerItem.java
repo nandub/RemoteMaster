@@ -126,7 +126,12 @@ public class AssemblerItem
           int argIndex = mode.nibbleArgs + i;
           int n = ( ( Integer )obj[ argIndex ] );
           int offset = p.isRelativeToOpStart() ? 0 : opCode.getLength() + mode.nibbleBytes + i + 1;
-          n += address + offset - ( n > 0x7F ? 0x100 : 0 );
+          n -= ( n > 0x7F ? 0x100 : 0 );
+          if ( p.getName().equals( "MAXQNative" ) )
+          {
+            n += n + 2;
+          }
+          n += address + offset;
           obj[ argIndex ] = n;
           String label = labels.get( n );
           if ( label != null )

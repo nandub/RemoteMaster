@@ -128,6 +128,11 @@ public class ManualCodePanel extends JPanel
 //          CodeTableModel model = ( CodeTableModel )tablePanel.getCodeTable().getModel();
 //          model.fireTableRowsUpdated( row, row );
           fireTableRowsUpdated( row, row );
+          if ( proc.getDataStyle() < 0 )
+          {
+            break;
+          }
+          
           ProtocolDataPanel pdp = owner.getProtDataPanel();
           owner.getDevicePanel().enableButtons();
           if ( owner.getAssemblerPanel().isAssembled() )
@@ -258,15 +263,21 @@ public class ManualCodePanel extends JPanel
     }
     procs = uProcs;
     List< Processor > asmProcs = new ArrayList< Processor >(  );
+    List< Processor > boxProcs = new ArrayList< Processor >(  );
     for ( Processor proc : procs )
     {
       if ( proc.getDataStyle() >= 0 )
       {
         // dataStyle == -1 for processors with MAXQ-format protocols
         asmProcs.add( proc );
-        procBox.setModel( new DefaultComboBoxModel< Processor >( asmProcs.toArray( new Processor[ 0 ] ) ) );
+        boxProcs.add( proc ); 
+      }
+      else
+      {
+        boxProcs.add( proc );
       }
     }
+    procBox.setModel( new DefaultComboBoxModel< Processor >( boxProcs.toArray( new Processor[ 0 ] ) ) );
   }
   
   public void setProtocol( ManualProtocol protocol )

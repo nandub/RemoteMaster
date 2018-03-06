@@ -198,21 +198,20 @@ public class AssemblerPanel extends JPanel implements ListSelectionListener, Ite
           for ( int row : rows )
           {
             Processor proc = procs[ row ];
-            if ( proc.getDataStyle() < 0 )
-            {
-              continue;
-            }
             if ( firstRow < 0 ) firstRow = row;
-            Hex hex = ( Hex )codePanel.getCodeModel().getValueAt( row, 1 );
+            Hex hex = ( Hex )codePanel.getCodeModel().getValueAt( row, 1 );   
             if ( hex != null && hex.length() > 0 )
             {
               ManualCodePanel.getProcBox().setSelectedItem( proc );
-              settingsPanel.setMode( Mode.ASM );
-              DisasmState state = null;
-              state = new DisasmState();
-              state.useFunctionConstants = settingsPanel.useFunctionConstants.isSelected();
-              state.useRegisterConstants = settingsPanel.useRegisterConstants.isSelected();
-              assemblerModel.disassemble( hex, proc, state );
+              if ( proc.getDataStyle() >= 0 )
+              {
+                settingsPanel.setMode( Mode.ASM );
+                DisasmState state = null;
+                state = new DisasmState();
+                state.useFunctionConstants = settingsPanel.useFunctionConstants.isSelected();
+                state.useRegisterConstants = settingsPanel.useRegisterConstants.isSelected();
+                assemblerModel.disassemble( hex, proc, state );
+              }
               protocol.setCode( hex, proc );
             }
           }
@@ -435,6 +434,10 @@ public class AssemblerPanel extends JPanel implements ListSelectionListener, Ite
     
     public void setAssemblerButtons( boolean retitle )
     {
+      if ( processor == null || processor.getDataStyle() < 0 )
+      {
+        return;
+      }
       boolean valid = codeTable != null;
       boolean asm = valid && settingsPanel.getMode() == Mode.ASM;
       boolean sel = valid;

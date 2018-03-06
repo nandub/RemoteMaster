@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.text.DateFormat;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import javax.swing.AbstractAction;
@@ -50,7 +51,9 @@ import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import com.hifiremote.jp1.AssemblerTableModel.DisasmState;
 import com.hifiremote.jp1.ProtocolDataPanel.Mode;
+import com.hifiremote.jp1.JP2Analyzer;
 
 public class RMProtocolBuilder extends JP1Frame implements ActionListener,
 ChangeListener
@@ -142,7 +145,6 @@ ChangeListener
     procBox = manualSettingsPanel.getProcBox();
        
     protNames.addActionListener( this );
-    protList.addActionListener( this );
     protList.setRenderer( protListRenderer );
     
     String[] names = protocolManager.getNames().toArray( new String[ 0 ] );
@@ -345,11 +347,11 @@ ChangeListener
     menuBar.add( menu );
     
     importAction = new PBAction( "Import...", "IMPORT", RemoteMaster.createIcon( "Import24" ),
-        "Import from protocols.ini", KeyEvent.VK_D );
+        "Import from protocols.ini", KeyEvent.VK_I );
     menu.add( importAction ).setIcon( null );
 
     exportAction = new PBAction( "Export...", "EXPORT", RemoteMaster.createIcon( "Export24" ),
-        "Export as protocols.ini add-on", KeyEvent.VK_U );
+        "Export as protocols.ini add-on", KeyEvent.VK_E );
 //    exportAction.setEnabled( false );
     menu.add( exportAction ).setIcon( null );
     menu.addSeparator();
@@ -361,6 +363,26 @@ ChangeListener
     pasteFromClipboardAction = new PBAction( "Paste from clipboard...", "PASTEFROMCLIPBOARD", RemoteMaster.createIcon( "Paste24" ),
         "Paste from clipboard in PB-style format", KeyEvent.VK_P );
     menu.add( pasteFromClipboardAction ).setIcon( null );
+    menu.addSeparator();
+    
+    JMenu analysesSubMenu = new JMenu( "Analyze to file..." );
+    analysesSubMenu.setMnemonic( KeyEvent.VK_A );
+    analysesSubMenu.setToolTipText( 
+        "<html>Output to text file an analysis of all executors in protocols.ini<br>"
+        + "for a chosen JP2/JP3 processor</html>" );
+    menu.add( analysesSubMenu );
+    
+    allMAXQItem = new JMenuItem( "All MAXQ protocols" );
+    allMAXQItem.setMnemonic( KeyEvent.VK_M );
+    allMAXQItem.setToolTipText( "Analyze to MAXQAnalyses.txt all MAXQ executors in protocols.ini" );
+    allMAXQItem.addActionListener( this );
+    analysesSubMenu.add( allMAXQItem );
+    
+    allTI2541Item = new JMenuItem( "All TI2541 protocols" );
+    allTI2541Item.setMnemonic( KeyEvent.VK_T );
+    allTI2541Item.setToolTipText( "Analyze to TI2541Analyses.txt all TI2541 executors in protocols.ini" );
+    allTI2541Item.addActionListener( this );
+    analysesSubMenu.add( allTI2541Item );
     
     menu = new JMenu( "Options" );
     menu.setMnemonic( KeyEvent.VK_O );
@@ -582,6 +604,24 @@ ChangeListener
         scroll.setPreferredSize( d );
 
         JOptionPane.showMessageDialog( this, scroll, "About RemoteMaster", JOptionPane.INFORMATION_MESSAGE );
+      }
+      else if ( source == allMAXQItem )
+      {
+        Processor p = ProcessorManager.getProcessor( "MAXQ610" );
+        JP2Analyzer jp2 = new JP2Analyzer();
+        jp2.analyze( p, "MAXQanalyses.txt" );
+        String message = "<html>Analysis of all MAXQ protocols has been written to the file \"MAXQanalyses.txt\"<br>"
+            + "in the RMIR installation folder.</html>";
+        JOptionPane.showMessageDialog( this, message, "Analysis complete", JOptionPane.PLAIN_MESSAGE );
+      }
+      else if ( source == allTI2541Item )
+      {
+        Processor p = ProcessorManager.getProcessor( "TI2541" );
+        JP2Analyzer jp2 = new JP2Analyzer();
+        jp2.analyze( p, "TI2541analyses.txt" );
+        String message = "<html>Analysis of all TI2541 protocols has been written to the file \"TI2541analyses.txt\"<br>"
+            + "in the RMIR installation folder.</html>";
+        JOptionPane.showMessageDialog( this, message, "Analysis complete", JOptionPane.PLAIN_MESSAGE );
       }
       else
         // must be a recent file
@@ -818,6 +858,8 @@ ChangeListener
   private JMenuItem wikiItem = null;
   private JMenuItem aboutItem = null;
   private JMenuItem updateItem = null;
+  private JMenuItem allMAXQItem = null;
+  private JMenuItem allTI2541Item = null;
   
   private JToolBar toolBar = null;
   private PBAction newAction = null;
@@ -850,14 +892,18 @@ ChangeListener
     int indexDisasm = tabbedPane.indexOfTab( "Disassembler" );
     int indexOutput = tabbedPane.indexOfTab( "Output Data" );
     int index = tabbedPane.getSelectedIndex();
-    if ( index == indexAsm )
+    if ( index < 0 )
+    {
+      return;
+    }
+    if ( index == indexAsm && indexDisasm >= 0 )
     {
       tabbedPane.setComponentAt( indexDisasm, null );
       tabbedPane.setComponentAt( indexAsm, manualSettingsPanel );
       manualSettingsPanel.setMode( Mode.ASM );
       manualSettingsPanel.getAssemblerPanel().optionsPanel.setVisible( false );
     }
-    else if ( index == indexDisasm )
+    else if ( index == indexDisasm && indexAsm >= 0 )
     {
       tabbedPane.setComponentAt( indexAsm, null );
       tabbedPane.setComponentAt( indexDisasm, manualSettingsPanel );

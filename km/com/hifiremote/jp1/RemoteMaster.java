@@ -84,7 +84,7 @@ import javax.swing.event.HyperlinkListener;
 
 import com.hifiremote.LibraryLoader;
 import com.hifiremote.jp1.FixedData.Location;
-import com.hifiremote.jp1.assembler.MAXQ610data;
+import com.hifiremote.jp1.JP2Analyzer;
 import com.hifiremote.jp1.extinstall.ExtInstall;
 import com.hifiremote.jp1.extinstall.RMExtInstall;
 import com.hifiremote.jp1.io.CommHID;
@@ -4265,7 +4265,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
       }
       else if ( source == analyzeMAXQprotocols )
       {
-        MAXQ610data maxq = new MAXQ610data();
+        JP2Analyzer maxq = new JP2Analyzer();
         maxq.analyze();
       }
       else if ( source == rdfPathItem )

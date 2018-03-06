@@ -9,6 +9,8 @@ Changes for v2.06
 - Display error message if unable to copy the hidapi library (Graham)
 - Fix bug causing device upgrades in segmented remotes to be sometimes mis-identified as device-dependent (Graham)
 - Improve handling of highlighting by adding further checking (Graham)
+- Fix bug causing wrong choice between S3C80 and S3F80 data to appear on Functions tab of Protocol Editor (Graham)
+- Add Analyzer tab for MAXQ and TI2541 protocols in RMPB and RMIR Protocol Editor (Graham)
 
 Changes for v2.05
 -- Private build 1

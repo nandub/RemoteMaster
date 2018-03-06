@@ -185,11 +185,18 @@ public class AssemblerOpCode implements Cloneable
     public String outline = "";   // Outline of print format
     public Integer[] argMap = new Integer[ 4 ];
     public int[] argLimits = new int[ 4 ];
+    private String[] parms = null;
     
     public AddressMode(){};
 
+    public AddressMode( AddressMode mode )
+    {
+      this( mode.parms );
+    }
+    
     public AddressMode( String[] parms )
     {
+      this.parms = parms;
       List< Integer > keyPositions = new ArrayList< Integer >(); 
       name = parms[ 0 ];
       String s = parms[ 1 ];

@@ -615,6 +615,12 @@ public abstract class Processor
   {
     // This code handles 6805, 740 and HCS08 processors.  S3C80Processor class has an override.
     if ( hex == null || hex.length() == 0 ) return null;
+    if ( hex.getData()[ 0 ] >= instructions.get( 0 ).length )
+    {
+      String opName = String.format( "***Op%02X",hex.getData()[ 0 ] );
+      String[] parms = new String[]{ opName, "Nil" };
+      return new AssemblerOpCode( this, parms );
+    }
     AssemblerOpCode opCode = instructions.get( 0 )[ hex.getData()[ 0 ] ].clone();
     if ( opCode.getIndex() > 0 && hex.length() > 1 )
     {
@@ -731,6 +737,11 @@ public abstract class Processor
     carrierOnOffset = oscData[ 2 ];
   }
   
+  public int[] getCarrierData( Hex hex )
+  {
+    return null;
+  }
+  
   public int getDataStyle()
   {
     return dataStyle;
@@ -782,6 +793,55 @@ public abstract class Processor
     return opMap;
   }
 
+  public String[][] getBaseZeroLabels()
+  {
+    return baseZeroLabels;
+  }
+
+  public void setBaseZeroLabels( String[][] baseZeroLabels )
+  {
+    this.baseZeroLabels = baseZeroLabels;
+  }
+
+  public int getDcBufStart()
+  {
+    return dcBufStart;
+  }
+
+  public void setDcBufStart( int dcBufStart )
+  {
+    this.dcBufStart = dcBufStart;
+  }
+
+  public int getProtocolHeaderSize()
+  {
+    return protocolHeaderSize;
+  }
+
+  public void setProtocolHeaderSize( int protocolHeaderSize )
+  {
+    this.protocolHeaderSize = protocolHeaderSize;
+  }
+
+  public String getNativeProcessorName()
+  {
+    return nativeProcessorName;
+  }
+
+  public void setNativeProcessorName( String nativeProcessorName )
+  {
+    this.nativeProcessorName = nativeProcessorName;
+  }
+
+  public List< Integer > getAddressList()
+  {
+    return addressList;
+  }
+
+  public void setAddressList( List< Integer > addressList )
+  {
+    this.addressList = addressList;
+  }
 
   /** The name. */
   private String name = null;
@@ -841,8 +901,12 @@ public abstract class Processor
   private LinkedHashMap< String, String > lblComments = new LinkedHashMap< String, String >();
   
   private LinkedHashMap< Integer, String[] > zeroLabels = new LinkedHashMap< Integer, String[] >();
-  
   private LinkedHashMap< String, Integer > zeroAddresses = new LinkedHashMap< String, Integer >();
+  private LinkedHashMap< String, Integer > zeroSizes = new LinkedHashMap< String, Integer >();  
+  private String[][] baseZeroLabels = null;
   
-  private LinkedHashMap< String, Integer > zeroSizes = new LinkedHashMap< String, Integer >();
+  private int dcBufStart = 0;
+  private int protocolHeaderSize = 3;
+  private String nativeProcessorName = null;
+  protected List< Integer > addressList = null;
 }
