@@ -17,10 +17,12 @@ public class JP2CommonData
     { "Rel2", "B3Z2R1", "$%02X, $%02X" },
     { "Fun1", "B3A1", "$%02X" },
     { "Fun1B", "B3A1", "$%02X, #$%3$02X" },
+    { "Fun1Z", "B3A1Z4", "$%02X, #$%3$02X" },
     { "Fun1W", "B3A1M1", "$%02X, #$%02X%02X" },
     { "Immd", "B3", "#$%02X, #$%02X, #$%02X" },
     { "BrT", "B3R1A2", "T, $%02X, $%02X" },
     { "BrF", "B3R1A2", "F, $%02X, $%02X" },
+    { "Imm1", "B3", "#$%3$02X" },
     { "Nil", "B3", "" }
     
   };
@@ -81,8 +83,8 @@ public class JP2CommonData
     { "TIMING", "Immd" },        { "END", "Nil" },
     
     { "***Op60", "Nil" },        { "***Op61", "Nil" },
-    { "***Op62", "Nil" },        { "***Op63", "Nil" },
-    { "***Op64", "Nil" },        { "***Op65", "Nil" },
+    { "***Op62", "Nil" },        { "***Op63", "Imm1" },
+    { "***Op64", "Imm3" },       { "***Op65", "Nil" },
     { "***Op65", "Nil" },        { "***Op67", "Nil" },
     { "***Op68", "Nil" },        { "***Op69", "Nil" },
     { "***Op6A", "Nil" },        { "***Op6B", "Nil" },
@@ -140,6 +142,7 @@ public class JP2CommonData
     { "TimingItem", "70" },     // Sends timing item with index op3
     { "TimingItemAddr", "71" }, // $AB:$AA <- word address of timing item with index op3
     { "Branch", "72" },         // Same as BRA #op3
+    { "XMPchecksum", "73", "Set XMP checksum in 4 bytes at specified start" },
     { "SetIRCA", "80" }         // IRCA <- op2:op3
   };
 

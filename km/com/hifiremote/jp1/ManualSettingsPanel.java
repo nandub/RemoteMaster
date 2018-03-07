@@ -163,6 +163,8 @@ ChangeListener, ListSelectionListener, ItemListener
     setMode( Mode.DISASM );
 
     analyzerPanel = new JP2AnalyzerPanel();
+    pfDescriptionPanel = new JP2AnalyzerPanel();
+    pfDescriptionPanel.setDescription();
     outputPanel = new RMPBOutputPanel( this );
 
     // To remove constraints on position of divider in the split pane, set minimum size to 0.
@@ -1327,6 +1329,11 @@ ChangeListener, ListSelectionListener, ItemListener
     return analyzerPanel;
   }
 
+  public JP2AnalyzerPanel getPfDescriptionPanel()
+  {
+    return pfDescriptionPanel;
+  }
+
   public RMPBOutputPanel getOutputPanel()
   {
     return outputPanel;
@@ -1377,6 +1384,7 @@ ChangeListener, ListSelectionListener, ItemListener
   private ManualDevicePanel devicePanel = null;
   private RMPBOutputPanel outputPanel = null;
   private JP2AnalyzerPanel analyzerPanel = null;
+  private JP2AnalyzerPanel pfDescriptionPanel = null;
   private JPanel buttonPanel = null;
   private JTextField name = null;
   private JTextField variantName = null;

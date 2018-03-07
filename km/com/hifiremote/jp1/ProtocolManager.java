@@ -247,15 +247,23 @@ public class ProtocolManager
   private void addWithConflictCheck( Protocol protocol, boolean deleteConflicting )
   {
     String name = protocol.getName();
+    String vn = protocol.getVariantName();
     if ( deleteConflicting && findByName( name ) != null )
     {
-      for ( Protocol p : findByName( name ) )
+      for ( Iterator< Protocol > ip = findByName( name ).iterator(); ip.hasNext(); )
       {
+        Protocol p = ip.next();
+        String pvn = p.getVariantName();
+        if ( vn == null && pvn != null 
+            || vn != null && !vn.equalsIgnoreCase( pvn ) )
+        {
+          continue;
+        }
         for ( String codeName : protocol.getCode().keySet() )
         {
           if ( p.getCode().get( codeName ) != null )
           {
-            remove( p );
+            ip.remove();;
             break;
           }
         }

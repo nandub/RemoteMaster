@@ -232,6 +232,7 @@ ChangeListener
           int result = JOptionPane.showConfirmDialog( RMProtocolBuilder.this, box, title, JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE );
           if ( result == JOptionPane.OK_OPTION )
           {
+            manualSettingsPanel.setLoadInProgress( true );
             Protocol protocol = ( Protocol )protList.getSelectedItem();
             ManualProtocol mp = protocol.convertToManual( null, null, null );
 //            for ( String key : protocol.getCode().keySet() )
@@ -257,6 +258,7 @@ ChangeListener
             deviceText.setText( manualSettingsPanel.getProtocolText( true, false ) );
             int ndx = tabbedPane.indexOfTab( "Hex Code" );
             tabbedPane.setSelectedIndex( ndx );
+            manualSettingsPanel.setLoadInProgress( false );
           }
         }
         else if ( command.equals( "EXPORT" ) )

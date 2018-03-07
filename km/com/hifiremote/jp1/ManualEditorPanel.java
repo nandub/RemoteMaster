@@ -216,6 +216,7 @@ public class ManualEditorPanel extends JPanel implements ActionListener, ChangeL
     index = checkTabbedPane( "Hex Code", manualSettingsPanel.getTablePanel(), true, index );
     index = checkTabbedPane( "Disassembler", null, !jp2, index );
     index = checkTabbedPane( "Analyzer", manualSettingsPanel.getAnalyzerPanel(), jp2, index );
+    index = checkTabbedPane( "PF Description", manualSettingsPanel.getPfDescriptionPanel(), jp2, index );
     index = checkTabbedPane( "Device Data", outerPane, true, index );
     tabbedPane.setSelectedIndex( 0 );
   }

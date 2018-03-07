@@ -29,6 +29,11 @@ public class TI2541Processor extends LittleEndianProcessor
         {
           mode = modes.get( "Fun1" );
         }
+        else if ( op1 == 0x73 )
+        {
+          // 0x73 not available in MAXQ executors
+          mode = modes.get( "Fun1Z" );
+        }
         else if ( op1 < 0x80 )
         {
           mode = modes.get( "Fun1B" );
