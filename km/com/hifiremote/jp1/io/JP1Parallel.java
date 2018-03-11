@@ -92,6 +92,15 @@ public class JP1Parallel extends IO
    */
   public native int writeRemote( int address, byte[] buffer, int length );
 
+  /* 
+   * This function is called only for Windows OS and when the
+   * JP1Parallel version is 0.11 or later.  This is when access to
+   * the parallel port was changed to use InpOut instead of PortTalk,
+   * to support 64-bit Windows with either 32-bit or 64-bit Java.
+   * See http://www.highrez.co.uk/Downloads/InpOut32/default.htm
+   */
+  public native boolean testIsInpOutDriverOpen();
+  
   /**
    * Instantiates a new j p1 parallel.
    * 

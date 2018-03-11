@@ -13,6 +13,8 @@ Changes for v2.06
 - Add Analyzer and PF Description tabs for MAXQ and TI2541 protocols in RMPB and RMIR Protocol Editor (Graham)
 - Fix bug in adding protocols in .prot files to ProtocolManager (Graham)
 - Revised protocols.ini to better handle RC6-6-32 and RC6-M-32 versus MCE. Added PIDs 021F and 0230 (Dave Reed)
+-- Private build 4
+- Replace JP1Parallel v0.02 for Windows by v0.11, which supports both 32-bit and 64-bit OS (Graham)
 
 Changes for v2.05
 -- Private build 1

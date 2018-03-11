@@ -117,7 +117,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
 
   /** Description of the Field. */
   public final static String version = "v2.06";
-  public final static int buildVer = 3;
+  public final static int buildVer = 4;
   
   public static class LanguageDescriptor
   {
@@ -2171,8 +2171,17 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
       JP1Parallel jp1Parallel = new JP1Parallel( userDir );
       interfaces.add( jp1Parallel );
       System.err.println( "    JP1Parallel version " + jp1Parallel.getInterfaceVersion() );
-//      System.err.println( "    EEPROM size returns " + jp1Parallel.getRemoteEepromSize() );
-//      System.err.println( "    EEPROM address returns " + jp1Parallel.getRemoteEepromAddress() );
+      if ( System.getProperty( "os.name" ).startsWith( "Windows" ) )
+      {        
+        double parallelVer = Double.parseDouble( jp1Parallel.getInterfaceVersion() );
+        if ( parallelVer > 0.10 )
+        {     
+          boolean isInpOutDriverOpen= jp1Parallel.testIsInpOutDriverOpen();
+          System.err.println( "    JP1Parallel InpOutDriver is " + ( isInpOutDriverOpen ? "open" : "not open" ) );
+//          System.err.println( "    EEPROM size returns " + jp1Parallel.getRemoteEepromSize() );
+//          System.err.println( "    EEPROM address returns " + jp1Parallel.getRemoteEepromAddress() );
+        }
+      }
     }
     catch ( LinkageError le )
     {
