@@ -15,6 +15,9 @@ Changes for v2.06
 - Revised protocols.ini to better handle RC6-6-32 and RC6-M-32 versus MCE. Added PIDs 021F and 0230 (Dave Reed)
 -- Private build 4
 - Replace JP1Parallel v0.02 for Windows by v0.11, which supports both 32-bit and 64-bit OS (Graham)
+-- Release build 5
+- In device upgrades, ignore included protocols with length < 4.  Such spurious protocols have been seen created by errors in RDFs (Graham)
+- Replace JP1Parallel v0.11 for Windows by v0.12 to provide better backward compatibility (Graham)
 
 Changes for v2.05
 -- Private build 1

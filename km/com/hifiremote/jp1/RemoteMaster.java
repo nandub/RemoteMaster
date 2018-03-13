@@ -117,7 +117,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
 
   /** Description of the Field. */
   public final static String version = "v2.06";
-  public final static int buildVer = 4;
+  public final static int buildVer = 5;
   
   public static class LanguageDescriptor
   {
@@ -2173,13 +2173,24 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
       System.err.println( "    JP1Parallel version " + jp1Parallel.getInterfaceVersion() );
       if ( System.getProperty( "os.name" ).startsWith( "Windows" ) )
       {        
-        double parallelVer = Double.parseDouble( jp1Parallel.getInterfaceVersion() );
+        double parallelVer = 0.0;
+        try
+        {
+          parallelVer = Double.parseDouble( jp1Parallel.getInterfaceVersion() );
+        }
+        catch ( NumberFormatException e ) {}
         if ( parallelVer > 0.10 )
         {     
           boolean isInpOutDriverOpen= jp1Parallel.testIsInpOutDriverOpen();
           System.err.println( "    JP1Parallel InpOutDriver is " + ( isInpOutDriverOpen ? "open" : "not open" ) );
 //          System.err.println( "    EEPROM size returns " + jp1Parallel.getRemoteEepromSize() );
 //          System.err.println( "    EEPROM address returns " + jp1Parallel.getRemoteEepromAddress() );
+          if ( !isInpOutDriverOpen )
+          {
+            System.err.println( "    *** To use the parallel port interface, RMIR must be run once as adminstrator.\n"
+                + "    This enables it to install the InpOut driver, a once-only task needed for\n"
+                + "    the interface to access the port." );
+          }
         }
       }
     }
