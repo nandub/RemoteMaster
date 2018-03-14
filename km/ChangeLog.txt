@@ -18,6 +18,8 @@ Changes for v2.06
 -- Release build 5
 - In device upgrades, ignore included protocols with length < 4.  Such spurious protocols have been seen created by errors in RDFs (Graham)
 - Replace JP1Parallel v0.11 for Windows by v0.12 to provide better backward compatibility (Graham)
+-- Private build 6
+- Fix bug preventing parallel port support from loading when RMIR opened by double-clicking a .rmir file in Windows (Graham)
 
 Changes for v2.05
 -- Private build 1

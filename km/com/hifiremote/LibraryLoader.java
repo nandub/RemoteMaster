@@ -79,6 +79,16 @@ public class LibraryLoader
       System.err.println( "LibraryLoader: Attempting to load '" + libraryName + "' from '" + libraryFile.getAbsolutePath() + "'..." );
       try
       {
+        if ( osName.equals( "Windows" ) && libraryName.equalsIgnoreCase( "jp1parallel" ) )
+        {
+          String arch = System.getProperty( "os.arch" ).toLowerCase();
+          String inpoutName = arch.equals( "amd64" ) ? "inpoutx64.dll" : "inpout32.dll" ;
+          File inpoutFile = new File( folder, inpoutName );
+          if ( inpoutFile.exists() )
+          {
+            System.load( inpoutFile.getAbsolutePath() );
+          }
+        }
         System.load( libraryFile.getAbsolutePath() );
         System.err.println( "LibraryLoader: Loaded '" + libraryName + "' successfully from '" + libraryFile.getAbsolutePath() + "'" );
         libraries.put( libraryName, mappedName );
