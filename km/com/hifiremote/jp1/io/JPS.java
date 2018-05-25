@@ -423,7 +423,7 @@ public class JPS extends IO
     }
 
     Runtime rt = Runtime.getRuntime();
-    String[] cmd = { lsblk, "-npro", "label,fstype,mountpoint" };
+    String[] cmd = { lsblk, "-nro", "label,fstype,mountpoint" };
     Process p = rt.exec( cmd );
     p.waitFor();
     if ( p.exitValue() != 0 ) {

@@ -20,6 +20,8 @@ Changes for v2.06
 - Replace JP1Parallel v0.11 for Windows by v0.12 to provide better backward compatibility (Graham)
 -- Private build 6
 - Fix bug preventing parallel port support from loading when RMIR opened by double-clicking a .rmir file in Windows (Graham)
+-- Private build 7
+- Fix issue with SimpleSet remotes not being detected on older Linux distributions (unsupported -p flag for older version of lsblk command) (Marcin)
 
 Changes for v2.05
 -- Private build 1
