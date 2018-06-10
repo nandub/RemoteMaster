@@ -1,5 +1,6 @@
 package com.hifiremote.jp1.io;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -24,6 +25,7 @@ import com.hifiremote.jp1.ProgressUpdater;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 
+import com.hifiremote.jp1.Hex;
 import com.hifiremote.jp1.RemoteMaster.Use;
 import com.hifiremote.jp1.Scanner;
 import com.hifiremote.jp1.RemoteMaster;
@@ -157,6 +159,16 @@ public class JPS extends IO
       s = new Settings( in, cf );
       if ( !s.isValid() )
       {
+        if ( RemoteMaster.admin )
+        {
+          String chksum = calcChecksum( filePath ); 
+          System.err.println( String.format( "Checksum is " + chksum) );
+          String title = "XOR16 Checksum Calculator";
+          String message = "File: " + filePath + "\nChecksum: " + chksum;
+          JOptionPane.showMessageDialog( RemoteMaster.getFrame(), message, title, JOptionPane.PLAIN_MESSAGE );
+          return null;
+        }
+
         System.err.println( "Not a Simpleset file: " + filePath );
         String message = "File \"" + filePath+ "\" is not a Simpleset file";
         JOptionPane.showMessageDialog( RemoteMaster.getFrame(), message, "File error", JOptionPane.ERROR_MESSAGE );
@@ -165,7 +177,6 @@ public class JPS extends IO
     }
     catch ( IOException e )
     {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     }
 
@@ -196,6 +207,49 @@ public class JPS extends IO
       scanner = null;
     }
     return filePath;
+  }
+  
+  private String calcChecksum( String filePath )
+  {
+    System.err.println( "Calculating 16-bit XOR checksum for binary file: " + filePath );
+    File file = new File( filePath );
+    int len = ( int )file.length();
+    System.err.println( "File size: " + len );
+    byte[] data = new byte[ len ];
+    try {
+      InputStream input = null;
+      try {
+        int totalBytesRead = 0;
+        input = new BufferedInputStream(new FileInputStream(file));
+        while( totalBytesRead < data.length )
+        {
+          int bytesRemaining = data.length - totalBytesRead;
+          int bytesRead = input.read(data, totalBytesRead, bytesRemaining); 
+          if (bytesRead > 0){
+            totalBytesRead = totalBytesRead + bytesRead;
+          }
+        }
+        System.err.println( "Num bytes read: " + totalBytesRead );
+      }
+      finally {
+        input.close();
+      }
+    }
+    catch (FileNotFoundException ex) {
+      System.err.println( "File not found." );
+    }
+    catch (IOException ex) {
+      System.err.println( ex );
+    }
+   
+    short sum = 0;
+    for ( int i = 2; i <= len - 2; i += 2 )
+    {
+      sum ^= ( data[ i ] << 8 ) & 0xFF00 | data[ i + 1 ] & 0xFF;
+    }
+    sum ^= 0xFF;
+    
+    return Hex.toString( new short[] { ( short )( sum >> 8 ), ( short )( sum & 0xFF ) } );
   }
 
   private int getInt32( byte[] data, int offset )
