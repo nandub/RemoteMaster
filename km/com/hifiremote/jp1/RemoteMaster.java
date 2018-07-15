@@ -32,7 +32,6 @@ import java.io.InputStream;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.net.URL;
-import java.net.URLClassLoader;
 import java.net.URLDecoder;
 import java.security.CodeSource;
 import java.text.DateFormat;
@@ -1991,9 +1990,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
   public static ImageIcon createIcon( String imageName )
   {
     String imgLocation = "toolbarButtonGraphics/general/" + imageName + ".gif";
-    URLClassLoader sysloader = ( URLClassLoader )ClassLoader.getSystemClassLoader();
-
-    java.net.URL imageURL = sysloader.getResource( imgLocation );
+    java.net.URL imageURL = DynamicURLClassLoader.getInstance().getResource( imgLocation );
 
     if ( imageURL == null )
     {
@@ -5036,7 +5033,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
         System.err.println( "   " + name + " = " + System.getProperty( name ) );
       }
 
-      ClassPathAdder.addFile( workDir );
+      DynamicURLClassLoader.getInstance().addFile( workDir );
 
       FilenameFilter filter = new FilenameFilter()
       {
@@ -5048,7 +5045,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
       };
 
       File[] jarFiles = workDir.listFiles( filter );
-      ClassPathAdder.addFiles( jarFiles );
+      DynamicURLClassLoader.getInstance().addFiles( jarFiles );
 
       if ( propertiesFile == null )
       {
