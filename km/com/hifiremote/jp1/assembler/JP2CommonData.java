@@ -19,77 +19,17 @@ public class JP2CommonData
     { "Fun1B", "B3A1", "$%02X, #$%3$02X" },
     { "Fun1Z", "B3A1Z4", "$%02X, #$%3$02X" },
     { "Fun1W", "B3A1M1", "$%02X, #$%02X%02X" },
-    { "Immd", "B3", "#$%02X, #$%02X, #$%02X" },
+    { "Immd", "B3", "#$%02X, #$%02X" },
     { "BrT", "B3R1A2", "T, $%02X, $%02X" },
     { "BrF", "B3R1A2", "F, $%02X, $%02X" },
     { "Imm1", "B3", "#$%3$02X" },
+    { "Immc", "B3", "#$%2$02X%1$02X, #$%3$02X" },
+    { "Imm11", "B3Z1", "$%02X, #$%02X, #$%02X" },
+    { "Imm0w", "B3", "#$%3$02X%2$02X" },
+    { "Ind1n", "B3Z3", "($%02X), $%02X, #$%02X" },
+    { "Imm23", "B3", "#$%2$02X, #$%3$02X" },
     { "Nil", "B3", "" }
     
-  };
-  
-  public static final String[][] Instructions = {
-    { "MOV", "Dir2" },           { "LSL", "Dir3" },
-    { "LSR", "Dir3" },           { "ADD", "Dir3" },
-    { "SUB", "Dir3" },           { "OR", "Dir3" },
-    { "AND", "Dir3" },           { "XOR", "Dir3" },
-    { "MULT", "Dir3" },          { "DIV", "Dir3" },
-    { "???", "Nil" },            { "???", "Nil" },
-    { "???", "Nil" },            { "???", "Nil" },
-    { "???", "Nil" },            { "???", "Nil" },
-    
-    { "MOV", "Imm2" },           { "LSL", "Imm3" },
-    { "LSR", "Imm3" },           { "ADD", "Imm3" },
-    { "SUB", "Imm3" },           { "OR", "Imm3" },
-    { "AND", "Imm3" },           { "XOR", "Imm3" },
-    { "MULT", "Imm3" },          { "DIV", "Imm3" },
-    { "???", "Nil" },            { "???", "Nil" },
-    { "???", "Nil" },            { "???", "Nil" },
-    { "???", "Nil" },            { "???", "Nil" },
-    
-    { "MOVW", "Dir2" },          { "LSLW", "Dir3" },
-    { "LSRW", "Dir3" },          { "ADDW", "Dir2" },
-    { "SUBW", "Dir2" },          { "ORW", "Dir2" },
-    { "ANDW", "Dir2" },          { "XORW", "Dir2" },
-    { "???", "Nil" },            { "???", "Nil" },
-    { "???", "Nil" },            { "???", "Nil" },
-    { "???", "Nil" },            { "???", "Nil" },
-    { "???", "Nil" },            { "???", "Nil" },
-
-    { "MOVW", "Immw" },          { "LSLW", "Imm3" },
-    { "LSRW", "Imm3" },          { "ADDW", "Immw" },
-    { "SUBW", "Immw" },          { "ORW", "Immw" },
-    { "ANDW", "Immw" },          { "XORW", "Immw" },
-    { "???", "Nil" },            { "???", "Nil" },
-    { "???", "Nil" },            { "???", "Nil" },
-    { "???", "Nil" },            { "???", "Nil" },
-    { "???", "Nil" },            { "???", "Nil" },
-    
-    { "MOV", "Ind2" },           { "MOVI", "Ind2" },
-    { "MOVD", "Ind2" },          { "IMOV", "Ind2" },
-    { "DMOV", "Ind2" },          { "LSL", "Ind2" },
-    { "LSR", "Ind2" },           { "ADD", "Ind2" },
-    { "SUB", "Ind2" },           { "OR", "Ind2" },
-    { "AND", "Ind2" },           { "XOR", "Ind2" },
-    { "MOV", "Ind1" },           { "???", "Nil" },
-    { "???", "Nil" },            { "NOP", "Nil" },
-    
-    { "DBBC", "Dir3" },          { "SWAP", "Dir2" },
-    { "MOVN", "Imm3" },          { "MOV", "Indx" },
-    { "CARRIER", "Immd" },       { "BRA", "BrNZ" },
-    { "BRA", "BrZ" },            { "BRA", "Rel1" },
-    { "DBNZ", "Rel2" },          { "BSR", "Rel1" },
-    { "CALL", "Fun1W" },         { "BRA", "BrT" },
-    { "BRA", "BrF" },            { "RTS", "Nil" },
-    { "TIMING", "Immd" },        { "END", "Nil" },
-    
-    { "***Op60", "Nil" },        { "***Op61", "Nil" },
-    { "***Op62", "Nil" },        { "***Op63", "Imm1" },
-    { "***Op64", "Imm3" },       { "***Op65", "Nil" },
-    { "***Op65", "Nil" },        { "***Op67", "Nil" },
-    { "***Op68", "Nil" },        { "***Op69", "Nil" },
-    { "***Op6A", "Nil" },        { "***Op6B", "Nil" },
-    { "***Op6C", "Nil" },        { "***Op6D", "Nil" },
-    { "***Op6E", "Nil" },        { "***Op6F", "Nil" }    
   };
   
   public static final String[][] absLabels = {

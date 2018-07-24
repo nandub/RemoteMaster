@@ -1,23 +1,83 @@
 package com.hifiremote.jp1.assembler;
 
 public class MAXQ610data
-{  
-  public static final String[][] zeroLabels = {
-    { "PF0", "94", "PF", "10" },
-    { "PD00", "30", "PD", "40", "2" },
-    { "TXD0", "10", "TXD", "10" },
-    { "TXB0", "20", "TXB", "10" },
-    { "Tmp0", "BE", "Tmp", "0A" }, // probably BE-CF all available as temp store
-    { "TogType", "89" },
-    { "TogMask", "8A" },
-    { "TXBcount", "B6", "TXBcount is total number of bits to send (but apparently not used)" },
-    { "TXDcount", "B7", "TXDcount is number of TXD bytes to send" },
-    { "MinRpts", "B8", "At least MinRpts frames sent after the first frame, more only if key held" },
-    { "StatFlags", "BA", "Status flags" },
-    { "CtrlFlags", "BB", "Control flags" },
-    { "ToggleCtr", "E0", "ToggleCtr is incremented on each keypress" },
-    { "MinKeyHeld", "E3", "Key is treated as held until MinKeyHeld frames have been sent" }
+{ 
+  /*
+   * This class is in three parts.  The first part gives data for the pseudocode
+   * processor of the MAXQ protocols, the second gives data for its native
+   * processor and the third is common to both.  Data common to all JP2 protocols
+   * is in JP2CommonData.java.
+   */
+  
+  // DATA FOR THE PSEUDOCODE PROCESSOR:
+  
+  public static final String[][] Instructions = {
+    { "MOV", "Dir2" },           { "LSL", "Dir3" },
+    { "LSR", "Dir3" },           { "ADD", "Dir3" },
+    { "SUB", "Dir3" },           { "OR", "Dir3" },
+    { "AND", "Dir3" },           { "XOR", "Dir3" },
+    { "MULT", "Dir3" },          { "DIV", "Dir3" },
+    { "???", "Nil" },            { "???", "Nil" },
+    { "???", "Nil" },            { "???", "Nil" },
+    { "???", "Nil" },            { "???", "Nil" },
+    
+    { "MOV", "Imm2" },           { "LSL", "Imm3" },
+    { "LSR", "Imm3" },           { "ADD", "Imm3" },
+    { "SUB", "Imm3" },           { "OR", "Imm3" },
+    { "AND", "Imm3" },           { "XOR", "Imm3" },
+    { "MULT", "Imm3" },          { "DIV", "Imm3" },
+    { "???", "Nil" },            { "???", "Nil" },
+    { "???", "Nil" },            { "???", "Nil" },
+    { "???", "Nil" },            { "???", "Nil" },
+    
+    { "MOVW", "Dir2" },          { "LSLW", "Dir3" },
+    { "LSRW", "Dir3" },          { "ADDW", "Dir2" },
+    { "SUBW", "Dir2" },          { "ORW", "Dir2" },
+    { "ANDW", "Dir2" },          { "XORW", "Dir2" },
+    { "???", "Nil" },            { "???", "Nil" },
+    { "???", "Nil" },            { "???", "Nil" },
+    { "???", "Nil" },            { "???", "Nil" },
+    { "???", "Nil" },            { "???", "Nil" },
+
+    { "MOVW", "Immw" },          { "LSLW", "Imm3" },
+    { "LSRW", "Imm3" },          { "ADDW", "Immw" },
+    { "SUBW", "Immw" },          { "ORW", "Immw" },
+    { "ANDW", "Immw" },          { "XORW", "Immw" },
+    { "???", "Nil" },            { "???", "Nil" },
+    { "???", "Nil" },            { "???", "Nil" },
+    { "???", "Nil" },            { "???", "Nil" },
+    { "???", "Nil" },            { "???", "Nil" },
+    
+    { "MOV", "Ind2" },           { "MOVI", "Ind2" },
+    { "MOVD", "Ind2" },          { "IMOV", "Ind2" },
+    { "DMOV", "Ind2" },          { "LSL", "Ind2" },
+    { "LSR", "Ind2" },           { "ADD", "Ind2" },
+    { "SUB", "Ind2" },           { "OR", "Ind2" },
+    { "AND", "Ind2" },           { "XOR", "Ind2" },
+    { "MOV", "Ind1" },           { "???", "Nil" },
+    { "???", "Nil" },            { "NOP", "Nil" },
+    
+    { "DBBC", "Dir3" },          { "SWAP", "Dir2" },
+    { "MOVN", "Imm3" },          { "MOV", "Indx" },
+    { "CARRIER", "Immd" },       { "BRA", "BrNZ" },
+    { "BRA", "BrZ" },            { "BRA", "Rel1" },
+    { "DBNZ", "Rel2" },          { "BSR", "Rel1" },
+    { "CALL", "Fun1W" },         { "BRA", "BrT" },
+    { "BRA", "BrF" },            { "RTS", "Nil" },
+    { "TIMING", "Immd" },        { "???", "Nil" },
+    
+    { "???", "Nil" },            { "???", "Nil" },
+    { "???", "Nil" },            { "???", "Nil" },
+    { "???", "Nil" },            { "???", "Nil" },
+    { "???", "Nil" },            { "???", "Nil" },
+    { "???", "Nil" },            { "???", "Nil" },
+    { "???", "Nil" },            { "???", "Nil" },
+    { "???", "Nil" },            { "???", "Nil" },
+    { "???", "Nil" },            { "END", "Nil" }    
   };
+  
+
+//DATA FOR THE NATIVE MAXQ PROCESSOR:
   
   public static final String[][] AddressModes = {
     { "Nil", "B1", "" },
@@ -112,6 +172,26 @@ public class MAXQ610data
         "*", "*", "*", "CP" }
   };
   
+  
+  // DATA COMMON TO PSEUDOCODE AND NATIVE PROCESSORS:
+  
+  public static final String[][] zeroLabels = {
+    { "PF0", "94", "PF", "10" },
+    { "PD00", "30", "PD", "40", "2" },
+    { "TXD0", "10", "TXD", "10" },
+    { "TXB0", "20", "TXB", "10" },
+    { "Tmp0", "BE", "Tmp", "0A" }, // probably BE-CF all available as temp store
+    { "TogType", "89" },
+    { "TogMask", "8A" },
+    { "TXBcount", "B6", "TXBcount is total number of bits to send (but apparently not used)" },
+    { "TXDcount", "B7", "TXDcount is number of TXD bytes to send" },
+    { "MinRpts", "B8", "At least MinRpts frames sent after the first frame, more only if key held" },
+    { "StatFlags", "BA", "Status flags" },
+    { "CtrlFlags", "BB", "Control flags" },
+    { "ToggleCtr", "E0", "ToggleCtr is incremented on each keypress" },
+    { "MinKeyHeld", "E3", "Key is treated as held until MinKeyHeld frames have been sent" }
+  };
+  
   public static final int[] oscData = { 6000000, 2, 1 };
- 
+   
 }

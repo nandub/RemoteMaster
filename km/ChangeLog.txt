@@ -24,6 +24,10 @@ Changes for v2.06
 - Fix issue with SimpleSet remotes not being detected on older Linux distributions (unsupported -p flag for older version of lsblk command) (Marcin)
 - Add checksum calculator for binary files (Graham)
 - Fix Java 9 and 10 compatibility issue (Marcin)
+-- Private build 8
+- Fix various bugs in RMPB (Graham)
+- Add the new JP2 pseudocode instructions supported by URC-7980 (Graham)
+- Comment out a FocusAdapter in SetupPanel.java that is redundant and caused errors with ChoiceDeviceParm parameters (Graham)
 
 Changes for v2.05
 -- Private build 1

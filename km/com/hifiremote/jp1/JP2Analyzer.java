@@ -1299,9 +1299,17 @@ public class JP2Analyzer
     int tbStart = pos++;
     int tbHeader = data[ tbStart ];
     boolean tbHasSpec = ( tbHeader & 0x80 ) != 0;
-    boolean tbHasData = ( tbHeader & 0x40 ) == 0;
     int tbSpecSize = tbHasSpec ? 2 : 0;
-    int tbDataSize = tbHasData ? tbHeader & 0x3F : 0;
+    boolean tbHasData = true;
+    int tbSizeMask = 0x7F;
+    if ( proc instanceof MAXQProcessor )
+    {
+      // TI2541 protocol uses 7 bits for timing block size, but MAXQ protocol
+      // only uses 6 bits, with the 7th being a flag that denotes no timing data.
+      tbHasData = ( tbHeader & 0x40 ) == 0;
+      tbSizeMask = 0x3F;
+    }
+    int tbDataSize = tbHasData ? tbHeader & tbSizeMask : 0;
     int tbSize = tbSpecSize + tbDataSize;
     pos += tbSize;
     if ( pos >= protLen )
@@ -1681,11 +1689,13 @@ public class JP2Analyzer
 
         if ( hasNativeCode )
         {
-          // Native code continues to end of protocol, but check for word boundary.
+          // Native code continues to end of protocol, but for MAXQ processors we need
+          // to check for 2-byte word boundary. TI2541 processor native code can start
+          // at any address.
           // Since we do not know the start address of the protocol in flash, which may
           // be an odd value, assume there are no spurious bytes beyond end of executor,
           // so we may use the length of the executor to check the start of native code.
-          if ( ( ( protLen - pos ) & 1 ) != 0 )
+          if ( ( proc instanceof MAXQProcessor ) && ( ( protLen - pos ) & 1 ) != 0 )
           {
             sb.append( "Padding to word boundary:\n" );
             sb.append( addrHex( pos ) + hex.subHex( pos++, 1 ) + "\n\n" );
@@ -2358,7 +2368,7 @@ public class JP2Analyzer
       return codeStr;
     }
     Hex pHex = new Hex( hex, 0, hex.length() + 4 );
-    pHex.set( ( short )0x5F, pHex.length() - 4 );
+    pHex.set( ( short )0x6F, pHex.length() - 4 );
     short[] data = pHex.getData();
     int index = 0;
     itemList.clear();

@@ -78,7 +78,7 @@ public class RMPBOutputPanel extends JPanel
     for ( int row = 0; row < msp.getTablePanel().getProcs().length; row++ )
     {
       Processor proc = msp.getTablePanel().getProcs()[ row ];
-      if ( proc.getDataStyle() < 0 || ( text = getPBOutput( proc ) ) == null )
+      if ( ( text = getPBOutput( proc ) ) == null )
       {
         continue;
       }
@@ -113,10 +113,10 @@ public class RMPBOutputPanel extends JPanel
       boolean isNew = ( ( S3C80Processor )proc ).testCode( code ) == S3C80Processor.CodeType.NEW;
       procName = isNew ? "S3C8+" : "S3C8";
     }
-//    else if ( procName.equals( "740" ) )  // Not sure what PB uses for this one
-//    {
-//      procName = "P8/740";
-//    }
+    else if ( procName.equals( "740" ) )
+    {
+      procName = "P8/740";
+    }
     
     String ls = System.getProperty( "line.separator" );
     StringBuilder buff = new StringBuilder( 300 );

@@ -23,10 +23,13 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.text.Document;
 
 import com.hifiremote.jp1.ProtocolDataPanel.Mode;
 
-public class ManualEditorPanel extends JPanel implements ActionListener, ChangeListener
+public class ManualEditorPanel extends JPanel implements ActionListener, ChangeListener, DocumentListener
 {
   public ManualEditorPanel( Component owner )
   {
@@ -79,6 +82,9 @@ public class ManualEditorPanel extends JPanel implements ActionListener, ChangeL
     JPanel identPanel = new JPanel( tl );
     identPanel.setBorder( BorderFactory.createLineBorder( Color.GRAY ) );
     manualSettingsPanel.getProtocolName().setColumns( 50 );
+    manualSettingsPanel.getProtocolName().getDocument().addDocumentListener( this );
+    manualSettingsPanel.getVariantName().getDocument().addDocumentListener( this );
+    manualSettingsPanel.getPid().getDocument().addDocumentListener( this );
     JLabel label = new JLabel( "Name:", SwingConstants.RIGHT );
     identPanel.add( label, "1, 1" );
     identPanel.add( manualSettingsPanel.getProtocolName(), "3, 1" );
@@ -163,7 +169,12 @@ public class ManualEditorPanel extends JPanel implements ActionListener, ChangeL
     }
     else if ( index == indexAnalyzer )
     {
-      
+      Processor proc = ( Processor )procBox.getSelectedItem();
+      Protocol prot = manualSettingsPanel.getProtocol();
+      if ( proc != null && prot != null )
+      {
+        manualSettingsPanel.getAnalyzerPanel().set( proc, prot.getCode( proc ) );
+      }
     }
   }
   
@@ -221,6 +232,36 @@ public class ManualEditorPanel extends JPanel implements ActionListener, ChangeL
     tabbedPane.setSelectedIndex( 0 );
   }
   
+  public void documentChanged( DocumentEvent e )
+  {
+    int indexOutput = tabbedPane.indexOfTab( "Output Data" );
+    int index = tabbedPane.getSelectedIndex();
+    if ( index < 0 )
+    {
+      return;
+    }
+    if ( index == indexOutput )
+    {
+      manualSettingsPanel.getOutputPanel().updatePBOutput();
+    }
+  }
+  
+  public void changedUpdate( DocumentEvent e )
+  {
+    documentChanged( e );
+  }
+
+  public void insertUpdate( DocumentEvent e )
+  {
+    documentChanged( e );
+  }
+
+  public void removeUpdate( DocumentEvent e )
+  {
+    documentChanged( e );
+  }
+  
+  
   public JTabbedPane getTabbedPane()
   {
     return tabbedPane;
@@ -244,5 +285,5 @@ public class ManualEditorPanel extends JPanel implements ActionListener, ChangeL
   private JComboBox< Processor > procBox = new JComboBox< Processor >();
   private Component owner = null;
   private boolean inJP2mode = false;
-  
+
 }

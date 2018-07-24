@@ -494,30 +494,43 @@ public class SetupPanel extends KMPanel implements ActionListener, ItemListener,
           protocolHolder.add( parameters[ i ].getComponent(), "3, " + row );
           row++ ;
           tlPH.insertRow( row++ , 5 );
-          parameters[ i ].getComponent().addFocusListener( new FocusAdapter()
-          {
-            @Override
-            public void focusLost( FocusEvent e )
-            {
-              Protocol p = deviceUpgrade.getProtocol();
-              Hex hex = p.getFixedData( deviceUpgrade.getParmValues() );
-              Value[] v = p.importFixedData( hex );
-              for ( int i = 0; i < parameters.length; i++ )
-              {
-                parameters[ i ].removeListener( SetupPanel.this );
-                if ( v[ i ] == null || v[ i ].getUserValue() == null )
-                {
-                  parameters[ i ].setValue( null );
-                }
-                else if ( !v[ i ].getUserValue().toString().equals( parameters[ i ].getDefaultValue().toString() ) )
-                {
-                  parameters[ i ].setValue( v[ i ].getUserValue() );
-                }
-                parameters[ i ].addListener( SetupPanel.this );
-              }
-              deviceUpgrade.setParmValues( p.getDeviceParmValues() );
-            }
-          } );
+          
+          // The Focus Adapter appears to be redundant, the updates also being performed
+          // elsewhere, and it causes an error when assigned to a ChoiceDeviceParm.  When
+          // updating more than one Device Upgrade with the same protocol by changing the
+          // value of a ChoiceDeviceParm, the focus event appears to be created under 
+          // one Device Upgrade and actioned under the next one, so propagating the value
+          // from one upgrade to the next.  I have therefore commented it out.
+          //
+          // Graham Dixon, July 27, 2018
+
+//          parameters[ i ].getComponent().addFocusListener( new FocusAdapter()
+//          {
+//            @Override
+//            public void focusLost( FocusEvent e )
+//            {
+//              Protocol p = deviceUpgrade.getProtocol();
+//              System.err.println( "Focus lost event.  Device Upgrade = " + deviceUpgrade );
+//              Value[] va = deviceUpgrade.getParmValues();
+//              System.err.println( "Dev Upg parm values: " + DeviceUpgrade.valueArrayToString( va ) );
+//              Hex hex = p.getFixedData( va );
+//              Value[] v = p.importFixedData( hex );
+//              for ( int i = 0; i < parameters.length; i++ )
+//              {
+//                parameters[ i ].removeListener( SetupPanel.this );
+//                if ( v[ i ] == null || v[ i ].getUserValue() == null )
+//                {
+//                  parameters[ i ].setValue( null );
+//                }
+//                else if ( !v[ i ].getUserValue().toString().equals( parameters[ i ].getDefaultValue().toString() ) )
+//                {
+//                  parameters[ i ].setValue( v[ i ].getUserValue() );
+//                }
+//                parameters[ i ].addListener( SetupPanel.this );
+//              }
+//              deviceUpgrade.setParmValues( p.getDeviceParmValues() );
+//            }
+//          } );
         }
         
         int maxRows = 7;

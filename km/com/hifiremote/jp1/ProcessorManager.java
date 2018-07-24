@@ -140,11 +140,10 @@ public class ProcessorManager
     p.setStartOffset( 0 );
     add( p );
     
-    String jp2Array[][][] = { JP2CommonData.Instructions };
-    
     p = new MAXQProcessor( "MAXQ610" );
     p.setAddressModes( JP2CommonData.AddressModes );
-    p.setInstructions( jp2Array );
+    String MAXQArray[][][] = { MAXQ610data.Instructions };
+    p.setInstructions( MAXQArray );
     p.setAbsLabels( JP2CommonData.absLabels );
     p.setBaseZeroLabels( MAXQ610data.zeroLabels );
     p.setOscillatorData( MAXQ610data.oscData );
@@ -167,7 +166,8 @@ public class ProcessorManager
     
     p = new TI2541Processor( "TI2541" );
     p.setAddressModes( JP2CommonData.AddressModes );
-    p.setInstructions( jp2Array );
+    String TI2541Array[][][] = { TI2541data.Instructions };
+    p.setInstructions( TI2541Array );
     p.setAbsLabels( JP2CommonData.absLabels );
     p.setBaseZeroLabels( TI2541data.zeroLabels );
     p.setOscillatorData( TI2541data.oscData );
