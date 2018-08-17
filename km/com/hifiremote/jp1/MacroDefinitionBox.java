@@ -42,14 +42,14 @@ import com.hifiremote.jp1.RemoteConfiguration.KeySpec;
 public class MacroDefinitionBox extends Box implements ActionListener, ListSelectionListener,
 PropertyChangeListener, RMSetter< Object >
 {
-  public MacroDefinitionBox()
+  public MacroDefinitionBox( boolean itemStyle )
   {
     super( BoxLayout.X_AXIS );
+    this.itemStyle = itemStyle;
     macroButtons.setModel( macroButtonModel );
     setBorder( BorderFactory.createTitledBorder( "Macro Definition" ) );
 
     creationPanel = new JPanel( new CardLayout() );
-//    add( creationPanel );
     
     JPanel availableBox = new JPanel( new BorderLayout() );
     add( availableBox );
@@ -81,18 +81,13 @@ PropertyChangeListener, RMSetter< Object >
         }  // rows
       };
 
-
     JPanel ssdPanel = new JPanel( new BorderLayout() );
     ssdPanel.add( new JLabel( "Specify macro item:"), BorderLayout.PAGE_START );
     itemPanel = new JPanel( new TableLayout( size ) );
     ssdPanel.add( itemPanel, BorderLayout.CENTER );
-    itemPanel.add( new JLabel( "Device:"), "1, 1" );
     deviceBox = new JComboBox();
-    deviceBox.addActionListener( this );
-    itemPanel.add( deviceBox, "3, 1"  );
-    itemPanel.add( new JLabel( "Function:"), "1, 3" );
     functionBox = new JComboBox();
-    itemPanel.add( functionBox, "3, 3"  );
+    buttonBox = new JComboBox();
     
     creationPanel.add( availablePanel, "Normal");
     creationPanel.add( ssdPanel, "SSD");
@@ -153,29 +148,23 @@ PropertyChangeListener, RMSetter< Object >
         }  // rows
       };
 
-    JPanel buttonBox = new JPanel( new TableLayout( size2 ) );
-    buttonPanel.add(  buttonBox, BorderLayout.PAGE_START );
+    JPanel pushbtnBox = new JPanel( new TableLayout( size2 ) );
+    buttonPanel.add(  pushbtnBox, BorderLayout.PAGE_START );
     buttonPanel.setBorder( BorderFactory.createEmptyBorder( 2, 0, 0, 0 ) );
     
     moveUp.addActionListener( this );
-    buttonBox.add( moveUp, "0,0" );
+    pushbtnBox.add( moveUp, "0,0" );
     moveDown.addActionListener( this );
-    buttonBox.add( moveDown, "2,0" );
+    pushbtnBox.add( moveDown, "2,0" );
     remove.addActionListener( this );
     remove.setToolTipText( "Remove selected item.  Key: DEL" );
     remove.setFocusable( false );
-    buttonBox.add( remove, "0,2" );
+    pushbtnBox.add( remove, "0,2" );
     clear.addActionListener( this );
-    buttonBox.add( clear, "2,2" );
+    pushbtnBox.add( clear, "2,2" );
     deselect.addActionListener( this );
     deselect.setToolTipText( "Deselects current selection.  Mouse: Right-click box" );
-    buttonBox.add( deselect, "0,4,2,4" );
-    
-    formatter = new NumberFormatter( new DecimalFormat( "0.0" ) );
-    formatter.setValueClass( Float.class );
-    duration = new XFormattedTextField( formatter );
-    duration.setColumns( 4 );
-    duration.addActionListener( this );
+    pushbtnBox.add( deselect, "0,4,2,4" );
     
     macroButtons.addKeyListener( new KeyAdapter()
     {
@@ -285,25 +274,58 @@ PropertyChangeListener, RMSetter< Object >
     }
     availableButtons.setModel( availableButtonModel );
     CardLayout cl = ( CardLayout)creationPanel.getLayout();
-    cl.show( creationPanel, remote.usesEZRC() ? "SSD" : "Normal" );
-    if ( remote.usesEZRC() )
+    cl.show( creationPanel, itemStyle ? "SSD" : "Normal" );
+    
+    if ( itemStyle )
     {
-      remote.setDeviceComboBox( deviceBox );
-      holdCheck = new JCheckBox( "Hold?" );
-      holdCheck.addActionListener( this );
+      NumberFormatter formatter = new NumberFormatter( new DecimalFormat( "0.0" ) );
+      formatter.setValueClass( Float.class );
       delay = new XFormattedTextField( formatter );
       delay.addPropertyChangeListener( "value", this );
-      itemPanel.add( new JLabel( "Pause after (secs):" ), "1, 5" );
-      itemPanel.add( delay, "3, 5" );
-      delay.setValue( 0.3f );
-      itemPanel.add( holdCheck, "1, 7" );
-      durationLabel.setText( "Hold for (secs):" );
-      itemPanel.add( durationLabel, "1, 8" );
-      itemPanel.add( duration, "3, 8" );
-      duration.setValue( 0.0f );
-      duration.setEnabled( false );
-      durationLabel.setEnabled( false );
-//      duration.setFocusLostBehavior( JFormattedTextField.COMMIT_OR_REVERT );
+      holdCheck = new JCheckBox( "Hold?" );
+      
+      formatter = new NumberFormatter( new DecimalFormat( remote.usesEZRC() ? "0.0" : "0.00" ) );
+      formatter.setValueClass( Float.class );
+      duration = new XFormattedTextField( formatter );
+      duration.setColumns( 4 );
+      duration.addActionListener( this );
+      
+      if ( remote.usesEZRC() )
+      {
+        remote.setDeviceComboBox( deviceBox );
+        holdCheck.addActionListener( this );
+        itemPanel.add( new JLabel( "Device:" ), "1, 1" );
+        itemPanel.add( deviceBox, "3, 1" );
+        itemPanel.add( new JLabel( "Function:" ), "1, 3" );
+        deviceBox.addActionListener( this );
+        itemPanel.add( functionBox, "3, 3"  );
+        itemPanel.add( new JLabel( "Pause after (secs):" ), "1, 5" );
+        itemPanel.add( delay, "3, 5" );
+        delay.setValue( 0.3f );
+        itemPanel.add( holdCheck, "1, 7" );
+        durationLabel.setText( "Hold for (secs):" );
+        itemPanel.add( durationLabel, "1, 8" );
+        itemPanel.add( duration, "3, 8" );
+        duration.setValue( 0.0f );
+        duration.setEnabled( false );
+        durationLabel.setEnabled( false );
+        //      duration.setFocusLostBehavior( JFormattedTextField.COMMIT_OR_REVERT );
+      }
+      else
+      {
+        holdCheck.setSelected( true );
+        durationLabel.setText( "Hold for (secs):" );
+        itemPanel.add( durationLabel, "1, 3" );
+        itemPanel.add( duration, "3, 3" );
+        itemPanel.add( new JLabel( "Button:" ), "1, 5" );
+        itemPanel.add( buttonBox, "3, 5"  );
+        itemPanel.add( new JLabel( "Pause after (secs):" ), "1, 7" );
+        itemPanel.add( delay, "3, 7" );
+        delay.setValue( 0.3f );
+        duration.setValue( 0.0f );
+        DefaultComboBoxModel model = new DefaultComboBoxModel( remote.getMacroButtons() );
+        buttonBox.setModel( model );
+      }
     }
   }  
   
@@ -389,15 +411,30 @@ PropertyChangeListener, RMSetter< Object >
   
   private KeySpec getKeySpec()
   {
-    DeviceButton db = ( DeviceButton )deviceBox.getSelectedItem();
-    GeneralFunction f = ( GeneralFunction )functionBox.getSelectedItem();
-    KeySpec ks = new KeySpec( db, f );;
+    KeySpec ks = null;
+    double durMult= 10.0;
+    if ( config.getRemote().usesEZRC() )
+    {
+      DeviceButton db = ( DeviceButton )deviceBox.getSelectedItem();
+      GeneralFunction f = ( GeneralFunction )functionBox.getSelectedItem();
+      ks = new KeySpec( db, f );
+    }
+    else
+    {
+      // db is not actually used, but needs to be non-null to prevent spurious errors
+      DeviceButton db = config.getRemote().getDeviceButtons()[ 0 ];
+      Button btn = ( Button )buttonBox.getSelectedItem();
+      ks = new KeySpec( db, btn );
+      ks.setEZRC( false );
+      durMult = 400.0;
+    }
+
     Float fv = ( Float )delay.getValue();
     ks.delay = fv == null ? 0 : ( int )( 10.0 * fv + 0.5 );
     if ( holdCheck.isSelected() )
     {
       fv = ( Float )duration.getValue();
-      ks.duration = fv == null ? 0 : ( int )( 10.0 * fv + 0.5 );
+      ks.duration = fv == null ? 0 : ( int )( durMult * fv + 0.5 );
     }
     else
     {
@@ -415,7 +452,7 @@ PropertyChangeListener, RMSetter< Object >
   private void addKey( int mask )
   {
     Remote remote = config.getRemote();
-    if ( remote.usesEZRC() )
+    if ( itemStyle )
     {
       macroButtonModel.addElement( getKeySpec() );
       return;
@@ -530,7 +567,7 @@ PropertyChangeListener, RMSetter< Object >
   public Object getValue()
   {
     int length = macroButtonModel.getSize();
-    if ( config.getRemote().usesEZRC() )
+    if ( itemStyle )
     {
       List< KeySpec > items = new ArrayList< KeySpec >();
       for ( int i = 0; i < length; ++i )
@@ -561,23 +598,32 @@ PropertyChangeListener, RMSetter< Object >
       return;
 
     enableButtons();
-    if ( config.getRemote().usesEZRC() )
+    if ( itemStyle )
     {
       KeySpec ks = ( KeySpec)macroButtons.getSelectedValue();
       if ( ks == null )
       {
         return;
       }
-      deviceBox.setSelectedItem( ks.db );
-      GeneralFunction gf = ks.fn; 
-      functionBox.getModel().setSelectedItem( null );
-      functionBox.setSelectedItem( gf );
+      if ( config.getRemote().usesEZRC() )
+      {
+        deviceBox.setSelectedItem( ks.db );
+        GeneralFunction gf = ks.fn; 
+        functionBox.getModel().setSelectedItem( null );
+        functionBox.setSelectedItem( gf );
+        boolean showDuration = ks.duration >= 0;
+        holdCheck.setSelected( showDuration );
+        duration.setEnabled( showDuration );
+        durationLabel.setEnabled( showDuration );
+        duration.setValue( showDuration ? ks.duration * 0.1f : 0f );
+      }
+      else
+      {
+        buttonBox.getModel().setSelectedItem( null );
+        buttonBox.setSelectedItem( ks.btn );
+        duration.setValue( ks.duration * 0.0025f );
+      }
       delay.setValue( ks.delay / 10.0f );
-      boolean showDuration = ks.duration >= 0;
-      holdCheck.setSelected( showDuration );
-      duration.setEnabled( showDuration );
-      durationLabel.setEnabled( showDuration );
-      duration.setValue( showDuration ? ks.duration/ 10.0f : 0f );
     }
   }
   
@@ -589,7 +635,8 @@ PropertyChangeListener, RMSetter< Object >
     {
       return;
     }
-    if ( config.getRemote().usesEZRC() )
+
+    if ( value instanceof List< ? > )
     {
       @SuppressWarnings( "unchecked" )
       List< KeySpec > list = ( List< KeySpec > )value;
@@ -614,13 +661,15 @@ PropertyChangeListener, RMSetter< Object >
    */
   public void enableButtons()
   {
+    boolean usesEZRC = config.getRemote().usesEZRC();
     int selected = macroButtons.getSelectedIndex();
     moveUp.setEnabled( selected > 0 );
     moveDown.setEnabled( ( selected != -1 ) && ( selected < ( macroButtonModel.getSize() - 1 ) ) );
     remove.setEnabled( macroButtons.isFocusOwner() && selected != -1 );
     clear.setEnabled( macroButtonModel.getSize() > 0 );
     deselect.setEnabled( selected != -1 );
-    Button baseButton = ( Button )availableButtons.getSelectedValue();
+    Button baseButton = ( Button )( usesEZRC ? null : itemStyle ? buttonBox.getSelectedItem() 
+        : availableButtons.getSelectedValue() );
     buttonEnabler.enableButtons( baseButton, this );
   }
 
@@ -656,6 +705,7 @@ PropertyChangeListener, RMSetter< Object >
   
   private JComboBox deviceBox = null;
   private JComboBox functionBox = null;
+  private JComboBox buttonBox = null;
   
 //  private JPanel durationPanel = new JPanel( new BorderLayout() );
   
@@ -666,7 +716,6 @@ PropertyChangeListener, RMSetter< Object >
   
   private XFormattedTextField duration = null;
   private XFormattedTextField delay = null;
-  private NumberFormatter formatter = null;
   private JCheckBox holdCheck = null;
 
   /** The config. */
@@ -689,6 +738,8 @@ PropertyChangeListener, RMSetter< Object >
   
   /** The macro button renderer. */
   private MacroButtonRenderer macroButtonRenderer = new MacroButtonRenderer();
+  
+  private boolean itemStyle = false;
 
   @Override
   public void propertyChange( PropertyChangeEvent e )
@@ -697,13 +748,16 @@ PropertyChangeListener, RMSetter< Object >
     if ( source == delay ) 
     {
       Float f = ( Float )delay.getValue();
-      if ( f < 0.1 )
+      if ( config != null && config.getRemote().usesEZRC() )
       {
-        delay.setValue( 0.1f );
-      }
-      if ( f > 10.0 )
-      {
-        delay.setValue( 10.0f );
+        if ( f < 0.1 )
+        {
+          delay.setValue( 0.1f );
+        }
+        if ( f > 10.0 )
+        {
+          delay.setValue( 10.0f );
+        }
       }
     }
   }

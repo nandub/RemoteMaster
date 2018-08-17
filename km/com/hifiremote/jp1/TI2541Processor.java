@@ -9,6 +9,7 @@ public class TI2541Processor extends LittleEndianProcessor
   public TI2541Processor( String name )
   {
     super( name );
+    setPageSize( 0x800 );
   }
   
   @Override

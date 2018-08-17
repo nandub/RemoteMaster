@@ -4252,6 +4252,19 @@ public class Remote implements Comparable< Remote >
     return processor.getName().equals( "MAXQ622" ) && !signature.startsWith( "USB" );
   }
   
+  /**
+   * JP2style remotes are those which have segments and which use jp12serial.
+   * There is no direct test for using jp12serial so it is done here by excluding
+   * EZRC and Simpleset remotes.  In RMIR, this is the category of remotes that are
+   * allowed to have an EEPROM size that is not a whole number of flash pages.
+   * At the time of writing, the only known example is the URC7955, where the EEPROM
+   * area is 4 bytes short of two 0x800-byte flash pages.
+   */
+  public boolean isJP2style()
+  {
+    return getSegmentTypes() != null && !usesEZRC() && !usesSimpleset();
+  }
+  
   public boolean usesIcons()
   {
     return isSSD();

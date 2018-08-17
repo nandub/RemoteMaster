@@ -15,6 +15,7 @@ public class MAXQProcessor extends LittleEndianProcessor
     // True RAM Address not yet known, but the 2k of data memory in word mode is
     // addressed from $0000 to $03FF.  For now, try $0100
     setRAMAddress( 0x0100 );
+    setPageSize( 0x200 );
   }
   
   @Override

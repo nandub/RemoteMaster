@@ -48,7 +48,8 @@ public class MacroDialog extends JDialog implements ActionListener, ButtonEnable
    */
   public static Macro showDialog( Component locationComp, Macro macro, RemoteConfiguration config )
   {
-    dialog = new MacroDialog( locationComp );
+    boolean itemStyle = config.getRemote().usesEZRC() || macro != null && macro.getItems() != null;
+    dialog = new MacroDialog( locationComp, itemStyle );
 
     dialog.setRemoteConfiguration( config );
     dialog.setMacro( macro );
@@ -74,11 +75,12 @@ public class MacroDialog extends JDialog implements ActionListener, ButtonEnable
    * @param c
    *          the c
    */
-  private MacroDialog( Component c )
+  private MacroDialog( Component c, boolean itemStyle )
   {
     super( ( JFrame )SwingUtilities.getRoot( c ) );
     setTitle( "Macro" );
     setModal( true );
+    this.itemStyle = itemStyle;
 
     JComponent contentPane = ( JComponent )getContentPane();
     contentPane.setBorder( BorderFactory.createEmptyBorder( 5, 5, 5, 5 ) );
@@ -93,7 +95,7 @@ public class MacroDialog extends JDialog implements ActionListener, ButtonEnable
     boundKey.addActionListener( this );
     
     // Add the Macro definition controls
-    macroBox = new MacroDefinitionBox();
+    macroBox = new MacroDefinitionBox( itemStyle );
     macroBox.setButtonEnabler( this );
     contentPane.add( macroBox, BorderLayout.CENTER );
 
@@ -360,13 +362,18 @@ public class MacroDialog extends JDialog implements ActionListener, ButtonEnable
       String notesStr = notes.getText();
       Object value = macroBox.getValue();
       Macro newMacro = new Macro( keyCode, null, notesStr );
-      if ( remote.usesEZRC() )
+      if ( itemStyle )
       {
         @SuppressWarnings( "unchecked" )
         List< KeySpec >items = ( List< KeySpec > )value;
         newMacro.setItems( items );
-        newMacro.setName( name );
-        newMacro.setDeviceButtonIndex( db.getButtonIndex() );
+        if ( remote.usesEZRC() )
+        {
+          newMacro.setName( name );
+          newMacro.setDeviceButtonIndex( db.getButtonIndex() );
+          DeviceUpgrade du = db.getUpgrade();
+          du.setFunction( b, newMacro, Button.NORMAL_STATE );
+        }
         if ( remote.isSSD() )
         {
           newMacro.setSerial( config.getNewMacroSerial() );
@@ -375,8 +382,6 @@ public class MacroDialog extends JDialog implements ActionListener, ButtonEnable
         {
           newMacro.setSegmentFlags( macro == null ? 0xFF : macro.getSegmentFlags() );
         }
-        DeviceUpgrade du = db.getUpgrade();
-        du.setFunction( b, newMacro, Button.NORMAL_STATE );
       }
       else
       {
@@ -508,6 +513,8 @@ public class MacroDialog extends JDialog implements ActionListener, ButtonEnable
   private Macro macro = null;
   
   private MacroDefinitionBox macroBox = null;
+  
+  private boolean itemStyle = false;
 
   /** The dialog. */
   private static MacroDialog dialog = null;

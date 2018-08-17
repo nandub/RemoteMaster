@@ -21,6 +21,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -116,7 +117,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
 
   /** Description of the Field. */
   public final static String version = "v2.06";
-  public final static int buildVer = 8;
+  public final static int buildVer = 9;
   
   public static class LanguageDescriptor
   {
@@ -1006,6 +1007,10 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
       }
       System.err.println( "Interface opened successfully" );
       this.io = io;
+      int eepromSize = remote.getEepromSize();
+      int extraSize = 0;
+      short[] extraData = null;
+      
       if ( use == Use.UPLOAD )
       {
         int baseAddress = io.getRemoteEepromAddress();
@@ -1047,6 +1052,20 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
             return null;
           }
         }
+        
+        int pageSize = remote.getProcessor().getPageSize();
+        short[] extraRemote = null;
+        if ( remote.isJP2style() && eepromSize % pageSize != 0 )
+        {
+          extraSize = pageSize - eepromSize % pageSize;
+          extraRemote = new short[ extraSize ];
+          io.readRemote( baseAddress + eepromSize, extraRemote );
+          extraData = Arrays.copyOfRange( data, eepromSize, eepromSize + extraSize );
+          System.err.println( "Remote/Data extra bytes: " + ( new Hex( extraRemote ) )
+              + " / " + ( new Hex( extraData ) ) );
+          // Replace extra data by the values read from the remote
+          System.arraycopy( extraRemote, 0, data, eepromSize, extraSize );
+        }
       }
       AutoClockSet autoClockSet = remote.getAutoClockSet();
       if ( allowClockSet && autoClockSet != null )
@@ -1064,6 +1083,11 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
         System.err.println( "Data writing phase failed, bytes written = " + rc + "instead of " + data.length + "." );
         JOptionPane.showMessageDialog( RemoteMaster.this, "writeRemote returned " + rc );
         setInterfaceState( null );
+        if ( extraData != null )
+        {
+          // Restore extra data
+          System.arraycopy( extraData, 0, data, eepromSize, extraSize );
+        }
         return null;
       }
       else
@@ -1105,11 +1129,18 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
         io.closeRemote();
         JOptionPane.showMessageDialog( RemoteMaster.this, "Upload complete!" );
       }
+      
+      if ( extraData != null )
+      {
+        // Restore extra data
+        System.arraycopy( extraData, 0, data, eepromSize, extraSize );
+      }
       if ( allowClockSet && autoClockSet != null )
       {
         autoClockSet.restoreTimeBytes( data );
         remoteConfig.updateCheckSums();
       }
+      
       System.err.println( "Ending upload" );
       setInterfaceState( null );
       if ( use == Use.SAVEAS )
@@ -2823,7 +2854,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
   public RMFileChooser getFileChooser()
   {
     RMFileChooser chooser = new RMFileChooser( dir );
-    EndingFileFilter irFilter = new EndingFileFilter( "All supported files", allEndings );
+    EndingFileFilter irFilter = new EndingFileFilter( "All supported files", admin ? allAdminEndings : allEndings );
     chooser.addChoosableFileFilter( irFilter );
     chooser.addChoosableFileFilter( new EndingFileFilter( "RMIR files (*.rmir)", rmirEndings ) );
     chooser.addChoosableFileFilter( new EndingFileFilter( "IR files (*.ir)", irEndings ) );
@@ -3092,6 +3123,43 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
       setInterfaceState( "LOADING SIMPLESET..." );
       this.file = file;
       ( new DownloadTask( file ) ).execute();
+      return;
+    }
+    
+    if ( admin && ext.equals( ".ctl" ) )
+    {
+      String title = "Control file updater";
+      String message = "Enter the hexadecimal offset to be applied to line numbers:";
+      String offsetStr = JOptionPane.showInputDialog( this, message, title, JOptionPane.QUESTION_MESSAGE );
+      int offset = Integer.parseInt( offsetStr, 16 );
+      String outname = file.getName().substring( 0, dot ) + ".out";
+      File outFile = new File(dir, outname);
+      if ( outFile.exists() )
+        outFile.delete();
+      outFile.createNewFile();
+      BufferedWriter out = new BufferedWriter( new FileWriter(outFile) );     
+      BufferedReader in = new BufferedReader( new FileReader( file ) );
+      String line = in.readLine();
+      while ( line != null )
+      {
+        if ( line.length() > 5 )
+        {
+          try
+          {
+            String num = line.substring( 2, 6 );
+            int val = Integer.parseInt( num, 16 );
+            val += offset;
+            line = line.substring( 0, 2 ) + String.format( "%04x", val ) + line.substring( 6 );
+          }
+          catch ( Exception ex ){};
+        }
+//        if ( !line.startsWith( "b" ) && !line.startsWith( "!" ) && !line.startsWith( "#" ) )
+        out.write( line + System.lineSeparator() );
+        line = in.readLine();
+      }
+      out.flush();
+      out.close();
+      in.close();
       return;
     }
 
@@ -5234,6 +5302,11 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
   {
       ".rmir", ".ir", ".rmdu", ".rmpb", ".txt", ".xml", ".bin"
   };
+  
+  private final static String[] allAdminEndings =
+    {
+        ".rmir", ".ir", ".rmdu", ".rmpb", ".txt", ".xml", ".bin", "ctl"
+    };
 
   private final static String[] allMergeEndings =
   {

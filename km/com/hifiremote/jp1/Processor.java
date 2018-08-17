@@ -156,6 +156,16 @@ public abstract class Processor
     this.addressLength = addressLength;
   }
   
+  public int getPageSize()
+  {
+    return pageSize;
+  }
+
+  public void setPageSize( int pageSize )
+  {
+    this.pageSize = pageSize;
+  }
+
   /**
    * Translate.
    * 
@@ -875,6 +885,11 @@ public abstract class Processor
   
   /** Whether processor uses 2-byte or 4-byte addresses */
   private int addressLength = 2;
+  
+  /** Flash memory is erased in pages of this size.  The value is used only for
+   *  JP2.x and JP3.x remotes and is set according to the processor concerned.
+   */
+  private int pageSize = 1;
   
   /** Index to style of PF and PD data */
   private int dataStyle = -1;  // Unset, indicates assembler/disassembler not available

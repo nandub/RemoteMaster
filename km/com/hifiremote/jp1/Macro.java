@@ -219,7 +219,10 @@ public class Macro extends AdvancedCode
         {
           continue;
         }
-        length += ks.db != db ? 1 : 0;
+        if ( ks.isEZRC )
+        {
+          length += ks.db != db ? 1 : 0;
+        }
         length += ks.duration >= 0 ? 1 : 0;
         length += ks.getButton() != null ? 1 : ks.fn != null ? 
             ks.db.getUpgrade().getRemote().isSSD() ? 2 : 1 : 0;
@@ -234,7 +237,7 @@ public class Macro extends AdvancedCode
     return 0;
   }
   
-  public Hex getItemData()
+  public Hex getItemData( boolean full )
   {
     if ( items == null )
     {
@@ -244,8 +247,9 @@ public class Macro extends AdvancedCode
     short[] vals = new short[ 2 * size ];
     DeviceButton db = null;
     int pos = 0;
-    for ( KeySpec ks : items )
+    for ( int i = 0; i < items.size(); i++ )
     {
+      KeySpec ks = items.get( i );
       if ( !ks.isValid() )
       {
         String str = "Invalid keySpec";
@@ -265,7 +269,7 @@ public class Macro extends AdvancedCode
         System.err.println( str );
         continue;
       }
-      if ( ks.db != db )
+      if ( ks.isEZRC && ks.db != db )
       {
         vals[ pos + size ] = 0;
         vals[ pos++ ] = ( short )( ks.db.getButtonIndex() );
@@ -273,13 +277,21 @@ public class Macro extends AdvancedCode
       }
       if ( ks.duration >= 0 )
       {
-        vals[ pos + size ] =  ( short )ks.duration;
-        vals[ pos++ ] = 0xFE;
+        int code = ks.isEZRC ? 0xFE : 0x71;
+        int val = ks.duration;
+        if ( !ks.isEZRC && val > 0xFF )
+        {
+          code = 0x72;
+          val = ( val + 5 ) / 10;
+        }
+        vals[ pos + size ] =  ( short )val;
+        vals[ pos++ ] = ( short)code;
       }
       Button btn = ks.getButton();
       if ( btn != null )
       {
-        vals[ pos + size ] = ( short )ks.delay;
+        int delay = ks.isEZRC || full || i < items.size() - 1 ? ks.delay : 0;
+        vals[ pos + size ] = ( short )delay;
         vals[ pos++ ] = btn.getKeyCode();
       }
       else if ( ks.fn != null )
@@ -318,13 +330,22 @@ public class Macro extends AdvancedCode
       int keyCode = hex.getData()[ i ];
       DeviceButton db2 = remote.getDeviceButton( keyCode );
       Button btn = remote.getButton( keyCode );
+
       if ( db2 != null )
       {
         db = db2;
+        if ( remote.usesEZRC() )
+          continue;
       }
-      else if ( keyCode == 0xFE )
+      if ( keyCode == 0xFE || remote.isJP2style() && ( keyCode == 0x71 || keyCode == 0x72 ) )
       {
+        // For keyCodes 0xFE, 0x71, 0x72 the duration units are respectively 100ms, 2.5ms 
+        // and 25ms.  Treat 0x72 as 0x71 by multiplying duration by 10.
         duration = hex.getData()[ i + count ];
+        if ( keyCode == 0x72 )
+        {
+          duration *= 10;
+        }
       }
       else if ( hex.getData()[ i + count ] == 0xFF )
       {
@@ -344,6 +365,10 @@ public class Macro extends AdvancedCode
         // button is converted to a function after loading of device upgrades
         ks.delay = hex.getData()[ i + count ];
         ks.duration = duration;
+        if ( remote.isJP2style() )
+        {
+          ks.setEZRC( false );
+        }
         items.add( ks );
         duration = -1; 
       }
@@ -381,8 +406,25 @@ public class Macro extends AdvancedCode
 
   public void store( PropertyWriter pw )
   {
-//    if ( getSegment().get_Type() == 3 || getSegment().get_Type() == 0x1E )
-    if ( name != null )  // XSight remotes
+    if ( items != null && items.size() > 0 && !items.get( 0 ).isEZRC )
+    {
+      // This is JP2-style remotes with real-time macros
+      pw.print( "RealTime", 1 );
+      pw.print( "Data", getItemData( true ) );
+      int segmentFlags = getSegmentFlags();
+      if ( segmentFlags > 0 )
+      {
+        pw.print( "SegmentFlags", segmentFlags );
+      }
+      pw.print( "KeyCode", keyCode );
+      pw.print( "DeviceIndex", deviceButtonIndex );
+      if ( notes != null && notes.length() > 0 )
+      {
+        pw.print( "Notes", notes );
+      }
+      return;
+    }
+    else if ( name != null )  // XSight remotes 
     {
       int segmentFlags = getSegmentFlags();
       if ( segmentFlags > 0 )
@@ -392,7 +434,7 @@ public class Macro extends AdvancedCode
       Hex hex = null;
       if ( items != null )
       {
-        hex = getItemData();
+        hex = getItemData( true );
       }
       else
       {

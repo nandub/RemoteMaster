@@ -79,7 +79,7 @@ public class SegmentTableModel extends JP1TableModel< Segment >
       case 2:
         return "Multi Macro segment";
       case 3:
-        return "Device Specific Macro segment";
+        return "Key Delayed Macro segment";
       case 4:
         return "Activity Power Macro segment";
       case 7:
@@ -116,6 +116,8 @@ public class SegmentTableModel extends JP1TableModel< Segment >
         return "Activity Device Settings segment";
       case 0xDC:
         return "Activity Help Settings segment";
+      case 0xE9:
+        return "Activity Assignment segment";
       default:
         return null;
     }

@@ -65,7 +65,7 @@ public class TimedMacroDialog extends JDialog implements ActionListener, ButtonE
     settingsBox.add( timePanel );
 
     // Add the Macro definition controls
-    macroBox = new MacroDefinitionBox();
+    macroBox = new MacroDefinitionBox( false );
     macroBox.setButtonEnabler( this );
     contentPane.add( macroBox, BorderLayout.CENTER );
 

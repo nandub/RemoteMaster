@@ -15,6 +15,7 @@ public class S3F80Processor
   {
     super( "S3F80" );
     setRAMAddress( newRAMAddress );
+    setPageSize( 0x80 );
   }
 
   /* (non-Javadoc)

@@ -301,8 +301,9 @@ public class RemoteConfiguration
           else if ( sectionName.equals( "Macro" ) )
           {
             Macro macro = ( Macro )o;
+            String temp = section.getProperty( "RealTime" );
             Button button;
-            if ( remote.usesEZRC() )
+            if ( remote.usesEZRC() || temp != null )
             {
               macro.setItems( macro.getData(), remote );
               macro.setData( null );
@@ -532,13 +533,13 @@ public class RemoteConfiguration
       property = pr.nextProperty();
     }
     
-    int eepromSize = 0;
+    int dataSize = 0;
     for ( int i = 0; i < offsets.size(); i++ )
     {
-      eepromSize = Math.max( eepromSize, offsets.get( i ) + values.get( i ).length );
+      dataSize = Math.max( dataSize, offsets.get( i ) + values.get( i ).length );
     }
     
-    data = new short[ eepromSize ];
+    data = new short[ dataSize ];
 
     for ( int i = 0; i < offsets.size(); i++ )
     {
@@ -579,7 +580,7 @@ public class RemoteConfiguration
       }
       else
       {
-        remote = filterRemotes( remotes, signature, eepromSize, data, sigData, true );
+        remote = filterRemotes( remotes, signature, dataSize, data, sigData, true );
       }
       Remote.prelimLoad = false;
       if ( remote == null )
@@ -587,16 +588,16 @@ public class RemoteConfiguration
         throw new IllegalArgumentException( "No matching remote selected for signature " + signature );
       }
     }
-    if ( remote.isSSD() && eepromSize < remote.getEepromSize() )
+    if ( remote.isSSD() && dataSize < remote.getEepromSize() )
     {
       data = Arrays.copyOf( data, remote.getEepromSize() );
-      Arrays.fill( data, eepromSize, remote.getEepromSize(), ( short )0xFF );
-      eepromSize = remote.getEepromSize();
+      Arrays.fill( data, dataSize, remote.getEepromSize(), ( short )0xFF );
+      dataSize = remote.getEepromSize();
     }
     remote.setFixedData( remote.getRawFixedData() );
     remote.load();
     createActivities();
-    highlight = new Color[ eepromSize + 8 * remote.getSettingAddresses().size() ];
+    highlight = new Color[ dataSize + 8 * remote.getSettingAddresses().size() ];
     for ( int i = 0; i < highlight.length; i++ )
     {
       highlight[ i ] = Color.WHITE;
@@ -1971,43 +1972,42 @@ public class RemoteConfiguration
     
     if ( !decode )
       return;
-    segType = 1;
-    List< Segment > macroList = segments.get( 1 );
-    if ( macroList == null )
+
+    for ( segType = 1; segType < 4; segType += 2 )
     {
-      segType = 3;
-      macroList = segments.get( 3 );
-    }
-    if ( macroList != null )
-    {
-      for ( Segment segment : macroList )
+      List< Segment > macroList = segments.get( segType );
+      if ( macroList != null )
       {
-        Hex hex = segment.getHex();
-        int deviceIndex = hex.getData()[ 0 ]; // Known values are 0 (not device specific) or an activity button number
-        Button btn = remote.getButton( deviceIndex );
-        int keyCode = hex.getData()[ 1 ];
-        int count = Math.min( hex.getData()[ 2 ], hex.length() - 3 );
-        Hex data = hex.subHex( 3, count );
-        Macro macro = new Macro( keyCode, segType == 1 ? data : null, deviceIndex, 0, null );
-        macro.setSegmentFlags( segment.getFlags() );
-        segment.setObject( macro );
-        if ( segType == 1 && btn != null && activities != null && activities.get( btn ) != null )
+        for ( Segment segment : macroList )
         {
-          activities.get( btn ).setMacro( macro );
-        }
-        else setMacro( macro );
-        if ( segType == 3 )
-        {
-          macro.setItems( hex.subHex( 3, 2 * count ), remote );
-          int len = hex.getData()[ 3 + 2 * count ];
-          if ( hex.length() > 5 + 2 * count + len )
+          Hex hex = segment.getHex();
+          int deviceIndex = hex.getData()[ 0 ]; // Known values are 0 (not device specific) or an activity button number
+          Button btn = remote.getButton( deviceIndex );
+          int keyCode = hex.getData()[ 1 ];
+          int count = Math.min( hex.getData()[ 2 ], hex.length() - 3 );
+          Hex data = hex.subHex( 3, count );
+          Macro macro = new Macro( keyCode, segType == 1 ? data : null, deviceIndex, 0, null );
+          macro.setSegmentFlags( segment.getFlags() );
+          segment.setObject( macro );
+          if ( segType == 1 && btn != null && activities != null && activities.get( btn ) != null )
           {
-            macro.setName( hex.subString( 4 + 2 * count, len ) );
-            macro.setSerial( hex.get( 4 + 2 * count + len) );
+            activities.get( btn ).setMacro( macro );
+          }
+          else setMacro( macro );
+          if ( segType == 3 )
+          {
+            macro.setItems( hex.subHex( 3, 2 * count ), remote );
+            int len = hex.getData()[ 3 + 2 * count ];
+            if ( hex.length() > 5 + 2 * count + len )
+            {
+              macro.setName( hex.subString( 4 + 2 * count, len ) );
+              macro.setSerial( hex.get( 4 + 2 * count + len) );
+            }
           }
         }
       }
     }
+    
     List< Segment > multiMacroList = segments.get( 2 );
     if ( multiMacroList != null )
     {
@@ -3658,25 +3658,33 @@ public class RemoteConfiguration
     return devBtn == null ? DeviceButton.noButton : devBtn; 
   }
   
-  public static Remote filterRemotes( List< Remote > remotes, String signature, int eepromSize, 
+  public static Remote filterRemotes( List< Remote > remotes, String signature, int dataSize, 
       short[] data, short[] sigData, boolean allowMismatch )
   { 
     Remote remote = null;
     
-    // Filter on matching eeprom size
+    // Filter on matching eeprom size.  JP2style remotes where the EEPROM size is 
+    // not a whole number of flash pages are considered as matching if the data
+    // size is the EEPROM size rounded up to a whole number of flash pages.
     for ( Iterator< Remote > it = remotes.iterator(); it.hasNext(); )
     {
       Remote r = it.next();
-      if ( !( r.getEepromSize() == eepromSize
-          || r.isSSD() && r.getEepromSize() > eepromSize ) )
+      int pageSize = r.getProcessor().getPageSize();
+      if ( !( r.getEepromSize() == dataSize
+          || r.isSSD() && r.getEepromSize() > dataSize 
+          || r.isJP2style() && dataSize % pageSize == 0
+                && r.getEepromSize() < dataSize  
+                && ( dataSize - r.getEepromSize()) < pageSize ) )
       {
           it.remove();
       }
     }        
     if ( remotes == null || remotes.isEmpty() )
     {
+      // The addition of 0x3FF is to handle cases such as the URC7955, with a EEPROM size of
+      // 0xFFC which is more appropriately referred to as 4k than 3k.
       String message = "No remote found with signature starting " + signature
-        + " and EEPROM size " + ( eepromSize >> 10 ) + "k";
+        + " and EEPROM size " + ( ( dataSize + 0x3FF ) >> 10 ) + "k";
       JOptionPane.showMessageDialog( null, message, "Unknown remote", JOptionPane.ERROR_MESSAGE );
       return null;
     }
@@ -4469,9 +4477,17 @@ public class RemoteConfiguration
     createActivities();
     SetupCode.setMax( remote );
 
+    int pageSize = remote.getProcessor().getPageSize();
     int eepromSize = remote.getEepromSize();
-    data = new short[ eepromSize ];
-    highlight = new Color[ eepromSize + 8 * remote.getSettingAddresses().size() ];
+    int dataSize = eepromSize;
+    if ( remote.isJP2style() && eepromSize % pageSize != 0 )
+    {
+      // Data size needs to be a whole number of flash pages, so round the
+      // EEPROM size upwards.
+      dataSize = ( eepromSize / pageSize + 1 ) * pageSize;
+    }
+    data = new short[ dataSize ];
+    highlight = new Color[ dataSize + 8 * remote.getSettingAddresses().size() ];
     for ( int i = 0; i < highlight.length; i++ )
     {
       highlight[ i ] = Color.WHITE;
@@ -5325,8 +5341,11 @@ public class RemoteConfiguration
       else if ( segType == 3 )
       {
         int len = 2 * segData[ 2 ]; // keys and durations
-        len += segData[ 3 + len ] + 2;  // name and serial
-        updateHighlight( macro, address + 4, len + 4 );
+        if ( remote.usesEZRC() )
+        {
+          len += segData[ 3 + len ] + 3;  // name and serial
+        }
+        updateHighlight( macro, address + 4, len + 3 );
       }
       else if ( segType == 4 )
       {
@@ -5990,7 +6009,7 @@ public class RemoteConfiguration
         Activity activity = activities.get( btn );
         activity.setSegment( segment );
         activity.getMacro().setSegment( segment );
-        short[] macroData = activity.getMacro().getItemData().getData();
+        short[] macroData = activity.getMacro().getItemData( false ).getData();
         int macroLen = macroData.length / 2;
         segData.set( activity.getSelector().getKeyCode(), i++ );
         segData.set( ( short )macroLen, j++ );
@@ -6488,6 +6507,11 @@ public class RemoteConfiguration
         list.clear();
         list.add( macro );
       }
+      if ( type == 1  && list.get( 0 ).getData() == null && list.get( 0 ).hasData() )
+      {
+        type = 3;
+        list.get( 0 ).setName( "" );
+      }
       if ( type == 1 && segmentTypes.contains( 4 ) && list.get( 0 ).getActivity() != null )
       {
         type = 4;
@@ -6502,7 +6526,15 @@ public class RemoteConfiguration
         size += macro.dataLength() + type - ( type == 4 ? 2 : 1 );
         if ( type == 3 )
         {
-          size += macro.dataLength() + macro.getName().length() + 1;
+          size += macro.dataLength();
+          if ( remote.usesEZRC() )
+          {
+            size += macro.getName().length() + 1;
+          }
+          else
+          {
+            size -= 2;  // JP2-style remotes do not use serial number
+          }
         }
       }
       int segSize = size + ( remote.doForceEvenStarts() && ( size & 1 ) == 0 ? 4 : 3 );
@@ -6531,17 +6563,20 @@ public class RemoteConfiguration
         segData.set( ( short )size, pos++ );
         if ( type == 3 )
         {
-          Hex hex =  macro.getItemData();
+          Hex hex =  macro.getItemData( false );
           segData.put( hex, pos );
           pos += hex.length();
-          int nameLen = macro.getName().length();
-          segData.set( ( short )nameLen, pos++ );
-          for ( int i = 0; i < nameLen; i++ )
+          if ( remote.usesEZRC() )
           {
-            segData.set( ( short )macro.getName().charAt( i ), pos++ );
+            int nameLen = macro.getName().length();
+            segData.set( ( short )nameLen, pos++ );
+            for ( int i = 0; i < nameLen; i++ )
+            {
+              segData.set( ( short )macro.getName().charAt( i ), pos++ );
+            }
+            segData.put( macro.getSerial(), pos );
+            pos += 2;
           }
-          segData.put( macro.getSerial(), pos );
-          pos += 2;
         }
         else
         {
@@ -8773,6 +8808,7 @@ public class RemoteConfiguration
     int irSerial = -1;  // unset; only used temporarily during file load
     int duration = -1;  // unset
     int delay = 0;
+    boolean isEZRC = true;
     
     public KeySpec(){};
     
@@ -8854,19 +8890,38 @@ public class RemoteConfiguration
       }
       return true;
     }
-    
+
+    public boolean isEZRC()
+    {
+      return isEZRC;
+    }
+
+    public void setEZRC( boolean isEZRC )
+    {
+      this.isEZRC = isEZRC;
+    }
+
     @Override
     public String toString()
     {
       StringBuilder buff = new StringBuilder();
-      buff.append( db.getName() + ";" );
+      if ( isEZRC )
+      {
+        buff.append( db.getName() + ";" );
+      }
       if ( duration >= 0 )
       {
-        buff.append( "Hold(" +  duration / 10 + "." + duration % 10 + ");" );
+        double durationUnit = isEZRC ? 0.1 : 0.0025;  // unit in seconds of duration values
+        String format = isEZRC ? "Hold(%3.1f);" : "Hold(%4.2f)";
+        buff.append( String.format( format, duration * durationUnit ) );
       } 
       if ( fn != null )
       {
         buff.append( fn );
+      }
+      else if ( !isEZRC && btn != null )
+      {
+        buff.append( btn );
       }
       if ( delay != 0 )
       {

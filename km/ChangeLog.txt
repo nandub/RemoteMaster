@@ -28,6 +28,10 @@ Changes for v2.06
 - Fix various bugs in RMPB (Graham)
 - Add the new JP2 pseudocode instructions supported by URC-7980 (Graham)
 - Comment out a FocusAdapter in SetupPanel.java that is redundant and caused errors with ChoiceDeviceParm parameters (Graham)
+-- Private build 9
+- For JP2-style remotes, support cases like URC7955 where E2 is not a whole number of flash pages (Graham)
+- Add support for real-time macros such as supported by the NetTV button of URC7955 (Graham)
+- Update jp12serial to v0.23 to support such remotes (Graham)
 
 Changes for v2.05
 -- Private build 1

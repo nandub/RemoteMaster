@@ -48,6 +48,7 @@ public class UnsignedByteRenderer extends DefaultTableCellRenderer
     baselineData = remoteConfig.getBaselineData();
     settingAddresses = remoteConfig.hasSegments() ? remoteConfig.getSettingMap() : remote.getSettingAddresses();
     highlight = remoteConfig.getHighlight();
+    eepromSize = remote.getEepromSize();
   }
 
   /*
@@ -62,6 +63,7 @@ public class UnsignedByteRenderer extends DefaultTableCellRenderer
   {
     component = super.getTableCellRendererComponent( table, value, isSelected, false, row, col );
     offset = 16 * row + col - 1;
+    boolean reserved = offset > eepromSize -1;
     short cellValue = ( ( UnsignedByte )value ).getValue();
     
     if ( savedData != null && cellValue != savedData[ offset ] )
@@ -74,7 +76,8 @@ public class UnsignedByteRenderer extends DefaultTableCellRenderer
     }
     if ( !isSelected )
     {
-      component.setForeground( changed() ? Color.YELLOW : useSavedData() ? Color.BLUE : Color.BLACK );
+      component.setForeground( reserved ? Color.LIGHT_GRAY : changed() ? Color.YELLOW 
+          : useSavedData() ? Color.BLUE : Color.BLACK );
     }
     return component;
   }
@@ -130,6 +133,7 @@ public class UnsignedByteRenderer extends DefaultTableCellRenderer
   private short[] normalData = null;
   private short[] savedData = null;
   private short[] baselineData = null;
+  private int eepromSize = 0;
 
   /** The base font. */
   private Font baseFont = null;
