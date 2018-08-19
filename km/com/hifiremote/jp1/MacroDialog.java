@@ -92,7 +92,7 @@ public class MacroDialog extends JDialog implements ActionListener, ButtonEnable
     upperPanel.add( boundPanel, BorderLayout.CENTER );
     boundPanel.setBorder( BorderFactory.createTitledBorder( "Bound Key" ) );
 
-    boundKey.addActionListener( this );
+//    boundKey.addActionListener( this );
     
     // Add the Macro definition controls
     macroBox = new MacroDefinitionBox( itemStyle );
@@ -135,7 +135,12 @@ public class MacroDialog extends JDialog implements ActionListener, ButtonEnable
     this.config = config;
     Remote remote = config.getRemote();
 
+    realTime = itemStyle && !remote.usesEZRC();
     boundKey.setModel( new DefaultComboBoxModel( remote.getMacroButtons() ) );
+    boundKey.setEnabled( !realTime );
+    if ( !realTime )
+      boundKey.addActionListener( this );
+    setTitle( realTime ? "Real-time Macro" : "Macro" );
     if ( remote.getMacroButtons().length > 0 )
     {
       boundKey.setSelectedIndex( 0 );
@@ -159,9 +164,9 @@ public class MacroDialog extends JDialog implements ActionListener, ButtonEnable
     else
     {
       shift.setText( remote.getShiftLabel() );
-      shift.setEnabled( remote.getShiftEnabled() );
+      shift.setEnabled( remote.getShiftEnabled() && !realTime );
       xShift.setText( remote.getXShiftLabel() );
-      xShift.setEnabled( remote.getXShiftEnabled() );
+      xShift.setEnabled( remote.getXShiftEnabled() && !realTime );
       boundPanel.add( Box.createHorizontalStrut( 5 ) );
       boundPanel.add( new JLabel( "Key:" ) );
       boundPanel.add( boundKey );
@@ -196,6 +201,11 @@ public class MacroDialog extends JDialog implements ActionListener, ButtonEnable
     else
     {
       setButton( macro.getKeyCode(), boundKey, shift, xShift );
+      if ( realTime )
+      {
+        shift.setEnabled( false );
+        xShift.setEnabled( false );
+      }
       Object val = macro.getValue();
       if ( val instanceof Hex )
       {
@@ -446,7 +456,7 @@ public class MacroDialog extends JDialog implements ActionListener, ButtonEnable
   @Override
   public void enableButtons( Button b, MacroDefinitionBox macroBox )
   {
-    if ( config.getRemote().usesEZRC() )
+    if ( itemStyle )
     {
       boolean selected = macroBox.getMacroButtons().getSelectedIndex() >= 0;
       macroBox.add.setEnabled( true );
@@ -515,6 +525,8 @@ public class MacroDialog extends JDialog implements ActionListener, ButtonEnable
   private MacroDefinitionBox macroBox = null;
   
   private boolean itemStyle = false;
+  
+  private boolean realTime = false;
 
   /** The dialog. */
   private static MacroDialog dialog = null;

@@ -176,6 +176,11 @@ public class MacroTableModel extends JP1TableModel< Macro >
     {
       return false;
     }
+    else if ( col == 3 )
+    {
+      Macro macro = getRow( row );
+      return( macro.getItems() == null || remoteConfig.getRemote().usesEZRC() );
+    }
 
     return true;
   }

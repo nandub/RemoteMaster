@@ -474,7 +474,7 @@ PropertyChangeListener, RMSetter< Object >
     {
       return;
     }
-    if ( config.getRemote().usesEZRC() )
+    if ( itemStyle )
     {
       KeySpec value = getKeySpec();
       macroButtonModel.setElementAt( value, index );
@@ -491,7 +491,7 @@ PropertyChangeListener, RMSetter< Object >
   private void insertKey( int mask )
   {
     int index = macroButtons.getSelectedIndex();
-    if ( config.getRemote().usesEZRC() )
+    if ( itemStyle )
     {
       KeySpec value = getKeySpec();
       macroButtonModel.add( index, value );
