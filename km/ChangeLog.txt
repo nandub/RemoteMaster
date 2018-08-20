@@ -32,6 +32,7 @@ Changes for v2.06
 - For JP2-style remotes, support cases like URC7955 where E2 is not a whole number of flash pages (Graham)
 - Add support for real-time macros such as supported by the NetTV button of URC7955 (Graham)
 - Update jp12serial to v0.23 to support such remotes (Graham)
+- Update digitmaps.bin to 692 (Dave Reed)
 
 Changes for v2.05
 -- Private build 1
