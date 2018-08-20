@@ -82,6 +82,14 @@
 
       Note: Prior to version 0.14, no change log was kept.
 
+	  Version 0.23 (15 August 2018)
+		This version adds support for JP2 and similar remotes where the EEPROM area starts on
+		a flash page boundary but may not consist of a whole number of flash pages.  The only
+		known example at present is the URC7955 where the EEPROM length is 0xFFC, four bytes
+		short of two 0x800-byte flash pages.  getRemoteEepromSize() reports the true size of
+		the EEPROM area but readRemote(...) and writeRemote(...) allow reading and writing
+		within the whole of the flash pages containing the EEPROM area.
+
 	  Version 0.22 (13 October 2016)
 		This version adds support for JP3.1.  This is a 32-bit version of JP1.4N but with an
 		important timing difference.  There is a delay of nearly 5 seconds between sending a
@@ -1164,6 +1172,18 @@ unsigned char jp12ComputeCheckSum( const unsigned char *data, int length )
 	return sum;
 }
 
+// This function was introduced to handle JP2-style remotes where the E2 area is
+// not an integral number of flash pages.  It rounds val to an integer
+// multiple of pageSize when pageSize > 1.  The mode parameter is  0 or 1,
+// 0 to round down, 1 to round up.
+int roundToPages( int val, int mode )
+{
+	if ( !ConnIsJP2() || pageSize <= 1 || val % pageSize == 0 )
+		return val;
+
+	return ( val / pageSize + mode ) * pageSize;
+}
+
 int jp12GetIdentity( unsigned char *buffer )
 {
 
@@ -1755,7 +1775,7 @@ JNIEXPORT jstring JNICALL Java_com_hifiremote_jp1_io_JP12Serial_getInterfaceName
 
 EXPORT const char *getInterfaceVersion( void )
 {
-  return "0.22";
+  return "0.23";
 }
 
 #ifdef JAVA_SDK_AVAILABLE
@@ -2134,7 +2154,7 @@ EXPORT int readRemote( JP12ADDR address, unsigned char *buffer, int length )
 {
 	// only allow reading within the upgrade area
 	if ( (address < eepromAddress) ||
-		((address + length) > (eepromAddress + eepromSize)))
+		((address + length) > (eepromAddress + roundToPages( eepromSize, 1 ))))
 	{
 		return -1;
 	}
@@ -2189,7 +2209,7 @@ EXPORT int writeRemote( JP12ADDR address, const unsigned char *buffer, int lengt
 {
 	// only allow writing within the upgrade area
 	if ( (address < eepromAddress) ||
-	   ((address + length) > (eepromAddress + eepromSize)))
+	   ((address + length) > (eepromAddress + roundToPages( eepromSize, 1 ))))
 	{
 		return -1;
 	}
