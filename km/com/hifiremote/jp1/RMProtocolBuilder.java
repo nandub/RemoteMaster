@@ -135,10 +135,11 @@ ChangeListener
     
     String note = "Code imported from protocols.ini with the Import button on the toolbar "
         + "(or the Protocol > Import... menu item) is initially shown in GRAY.  To complete "
-        + "the import process, select the entries you wish to import into the Assembler and "
-        + "press the \"Import to Assembler\" button.  The form of the import is determined "
-        + "by the settings of the \"Use predefined constants\" check boxes.\n\n"
-        + "Code in BLACK is already imported to, or created by, the Assembler.\n"
+        + "the import process, select the entries you wish to import for analysis or editing "
+        + "and press the \"Import Hex\" button.  Code in BLACK is already imported for such "
+        + "use.\n\n"
+        + "The form of any import to the assembler is determined by the settings of "
+        + "the \"Use predefined constants\" check boxes.\n\n"
         + "All entries can be edited or created directly as hex data by double-clicking.";
     manualSettingsPanel.getTablePanel().getNoteArea().setText( note );
     

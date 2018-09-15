@@ -29,6 +29,7 @@ import java.util.Properties;
 import java.util.Random;
 import java.util.StringTokenizer;
 
+import javax.activity.ActivityCompletedException;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
@@ -2521,15 +2522,48 @@ public class RemoteConfiguration
       }
     }
     
+    
     activityAssignments = segments.get( 0xE9 );
-    if ( activityAssignments != null && activityAssignments.size() > 0 && remote.hasActivityControl() )
+    if ( activityAssignments == null  && remote.getSegmentTypes().contains( 0xCD ) 
+        && remote.hasActivityControl() )
     {
-      Segment segment = activityAssignments.get( 0 );
-      Hex hex = segment.getHex();
-      List< Button > activityBtns = remote.getButtonGroups().get( "Activity" );
+      for ( int i= 0; i < remote.getActivityControl().length; i++ )
+      {
+        List< Segment > list = segments.get( 0xCD + i );
+        if ( list == null || list.size() == 0 ) continue;
+        if ( activityAssignments == null )
+        {
+          activityAssignments = new ArrayList< Segment >();
+        }
+        activityAssignments.add( list.get( 0 ) );
+      }
+    }
 
+    if ( activityAssignments != null && activityAssignments.size() > 0 && remote.hasActivityControl() )
+    {      
+      List< Button > activityBtns = remote.getButtonGroups().get( "Activity" );
       for ( int i = 0; i < activityBtns.size(); i++ )
       {
+        Segment segment = activityAssignments.get( 0 );
+        int indexPos = i + 4;
+        int offset = 1;
+        if ( segment.get_Type() != 0xE9 )
+        {
+          indexPos = 2;
+          offset = 0;
+          segment = null;
+          for ( Segment seg : activityAssignments )
+          {
+            if ( seg.get_Type() == 0xCD + i )
+            {
+              segment = seg;
+              break;
+            }
+          }
+          if ( segment == null ) continue;
+        }
+       
+        Hex hex = segment.getHex();
         Activity activity = activities.get( activityBtns.get( i ) );
         activity.setActive( true );
         activity.setSegmentFlags( segment.getFlags() );
@@ -2539,16 +2573,20 @@ public class RemoteConfiguration
         {
           group.setDevice( DeviceButton.noButton );
         }
-        int index = hex.getData()[ i + 4 ];
+        int index = hex.getData()[ indexPos ];
         if ( index >= control.maps.length )
         {
           activity.setSelector( null );
         }
         else
         {
-          String selectorName = "" + ( index + 1 );
-          activity.setSelector( remote.getButton( selectorName ) );      
-          int val = control.maps[ index ];       
+          String selectorName = "" + ( index + offset );
+          activity.setSelector( remote.getButton( selectorName ) );
+        }
+        index &= 0x7F;
+        if ( index < control.maps.length )
+        {     
+          int val = control.maps[ index + offset - 1 ];       
           DeviceButton[] devBtns = remote.getDeviceButtons();
           for ( int k = 0; k < devBtns.length; k++ )
           {
@@ -5451,13 +5489,21 @@ public class RemoteConfiguration
       }
       Segment segment = activity.getSegment();
       int address = segment.getAddress();
-      if ( segment.get_Type() == 0xE9 )
+      int type = segment.get_Type();
+      if ( type == 0xE9 )
       {
         activity.clearMemoryUsage();
         int tabIndex = remote.getButtonGroups().get( "Activity" ).indexOf( activity.getButton() );
         updateHighlight( activity, address + 8 + tabIndex, 1 );
         continue;
       }
+      else if ( type >= 0xCD && type < 0xCD + activities.size() )
+      {
+        activity.clearMemoryUsage();
+        updateHighlight( activity, address + 4, 4 );
+        continue;
+      }
+
       ActivityGroup[] groups = activity.getActivityGroups();      
       int incr = ( remote.hasActivityControl() ) ? 0 : 1;
       int pos = 1 - incr;
@@ -5950,6 +5996,38 @@ public class RemoteConfiguration
       }
       segments.get( 0xE9 ).add( segment );
     }
+    else if ( types.contains( 0xCD ) )
+    {
+      List< Button > activityBtns = remote.getButtonGroups().get( "Activity" );
+      for ( int i = 0; i < activityBtns.size(); i++ )
+      {
+        segments.remove( 0xCD + i );
+        Activity activity = activities.get( activityBtns.get( i ) );
+        activity.setActive( false );
+        Button selector = activity.getSelector();
+        int val = 0;
+        if ( selector == null )
+        {
+          val = getDefaultActivitySetting( i );
+        }
+        else
+        {
+          val = Integer.valueOf( selector.getName() );
+        }
+        if ( val != 0 )
+        {
+          if ( segments.get( 0xCD + i ) == null )
+          {
+            segments.put(  0xCD + i, new ArrayList< Segment >() );
+          }
+          activity.setActive( true );
+          Hex segData = new Hex( new short[]{ 0,0,( short )val,1 } );
+          Segment segment = new Segment( 0xCD + i, 0, segData );
+          segments.get( 0xCD + i ).add( segment );
+          activity.setSegment( segment );
+        }
+      }
+    }
     else if ( types.contains( 0x1E ) )
     {
       Button act = remote.getButtonByStandardName( "Activities" );
@@ -6213,6 +6291,32 @@ public class RemoteConfiguration
     activity.setHelpSegment( segment );
     segments.get( 0x1F ).add( segment );
 
+  }
+  
+  public int getDefaultActivitySetting( int index)
+  {
+    int states = 0;
+    int val = 1;
+    for ( DeviceButton devBtn : remote.getDeviceButtons() )
+    {
+      short[] data = devBtn.getSegment().getHex().getData();
+      if ( devBtn.getSetupCode( data ) >= 0 )
+      {
+        states |= val;
+      }
+      val <<= 1;
+    }
+    val = 0;
+    for ( int i = 1; i >= 0; i-- )
+    {
+      int map = remote.getActivityControl()[ index ].maps[ i ];
+      if ( ( map & states ) == map )
+      {
+        val = 0x81 + i;
+        break;
+      }
+    }
+    return val;
   }
 
   public List< KeyMove > getUpgradeKeyMoves()

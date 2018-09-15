@@ -118,7 +118,7 @@ ChangeListener, ListSelectionListener, ItemListener
     buttonPanel.add( useRegisterConstants );
     buttonPanel.add( useFunctionConstants );
     buttonPanel.add( Box.createHorizontalGlue() );
-    buttonPanel.add( assemblerPanel.toAssemblerButton );
+    buttonPanel.add( assemblerPanel.importHexButton );
 
     importButton = new JButton( "Import from Clipboard" );
 
@@ -932,7 +932,6 @@ ChangeListener, ListSelectionListener, ItemListener
       hex = displayProtocol.getCode( proc );
     if ( proc.getDataStyle() < 0 )
     {
-      buttonPanel.setVisible( false );
       analyzerPanel.set( proc, hex );
       return;
     }
@@ -1185,7 +1184,7 @@ ChangeListener, ListSelectionListener, ItemListener
       {
         boolean test = rows.length == 1 
             && procs[ rows[ 0 ] ].getEquivalentName().equals( displayProcessor.getEquivalentName() );
-        assemblerPanel.toAssemblerButton.setEnabled( test );
+        assemblerPanel.importHexButton.setEnabled( test );
       }
     }
   }

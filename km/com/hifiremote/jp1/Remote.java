@@ -3777,7 +3777,7 @@ public class Remote implements Comparable< Remote >
   public boolean hasActivitySupport()
   {
     return segmentTypes != null && ( segmentTypes.contains( 0xDB ) || segmentTypes.contains( 0xE9 )
-        || segmentTypes.contains( 0x1E ) || usesSimpleset() || isSSD() );
+        || segmentTypes.contains( 0xCD ) || segmentTypes.contains( 0x1E ) || usesSimpleset() || isSSD() );
   }
   
   public boolean hasActivityInitialMacro()

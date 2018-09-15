@@ -401,6 +401,7 @@ public class ActivityFunctionTableModel extends JP1TableModel< Activity > implem
     Activity activity = getRow( row );
     Macro macro = activity.getMacro();
     Remote remote = remoteConfig.getRemote();
+    int rawCol = col;
     col = getEffectiveColumn( col );
     switch ( col )
     {
@@ -410,6 +411,10 @@ public class ActivityFunctionTableModel extends JP1TableModel< Activity > implem
         return activity.getName();
       case 2:
         Button selector = activity.getSelector();
+        if ( selector == null && remote.getSegmentTypes().contains( 0xCD ) )
+        {
+          setValueAt( ( int )remote.getButton( "0" ).getKeyCode(), row, rawCol );
+        }
         return selector == null ? null : new Integer( activity.getSelector().getKeyCode() );
       case 3:
 //        return macro == null ? remoteConfig.getRemote().usesEZRC() ?
@@ -469,16 +474,21 @@ public class ActivityFunctionTableModel extends JP1TableModel< Activity > implem
         keyCode = ( Integer )value;
         btn = remote.getButton( keyCode );
       }
+     
       if ( remote.hasActivityControl() && btn.getName().equals( "0" ) )
       {
         btn = null;
-        for ( ActivityGroup group : activity.getActivityGroups() )
+        if ( !remote.getSegmentTypes().contains( 0xCD ) )
         {
-          group.setDevice( DeviceButton.noButton );
+          for ( ActivityGroup group : activity.getActivityGroups() )
+          {
+            group.setDevice( DeviceButton.noButton );
+          }
+          activityGroupModel.fireTableDataChanged();
         }
-        activityGroupModel.fireTableDataChanged();
       }
       activity.setSelector( btn );
+
       if ( remote.hasMasterPowerSupport() )
       {
         if ( macro == null )
@@ -493,11 +503,19 @@ public class ActivityFunctionTableModel extends JP1TableModel< Activity > implem
           macro.setKeyCode( keyCode );
         }
       }
-      if ( remote.hasActivityControl() && btn != null )
+      if ( remote.hasActivityControl() && ( btn != null || remote.getSegmentTypes().contains( 0xCD ) ) )
       {
         int tabIndex = remote.getButtonGroups().get( "Activity" ).indexOf( activity.getButton() );
         Activity.Control control = remote.getActivityControl()[ tabIndex ];
-        int index = Integer.valueOf( btn.getName() ) - 1;
+        int index = 0;
+        if ( btn != null )
+        {
+          index = Integer.valueOf( btn.getName() ) - 1;
+        }
+        else
+        {
+          index = ( remoteConfig.getDefaultActivitySetting( tabIndex ) & 0x7F ) - 1;
+        }
         ActivityGroup[] groups = activity.getActivityGroups();      
         int val = control.maps[ index ];       
         DeviceButton[] devBtns = remote.getDeviceButtons();

@@ -206,7 +206,7 @@ public class ActivityPanel extends RMPanel implements ChangeListener, ActionList
       deleteActivity.setVisible( remote.usesEZRC() );
       moveRight.setVisible( remote.usesEZRC() );
       moveLeft.setVisible( remote.usesEZRC() );
-      clearActivity.setVisible( !remote.usesEZRC() );
+      clearActivity.setVisible( !remote.usesEZRC() && remote.getSegmentTypes().contains( 0xDC ) );
       iconLabel.setVisible( remote.isSSD() );
       iconLabel.setIcon( null );
       String startMessage = "Note:  When the activity has been set with the remote, \"Key\" is "

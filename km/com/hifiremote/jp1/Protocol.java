@@ -1888,7 +1888,7 @@ public class Protocol
       settingsPanel.getDeviceText().setText( settingsPanel.getProtocolText( true, true ) );
     }
     AssemblerPanel ap = settingsPanel.getAssemblerPanel();
-    ap.getEditorPanel().actionPerformed( new ActionEvent( ap.toAssemblerButton, ActionEvent.ACTION_PERFORMED, "" ) );
+    ap.getEditorPanel().actionPerformed( new ActionEvent( ap.importHexButton, ActionEvent.ACTION_PERFORMED, "" ) );
     
     dialog.setMessage( this instanceof ManualProtocol ? 1 : 2 );
     settingsPanel.getTablePanel().getCodeModel().setCodeWhenNull( codeWhenNull );

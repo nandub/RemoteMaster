@@ -70,8 +70,8 @@ public class AssemblerPanel extends JPanel implements ListSelectionListener, Ite
       update.addActionListener( this );
       selectAll.addActionListener( this );
       assemble.addActionListener( this );
-      toAssemblerButton.setToolTipText( "Import hex code of selected processors to Assembler for editing" );
-      toAssemblerButton.addActionListener( this );
+      importHexButton.setToolTipText( "Import hex code of selected processors for analysis or editing" );
+      importHexButton.addActionListener( this );
 
       insert.setToolTipText( "Inserts above selection a number of rows equal to the number selected." );
       delete.setToolTipText( "Deletes the rows containing selected cells." );
@@ -188,7 +188,7 @@ public class AssemblerPanel extends JPanel implements ListSelectionListener, Ite
           }
         }
       }
-      else if ( source == toAssemblerButton )
+      else if ( source == importHexButton )
       {
         ManualProtocol protocol = codePanel.getProtocol();
         if ( protocol != null )
@@ -681,7 +681,7 @@ public class AssemblerPanel extends JPanel implements ListSelectionListener, Ite
   public JRadioButton asCodeButton = new JRadioButton( "As code" );
   public JRadioButton rcButton = new JRadioButton( "Force RCn" );
   public JRadioButton wButton = new JRadioButton( "Force Wn" );
-  public JButton toAssemblerButton = new JButton( "Import to Assembler");
+  public JButton importHexButton = new JButton( "Import Hex");
   
   private JToggleButton[] optionButtons =
     {
