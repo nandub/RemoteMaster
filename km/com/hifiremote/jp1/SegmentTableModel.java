@@ -112,6 +112,10 @@ public class SegmentTableModel extends JP1TableModel< Segment >
         return "Activity Assist Definition segment";
       case 0x20:
         return "Function Names segment";
+      case 0xCD:
+        return "WatchTV Assignment segment";
+      case 0xCE:
+        return "WatchMovie Assignment segment";
       case 0xDB:
         return "Activity Device Settings segment";
       case 0xDC:

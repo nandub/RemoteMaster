@@ -6022,7 +6022,7 @@ public class RemoteConfiguration
           }
           activity.setActive( true );
           Hex segData = new Hex( new short[]{ 0,0,( short )val,1 } );
-          Segment segment = new Segment( 0xCD + i, 0, segData );
+          Segment segment = new Segment( 0xCD + i, 0xFF, segData );
           segments.get( 0xCD + i ).add( segment );
           activity.setSegment( segment );
         }
