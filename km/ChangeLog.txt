@@ -33,9 +33,10 @@ Changes for v2.06
 - Add support for real-time macros such as supported by the NetTV button of URC7955 (Graham)
 - Update jp12serial to v0.23 to support such remotes (Graham)
 - Update digitmaps.bin to 692 (Dave Reed)
--- Private build 10
+-- Release build 10
 - Minor tweaks to RMPB (Graham)
 - Add support for segment types 0xCD and 0xCE used in URC-7145 (Graham)
+- Make raw downloads of segmented remotes be loadable .ir files (Graham)
 
 Changes for v2.05
 -- Private build 1

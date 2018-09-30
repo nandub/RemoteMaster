@@ -106,6 +106,16 @@ public class RawDataDialog extends JDialog implements ActionListener
       try
       {
         PrintWriter pw = new PrintWriter( new BufferedWriter( new FileWriter( rawFile ) ) );
+        if ( interfaceType == 1 || interfaceType > 5 )
+        {
+          pw.println( "[Signature]" );
+          pw.print( "0000:" );
+          for ( int i = 0; i < signature.length(); i++ )
+            pw.printf( "  %02X", signature.charAt( i ) & 0xFF );
+          pw.println();
+          pw.println();
+          pw.println( "[Buffer]" );
+        }
         Hex.print( pw, buffer, baseAddress );
         pw.close();
       }
@@ -133,7 +143,9 @@ public class RawDataDialog extends JDialog implements ActionListener
       }
       System.err.println( "Interface opened successfully" );
       baseAddress = io.getRemoteEepromAddress();
+      interfaceType = io.getInterfaceType();
       System.err.println( "Base address = $" + Integer.toHexString( baseAddress ).toUpperCase() );
+      System.err.println( "Interface type = $" + Integer.toHexString( interfaceType ).toUpperCase() );
       
       signature = RemoteMaster.getIOsignature( io, baseAddress );
       if ( signature != null && signature.length() > 8 ) // JP1.4/JP2 full signature block
@@ -284,6 +296,7 @@ public class RawDataDialog extends JDialog implements ActionListener
   private String signature = null;
   private short[] buffer = null;
   private int baseAddress = 0;
+  private int interfaceType = 0;
 
   private JButton downloadButton = new JButton( "Download" );
 //  private JButton setBaselineButton = new JButton( "Set Baseline" );
