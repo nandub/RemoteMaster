@@ -9,6 +9,7 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Frame;
+import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
@@ -38,6 +39,7 @@ import java.security.CodeSource;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
@@ -49,10 +51,12 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JColorChooser;
 import javax.swing.JDialog;
@@ -60,6 +64,7 @@ import javax.swing.JEditorPane;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -71,7 +76,11 @@ import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTabbedPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
+import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
@@ -85,9 +94,12 @@ import javax.swing.event.HyperlinkListener;
 import com.hifiremote.LibraryLoader;
 import com.hifiremote.jp1.FixedData.Location;
 import com.hifiremote.jp1.JP2Analyzer;
+import com.hifiremote.jp1.extinstall.BTExtInstall;
 import com.hifiremote.jp1.extinstall.ExtInstall;
 import com.hifiremote.jp1.extinstall.RMExtInstall;
+import com.hifiremote.jp1.io.BLERemote;
 import com.hifiremote.jp1.io.CommHID;
+import com.hifiremote.jp1.io.JP2BT;
 import com.hifiremote.jp1.io.JPS;
 import com.hifiremote.jp1.io.IO;
 import com.hifiremote.jp1.io.JP12Serial;
@@ -117,7 +129,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
 
   /** Description of the Field. */
   public final static String version = "v2.06";
-  public final static int buildVer = 10;
+  public final static int buildVer = 11;
   
   public static class LanguageDescriptor
   {
@@ -164,10 +176,42 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
   {
     return version.replaceAll("\\s","") + "build" + getBuild();
   }
+  
+  public static class BatteryBar extends JLabel
+  {
+    private int bars = 0;
+    
+    public BatteryBar()
+    {
+      setOpaque( true );
+      setBackground( Color.WHITE );
+      setBorder( BorderFactory.createLineBorder( Color.LIGHT_GRAY ) );
+    }
+
+    public void setBars( int bars )
+    {
+      this.bars = bars;
+      repaint();
+    }
+
+    @Override
+    public void paintComponent( Graphics g )
+    {
+      {
+        Dimension d = getSize();
+        int barWidth = (d.width + 2) / 3 - 2;
+        for ( int i = 0; i < bars; i++ )
+        {
+          g.setColor( Color.GRAY );
+          g.fillRect( ( barWidth + 2 ) * i, 0, barWidth, d.height );
+        }
+      }
+    }
+  }
 
   public enum Use
   {
-    DOWNLOAD, READING, UPLOAD, SAVING, SAVEAS, EXPORT, RAWDOWNLOAD
+    DOWNLOAD, READING, UPLOAD, SAVING, SAVEAS, EXPORT, RAWDOWNLOAD, CONNECT, SEARCH
   }
   
   public static int defaultToolTipTimeout = 5000;
@@ -222,6 +266,27 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
   /** The interfaces. */
   private ArrayList< IO > interfaces = new ArrayList< IO >();
 
+  private RMAction bluetoothAction = null;
+  private JToggleButton bluetoothButton = null;
+  private JCheckBoxMenuItem bluetoothItem = null;
+  private Box box = null;
+  private ButtonGroup btGroup = null;
+  private LinkedHashMap< String, BLERemote > bleMap = new LinkedHashMap< String, BLERemote >();
+  private LinkedHashMap< JRadioButton, BLERemote > bleBtnMap = new LinkedHashMap< JRadioButton, BLERemote >();
+  private JButton searchButton = null;
+  private JButton registerButton = null;
+  private JButton deregisterButton = null;
+  private BatteryBar batteryBar = null;
+  private JLabel batteryVoltage = null;
+  private JProgressBar signalProgressBar = null;
+  
+  private RMAction finderAction = null;
+  private JToggleButton finderButton = null;
+  private JCheckBoxMenuItem finderItem = null;
+  private boolean uploadable = false;
+  
+  private JP2BT btio = null;
+  
   /** The download action. */
   private RMAction downloadAction = null;
 
@@ -374,6 +439,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
 
   private JPanel memoryStatus = null;
   private JPanel extraStatus = null;
+  private JPanel bleStatus = null;
 
   private JPanel interfaceStatus = null;
   private JPanel warningStatus = null;
@@ -819,7 +885,8 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
       initializeTo00Item.setEnabled( true );
       initializeToFFItem.setEnabled( true );
       setBaselineItem.setEnabled( true );
-      uploadAction.setEnabled( true );
+      uploadable = true;
+      uploadAction.setEnabled( allowUpload() );
       resetSegmentPanel();
       update();
       changed = remoteConfig != null ? !Hex.equals( remoteConfig.getSavedData(), remoteConfig.getData() ) : false;
@@ -1251,6 +1318,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
       putValue( ACTION_COMMAND_KEY, action );
       putValue( SHORT_DESCRIPTION, description );
       putValue( MNEMONIC_KEY, mnemonic );
+      
     }
 
     /*
@@ -1320,7 +1388,8 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
           cleanUpperMemoryItem.setEnabled( true );
           initializeTo00Item.setEnabled( !interfaces.isEmpty() );
           initializeToFFItem.setEnabled( !interfaces.isEmpty() );
-          uploadAction.setEnabled( !interfaces.isEmpty() );
+          uploadable = !interfaces.isEmpty();
+          uploadAction.setEnabled( uploadable && allowUpload() );
         }
         else if ( command.equals( "NEWDEVICE" ) )
         {
@@ -1463,6 +1532,185 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
             model.fireTableDataChanged();
             model.propertyChangeSupport.firePropertyChange( "data", null, null );
             highlightAction.setEnabled( false );
+          }
+        }
+        else if ( command == "BLUETOOTH" )
+        {
+          if ( bluetoothButton.isSelected() )
+          {
+            BLERemote selectedRemote = null;
+            bleBtnMap.clear();
+            getRegisteredRemotes();
+            JPanel panel = new JPanel( new BorderLayout() );
+            JLabel lbl = new JLabel( "Text" );
+            int height = lbl.getPreferredSize().height;
+            String info =
+                "Select a remote and press Connect to connect.  To find other remotes,\n"
+              + "press Search.  To find a remote new to RMIR, then press and hold its\n"
+              + "Devices and Activity buttons until the LED starts to flash.\n\n"
+              + "To register a remote with RMIR with a user-friendly name, or to change\n"
+              + "the name of a registered remote, select it and press Register.  To\n"
+              + "deregister a registered remote, select it and press Deregister.  To\n"
+              + "check if a registered remote is available, press Search.  Registered\n"
+              + "remotes will then be disabled and only re-enabled if found.";
+            JTextArea infoArea = new JTextArea( info );
+            infoArea.setFont( lbl.getFont() );
+            infoArea.setBackground( lbl.getBackground() );
+            infoArea.setEditable( false );
+            infoArea.setBorder( BorderFactory.createEmptyBorder( 0, 2, 10, 2 ) );
+            panel.add( infoArea, BorderLayout.PAGE_START );
+            
+            panel.add( Box.createVerticalStrut( 10*height ), BorderLayout.LINE_START );
+            
+            box = Box.createVerticalBox();
+            btGroup = new ButtonGroup();
+            for ( String addr : bleMap.keySet() )
+            {
+              JRadioButton btn = new JRadioButton( bleMap.get( addr ).name );
+              btGroup.add( btn );
+              bleBtnMap.put( btn, bleMap.get( addr ) );
+              box.add( btn );
+            }
+            JScrollPane scroll = new JScrollPane( box );
+            scroll.getViewport().setPreferredSize( new Dimension( 0,0 ));
+            scroll.setBorder( BorderFactory.createTitledBorder( "Select remote: "  ) );
+            panel.add( scroll, BorderLayout.CENTER );
+            
+            searchButton = new JButton( "Search" );
+            registerButton = new JButton( "Register" );
+            deregisterButton = new JButton( "Deregister" );
+            JPanel btnPanel = new JPanel( new BorderLayout() );
+            JPanel regPanel = new JPanel( new FlowLayout() );
+            regPanel.add( searchButton );           
+            btnPanel.add( regPanel, BorderLayout.LINE_START );
+            regPanel = new JPanel( new FlowLayout() );
+            regPanel.add( registerButton );
+            regPanel.add( deregisterButton );
+            btnPanel.add( regPanel, BorderLayout.LINE_END );
+            btnPanel.setBorder( BorderFactory.createTitledBorder( "Actions: " ) );
+            panel.add( btnPanel, BorderLayout.PAGE_END );
+ 
+            searchButton.addActionListener( new ActionListener() 
+            {
+              public void actionPerformed( ActionEvent e )
+              { 
+                if ( btio == null || !btio.isScanning() )
+                {
+                  for ( JRadioButton btn : bleBtnMap.keySet() )
+                  {
+                    btn.setEnabled( false );
+                  }
+                  ( new ConnectTask( null, Use.SEARCH ) ).execute();
+                }
+              }
+            } );
+
+            ActionListener regListener = new ActionListener() 
+            {
+              public void actionPerformed( ActionEvent e )
+              {
+                String name = null;
+                BLERemote r = null;
+                JRadioButton rBtn = null;
+                int regCount = 0;
+                for ( JRadioButton btn : bleBtnMap.keySet() )
+                {
+                  if ( btn.isSelected() )
+                  {
+                    rBtn = btn;
+                    r = bleBtnMap.get( btn );
+                    name = r.name;          
+                  }
+                  if ( bleBtnMap.get( btn ).regIndex >= 0 )
+                    regCount++;
+                }
+                if ( name == null )
+                  return;
+                Object source = e.getSource();
+                if ( source == registerButton )
+                {
+                  String message = "Enter user-friendly name for this remote:";
+                  String result = JOptionPane.showInputDialog( null, message, name );
+                  if ( result != null )
+                  {
+                    r.name = result;
+                    if ( r.regIndex < 0 )
+                      r.regIndex = regCount;
+                    String propName = "RegisteredBTRemotes." + r.regIndex;
+                    String propValue = "Name=" + r.name + "UEIName=" + r.ueiName
+                        + "Address=" + r.address;
+                    properties.setProperty( propName, propValue );
+                    rBtn.setText( r.name );
+                  }
+                }
+                else if ( source == deregisterButton )
+                {
+                  int ndx = r.regIndex;
+                  r.regIndex = -1;
+                  r.name = r.ueiName + " " + r.address.substring( 9 );
+                  rBtn.setText( r.name );
+                  for ( int n = ndx; n < regCount - 1; n++ )
+                  {
+                    String propName = "RegisteredBTRemotes." + ( n + 1 );
+                    String propValue = properties.getProperty( propName );
+                    propName = "RegisteredBTRemotes." + n;
+                    properties.setProperty( propName, propValue );
+                  }
+                  String propName = "RegisteredBTRemotes." + ( regCount - 1 );
+                  properties.remove( propName );
+                }
+              }
+            };
+
+            registerButton.addActionListener( regListener );
+            deregisterButton.addActionListener( regListener );
+            String[] options = { "Connect", "Close" };
+            int result = JOptionPane.showOptionDialog( null, panel, "Remote chooser", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE,
+                null, options, options[ 0 ] );
+            if ( btio != null && btio.isScanning() )
+            {
+              btio.discoverUEI( false );
+              setInterfaceState( null );
+              searchButton.setEnabled( true );
+            }
+            if ( result == 0 )
+            {
+              for ( JRadioButton btn : bleBtnMap.keySet() )
+              {
+                if ( btn.isSelected() )
+                {
+                  selectedRemote = bleBtnMap.get( btn );;
+                  break;           
+                }
+              }
+              if ( selectedRemote != null )
+                ( new ConnectTask( selectedRemote, Use.CONNECT ) ).execute();
+              else
+                disconnectBLE();
+            }    
+            else
+            {
+              disconnectBLE();
+            }
+            
+          }
+          else
+          {
+            // Disconnect
+            disconnectBLE();
+          }
+        }
+        else if ( command == "FINDER" )
+        {
+          if ( finderButton.isSelected() )
+          {
+            btio.finderOn( true );
+            finderButton.setBorder( BorderFactory.createLoweredBevelBorder() );
+          }
+          else
+          {
+            btio.finderOn( false );
+            finderButton.setBorder( BorderFactory.createRaisedBevelBorder() );
           }
         }
       }
@@ -1625,6 +1873,16 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
         try
         {
           System.err.println( "RemoteMaster.windowClosing() entered" );
+          if ( btio != null )
+          {
+            if ( btio.isScanning() )
+            {
+              btio.discoverUEI( false );
+              setInterfaceState( null );
+            }
+            // BGAPITransport runs a separate thread, which needs to be stopped.
+            disconnectBLE();
+          }
           boolean quit = false;
           if ( interfaceText != null )
           {
@@ -1812,6 +2070,37 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
     sep.setPreferredSize( d );
     extraStatus.add( sep );
     interfaceStatus.add( Box.createVerticalStrut( d.height ) );
+    
+    bleStatus = new JPanel( new FlowLayout( FlowLayout.LEFT, 5, 0 ) );
+    bleStatus.add( Box.createHorizontalStrut( 5 ) );
+    sep = new JSeparator( SwingConstants.VERTICAL );
+    sep.setPreferredSize( d );
+    bleStatus.add( sep );
+    bleStatus.add( Box.createHorizontalStrut( 5 ) );
+    bleStatus.add( new JLabel( "Battery:" ) );
+    batteryBar = new BatteryBar();
+    int sizeUnit = d.height / 2;
+    batteryBar.setPreferredSize( new Dimension( 6*sizeUnit - 2, sizeUnit ) );
+    bleStatus.add( batteryBar );
+    batteryVoltage = new JLabel();
+    bleStatus.add( batteryVoltage );
+    bleStatus.add( Box.createHorizontalStrut( 5 ) );
+    sep = new JSeparator( SwingConstants.VERTICAL );
+    sep.setPreferredSize( d );
+    bleStatus.add( sep );
+    bleStatus.add( Box.createHorizontalStrut( 5 ) );
+    bleStatus.add( new JLabel( "Signal:" ) );
+    signalProgressBar = new JProgressBar();
+    signalProgressBar.setStringPainted( true );
+    signalProgressBar.setPreferredSize( advProgressBar.getPreferredSize() );
+    signalProgressBar.setFont( advProgressBar.getFont() );
+    signalProgressBar.setMinimum( -91 );
+    signalProgressBar.setMaximum( -38 );
+    signalProgressBar.setForeground( AQUAMARINE );
+    bleStatus.add( signalProgressBar );
+    bleStatus.setVisible( false );
+
+    memoryStatus.add( bleStatus );
 
     extraStatus.add( new JLabel( "Upgrade:" ) );
 
@@ -2025,6 +2314,11 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
 
     if ( imageURL == null )
     {
+      imgLocation = "toolbarButtonGraphics/media/" + imageName + ".gif";
+      imageURL = DynamicURLClassLoader.getInstance().getResource( imgLocation );
+    }
+    if ( imageURL == null )
+    {
       System.err.println( "Resource not found: " + imgLocation );
       return null;
     }
@@ -2170,6 +2464,20 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
       System.err.println( "Unable to create CommHID object: " + le.getMessage() );
     }
     
+    if ( admin )
+    {
+      try
+      {
+        JP2BT jp2bt = new JP2BT( userDir );
+        interfaces.add( jp2bt );
+        System.err.println( "    JP2BT version " + jp2bt.getInterfaceVersion() );
+      }
+      catch ( LinkageError le )
+      {
+        System.err.println( "Unable to create CommHID object: " + le.getMessage() );
+      }
+    }
+    
     try
     {
       JP1USB jp1usb = new JP1USB( userDir );
@@ -2242,6 +2550,10 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
         {
           properties.remove( "Interface" );
           properties.remove( "Port" );
+          bluetoothItem.setVisible( false );
+          finderItem.setVisible( false );
+          uploadAction.setEnabled( uploadable );
+          recreateToolbar();
           return;
         }
 
@@ -2262,6 +2574,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
             {
               d.setOtherPort( ( ( JPS )io ).getFilePath() );
             }
+            d.getAutodetect().setVisible( !command.equals( "JP2BT" ) );
             
             d.setVisible( true );
             if ( d.getUserAction() == JOptionPane.OK_OPTION )
@@ -2276,6 +2589,8 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
               {
                 properties.setProperty( "Port", port );
               }
+              uploadAction.setEnabled( uploadable && allowUpload() );
+              recreateToolbar();
             }
 
             break;
@@ -2329,6 +2644,36 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
         }
       }
     }
+        
+    bluetoothAction = new RMAction( "Connect by Bluetooth", "BLUETOOTH", createIcon( "RMBTOn24" ),
+        "Connect to the remote by Bluetooth", KeyEvent.VK_B );
+    bluetoothAction.putValue( Action.SELECTED_KEY, true );
+    
+    bluetoothItem = new JCheckBoxMenuItem();
+    bluetoothItem.setAction( bluetoothAction );
+    bluetoothItem.setIcon( null );
+    bluetoothItem.setSelected( false );
+    menu.add( bluetoothItem );
+    
+    bluetoothButton = new JToggleButton();
+    bluetoothButton.setAction( bluetoothAction );
+    bluetoothButton.setHideActionText( true );
+    bluetoothButton.setBorder( BorderFactory.createRaisedBevelBorder() );
+    
+    finderAction = new RMAction( "Find remote", "FINDER", createIcon( "Volume24" ),
+        "Sound the remote's finder", KeyEvent.VK_F );
+    finderAction.putValue( Action.SELECTED_KEY, true );
+    
+    finderItem = new JCheckBoxMenuItem();
+    finderItem.setAction( finderAction );
+    finderItem.setIcon( null );
+    finderItem.setSelected( false );
+    menu.add( finderItem );
+    
+    finderButton = new JToggleButton();
+    finderButton.setAction( finderAction );
+    finderButton.setHideActionText( true );
+    finderButton.setBorder( BorderFactory.createRaisedBevelBorder() );
 
     downloadAction = new RMAction( "Download from Remote", "DOWNLOAD", createIcon( "Import24" ),
         "Download from the attached remote", KeyEvent.VK_D );
@@ -2337,6 +2682,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
 
     uploadAction = new RMAction( "Upload to Remote", "UPLOAD", createIcon( "Export24" ),
         "Upload to the attached remote", KeyEvent.VK_U );
+    uploadable = false;
     uploadAction.setEnabled( false );
     menu.add( uploadAction ).setIcon( null );
 
@@ -2822,6 +3168,32 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
     toolBar.add( saveAction );
     toolBar.add( saveAsAction );
     toolBar.addSeparator();
+
+    String selectedInterface = properties.getProperty( "Interface" );
+    if ( selectedInterface != null && selectedInterface.equals( "JP2BT" ) )
+    {
+      toolBar.add( bluetoothButton );
+      bluetoothButton.setBorder( bluetoothButton.isSelected() ? BorderFactory.createLoweredBevelBorder()
+          : BorderFactory.createRaisedBevelBorder());
+      if ( btio != null && btio.bleRemote != null && btio.bleRemote.hasFinder )
+      {
+        toolBar.add( Box.createHorizontalStrut( 5 ) );
+        toolBar.add( finderButton );
+        finderButton.setBorder( finderButton.isSelected() ? BorderFactory.createLoweredBevelBorder()
+            : BorderFactory.createRaisedBevelBorder());
+        finderItem.setVisible( true );
+      }
+      else
+      {
+        finderItem.setVisible( false );
+      }
+      bluetoothItem.setVisible( true );
+    }
+    else
+    {
+      bluetoothItem.setVisible( false );
+      finderItem.setVisible( false );
+    }
     toolBar.add( downloadAction );
     toolBar.add( uploadAction );
     toolBar.addSeparator();
@@ -2831,6 +3203,11 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
     {
       toolBar.add( highlightAction );
 //      highlightAction.setEnabled( true );
+    }
+    if ( selectedInterface != null && selectedInterface.equals( "JP2BT" ) )
+    {
+      downloadAction.setEnabled( bluetoothButton.isSelected() );
+      uploadAction.setEnabled( uploadable && allowUpload() );
     }
   }
   
@@ -2844,6 +3221,19 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
     createToolbar();
     mainPanel.add( toolBar, BorderLayout.PAGE_START );
     mainPanel.validate();
+  }
+  
+  /**
+   * allowUpload() returns true if the remote allows uploads with the current
+   * interface.  This is normally so, but the JP2BT Bluetooth interface in some
+   * remotes supports downloads but needs an extender to fix the DATAWRITE code
+   * in order to support uploads.
+   */
+  public boolean allowUpload()
+  {
+    String temp = properties.getProperty( "Interface" );
+    return temp != null && temp.equals( "JP2BT" ) ? 
+        btio != null && btio.bleRemote != null && btio.bleRemote.supportsUpload : true; 
   }
 
   /**
@@ -3003,7 +3393,47 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
    */
   public void openFile() throws Exception
   {
-    openFile( null );
+    //TESTING
+//    Hex hex = new Hex( "008200ec5700001000363033373034"+ 
+//        "ffffffffffffffff001000ffe00001ff"+ 
+//        "ffffe0e0e0e0e0e0001000ffe10000ff"+ 
+//        "ffffe1e1e1e1e1e1001000ffe20002ff"+ 
+//        "ffffe2e2e2e2e2e2001000ffe30003ff"+ 
+//        "ffffe3e3e3e3e3e3001000ffe40002ff"+ 
+//        "ffffe4e4e4e4e4e4001000ffe50000ff"+ 
+//        "ffffe5e5e5e5e5e5001000ffe60000ff"+ 
+//        "ffffe6e6da");
+//    byte[] payload = hex.toByteArray();
+//    UEIPacket p = new UEIPacket( 0, 1, 0x11, 0x40, hex.toByteArray() );
+//    byte[] payload = new byte[]{ 0x00, 0x08, 0x01, 0x00, 0x03c, 0x00, 0x00, 0x08, 0x03d };
+//    UEIPacket upkt = new UEIPacket( 0, 1, 0x11, 0x41, payload );
+//    
+//      CmdPacket cp = new CmdPacket( 1, new byte[]{ 0x00, 0x03, (byte)0xc0, 0x00, 0x00, (byte)0x80 } );
+//      UEIPacket upkt = cp.getUEIPacket( 1 );
+//      System.err.println( upkt.toString());
+    
+//    
+//    int chksum = upkt.doChecksum( payload );
+//    System.err.println( "checksum = " + String.format( "%02X", chksum ) );
+    
+//    List< BGAPIPacket > list = p.toBGAPI( 0, 0x25 );
+//    for ( BGAPIPacket b : list )
+//    {
+//      hex = new Hex( b.getPacketBytes() );
+//      System.err.println( hex.toString() );
+//    }
+//    JP2BT j = new JP2BT();
+//    for ( BGAPIPacket b : list )
+//    {
+//      BGAPIPacketReader r = b.getPayloadReader();
+//      int connection = r.r_uint8();
+//      int atthandle = r.r_uint16();
+//      byte[] value = r.r_uint8array();
+//      j.receive_attclient_attribute_value( connection, atthandle, 1, value );
+//    }
+    
+
+     openFile( null );
   }
 
   /**
@@ -3106,7 +3536,8 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
       update();
       saveAction.setEnabled( false );
       saveAsAction.setEnabled( true );
-      uploadAction.setEnabled( !interfaces.isEmpty() );
+      uploadable = !interfaces.isEmpty();
+      uploadAction.setEnabled( uploadable );
       openRdfAction.setEnabled( true );
       installExtenderItem.setEnabled( true );
       cleanUpperMemoryItem.setEnabled( true );
@@ -3173,7 +3604,8 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
     initializeTo00Item.setEnabled( !interfaces.isEmpty() );
     initializeToFFItem.setEnabled( !interfaces.isEmpty() );
     setBaselineItem.setEnabled( true );
-    uploadAction.setEnabled( !interfaces.isEmpty() );
+    uploadable = !interfaces.isEmpty();
+    uploadAction.setEnabled( uploadable && allowUpload() );
     resetSegmentPanel();
     setInterfaceState( "LOADING..." );
     ( new LoadTask( file ) ).execute();
@@ -3226,6 +3658,26 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
 
     System.err.println( "Merge file is " + file.getCanonicalPath() + ", last modified "
         + DateFormat.getInstance().format( new Date( file.lastModified() ) ) );
+
+    String interfaceName = properties.getProperty( "Interface" );
+    if ( interfaceName != null && interfaceName.equals( "JP2BT" ) )
+    {
+      if ( btio != null )
+      {
+        ( new InstallTask( file, btio ) ).execute();
+        return;
+
+        //      BTExtInstall installer = new BTExtInstall( file, btio );
+        //      installer.install();
+        //      return;
+      }
+      else 
+      {
+        String message = "The JP2BT interface is not connected to a remote.";
+        JOptionPane.showMessageDialog( this, message, "Extender Install", JOptionPane.ERROR_MESSAGE );
+        return;
+      }
+    }
 
     mergeDir = file.getParentFile();
     String[] oldDevBtnNotes = remoteConfig.getDeviceButtonNotes();
@@ -3538,7 +3990,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
         setInterfaceState( "SAVING..." );
         ( new SaveTask( newFile, Use.SAVEAS ) ).execute();
       }
-      uploadAction.setEnabled( !interfaces.isEmpty() );
+//      uploadAction.setEnabled( !interfaces.isEmpty() );
     }
   }
   
@@ -3653,6 +4105,187 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
     }
   }
   
+  private class InstallTask extends WriteTask implements ProgressUpdater
+  {
+    private File file = null;
+    private JP2BT btio = null;
+    
+    public InstallTask( File file, JP2BT btio )
+    {
+      this.file = file;
+      this.btio = btio;
+    }
+    
+    @Override
+    protected Void doInBackground() throws Exception
+    {
+      BTExtInstall installer = new BTExtInstall( file, btio, this );
+      installer.install();
+//      String title = "Bluetooth Extender Install";
+//      String message = "Installation succeeded.";
+//      int error = installer.install();
+//      if ( error != 0 );
+//        message = "Installation failed with error code " + error;
+//      JOptionPane.showMessageDialog( null, message, title, JOptionPane.PLAIN_MESSAGE );
+      return null;
+    }
+    
+    @Override
+    public void done()
+    {
+      super.done();
+      setInterfaceState( null );
+      if ( !ok )
+      {
+
+        return;
+      }
+    }
+    
+    @Override
+    public void updateProgress( int value )
+    {     
+      setInterfaceState( "INSTALLING:", value );
+    }
+  }
+  
+  private class ConnectTask extends WriteTask implements ProgressUpdater
+  {
+    private BLERemote bleRemote = null;
+    private Use use = null;
+    
+    public ConnectTask( BLERemote bleRemote, Use use )
+    {
+      this.bleRemote = bleRemote;
+      this.use = use;
+    }
+    
+    @Override
+    protected Void doInBackground() throws Exception
+    {
+      if ( btio == null )
+      {
+        btio = ( JP2BT )getOpenInterface( null, Use.CONNECT, this );
+        btio.setOwner( RemoteMaster.this );
+      }
+      if ( btio == null )
+      {
+        String message = "Failed to open BLE dongle on port " + properties.getProperty( "Port" );
+        JOptionPane.showMessageDialog( null, message, "Connection error", JOptionPane.PLAIN_MESSAGE );
+        bluetoothButton.setSelected( false );
+      }
+      else
+      {
+        btio.setProgressUpdater( this );
+//        updateProgress( 0 );
+        if ( use == Use.CONNECT && bleRemote != null )
+        {
+          setInterfaceState( "CONNECTING:", 5 );
+          btio.bleRemote = bleRemote;
+          try
+          {
+            if ( btio.connectUEI() )
+            {
+              System.err.println( "Connection complete" );
+              bluetoothButton.setBorder( BorderFactory.createLoweredBevelBorder() );
+              downloadAction.setEnabled( true );
+              installExtenderItem.setEnabled( true );
+              extraStatus.setVisible( false );
+              advProgressLabel.setText( "Memory usage:" );
+              bleStatus.setVisible( true );
+              updateBleStatus();
+              recreateToolbar();
+            }
+            else
+            {
+              disconnectBLE();
+              System.err.println( "Connection failed to complete" );
+              String message = "Attempt to connect to remote " + bleRemote.name + " failed";
+              JOptionPane.showMessageDialog( null, message, "Connection error", JOptionPane.ERROR_MESSAGE );                  
+            }
+          }
+          catch ( InterruptedException e )
+          {
+            e.printStackTrace();
+          }
+          setInterfaceState( null );
+        }
+        else if ( use == Use.SEARCH && bleRemote == null )
+        {
+          setInterfaceState( "SEARCHING..." );
+          btio.setBleMap( bleMap );
+          btio.discoverUEI( true );
+          searchButton.setEnabled( false );
+          long waitStart = Calendar.getInstance().getTimeInMillis();
+          // Allow a maximum scan time of 15 minutes
+          while ( btio.isScanning() && ( Calendar.getInstance().getTimeInMillis() - waitStart) < 900000L )
+          {
+            for ( JRadioButton btn : bleBtnMap.keySet() )
+            {
+              BLERemote rem = bleBtnMap.get( btn );
+              if ( rem.found && !btn.isEnabled() )
+              {
+                btn.setEnabled( true );
+              }
+            }
+            
+            if ( bleMap.size() > bleBtnMap.size() )
+            {
+              for ( BLERemote dev : bleMap.values() )
+              {
+                if ( !bleBtnMap.values().contains( dev ) )
+                {
+                  JRadioButton rb = new JRadioButton( dev.name );
+                  bleBtnMap.put( rb, dev );
+                  btGroup.add( rb );
+                  box.add( rb );
+                  changed = true;
+                }
+              }
+              box.revalidate();
+            }
+          }
+          searchButton.setEnabled( true );
+          btio.discoverUEI( false );
+          setInterfaceState( null );
+        }
+      }
+      return null;
+    }
+
+    @Override
+    public void done()
+    {
+      super.done();
+      setInterfaceState( null );
+      if ( use == Use.CONNECT && btio != null && btio.bleRemote != null && !btio.bleRemote.supportsUpload )
+      {
+        String title = "Connection";
+        String message = "Please note that this remote needs an extender in order to\n"
+            + "support uploading via its Bluetooth interface.";                
+        JOptionPane.showMessageDialog( RemoteMaster.this, message, title, JOptionPane.INFORMATION_MESSAGE );
+      }
+      if ( !ok )
+      {
+        bluetoothButton.setSelected( false );
+        uploadable = false;
+        uploadAction.setEnabled( false );
+        downloadAction.setEnabled( false );
+        JOptionPane.showMessageDialog( RemoteMaster.this, "Error connecting to remote " + bleRemote.name, "Task error", JOptionPane.ERROR_MESSAGE );
+        return;
+      }
+    }
+    
+    @Override
+    public void updateProgress( int value )
+    {     
+//        String name = io != null ? io.getProgressName() : null;
+//        setInterfaceState( name != null ? name : "PREPARING:", value );
+      setInterfaceState( "CONNECTING:", value );
+    }
+    
+  }
+  
   private class SaveTask extends WriteTask
   {
     private File file = null;
@@ -3745,7 +4378,8 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
     String portName = properties.getProperty( "Port" );
     System.err.println( "Port Name = " + ( portName == null ? "NULL" : portName ) );
     IO ioOut = null;
-    if ( interfaceName != null && ( use == Use.DOWNLOAD || use == Use.UPLOAD || use == Use.RAWDOWNLOAD ) )
+    if ( interfaceName != null && ( use == Use.DOWNLOAD || use == Use.UPLOAD 
+        || use == Use.RAWDOWNLOAD || use == Use.CONNECT ) )
     {
       for ( IO temp : interfaces )
       {
@@ -3753,7 +4387,8 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
         System.err.println( "Testing interface: " + ( tempName == null ? "NULL" : tempName ) );
         if ( tempName.equals( interfaceName ) )
         {
-          System.err.println( "Interface matched.  Trying to open remote." );
+          String item = use == Use.CONNECT ? "BLE dongle" : "remote";
+          System.err.println( "Interface matched.  Trying to open " + item );
           ioOut = testInterface( temp, portName, file, use, progressUpdater );
           if ( ioOut == null )
           {
@@ -3767,6 +4402,12 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
     {
       for ( IO temp : interfaces )
       {
+        if ( temp instanceof JP2BT )
+        {
+          // The BT interface must be selected explicitly.
+          continue;
+        }
+        
         if ( temp instanceof JP1Parallel && System.getProperty( "os.name" ).equals( "Linux" ) )
         {
           String title = "Linux Parallel Port Interface";
@@ -3837,6 +4478,29 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
     {
       return null;
     }
+
+    if ( ioName.equals( "JP2BT" ) )
+    {
+      if ( use == Use.DOWNLOAD || use == Use.UPLOAD)
+      {
+        if ( btio != null )
+          System.err.println( "JP2BT interface is already open" );
+      }
+      else if ( use == Use.CONNECT )
+      {
+        JP2BT iobt = ( JP2BT )ioIn;
+        String portResult = iobt.connectBLED112( portName );
+        if ( portResult == null )
+        {
+          System.err.println( "Failed to connect to BLED dongle on port " +  portName );
+          portName = "";
+        }
+        else
+        {
+          System.err.println( "Connected BLED dongle on port " +  portName );
+        }
+      }
+    }
     
     if ( ioName.equals( "JPS" ) )
     {
@@ -3855,7 +4519,8 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
       }
     }
     ioIn.setProgressUpdater( progressUpdater );
-    portName = ioIn.openRemote( portName != null ? portName : file != null ? file.getAbsolutePath() : null );
+    if ( use != Use.CONNECT )
+      portName = ioIn.openRemote( portName != null ? portName : file != null ? file.getAbsolutePath() : null );
     if ( portName == null ) portName = "";
     System.err.println( "Port Name = " + ( portName.isEmpty() ? "NULL" : portName ) );
     if ( !portName.isEmpty() )
@@ -3995,7 +4660,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
     finishEditing();
     try
     {
-      Object source = e.getSource();
+      Object source = e.getSource(); 
       if ( source == installExtenderItem )
       {
         installExtender();
@@ -4751,6 +5416,15 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
       return true;
     }
   }
+  
+  private void updateBleStatus()
+  {
+    BLERemote rem = btio.bleRemote;
+    batteryBar.setBars( rem.batteryBars );
+    batteryVoltage.setText( String.format( "(%4.2fv)", rem.batteryVoltage ) );
+    signalProgressBar.setValue( rem.signalStrength );
+    signalProgressBar.setString( rem.signalStrength + "dBm" );
+  }
 
   /**
    * Updates the progress bars and returns a boolean specifying whether the configuration is valid, i.e. whether all
@@ -4762,6 +5436,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
     Remote remote = remoteConfig.getRemote();
     Dimension d = advProgressBar.getPreferredSize();
     Font font = advProgressBar.getFont();
+    bleStatus.setVisible( btio != null );
     if ( remoteConfig.hasSegments() )
     {
       extraStatus.setVisible( false );
@@ -4791,6 +5466,11 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
       devUpgradeProgressBar.setVisible( true );
       extraStatus.setVisible( true );
       advProgressLabel.setText( "Move/Macro:" );
+    }
+    
+    if ( btio != null && btio.bleRemote != null )
+    {
+      updateBleStatus();
     }
 
     String title = "Available Space Exceeded";
@@ -4846,6 +5526,10 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
             + "section.  Please remove some entries.";
       }
       showErrorMessage( message, title );
+    }
+    if ( btio != null && btio.bleRemote != null )
+    {
+      batteryBar.setBars( btio.bleRemote.batteryBars );
     }
     return valid;
   }
@@ -5828,4 +6512,58 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
       segmentPanel.resetLastSorted();
     }
   }
+  
+  private int getRegisteredRemotes()
+  {
+    bleMap.clear();
+    int n = 0;
+    while( true )
+    {
+      String propName = "RegisteredBTRemotes." + n;
+      String temp = properties.getProperty( propName );
+      if ( temp == null )
+        break;
+      int namePos = temp.indexOf( "Name=" );
+      int ueiNamePos = temp.indexOf( "UEIName=" );
+      int addrPos = temp.indexOf( "Address=" );
+      if ( namePos >= 0 && ueiNamePos >= namePos + 5 && addrPos > ueiNamePos + 8 )
+      {
+        String name = temp.substring( namePos + 5, ueiNamePos );
+        String ueiName = temp.substring( ueiNamePos + 8, addrPos);
+        String address = temp.substring( addrPos + 8 );
+        BLERemote dev = new BLERemote( name, ueiName, address );
+        dev.regIndex = n;
+        bleMap.put( address, dev );
+      }
+      n++;
+    }
+    return n - 1;
+  }
+  
+  public void disconnectBLE()
+  {
+    boolean forced = false;
+    if ( btio != null )
+    {
+      if ( !btio.disconnecting )
+        btio.disconnectUEI();
+      else
+        forced = true;
+      btio.disconnectBLED112();
+      btio = null;
+    }
+    bluetoothButton.setSelected( false );
+    bluetoothButton.setBorder( BorderFactory.createRaisedBevelBorder() );
+    uploadable = false;
+    uploadAction.setEnabled( false );
+    downloadAction.setEnabled( false );
+    bleStatus.setVisible( false );
+    recreateToolbar();
+    if ( forced )
+    {
+      String message = "Connection terminated by the connected remote.";
+      JOptionPane.showMessageDialog( this, message, "Disconnection", JOptionPane.INFORMATION_MESSAGE );
+    }
+  }
+  
 }

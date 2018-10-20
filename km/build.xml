@@ -30,6 +30,7 @@
         <target name="rmjar" depends="compile" description="Generate RemoteMaster.jar">
                 <jar destfile="RemoteMaster.jar" manifest="RemoteMaster.mf" update="true">
                         <fileset dir="${build}" includes="com/**/*.class" />
+                		<fileset dir="${build}" includes="org/thingml/**/*.class" />
                         <zipfileset src="${lib.dir}/TableLayout.jar" includes="**/*.class"/>
                         <zipfileset src="${src}/jlfgr-1_0.jar">
 							<include name="toolbarButtonGraphics/general/Open24.gif"/>
@@ -39,7 +40,7 @@
 							<include name="toolbarButtonGraphics/general/Export24.gif"/>
 							<include name="toolbarButtonGraphics/general/Copy24.gif"/>
 							<include name="toolbarButtonGraphics/general/Paste24.gif"/>
-							<include name="toolbarButtonGraphics/general/New.gif"/>
+							<include name="toolbarButtonGraphics/media/Volume24.gif"/>
 						</zipfileset> 
                         <zipfileset src="${lib.dir}/RMGraphics.jar"/>
                 		<zipfileset src="${lib.dir}/l2fprod-common-directorychooser.jar">
@@ -50,7 +51,17 @@
 						<zipfileset src="${lib.dir}/hidapi-1.1.jar" includes="**/*.class"/>
                 		<zipfileset src="${lib.dir}/hidapi-1.1.jar">
                 			<include name="native/**/*.*"/>
-                		</zipfileset>
+                		</zipfileset>               	
+            			<zipfileset src="${lib.dir}/org.kevoree.extra.osgi.rxtx-2.2.0.jar" includes="gnu/io/*.class"/>
+            			<zipfileset src="${lib.dir}/org.kevoree.extra.osgi.rxtx-2.2.0.jar">
+                    		<include name="nativelib/**/*.*"/>
+            				<exclude name="nativelib/Solaris/**/*.*"/>
+            				<exclude name="nativelib/Linux/arm/**/*.*"/>
+            				<exclude name="nativelib/Linux/ia64-unknown-linux-gnu/**/*.*"/>
+            				<exclude name="nativelib/Windows/i368-mingw32/**/*.*"/>
+            				<exclude name="nativelib/**/*rxtxParallel.*"/>
+                	    </zipfileset> 
+                		<zipfileset src="${lib.dir}/org.thingml.bglib-protocol-1.0.3-43.jar" includes="**/*.class"/>
                         <zipfileset src="${lib.dir}/commons-lang3-3.4.jar" includes="**/*.class"/>
                 </jar>
                 <java classpath="RemoteMaster.jar" classname="com.hifiremote.jp1.RemoteMaster" outputproperty="rmversion">

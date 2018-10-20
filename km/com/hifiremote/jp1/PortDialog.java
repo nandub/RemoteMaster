@@ -78,6 +78,7 @@ public class PortDialog
     int i = 0;
     buttons[ i++ ] = new JRadioButton( AUTODETECT );
     buttons[ 0 ].setAlignmentX( Component.LEFT_ALIGNMENT );
+    autodetect = buttons[ 0 ];
     for( String name : portNames )
       buttons[ i++ ] = new JRadioButton( name );
     buttons[ i++ ] = new JRadioButton( OTHER );
@@ -210,6 +211,11 @@ public class PortDialog
     return userAction;
   }
 
+  public JRadioButton getAutodetect()
+  {
+    return autodetect;
+  }
+
   /** The port. */
   private String port = null;
   
@@ -221,6 +227,8 @@ public class PortDialog
   
   /** The cancel. */
   private JButton cancel = null;
+  
+  private JRadioButton autodetect = null;
   
   /** The user action. */
   private int userAction = JOptionPane.CANCEL_OPTION;
