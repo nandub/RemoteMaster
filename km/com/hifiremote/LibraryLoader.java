@@ -60,31 +60,23 @@ public class LibraryLoader
           }
         }
       }
-      
-      // The rxtxSerial library must be in the java library path, so it needs to be
-      // in the installation folder rather than a subfolder of it.
-      File libraryFile = libraryName.equals( LIB_NAMES[ 1 ] ) ? new File( mappedName )
-        : new File( libraryFolder, mappedName );
+
+      File libraryFile = new File( libraryFolder, mappedName );
+      if ( libraryName.equals( "hidapi" ) && !libraryFile.exists() )
 
       for ( int i = 0; i < LIB_NAMES.length; i++ )
       {
-        String libName = LIB_NAMES[ i ];
-        if ( libraryName.equals( libName ) && !libraryFile.exists() )
+        System.err.println( "LibraryLoader: Attempting to copy hidapi library to library folder" );
+        boolean success = copyLibrary( libraryFile, SOURCE_NAMES[i] );
+        System.err.println( "LibraryLoader: Attempt to copy hidapi library " + ( success ? "succeeded" : "failed" ) );
+        if ( !success )
         {
-          String toFolder = i == 1 ? "installation" : "library";
-          System.err.println( "LibraryLoader: Attempting to copy " + libName + " library to " + toFolder + " folder" );
-          boolean success = copyLibrary( libraryFile, SOURCE_NAMES[ i ] );
-          System.err.println( "LibraryLoader: Attempt to copy " + libName + " library " + ( success ? "succeeded" : "failed" ) );
-          if ( !success )
-          {
-            String title = "Setup error";
-            String[] comms = { "USB HID", "Bluetooth" };
-            String message = "RMIR was unable to set up the library required for " + comms[ i ] + " communication.\n"
-                + "This may mean that you have installed RMIR in a read-only folder.  If so,\n"
-                + "some features of RMIR will not work correctly.  You are strongly advised\n"
-                + "to reinstall it in a folder that is not read-only.";
-            JOptionPane.showMessageDialog( null, message, title, JOptionPane.ERROR_MESSAGE );
-          }
+          String title = "Setup error";
+          String message = "RMIR was unable to set up the library required for USB HID communication.\n"
+            + "This may mean that you have installed RMIR in a read-only folder.  If so,\n"
+            + "some features of RMIR will not work correctly.  You are strongly advised\n"
+            + "to reinstall it in a folder that is not read-only.";
+          JOptionPane.showMessageDialog( null, message, title, JOptionPane.ERROR_MESSAGE );
         }
       }
 
@@ -174,7 +166,7 @@ public class LibraryLoader
   protected static File libraryFolder = null;
   protected static int osIndex = -1;
   
-  private static final String[] LIB_NAMES = { "hidapi", "rxtxSerial" };
+  private static final String[] LIB_NAMES = { "hidapi" };
   
   private static final String[][] SOURCE_NAMES = 
   {
@@ -185,12 +177,5 @@ public class LibraryLoader
       "/native/mac/libhidapi-jni-32.jnilib",
       "/native/win/hidapi-jni-64.dll",
       "/native/win/hidapi-jni-32.dll" },
-    {
-      "/nativelib/Linux/x86_64-unknown-linux-gnu/librxtxSerial.so",
-      "/nativelib/Linux/i686-unknown-linux-gnu/librxtxSerial.so",
-      "/nativelib/Mac_OS_X/librxtxSerial.jnilib",
-      "",
-      "/nativelib/Windows/win64/rxtxSerial.dll",
-      "/nativelib/Windows/win32/rxtxSerial.dll" }
   };
 }

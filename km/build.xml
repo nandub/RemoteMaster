@@ -51,16 +51,13 @@
 						<zipfileset src="${lib.dir}/hidapi-1.1.jar" includes="**/*.class"/>
                 		<zipfileset src="${lib.dir}/hidapi-1.1.jar">
                 			<include name="native/**/*.*"/>
-                		</zipfileset>               	
-            			<zipfileset src="${lib.dir}/org.kevoree.extra.osgi.rxtx-2.2.0.jar" includes="gnu/io/*.class"/>
-            			<zipfileset src="${lib.dir}/org.kevoree.extra.osgi.rxtx-2.2.0.jar">
-                    		<include name="nativelib/**/*.*"/>
-            				<exclude name="nativelib/Solaris/**/*.*"/>
-            				<exclude name="nativelib/Linux/arm/**/*.*"/>
-            				<exclude name="nativelib/Linux/ia64-unknown-linux-gnu/**/*.*"/>
-            				<exclude name="nativelib/Windows/i368-mingw32/**/*.*"/>
-            				<exclude name="nativelib/**/*rxtxParallel.*"/>
-                	    </zipfileset> 
+                		</zipfileset>
+                        <zipfileset src="${lib.dir}/jSerialComm-2.3.0.jar">
+                            <include name="com/fazecast/jSerialComm/*.class" />
+                            <include name="Windows/*/*.dll" />
+                            <include name="OSX/*/*.jnilib" />
+                            <include name="Linux/x86*/*.so" />
+                        </zipfileset>
                 		<zipfileset src="${lib.dir}/org.thingml.bglib-protocol-1.0.3-43.jar" includes="**/*.class"/>
                         <zipfileset src="${lib.dir}/commons-lang3-3.4.jar" includes="**/*.class"/>
                 </jar>

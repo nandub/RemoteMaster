@@ -1,16 +1,11 @@
 package com.hifiremote.jp1.io;
 
-import gnu.io.CommPort;
-import gnu.io.CommPortIdentifier;
-import gnu.io.PortInUseException;
-import gnu.io.SerialPort;
+import com.fazecast.jSerialComm.SerialPort;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Enumeration;
-import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -128,11 +123,11 @@ public class JP2BT extends IO
    *******************************************************************************/
   
   public JP2BT() throws UnsatisfiedLinkError  {
-    super( libraryName );  
+    super( null );
   }
 
   public JP2BT( File folder ) throws UnsatisfiedLinkError  {
-    super( folder, libraryName );   
+    super( folder, null );
   }
 
   @Override
@@ -156,9 +151,9 @@ public class JP2BT extends IO
   public String[] getPortNames() 
   {
     ArrayList<String> portList = new ArrayList<String>();
-    for (CommPortIdentifier commportidentifier : getAvailableSerialPorts()) 
+    for (SerialPort serialPort : SerialPort.getCommPorts())
     {
-      portList.add(commportidentifier.getName());
+      portList.add(serialPort.getSystemPortName());
     }
     String[] portNames  = portList.toArray( new String[0] );
     return portNames;
@@ -314,54 +309,19 @@ public class JP2BT extends IO
    *   under GNU LESSER GENERAL PUBLIC LICENSE, Version 3, 29 June 2007,
    *   obtainable at http://www.gnu.org/licenses/lgpl-3.0.txt
    *******************************************************************************/
-  
-  /**
-   * @return    A HashSet containing the CommPortIdentifier for all serial ports that are not currently being used.
-   */
-  public static HashSet<CommPortIdentifier> getAvailableSerialPorts() {
-    HashSet<CommPortIdentifier> h = new HashSet<CommPortIdentifier>();
-    @SuppressWarnings( "unchecked" )
-    Enumeration<CommPortIdentifier> thePorts = CommPortIdentifier.getPortIdentifiers();
-    while (thePorts.hasMoreElements()) {
-      CommPortIdentifier com = (CommPortIdentifier) thePorts.nextElement();
-      switch (com.getPortType()) {
-        case CommPortIdentifier.PORT_SERIAL:
-          try {
-            CommPort thePort = com.open("CommUtil", 50);
-            thePort.close();
-            h.add(com);
-          } catch (PortInUseException e) {
-            System.err.println("Port, " + com.getName() + ", is in use.");
-          } catch (Exception e) {
-            System.err.println("Failed to open port " + com.getName());
-            e.printStackTrace();
-          }
-      }
-    }
-    return h;
-  }
 
   public static SerialPort connectSerial(String portName) {
     try {
       System.err.println( "Trying to open serial port " + portName );
-      CommPortIdentifier portIdentifier = CommPortIdentifier.getPortIdentifier(portName);
-      if (portIdentifier.isCurrentlyOwned()) {
-        System.err.println("Error: Port " + portName + " is currently in use");
-      } 
-      else {
-        CommPort commPort = portIdentifier.open("BLED112", 2000);
-        System.err.println("port = " + commPort);
-        if (commPort instanceof SerialPort) {
-          SerialPort serialPort = (SerialPort) commPort;
-          serialPort.setSerialPortParams(115200, SerialPort.DATABITS_8, SerialPort.STOPBITS_1, SerialPort.PARITY_NONE);
-          serialPort.setFlowControlMode(SerialPort.FLOWCONTROL_RTSCTS_IN | SerialPort.FLOWCONTROL_RTSCTS_OUT);
-          serialPort.setRTS(true);
-          System.err.println("serial port = " + serialPort);
-          return serialPort;
-        } else {
-          System.err.println("Error: Port " + portName + " is not a valid serial port.");
-        }
+      SerialPort serialPort = SerialPort.getCommPort(portName);
+      if (!serialPort.openPort()) {
+        System.err.println("Error: Can't open port " + portName + ".");
+        return null;
       }
+      serialPort.setComPortParameters(115200, 8, SerialPort.ONE_STOP_BIT, SerialPort.NO_PARITY);
+      serialPort.setComPortTimeouts(SerialPort.TIMEOUT_READ_SEMI_BLOCKING, 0, 0);
+      System.err.println("serial port = " + serialPort);
+      return serialPort;
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -395,6 +355,7 @@ public class JP2BT extends IO
           if ( delay > 1000 )
           {
             message = "Connection request timed out after 1000ms";
+            disconnectBLED112();
             break;
           }
         }
@@ -430,7 +391,7 @@ public class JP2BT extends IO
     }
     if (port != null) 
     {
-      port.close();
+      port.closePort();
     }
     bgapi = null;
     port = null;
@@ -1046,6 +1007,4 @@ public class JP2BT extends IO
   public int sequence = 1;
   private RemoteMaster owner = null;
   private ArrayList< UEIPacket > incoming = new ArrayList< UEIPacket >();
-  
-  private final static String libraryName = "rxtxSerial";
 }

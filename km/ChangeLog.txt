@@ -39,6 +39,8 @@ Changes for v2.06
 - Make raw downloads of segmented remotes be loadable .ir files (Graham)
 -- Private build 11
 - Add new interface JP2BT, a prototype Bluetooth interface for remotes such as URC7980 (Graham)
+-- Private build 12
+- Replace rxtx library (serial port) used by JP2BT with jSerialComm library (Marcin)
 
 Changes for v2.05
 -- Private build 1
