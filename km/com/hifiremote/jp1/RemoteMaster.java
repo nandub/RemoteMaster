@@ -129,7 +129,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
 
   /** Description of the Field. */
   public final static String version = "v2.06";
-  public final static int buildVer = 12;
+  public final static int buildVer = 13;
   
   public static class LanguageDescriptor
   {
@@ -1673,6 +1673,8 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
               setInterfaceState( null );
               searchButton.setEnabled( true );
             }
+            if ( btio != null )
+              btio.disconnecting = false;
             if ( result == 0 )
             {
               for ( JRadioButton btn : bleBtnMap.keySet() )
@@ -1881,6 +1883,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
               setInterfaceState( null );
             }
             // BGAPITransport runs a separate thread, which needs to be stopped.
+            btio.disconnecting = false;
             disconnectBLE();
           }
           boolean quit = false;
@@ -4176,6 +4179,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
       }
       else
       {
+        btio.disconnecting = false;
         btio.setProgressUpdater( this );
 //        updateProgress( 0 );
         if ( use == Use.CONNECT && bleRemote != null )
@@ -6545,6 +6549,9 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
     boolean forced = false;
     if ( btio != null )
     {
+      // btio.disconnecting will be false unless this is called from 
+      // receive_connection_disconnected(), which is when the remote has initiated
+      // the disconnection.
       if ( !btio.disconnecting )
         btio.disconnectUEI();
       else
