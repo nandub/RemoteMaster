@@ -1,0 +1,68 @@
+#$MTIMFH
+#$-:Image Map file created by Map THIS!
+#$-:Map THIS! free image map editor by Todd C. Wilson
+#$-:Please do not edit lines starting with "#$"
+#$VERSION:1.30
+#$TITLE:URC-2025 B2
+#$AUTHOR:Rob Crowe
+#$DATE:Wed Sep 19 12:21:58 2018
+#$PATH:H:\Documents\Documents\abstract\JP1\RM\Maps and Images\
+#$GIF:URC-2025B2.jpg
+#$FORMAT:ncsa
+#$EOH
+default URC-2025B2
+circle Video_Input  35,35 42,43
+circle Watch_Cable  75,29 98,38
+circle DVD  28,66 36,74
+circle Audio  52,60 60,68
+circle Power  75,52 84,60
+circle TV  99,60 107,68
+circle Cable  122,65 130,72
+poly A-yellow 18,99 28,84 39,100 18,99 18,99
+poly B-blue 51,76 68,76 68,91 50,91 50,75 51,76 51,76
+poly D-green 114,91 123,82 132,91 124,100 115,91 114,91 114,91
+circle C-red  93,83 102,92
+circle OK/Select  74,166 91,184
+circle Day-  25,147 33,156
+circle Day+  127,145 135,154
+poly Guide 22,121 43,104 54,118 31,136 21,121 22,121 22,121
+poly ON_DEMAND 59,97 59,115 92,117 91,99 59,98 59,97 59,97
+poly Menu 108,105 127,122 115,136 97,116 107,105 108,105 108,105
+poly Up 48,133 59,145 74,139 91,146 102,135 83,124 68,124 49,133 48,133 48,133
+poly Right 98,152 108,141 117,157 117,177 109,192 97,179 102,166 97,152 98,152 98,152
+poly Down 91,185 104,198 83,209 64,208 48,199 59,187 74,192 91,186 91,185 91,185
+poly Left 42,191 54,181 49,167 54,152 42,142 33,156 33,173 41,190 42,191 42,191
+poly Info 33,200 53,216 44,229 22,212 32,200 33,200 33,200
+poly Exit 107,230 127,212 118,200 96,216 105,227 105,228 107,230
+circle Page+  76,224 87,232
+circle Page-  75,245 87,252
+circle Vol+  44,259 58,272
+circle Vol-  44,291 58,304
+circle Ch+  108,257 124,269
+circle Ch-  108,292 123,306
+circle Mute  76,274 89,286
+circle List  62,319 73,330
+circle Record  92,319 103,330
+circle Rewind  34,348 45,360
+circle FFwd  118,347 129,359
+circle Pause  63,347 75,359
+circle Play  90,347 101,359
+circle Skip-  39,377 52,385
+circle Skip+  111,377 125,386
+circle Stop  76,376 86,385
+circle 1  40,405 54,415
+circle 2  76,406 91,416
+circle 3  111,405 125,415
+circle 4  42,431 56,441
+circle 5  76,433 90,443
+circle 6  110,430 124,440
+circle 7  42,457 56,466
+circle 8  76,459 90,468
+circle 9  109,456 122,466
+circle Last  45,481 56,489
+circle 0  75,482 89,492
+circle Fav  109,482 121,490
+circle PIP_ON/OFF  48,510 56,515
+circle PIP_SWAP  76,509 87,515
+circle Live  105,509 114,515
+circle Setup  116,34 123,41
