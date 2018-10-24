@@ -21,6 +21,7 @@ import org.thingml.bglib.BGAPIPacket;
 import org.thingml.bglib.BGAPITransport;
 
 import com.hifiremote.jp1.Hex;
+import com.hifiremote.jp1.Remote;
 import com.hifiremote.jp1.RemoteMaster;
 import com.hifiremote.jp1.RemoteMaster.Use;
 import com.hifiremote.jp1.io.UEIPacket.CmdPacket;
@@ -196,9 +197,14 @@ public class JP2BT extends IO
       progressUpdater.updateProgress( progress );
     }
     int blockSize = 0x80;
+    // Restrict downloading to actual segments for TI2541 remotes, distinguished
+    // by signature starting with 6.
+    int segPos = bleRemote.signature.startsWith( "6" ) ? 20 : 0xFFFFFF;
+    int segSize = 0;
     int remaining = length;
     int pos = 0;
     int progressIncrement = ( 100 * blockSize ) / ( length + blockSize );
+    Arrays.fill( buffer, ( byte )0xFF );
 
     if ( getUse() == Use.DOWNLOAD )
     {
@@ -218,6 +224,17 @@ public class JP2BT extends IO
     
     while ( remaining > 0 )
     {
+      while ( pos >= segPos + 2 )
+      {
+        segSize = ( buffer[ segPos ] << 8 & 0xFF00 ) + ( buffer[ segPos + 1 ] & 0xFF );
+        if ( segSize == 0xFFFF ) 
+          break;
+        else
+          segPos += segSize;
+      }
+      if ( segSize == 0xFFFF && pos > segPos ) 
+        break;
+      
       int size = remaining > blockSize ? blockSize : remaining;
       byte[] block = readRemoteBlock( address + pos, size );
       progress += progressIncrement;
@@ -230,19 +247,39 @@ public class JP2BT extends IO
       pos += size;
       remaining -= size;
     }
-    return pos;
+    return buffer.length;
   }
 
   @Override
   public int writeRemote( int address, byte[] buffer, int length )
   {
     int erasePageSize = 0x800;
+    int writeWordSize = 4;
     if ( length == 0 )
       return 0;
     if ( ( address < getRemoteEepromAddress() ) 
         || (address + length > getRemoteEepromAddress() + getRemoteEepromSize() ) 
-        || (length % erasePageSize) != 0 || (address % erasePageSize) != 0 )
+        || (address % erasePageSize) != 0 )
       return -1;
+    int eraseLength = bleRemote.E2size;
+    Remote remote = owner.getRemoteConfiguration().getRemote();
+    // We write only the data up to the end of segments.  The checksum end has already
+    // been set to the address of the last segment byte, so we use this value to get
+    // the length to write, but need to round it up to multiple of word size.
+    int dataEnd = ( remote.getCheckSums()[ 0 ].getAddressRange().getEnd() 
+        | ( writeWordSize - 1 ) ) + 1;
+    // As a precaution, make sure this is not greater than supplied length
+    length = Math.min( length, dataEnd );
+    System.err.println( "Length to upload is $" + Integer.toHexString( length ) );
+    for ( int i = length; i < buffer.length; i++ )
+    {
+      if ( ( buffer[ i ] & 0xFF ) != 0xFF )
+      {
+        System.err.println( "There are bytes beyond the segments that are not $FF" );
+        return -1;
+      }
+    }
+    
     int progress = 0;
     if ( progressUpdater != null && getUse() == Use.UPLOAD )
     {
@@ -271,19 +308,11 @@ public class JP2BT extends IO
     if ( progressUpdater != null && ( getUse() == Use.DOWNLOAD || getUse() == Use.UPLOAD ) )
       progressUpdater.updateProgress( progress );
     
-    if ( erase( address, address + length - 1 ) != 0 )
+    if ( erase( address, address + eraseLength - 1 ) != 0 )
       return -1;
     
     while ( remaining > 0 )
     {
-      try
-      {
-        Thread.sleep( 200 );
-      }
-      catch ( InterruptedException e )
-      {
-        e.printStackTrace();
-      }
       int size = remaining > blockSize ? blockSize : remaining;
       if ( writeRemoteBlock( address + pos, Arrays.copyOfRange( buffer, pos, pos + size ) ) != 0 )
       {
@@ -295,7 +324,7 @@ public class JP2BT extends IO
       pos += size;
       remaining -= size;
     }
-    return pos;
+    return buffer.length;
   }
 
   public void setBleMap( LinkedHashMap< String, BLERemote > bleMap )
@@ -428,7 +457,9 @@ public class JP2BT extends IO
   {
     if ( progressUpdater != null )
       progressUpdater.updateProgress( 10 );
+    reserved_connection = -1;
     connection = -1;
+    incoming.clear();
     BDAddr addr = BDAddr.fromString( bleRemote.address );
     bgapi.send_gap_connect_direct( addr, 0, 60, 76, 500, 0 );
     long waitStart = Calendar.getInstance().getTimeInMillis();
@@ -437,10 +468,9 @@ public class JP2BT extends IO
     {
       delay = Calendar.getInstance().getTimeInMillis() - waitStart; 
       if ( delay > 5000 )
-      {
         return false;
-      }
     }
+    
     if ( progressUpdater != null )
       progressUpdater.updateProgress( 20 );
     System.err.println( "Connected after " + delay + "ms with handle " + connection );
@@ -467,6 +497,7 @@ public class JP2BT extends IO
       System.err.println( serv.toString() );
     }
 
+    System.err.println( "Reading info and sig" );
     UEIPacket upkt = new CmdPacket( "APPINFOGET", new byte[]{} ).getUEIPacket( sequence++ );
     if ( ( upkt = getUEIPacketResponse( upkt, 75 ) ) == null || !bleRemote.interpret( "APPINFOGET", upkt ) )
     {
@@ -647,6 +678,7 @@ public class JP2BT extends IO
           ueiInStart = Calendar.getInstance().getTimeInMillis();
           upkt = new UEIPacket( frameType, sequence, value[ 2 ], 
               value[ 4 ], value[ 3 ], Arrays.copyOfRange( value, 5, value.length ) );
+//          System.err.println( "Start " + upkt.toString() );
           ueiIn.put( sequence, upkt );
         }
         else if ( state == UEIPacket.getFrameType( "Fragmented" ) )
@@ -660,6 +692,7 @@ public class JP2BT extends IO
             ueiIn.remove( sequence );
             ueiInOk = false;
           }
+//          System.err.println( "Incomplete " + upkt.toString() );
         }
         else if ( state == UEIPacket.getFrameType( "FragmentEnd" ) )
         {
@@ -673,7 +706,7 @@ public class JP2BT extends IO
           }
           else if ( ueiInOk )
           {
-            System.err.println( upkt.toString() );
+            System.err.println( "Complete " + upkt.toString() );
             incoming.add( upkt );
           }
         }
@@ -686,6 +719,12 @@ public class JP2BT extends IO
     }
 
     // Callbacks for class gap (index = 6)
+    public void receive_gap_connect_direct(int result, int connection_handle) 
+    {
+      System.err.println( "Connect direct returned result " + result + ", handle " +  connection_handle );
+      reserved_connection = connection_handle;
+    }
+    
     public void receive_gap_end_procedure(int result)
     {
       if ( result == 0 ) scanning = false;
@@ -725,6 +764,7 @@ public class JP2BT extends IO
   public int sendUEIPacket( int connection, int atthandle, UEIPacket upkt )
   {
     int n = 0;
+    System.err.println( "Sending " + upkt.toString() );
     List< BGAPIPacket > bpktList = upkt.toBGAPI( connection, atthandle );
     for ( BGAPIPacket bpkt : bpktList )
     {
@@ -999,6 +1039,7 @@ public class JP2BT extends IO
   private LinkedHashMap< Integer, UEIPacket > ueiIn = new LinkedHashMap< Integer, UEIPacket >();
   private BGAPITransport transport = null;
   private int sentState = 0;  // 0=sent, 1=ack rcvd, 2=(error code)+1
+  public int reserved_connection = -1;
   public int connection = -1;
   public boolean disconnecting = false;
   public BLERemote bleRemote = null;

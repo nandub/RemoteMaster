@@ -129,7 +129,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
 
   /** Description of the Field. */
   public final static String version = "v2.06";
-  public final static int buildVer = 13;
+  public final static int buildVer = 14;
   
   public static class LanguageDescriptor
   {
@@ -1564,10 +1564,13 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
             
             box = Box.createVerticalBox();
             btGroup = new ButtonGroup();
+            String lastRemote = properties.getProperty( "LastBLERemote" );
             for ( String addr : bleMap.keySet() )
             {
               JRadioButton btn = new JRadioButton( bleMap.get( addr ).name );
               btGroup.add( btn );
+              if ( lastRemote != null && addr.equals( lastRemote ) )
+                btn.setSelected( true );
               bleBtnMap.put( btn, bleMap.get( addr ) );
               box.add( btn );
             }
@@ -1686,7 +1689,10 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
                 }
               }
               if ( selectedRemote != null )
+              {
+                properties.setProperty( "LastBLERemote", selectedRemote.address );
                 ( new ConnectTask( selectedRemote, Use.CONNECT ) ).execute();
+              }
               else
                 disconnectBLE();
             }    
@@ -4168,6 +4174,8 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
     {
       if ( btio == null )
       {
+        if ( use == Use.CONNECT )
+          setInterfaceState( "CONNECTING:", 5 );
         btio = ( JP2BT )getOpenInterface( null, Use.CONNECT, this );
         btio.setOwner( RemoteMaster.this );
       }
@@ -4176,15 +4184,14 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
         String message = "Failed to open BLE dongle on port " + properties.getProperty( "Port" );
         JOptionPane.showMessageDialog( null, message, "Connection error", JOptionPane.PLAIN_MESSAGE );
         bluetoothButton.setSelected( false );
+        setInterfaceState( null );
       }
       else
       {
         btio.disconnecting = false;
-        btio.setProgressUpdater( this );
-//        updateProgress( 0 );
+        btio.setProgressUpdater( this );;
         if ( use == Use.CONNECT && bleRemote != null )
         {
-          setInterfaceState( "CONNECTING:", 5 );
           btio.bleRemote = bleRemote;
           try
           {
@@ -4220,6 +4227,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
           btio.setBleMap( bleMap );
           btio.discoverUEI( true );
           searchButton.setEnabled( false );
+          String lastRemote = properties.getProperty( "LastBLERemote" );
           long waitStart = Calendar.getInstance().getTimeInMillis();
           // Allow a maximum scan time of 15 minutes
           while ( btio.isScanning() && ( Calendar.getInstance().getTimeInMillis() - waitStart) < 900000L )
@@ -4240,6 +4248,8 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
                 if ( !bleBtnMap.values().contains( dev ) )
                 {
                   JRadioButton rb = new JRadioButton( dev.name );
+                  if ( lastRemote != null && lastRemote.equals( dev.address ) )
+                    rb.setSelected( true );
                   bleBtnMap.put( rb, dev );
                   btGroup.add( rb );
                   box.add( rb );
