@@ -29,6 +29,10 @@ import com.hifiremote.jp1.io.UEIPacket.CmdPacket;
 public class JP2BT extends IO
 {
   /* *****************************************************************************
+   * BGLIB is a Java implementation of the BGAPI binary protocol for Bluegiga
+   *   BLE112 Bluetooth low energy modules.  It is available here:
+   *   https://github.com/SINTEF-9012/bglib
+   * 
    * Classes BLEService and BLEAttribute.
    * Copied from org.thingml.bglib.gui by <franck.fleurey@sintef.no>
    *   under GNU LESSER GENERAL PUBLIC LICENSE, Version 3, 29 June 2007,
@@ -140,7 +144,7 @@ public class JP2BT extends IO
   @Override
   public String getInterfaceVersion()
   {
-    return "0.1";
+    return "0.2";
   }
   
   @Override
@@ -242,7 +246,7 @@ public class JP2BT extends IO
         progressUpdater.updateProgress( progress );
       
       if ( block == null )
-        break;
+        return pos;
       System.arraycopy( block, 0, buffer, pos, size );
       pos += size;
       remaining -= size;
@@ -270,7 +274,7 @@ public class JP2BT extends IO
         | ( writeWordSize - 1 ) ) + 1;
     // As a precaution, make sure this is not greater than supplied length
     length = Math.min( length, dataEnd );
-    System.err.println( "Length to upload is $" + Integer.toHexString( length ) );
+    System.err.println( "Length to upload is $" + Integer.toHexString( length ).toUpperCase() );
     for ( int i = length; i < buffer.length; i++ )
     {
       if ( ( buffer[ i ] & 0xFF ) != 0xFF )
@@ -316,7 +320,7 @@ public class JP2BT extends IO
       int size = remaining > blockSize ? blockSize : remaining;
       if ( writeRemoteBlock( address + pos, Arrays.copyOfRange( buffer, pos, pos + size ) ) != 0 )
       {
-        break;
+        return pos;
       }
       progress += progressIncrement;
       if ( progressUpdater != null && getUse() == Use.UPLOAD )
@@ -332,13 +336,6 @@ public class JP2BT extends IO
     this.bleMap = bleMap;
   }
   
-  /* *****************************************************************************
-   * Serial port utilities.
-   * Copied from org.thingml.bglib.gui.BLED112.java by <franck.fleurey@sintef.no>
-   *   under GNU LESSER GENERAL PUBLIC LICENSE, Version 3, 29 June 2007,
-   *   obtainable at http://www.gnu.org/licenses/lgpl-3.0.txt
-   *******************************************************************************/
-
   public static SerialPort connectSerial(String portName) {
     try {
       System.err.println( "Trying to open serial port " + portName );
@@ -356,10 +353,6 @@ public class JP2BT extends IO
     }
     return null;
   }
-  
-  /* *****************************************************************************
-   * End of copied Serial port utilities.
-   *******************************************************************************/
   
   public String connectBLED112( String portName )
   {
@@ -516,11 +509,9 @@ public class JP2BT extends IO
     }
     System.err.println( bleRemote.hasFinder ? "Remote has finder" : "Remote does not have finder" );
 
+    // Update the connection to the parameter values used by UEI phone app
     bgapi.send_connection_update( connection, 104, 120, 4, 550 );
-    
-    
-    
-    
+
     // This erase command has no effect, whether the extender is installed or not.
     // If it is not installed then the first parameter is interpreted as two valid 2-byte
     // addresses, start and end, with start > end, so the command is accepted (return code
@@ -570,7 +561,7 @@ public class JP2BT extends IO
 
     // Callbacks for class attributes (index = 2)
     public void receive_attributes_value(int connection, int reason, int handle, int offset, byte[] value) {
-      System.err.println("Attribute Value att=" + Integer.toHexString(handle) + " val = " + bytesToString(value));
+//      System.err.println("Attribute Value att=" + Integer.toHexString(handle) + " val = " + bytesToString(value));
     }
 
     // Callbacks for class connection (index = 3)
@@ -584,7 +575,6 @@ public class JP2BT extends IO
       {
         System.err.println("Connection lost!");
         connection = -1;
-//        bledevice = null;
       } 
     }
     
@@ -639,7 +629,7 @@ public class JP2BT extends IO
     
     public void receive_attclient_group_found(int connection, int start, int end, byte[] uuid) {
       if (bleRemote != null) {
-        System.err.println( "Group found" );
+//        System.err.println( "Group found" );
         BLEService srv = new BLEService(uuid, start, end);
         bleRemote.services.put(srv.getUuidString(), srv); 
       }
@@ -654,7 +644,7 @@ public class JP2BT extends IO
     }
     
     public void receive_attclient_attribute_value(int connection, int atthandle, int type, byte[] value) {
-      System.err.println("Attclient Value att=" + Integer.toHexString(atthandle) + " val = " + bytesToString(value));
+//      System.err.println("Attclient Value att=" + Integer.toHexString(atthandle) + " val = " + bytesToString(value));
       Integer inHandle = bleRemote.attributeHandles.get( "0xFFE2" );
       UEIPacket upkt = null;
       boolean ueiInOk = true;
@@ -669,8 +659,11 @@ public class JP2BT extends IO
           ueiInStart = Calendar.getInstance().getTimeInMillis();
           upkt = new UEIPacket( frameType, sequence, value[ 2 ], 
               value[ 3 ], Arrays.copyOfRange( value, 4, value.length ) );
-          System.err.println( upkt.toString() );
+//          System.err.println( upkt.toString() );
+          synced = false;
           incoming.add( upkt );
+//          System.err.println( "Queueing UEIPacket with id " + System.identityHashCode( upkt ) );
+          synced = true;
         }
         else if ( state == UEIPacket.getFrameType( "FragmentStart" ) )
         {
@@ -706,8 +699,11 @@ public class JP2BT extends IO
           }
           else if ( ueiInOk )
           {
-            System.err.println( "Complete " + upkt.toString() );
+//            System.err.println( "Complete " + upkt.toString() );
+            synced = false;
             incoming.add( upkt );
+//            System.err.println( "Queueing UEIPacket with id " + System.identityHashCode( upkt ) );
+            synced = true;
           }
         }
       }
@@ -715,6 +711,7 @@ public class JP2BT extends IO
     
     public void receive_attclient_write_command(int connection, int result)
     {
+//      System.err.println( "Write command ack returned result " + result );
       sentState = 1 + result;
     }
 
@@ -736,7 +733,7 @@ public class JP2BT extends IO
       String addr = String.format( "%02x:%02x:%02x:%02x:%02x:%02x", b[5],b[4],b[3],b[2],b[1],b[0] );
       if ( addr.startsWith( "48:d0:cf" ) )
       {
-        System.err.println( "Found " + addr );
+//        System.err.println( "Found " + addr );
         if ( !bleMap.containsKey( addr ) )
         {
           String ueiName = getNameFromScanData( data );
@@ -764,7 +761,7 @@ public class JP2BT extends IO
   public int sendUEIPacket( int connection, int atthandle, UEIPacket upkt )
   {
     int n = 0;
-    System.err.println( "Sending " + upkt.toString() );
+//    System.err.println( "Sending " + upkt.toString() );
     List< BGAPIPacket > bpktList = upkt.toBGAPI( connection, atthandle );
     for ( BGAPIPacket bpkt : bpktList )
     {
@@ -848,17 +845,18 @@ public class JP2BT extends IO
   {
     ueiInStart = Calendar.getInstance().getTimeInMillis();
     long delay = 0;
-    while ( incoming.isEmpty() )
+    while ( !synced || incoming.isEmpty() )
     {
       delay = Calendar.getInstance().getTimeInMillis() - ueiInStart;
       if ( delay > 6000 )
       {
-        System.err.println( "Incoming UEI packet timed out" );
+//        System.err.println( "Incoming UEI packet timed out, incoming queue size " + incoming.size() );
         return null;
       }
     }
-    System.err.println( "Incoming UEI packet received" );
+//    System.err.println( "Incoming UEI packet received" );
     UEIPacket upkt = incoming.remove( 0 );
+//    System.err.println( "Removing UEIPacket with id " + System.identityHashCode( upkt ) );
     return upkt;
   }
   
@@ -895,6 +893,11 @@ public class JP2BT extends IO
         || upkt.getPayload().length == 4 )
     {  
       upkt = getUEIPacketIn();
+      if ( upkt != null && ( upkt.getFrameType() == 4 || upkt.getOpCode() != 0x40 
+        || upkt.getPayload().length == 4 ) )
+      {
+        System.err.println( "Unexpected " + upkt.toString() );
+      }
       delay = Calendar.getInstance().getTimeInMillis() - ueiInStart;
       if ( delay > 6000 )
       {
@@ -906,7 +909,7 @@ public class JP2BT extends IO
     if ( upkt == null || upkt.isValidCmd() != 0 )
       return null;
     byte[] result = upkt.getCmdArgs();
-    System.err.println( bytesToString( result ) );
+//    System.err.println( bytesToString( result ) );
     return result;
   }
   
@@ -932,7 +935,7 @@ public class JP2BT extends IO
     if ( upkt == null )
       return -2;
     byte[] result = upkt.getCmdArgs();
-    System.err.println( "Erase args rcvd: " + bytesToString( result ) );
+//    System.err.println( "Erase args rcvd: " + bytesToString( result ) );
     int n = upkt.isValidCmd();
     return n;
   }
@@ -940,7 +943,7 @@ public class JP2BT extends IO
   public int sendRecord( Hex record )
   {
 //    System.err.println( "Start sending record" );
-    long recordStart = Calendar.getInstance().getTimeInMillis();
+//    long recordStart = Calendar.getInstance().getTimeInMillis();
     byte[] args = new byte[ record.length() + 2 ];
     args[ 0 ] = args[ 1 ] = 0;
     System.arraycopy( record.toByteArray(), 0, args, 2, record.length() );
@@ -951,7 +954,7 @@ public class JP2BT extends IO
       System.err.println( "Record failed to send" );
       return -1;
     }
-    long duration = Calendar.getInstance().getTimeInMillis() - recordStart;
+//    long duration = Calendar.getInstance().getTimeInMillis() - recordStart;
 //    System.err.println( "Record data sent after " + duration + "ms" );
     UEIPacket upkt = null;
     ueiInStart = Calendar.getInstance().getTimeInMillis();
@@ -963,17 +966,15 @@ public class JP2BT extends IO
       if ( delay > 6000 )
       {
         System.err.println( "Send record timed out after delay of " + delay + "ms" );
-        return -4;
+        return -2;
       }
     }
-    if ( upkt == null )
-      return -2;
     byte[] result = upkt.getCmdArgs();
     if ( result == null )
       return -3;
-    System.err.println( "Send args rcvd: " + bytesToString( result ) );
+//    System.err.println( "Send args rcvd: " + bytesToString( result ) );
     int n = upkt.isValidCmd();
-    duration = Calendar.getInstance().getTimeInMillis() - recordStart;
+//    duration = Calendar.getInstance().getTimeInMillis() - recordStart;
 //    System.err.println( "Record send complete after " + duration + "ms" );
     return n;
   }
@@ -1002,6 +1003,10 @@ public class JP2BT extends IO
     while ( upkt == null || upkt.getFrameType() == 4 || upkt.getOpCode() != 0x40  )
     {  
       upkt = getUEIPacketIn();
+      if ( upkt != null && ( upkt.getFrameType() == 4 || upkt.getOpCode() != 0x40 ) )
+      {
+        System.err.println( "Unexpected " + upkt.toString() );
+      }
       delay = Calendar.getInstance().getTimeInMillis() - ueiInStart;
       if ( delay > 6000 )
       {
@@ -1010,7 +1015,7 @@ public class JP2BT extends IO
       }
     }
     byte[] result = upkt.getCmdArgs();
-    System.err.println( "Send args rcvd: " + bytesToString( result ) );
+//    System.err.println( "Send args rcvd: " + bytesToString( result ) );
     return upkt.isValidCmd();
   }
 
@@ -1036,6 +1041,7 @@ public class JP2BT extends IO
   private boolean bledConn = false;
   private boolean scanning = false;
   public BGAPI bgapi;
+  private boolean synced = true;
   private LinkedHashMap< Integer, UEIPacket > ueiIn = new LinkedHashMap< Integer, UEIPacket >();
   private BGAPITransport transport = null;
   private int sentState = 0;  // 0=sent, 1=ack rcvd, 2=(error code)+1

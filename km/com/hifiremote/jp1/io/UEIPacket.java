@@ -312,7 +312,5 @@ public class UEIPacket
   {   
     return payload.length < 4 ? null : Arrays.copyOfRange( payload, 3, payload.length - 1  );
   }
-  
-  
 
 }

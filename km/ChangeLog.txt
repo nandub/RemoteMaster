@@ -46,6 +46,11 @@ Changes for v2.06
 -- Private build 14
 - Make BT uploads and downloads write/read up to end of segments, skipping all the filler FF's (Graham)
 - Make BT connect dialog automatically select the button for the last connected remote (Graham)
+-- Private build 15
+- Make JP2BT interface available in normal as well as admin mode (Graham)
+- Fix issues relating to switching between JP2BT and other interfaces (Graham)
+- Fix BT failure occurring due to main thread reading simultaneously with receive thread writing (Graham)
+- Correct various errors in protocols.ini (Rob)
 
 Changes for v2.05
 -- Private build 1

@@ -129,7 +129,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
 
   /** Description of the Field. */
   public final static String version = "v2.06";
-  public final static int buildVer = 14;
+  public final static int buildVer = 15;
   
   public static class LanguageDescriptor
   {
@@ -809,8 +809,9 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
       System.err.println( "Number of bytes read  = $" + Integer.toHexString( count ).toUpperCase() );
       io.closeRemote();
       System.err.println( "Ending normal download" );
-      if ( count == 0 )
+      if ( count != rc.getData().length )
       {
+        System.err.println( "Download aborting due to incomplete read" );
         return null;
       }
       if ( sigData != null )
@@ -1830,6 +1831,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
 
     toolBar = new JToolBar();
     toolBar.setFloatable( false );
+    bleStatus = new JPanel( new FlowLayout( FlowLayout.LEFT, 5, 0 ) );
     createMenus();
     createToolbar();
 
@@ -2080,7 +2082,6 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
     extraStatus.add( sep );
     interfaceStatus.add( Box.createVerticalStrut( d.height ) );
     
-    bleStatus = new JPanel( new FlowLayout( FlowLayout.LEFT, 5, 0 ) );
     bleStatus.add( Box.createHorizontalStrut( 5 ) );
     sep = new JSeparator( SwingConstants.VERTICAL );
     sep.setPreferredSize( d );
@@ -2472,21 +2473,18 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
     {
       System.err.println( "Unable to create CommHID object: " + le.getMessage() );
     }
-    
-    if ( admin )
+
+    try
     {
-      try
-      {
-        JP2BT jp2bt = new JP2BT( userDir );
-        interfaces.add( jp2bt );
-        System.err.println( "    JP2BT version " + jp2bt.getInterfaceVersion() );
-      }
-      catch ( LinkageError le )
-      {
-        System.err.println( "Unable to create CommHID object: " + le.getMessage() );
-      }
+      JP2BT jp2bt = new JP2BT( userDir );
+      interfaces.add( jp2bt );
+      System.err.println( "    JP2BT version " + jp2bt.getInterfaceVersion() );
     }
-    
+    catch ( LinkageError le )
+    {
+      System.err.println( "Unable to create JP2BT object: " + le.getMessage() );
+    }
+
     try
     {
       JP1USB jp1usb = new JP1USB( userDir );
@@ -3218,6 +3216,13 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
       downloadAction.setEnabled( bluetoothButton.isSelected() );
       uploadAction.setEnabled( uploadable && allowUpload() );
     }
+    else
+    {
+      disconnectBLE();
+      downloadAction.setEnabled( !interfaces.isEmpty() );
+      uploadAction.setEnabled( uploadable );
+      bleStatus.setVisible( false );
+    }
   }
   
   public void recreateToolbar()
@@ -3242,7 +3247,8 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
   {
     String temp = properties.getProperty( "Interface" );
     return temp != null && temp.equals( "JP2BT" ) ? 
-        btio != null && btio.bleRemote != null && btio.bleRemote.supportsUpload : true; 
+        btio != null && btio.bleRemote != null && btio.bleRemote.supportsUpload
+          && btio.connection >= 0 : true; 
   }
 
   /**
@@ -6570,16 +6576,15 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
       btio = null;
     }
     bluetoothButton.setSelected( false );
-    bluetoothButton.setBorder( BorderFactory.createRaisedBevelBorder() );
-    uploadable = false;
-    uploadAction.setEnabled( false );
-    downloadAction.setEnabled( false );
-    bleStatus.setVisible( false );
-    recreateToolbar();
-    if ( forced )
+    String selectedInterface = properties.getProperty( "Interface" );
+    if ( selectedInterface != null && selectedInterface.equals( "JP2BT" ) )
     {
-      String message = "Connection terminated by the connected remote.";
-      JOptionPane.showMessageDialog( this, message, "Disconnection", JOptionPane.INFORMATION_MESSAGE );
+      recreateToolbar();
+      if ( forced )
+      {
+        String message = "Connection terminated by the connected remote.";
+        JOptionPane.showMessageDialog( this, message, "Disconnection", JOptionPane.INFORMATION_MESSAGE );
+      }
     }
   }
   
