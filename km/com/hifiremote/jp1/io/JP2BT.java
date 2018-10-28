@@ -617,7 +617,7 @@ public class JP2BT extends IO
           }
           else { // Discovery is done
             System.err.println("Discovery completed:");
-            System.err.println(bleRemote.getGATTDescription());
+//            System.err.println(bleRemote.getGATTDescription());
             discovery_state = IDLE;
           }
         }

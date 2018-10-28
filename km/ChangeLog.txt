@@ -1,3 +1,7 @@
+Changes for v2.07
+-- Release build 1
+- As v2.06 build 15 with some diagnostic printouts commented out (Graham)
+
 Changes for v2.06
 -- Release build 1
 - Tweaked RMPB and included it as a publicly available new application (Graham)
