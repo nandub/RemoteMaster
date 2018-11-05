@@ -42,6 +42,12 @@ import com.hifiremote.jp1.RemoteConfiguration.KeySpec;
 public class MacroDefinitionBox extends Box implements ActionListener, ListSelectionListener,
 PropertyChangeListener, RMSetter< Object >
 {
+  public MacroDefinitionBox()
+  {
+    this( false );
+    itemStyleFromRemote = true;
+  }
+  
   public MacroDefinitionBox( boolean itemStyle )
   {
     super( BoxLayout.X_AXIS );
@@ -261,6 +267,10 @@ PropertyChangeListener, RMSetter< Object >
   {
     this.config = config;
     Remote remote = config.getRemote();
+    if ( itemStyleFromRemote )
+    {
+      itemStyle = config.getRemote().usesEZRC();
+    }
     macroButtonRenderer.setRemote( remote );
 //    durationPanel.setVisible( false );
     
@@ -740,6 +750,7 @@ PropertyChangeListener, RMSetter< Object >
   private MacroButtonRenderer macroButtonRenderer = new MacroButtonRenderer();
   
   private boolean itemStyle = false;
+  private boolean itemStyleFromRemote = false;
 
   @Override
   public void propertyChange( PropertyChangeEvent e )

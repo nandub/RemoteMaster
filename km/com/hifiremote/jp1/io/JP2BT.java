@@ -144,7 +144,7 @@ public class JP2BT extends IO
   @Override
   public String getInterfaceVersion()
   {
-    return "0.2";
+    return "0.3";
   }
   
   @Override
@@ -195,22 +195,43 @@ public class JP2BT extends IO
   public int readRemote( int address, byte[] buffer, int length )
   {
     int progress = 0;
+    int blockSize = 0x80;
+    int erasePageSize = 0x800;
+    int extraSize = 0;
+    if ( getRemoteEepromSize() % erasePageSize != 0 )
+    {
+      extraSize = erasePageSize - getRemoteEepromSize() % erasePageSize;
+    }
+    if ( ( address < getRemoteEepromAddress() ) 
+        || (address + length > getRemoteEepromAddress() + getRemoteEepromSize() + extraSize ) ) 
+      return -1;
+    
+    // Reset extraSize to be only extra bytes within requested range
+    int extraStart = getRemoteEepromAddress() + getRemoteEepromSize();
+    extraSize = Math.max( 0, address + length - extraStart );
+    
+    boolean segmentsOnly = address == getRemoteEepromAddress();
     if ( progressUpdater != null && ( getUse() == Use.DOWNLOAD || getUse() == Use.UPLOAD ) )
     {
-      setProgressName( getUse() == Use.DOWNLOAD ? "DOWNLOADING:" : "VERIFYING:" );
+      // There are two uses of readRemote during uploading.  Mainly it is used for verifying
+      // the upload, but for remotes such as the URC7955 where the E2 does not end on an
+      // erase page boundary, it is also used for reading these extra bytes.  These can
+      // be distinguished by the segmentsOnly boolean.
+      setProgressName( getUse() == Use.DOWNLOAD ? "DOWNLOADING:" 
+          : segmentsOnly ? "VERIFYING:" : "PREPARING:" );
       progressUpdater.updateProgress( progress );
     }
-    int blockSize = 0x80;
-    // Restrict downloading to actual segments for TI2541 remotes, distinguished
-    // by signature starting with 6.
-    int segPos = bleRemote.signature.startsWith( "6" ) ? 20 : 0xFFFFFF;
+    
+    // Restrict downloading to actual segments if starting at E2 start address
+    int segPos = segmentsOnly ? 20 : 0xFFFFFF;
     int segSize = 0;
     int remaining = length;
     int pos = 0;
-    int progressIncrement = ( 100 * blockSize ) / ( length + blockSize );
+    int extraIncs = extraSize > 0 ? 3 : 2;
+    int progressIncrement = 100 / ( ( length - 1 ) / blockSize + extraIncs );
     Arrays.fill( buffer, ( byte )0xFF );
 
-    if ( getUse() == Use.DOWNLOAD )
+    if ( getUse() == Use.DOWNLOAD || getUse() == Use.RAWDOWNLOAD )
     {
       if ( !bleRemote.updateConnData( this, sequence++ ) )
         return -1;
@@ -241,16 +262,27 @@ public class JP2BT extends IO
       
       int size = remaining > blockSize ? blockSize : remaining;
       byte[] block = readRemoteBlock( address + pos, size );
+      if ( block == null )
+        return pos;
       progress += progressIncrement;
       if ( progressUpdater != null && ( getUse() == Use.DOWNLOAD || getUse() == Use.UPLOAD ) )
         progressUpdater.updateProgress( progress );
-      
-      if ( block == null )
-        return pos;
       System.arraycopy( block, 0, buffer, pos, size );
       pos += size;
       remaining -= size;
     }
+    
+    if ( segmentsOnly && extraSize > 0 )
+    {
+      byte[] block = readRemoteBlock( extraStart, extraSize );
+      if ( block == null )
+        return pos;
+      progress += progressIncrement;
+      if ( progressUpdater != null && ( getUse() == Use.DOWNLOAD || getUse() == Use.UPLOAD ) )
+        progressUpdater.updateProgress( progress );
+      System.arraycopy( block, 0, buffer, getRemoteEepromSize(), extraSize );
+    }
+    
     return buffer.length;
   }
 
@@ -259,12 +291,20 @@ public class JP2BT extends IO
   {
     int erasePageSize = 0x800;
     int writeWordSize = 4;
+    int extraSize = 0;
     if ( length == 0 )
       return 0;
-    if ( ( address < getRemoteEepromAddress() ) 
-        || (address + length > getRemoteEepromAddress() + getRemoteEepromSize() ) 
-        || (address % erasePageSize) != 0 )
+    if ( getRemoteEepromSize() % erasePageSize != 0 )
+    {
+      extraSize = erasePageSize - getRemoteEepromSize() % erasePageSize;
+    }
+    if ( address != getRemoteEepromAddress() || length > getRemoteEepromSize() + extraSize )
       return -1;
+    
+    // Reset extraSize to be only extra bytes within requested range
+    int extraStart = address + getRemoteEepromSize();
+    extraSize = Math.max( 0, address + length - extraStart );
+       
     int eraseLength = bleRemote.E2size;
     Remote remote = owner.getRemoteConfiguration().getRemote();
     // We write only the data up to the end of segments.  The checksum end has already
@@ -274,13 +314,23 @@ public class JP2BT extends IO
         | ( writeWordSize - 1 ) ) + 1;
     // As a precaution, make sure this is not greater than supplied length
     length = Math.min( length, dataEnd );
-    System.err.println( "Length to upload is $" + Integer.toHexString( length ).toUpperCase() );
+    System.err.println( "Length of segment data is $" + Integer.toHexString( length ).toUpperCase() );
+    boolean writeExtraBytes = false;
     for ( int i = length; i < buffer.length; i++ )
     {
       if ( ( buffer[ i ] & 0xFF ) != 0xFF )
       {
-        System.err.println( "There are bytes beyond the segments that are not $FF" );
-        return -1;
+        if ( i < getRemoteEepromSize() )
+        {
+          // There are bytes other than $FF in the E2 area beyond the segments
+          System.err.println( "There are bytes beyond the segments that are not $FF" );
+          return -1;
+        }
+        else
+        {
+          writeExtraBytes = true;
+          break;
+        }
       }
     }
     
@@ -293,8 +343,9 @@ public class JP2BT extends IO
   
     int blockSize = 0x80;
     int remaining = length;
+    int extraIncs = writeExtraBytes ? 3 : 2;
     int pos = 0;
-    int progressIncrement = ( 100 * blockSize ) / ( length + blockSize );
+    int progressIncrement = 100 / ( ( length - 1 ) / blockSize + extraIncs );
 
     if ( getUse() == Use.UPLOAD )
     {
@@ -328,6 +379,18 @@ public class JP2BT extends IO
       pos += size;
       remaining -= size;
     }
+    
+    if ( writeExtraBytes )
+    {
+      if ( writeRemoteBlock( extraStart, Arrays.copyOfRange( buffer, getRemoteEepromSize(), getRemoteEepromSize() + extraSize ) ) != 0 )
+      {
+        return pos;
+      }
+      progress += progressIncrement;
+      if ( progressUpdater != null && getUse() == Use.UPLOAD )
+        progressUpdater.updateProgress( progress );
+    }
+    
     return buffer.length;
   }
 
@@ -873,7 +936,7 @@ public class JP2BT extends IO
   
   public byte[] readRemoteBlock( int address, int length )
   {
-    // Args are 4-byte msb address and 2-byte msb length
+    // Args of DATAREAD are 4-byte msb address and 2-byte msb length
     byte[] args = new byte[ 6 ];
     for ( int i = 0; i < 4; i++ )
       args[ 3 - i ] = ( byte )( ( address >> 8*i ) & 0xFF );

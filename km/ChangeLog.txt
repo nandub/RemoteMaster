@@ -1,6 +1,10 @@
 Changes for v2.07
 -- Release build 1
 - As v2.06 build 15 with some diagnostic printouts commented out (Graham)
+-- Release build 2
+- Fix inability to open Activity Macro Editor (Graham)
+- Update JP2BT interface to handle E2 area not a whole number of erase pages, as in URC7955 (Graham)
+- Update raw download similarly to handle E2 area not a whole number of erase pages (Graham)
 
 Changes for v2.06
 -- Release build 1

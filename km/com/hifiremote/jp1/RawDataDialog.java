@@ -192,6 +192,9 @@ public class RawDataDialog extends JDialog implements ActionListener
           buffSize = buffer.length;
         }
       }
+      // Round buffSize to multiple of 16 bytes so that all data shows in displayed table
+      if ( buffSize % 16 != 0 )
+        buffSize = ( buffSize / 16 + 1 ) * 16;
       System.err.println( "Final buffer size  = $" + Integer.toHexString( buffSize ).toUpperCase() );
       buffer = new short[ buffSize ];
       int count = io.readRemote( baseAddress, buffer );
