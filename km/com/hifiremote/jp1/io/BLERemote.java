@@ -95,7 +95,7 @@ public class BLERemote
               break;
             }
           }
-          System.err.println( upkt.toString() );
+//          System.err.println( upkt.toString() );
           break;
         case 0x43:  // Battery status
           if ( payload.length != 4 )

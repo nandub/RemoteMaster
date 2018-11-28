@@ -5,6 +5,9 @@ Changes for v2.07
 - Fix inability to open Activity Macro Editor (Graham)
 - Update JP2BT interface to handle E2 area not a whole number of erase pages, as in URC7955 (Graham)
 - Update raw download similarly to handle E2 area not a whole number of erase pages (Graham)
+-- Private build 3
+- Minor tweaks to Bluetooth support (Graham)
+- Add support for subscribing to notification if remote supports subscription (Graham)
 
 Changes for v2.06
 -- Release build 1

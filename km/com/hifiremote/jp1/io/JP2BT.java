@@ -552,6 +552,39 @@ public class JP2BT extends IO
     {
       System.err.println( serv.toString() );
     }
+    
+    StringBuffer sb = new StringBuffer();
+    int handle = findDescriptor( "0xFFE0", "0xFFE1", "0x2901", true );
+    if ( handle != 0 )
+      for( byte b : receivedValue ) sb.append( (char)( b & 0xFF ) );
+    System.err.println( "FFE1 description = \"" + sb.toString() + "\"" );
+
+    sb = new StringBuffer();
+    handle = findDescriptor( "0xFFE0", "0xFFE2", "0x2901", true );
+    if ( handle != 0 )
+      for( byte b : receivedValue ) sb.append( (char)( b & 0xFF ) );
+    System.err.println( "FFE2 description = \"" + sb.toString() + "\"" );
+
+    handle = findDescriptor( "0xFFE0", "0xFFE2", "0x2902", false );
+    if ( handle != 0 )
+    {
+      System.err.println( "Subscribing to notification for characteristic 0xFFE2" );
+      waitStart = Calendar.getInstance().getTimeInMillis();
+      completed = false;
+      bgapi.send_attclient_attribute_write( connection, handle, new byte[]{ 0x01, 0x00 } );
+      while ( !completed )
+      {
+        delay = Calendar.getInstance().getTimeInMillis() - waitStart;
+        if ( delay > 2000 )
+        {
+          System.err.println( "Unable to write 0xFFE2 CCCD" );
+          return false;
+        }
+      }
+      findDescriptor( "0xFFE0", "0xFFE2", "0x2902", true );
+      int val = ( receivedValue[ 1 ] << 8 ) + receivedValue[ 0 ];
+      System.err.println( String.format( "0xFFE2 CCCD = 0x%04X", val ) );
+    }
 
     System.err.println( "Reading info and sig" );
     UEIPacket upkt = new CmdPacket( "APPINFOGET", new byte[]{} ).getUEIPacket( sequence++ );
@@ -624,6 +657,7 @@ public class JP2BT extends IO
 
     // Callbacks for class attributes (index = 2)
     public void receive_attributes_value(int connection, int reason, int handle, int offset, byte[] value) {
+      receivedValue = value;
 //      System.err.println("Attribute Value att=" + Integer.toHexString(handle) + " val = " + bytesToString(value));
     }
 
@@ -668,24 +702,35 @@ public class JP2BT extends IO
     }
 
     public void receive_attclient_procedure_completed(int connection, int result, int chrhandle) {
-      if (discovery_state != IDLE && bleRemote != null) {
-        if (discovery_state == SERVICES) { // services have been discovered
+      if (discovery_state != IDLE && bleRemote != null) 
+      {
+        if (discovery_state == SERVICES) 
+        { // services have been discovered
           discovery_it = bleRemote.services.values().iterator();
           discovery_state = ATTRIBUTES;
         }
-        if (discovery_state == ATTRIBUTES) {
-          if (discovery_it.hasNext()) {
+        if (discovery_state == ATTRIBUTES) 
+        {
+          if (discovery_it.hasNext()) 
+          {
             discovery_srv = discovery_it.next();
             bgapi.send_attclient_find_information(connection, discovery_srv.getStart(), discovery_srv.getEnd());
           }
-          else { // Discovery is done
+          else 
+          { // Discovery is done
             System.err.println("Discovery completed:");
 //            System.err.println(bleRemote.getGATTDescription());
             discovery_state = IDLE;
           }
         }
       }
-      if (result != 0) {
+      else
+      {
+        completed = true;
+      }
+      
+      if (result != 0) 
+      {
         System.err.println("ERROR: Attribute Procedure Completed with error code 0x" + Integer.toHexString(result));
       }
     }
@@ -769,6 +814,10 @@ public class JP2BT extends IO
             synced = true;
           }
         }
+      }
+      else
+      {
+        receivedValue = value;
       }
     }
     
@@ -925,10 +974,9 @@ public class JP2BT extends IO
   
   public void finderOn( boolean setOn )
   {
-    int ueiOut = bleRemote.attributeHandles.get( "0xFFE1" );
     byte[] args = { 5, setOn ? ( byte )0xa0 : 8, 0 };
     UEIPacket p = new UEIPacket( 0, sequence++, 0x25, 0x44, args );
-    if ( sendUEIPacket( connection, ueiOut, p ) == 0 )
+    if ( getUEIPacketResponse( p, 0 ) != null )
       System.err.println( "Finder turned " + ( setOn ? "On" : "Off") );
     else
       System.err.println( "Error in setting finder " + ( setOn ? "On" : "Off") );
@@ -1081,6 +1129,47 @@ public class JP2BT extends IO
 //    System.err.println( "Send args rcvd: " + bytesToString( result ) );
     return upkt.isValidCmd();
   }
+  
+  private int findDescriptor( String uuidServ, String uuidChstic, String uuidDesc, boolean doRead )
+  {
+    int handle = 0;
+    boolean atChstic = false;
+    BLEService ueiService = bleRemote.services.get( uuidServ );
+    for ( BLEAttribute att : ueiService.attributes )
+    {
+      if ( !atChstic && !att.getUuidString().equals( uuidChstic ) )
+        continue;
+      atChstic = true;
+      if ( att.getUuidString().equals( uuidDesc ) )
+      {
+        handle = att.handle;
+        break;
+      }
+    }
+    
+    if ( !doRead )
+      return handle;
+    
+    receivedValue = null;
+    if ( handle != 0 )
+    {
+      System.err.println( "Reading handle 0x" + Integer.toHexString( handle ).toUpperCase() );
+      long waitStart = Calendar.getInstance().getTimeInMillis();
+      long delay = 0;
+      receivedValue = null;
+      bgapi.send_attclient_read_by_handle( connection, handle );
+      while ( receivedValue == null )
+      {
+        delay = Calendar.getInstance().getTimeInMillis() - waitStart;
+        if ( delay > 2000 )
+        {
+          System.err.println( "Unable to read descriptor with handle " + handle );
+          return 0;
+        }
+      }
+    }
+    return handle;
+  }
 
   public boolean isScanning()
   {
@@ -1117,4 +1206,6 @@ public class JP2BT extends IO
   public int sequence = 1;
   private RemoteMaster owner = null;
   private ArrayList< UEIPacket > incoming = new ArrayList< UEIPacket >();
+  private byte[] receivedValue = null;
+  private boolean completed = false;
 }
