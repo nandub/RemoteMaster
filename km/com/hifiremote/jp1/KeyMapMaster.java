@@ -110,6 +110,8 @@ public class KeyMapMaster extends JP1Frame implements ActionListener, PropertyCh
   private JMenuItem readmeItem = null;
   
   private JMenuItem rmpbReadmeItem = null;
+  
+  private JMenuItem learnedSignalItem = null;
 
   private JMenuItem tutorialItem = null;
 
@@ -706,6 +708,10 @@ public class KeyMapMaster extends JP1Frame implements ActionListener, PropertyCh
       rmpbReadmeItem = new JMenuItem( "Using RMPB", KeyEvent.VK_U );
       rmpbReadmeItem.addActionListener( this );
       menu.add( rmpbReadmeItem );
+      
+      learnedSignalItem = new JMenuItem( "Interpreting Decoded IR Signals", KeyEvent.VK_I );
+      learnedSignalItem.addActionListener( this );
+      menu.add( learnedSignalItem );
 
       menu.addSeparator();
 
@@ -1056,6 +1062,11 @@ public class KeyMapMaster extends JP1Frame implements ActionListener, PropertyCh
       {
         File rmpbReadme = new File( RemoteMaster.getWorkDir(), "RMPB_Readme.html" );
         desktop.browse( rmpbReadme.toURI() );
+      }
+      else if ( source == learnedSignalItem )
+      {
+        File decodeFile = new File( RemoteMaster.getWorkDir(), "DecodeIR.html" );
+        desktop.browse( decodeFile.toURI() );
       }
       else if ( source == homePageItem )
       {

@@ -4,15 +4,15 @@ import info.clearthought.layout.TableLayout;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultCellEditor;
-import javax.swing.JButton;
 import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
@@ -24,6 +24,8 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.Document;
+
+import com.hifiremote.jp1.ProtocolDataPanel.DisplayArea;
 
 public class ManualDevicePanel extends JPanel implements ChangeListener, DocumentListener
 {
@@ -41,7 +43,7 @@ public class ManualDevicePanel extends JPanel implements ChangeListener, Documen
               b, pr, c, pf, b
           }, // cols
           {
-              b, pr, b, pr, b, pr, b, pr, pf, pr, b
+              b, pr, b, pr, b, pr, b, pr, b, pr, pf, pr, b
           }
       // rows
       };
@@ -96,6 +98,17 @@ public class ManualDevicePanel extends JPanel implements ChangeListener, Documen
         1 ) );
     cmdIndex.addChangeListener( this );
     add( cmdIndex, "3, 7" );
+    
+    String note = "If editing a Manual Protocol in RM, the Data Translators are "
+        + "read-only and set automatically to match the parameter tables.\n\n"
+        + "If editing a protocol in RMPB, the Data Translators panel is editable. "
+        + "The parameter tables and Create Translators button are there to provide "
+        + "an easy means to create simple translators.";
+    DisplayArea noteArea = new DisplayArea( note, null );
+    noteArea.setColumns( 40 );
+    JPanel notePanel = new JPanel( new FlowLayout( FlowLayout.LEFT ) );
+    notePanel.add( noteArea );
+    add( notePanel, "1, 9, 3, 9" );
   }
   
   public void setOwner( Object owner )
@@ -118,6 +131,11 @@ public class ManualDevicePanel extends JPanel implements ChangeListener, Documen
     SpinnerNumberModel spinnerModel = new SpinnerNumberModel( protocol.getCmdIndex(), 0, protocol.getDefaultCmd().length() - 1, 1 );
     cmdIndex.setModel( spinnerModel );
     rawHexData.setText( protocol.getFixedData( new Value[ 0 ] ).toString() );
+    if ( settingsDialog != null )
+    {
+      deviceModel.setManualSettingsPanel( settingsDialog.getManualSettingsPanel() );
+      commandModel.setManualSettingsPanel( settingsDialog.getManualSettingsPanel() );
+    }
   }
   
   public void updateFixedData()
@@ -141,18 +159,43 @@ public class ManualDevicePanel extends JPanel implements ChangeListener, Documen
   
   public void update( String procName, Hex hex )
   {
+    ManualSettingsPanel msp = settingsDialog != null ? settingsDialog.getManualSettingsPanel() : null;
+
+    if ( msp != null && msp.isLoadInProgress() )
+      return;
+    int oldFixedDataLength = protocol.getDeviceTranslators().length;
+    int oldCmdLength = protocol.getCmdTranslators().length;
     int fixedDataLength = Protocol.getFixedDataLengthFromCode( procName, hex );
+    int cmdLength = Protocol.getCmdLengthFromCode( procName, hex );
+    if ( msp != null && !msp.isLoadInProgress() && fixedDataLength == oldFixedDataLength 
+        && cmdLength == oldCmdLength )
+    {
+      return;
+    }
+    else if ( settingsDialog != null && settingsDialog.getModeIndex() >= 0 
+        && settingsDialog.getModeIndex() <= 1 && msp != null )
+    {
+      // This message is active for a manual protocol either new (0) or edited (1)
+      String title = "Code update";
+      String message = "The device and command translators have been reset to default\n"
+          + "due to a change in the number of parameters.";
+      JOptionPane.showMessageDialog( null, message, title, JOptionPane.INFORMATION_MESSAGE );
+    }
     rawHexData.setText( Hex.toString( new short[ fixedDataLength ] ) );
     ArrayList< Value > devParms = new ArrayList< Value >();
     Value zero = new Value( 0 );
     for ( int i = 0; i < fixedDataLength; ++i )
       devParms.add( zero );
-    int cmdLength = Protocol.getCmdLengthFromCode( procName, hex );
     SpinnerNumberModel spinnerModel = ( SpinnerNumberModel )cmdIndex.getModel();
     spinnerModel.setMaximum( cmdLength - 1 );
     protocol.createDefaultParmsAndTranslators( cmdLength << 4, false, false, 8, devParms, new short[ 0 ], 8 );
     deviceModel.fireTableDataChanged();
     commandModel.fireTableDataChanged();
+    if ( settingsDialog != null )
+    {
+      deviceModel.setProtocolText( settingsDialog.getModeIndex() );
+      commandModel.setProtocolText( settingsDialog.getModeIndex() );
+    }
   }
   
   @Override

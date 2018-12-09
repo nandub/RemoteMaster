@@ -24,11 +24,13 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Properties;
 import java.util.StringTokenizer;
 
 import javax.swing.BorderFactory;
@@ -304,8 +306,6 @@ ChangeListener, ListSelectionListener, ItemListener
   public void actionPerformed( ActionEvent e )
   {
     Object source = e.getSource();
-    JTableX codeTable = tablePanel.getCodeTable();
-    CodeTableModel codeModel = ( CodeTableModel )codeTable.getModel();
     if ( source == importButton )
     {
       importFromClipboard();
@@ -599,7 +599,7 @@ ChangeListener, ListSelectionListener, ItemListener
     }
   }
 
-  public String[] loadRMPB( File loadFile, boolean idOnly )
+  public String[] loadRMPB( File loadFile, boolean idOnly, int modeIndex )
   {
     PropertyFile properties = JP1Frame.getProperties();
     JTableX codeTable = tablePanel.getCodeTable();
@@ -630,13 +630,17 @@ ChangeListener, ListSelectionListener, ItemListener
             }
             else if ( line.startsWith( "VariantName=" ) )
             {
-              idStrings[ 1 ] = line.substring( 12 ).trim();
+              String vName = line.substring( 12 ).trim();
+              idStrings[ 1 ] = modeIndex == 2 ? vName == null || vName.equals( "" ) ? "Custom" :  vName + "-Custom" : vName;
             }
             else if ( line.startsWith( "PID=" ) )
             {
               idStrings[ 2 ] = line.substring( 4 ).trim();
             }
           }
+          if( modeIndex == 2 && idStrings[ 1 ] == null )
+            idStrings[ 1 ] = "Custom";
+          
           if ( idOnly )
           {
             return idStrings;
@@ -658,6 +662,31 @@ ChangeListener, ListSelectionListener, ItemListener
           }
           deviceText.setText( sw.toString() );
           pw.close();
+          
+          if ( modeIndex == 0 )
+          {
+            // This is loading a manual protocol, so the device and command
+            // parameter tables need to be set from the translators.
+            StringReader sr = new StringReader( deviceText.getText() );
+            BufferedReader dbr = new BufferedReader( sr );
+            PropertyReader pr = new PropertyReader( dbr );
+            Properties props = new Properties();
+            Property property = new Property();
+            while ( ( property = pr.nextProperty() ) != null )
+            {
+              props.put( property.name, property.value );
+            }
+            props.put( "PID", pid.getText() );
+            dbr.close();
+            ManualProtocol temp = new ManualProtocol( props );
+            protocol.setDeviceParms( Arrays.asList( temp.getDeviceParameters() ) );
+            protocol.setCommandParms( Arrays.asList( temp.getCommandParameters() ) );
+            protocol.setDeviceTranslators( Arrays.asList( temp.getDeviceTranslators() ) );
+            protocol.setCommandTranslators( Arrays.asList( temp.getCmdTranslators() ) );
+            protocol.setDefaultCmd( temp.getDefaultCmd() );
+            protocol.setRawHex( temp.getFixedData( new Value[ 0 ] ) );
+            protocol.setCmdIndex( temp.getCmdIndex() );
+          }
         }
         else if ( section.equals( "Executor" ) )
         {
@@ -1031,10 +1060,10 @@ ChangeListener, ListSelectionListener, ItemListener
     protDataPanel.interpretPFPD( false );
   }
   
-  public void reset()
+  public void reset( boolean forClone )
   {
     setDisplayProtocol( null );
-    setProtocol( new ManualProtocol( null, null ), true );
+    setProtocol( new ManualProtocol( null, null ), forClone  );
     name.setText( null );
     variantName.setText( null );
     pid.setText( null );

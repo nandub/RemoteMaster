@@ -8,6 +8,10 @@ Changes for v2.07
 -- Private build 3
 - Minor tweaks to Bluetooth support (Graham)
 - Add support for subscribing to notification if remote supports subscription (Graham)
+- When creating/editing manual protocol in RM, preserve device and command parameter settings when possible (Graham)
+- When creating/editing manual protocol in RM, update data translation panel when parameter settings are edited (Graham)
+- Fix bug in RM that a loaded manual protocol did not show in protocol drop-down list (Graham)
+- Fix bug in RM protocol editor causing procBox listeners to persist after editor closed (Graham)
 
 Changes for v2.06
 -- Release build 1

@@ -25,7 +25,6 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import javax.swing.text.Document;
 
 import com.hifiremote.jp1.ProtocolDataPanel.Mode;
 
@@ -104,9 +103,14 @@ public class ManualEditorPanel extends JPanel implements ActionListener, ChangeL
     translationButton.addActionListener( this );
     JPanel buttonPanel = new JPanel( new FlowLayout( FlowLayout.CENTER ) );
     buttonPanel.add( translationButton );
-    devicePanel.add( buttonPanel, "1, 9, 3, 9" );
+    devicePanel.add( buttonPanel, "1, 11, 3, 11" );
   }
   
+  public JButton getTranslationButton()
+  {
+    return translationButton;
+  }
+
   @Override
   public void actionPerformed( ActionEvent e )
   {

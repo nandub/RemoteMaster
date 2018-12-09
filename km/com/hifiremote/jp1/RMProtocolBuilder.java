@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.text.DateFormat;
 import java.util.Date;
-import java.util.LinkedHashMap;
 import java.util.List;
 
 import javax.swing.AbstractAction;
@@ -41,7 +40,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JToolBar;
@@ -51,7 +49,6 @@ import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import com.hifiremote.jp1.AssemblerTableModel.DisasmState;
 import com.hifiremote.jp1.ProtocolDataPanel.Mode;
 import com.hifiremote.jp1.JP2Analyzer;
 
@@ -735,7 +732,7 @@ ChangeListener
     reset();
     if ( isRMPB )
     {
-      manualSettingsPanel.loadRMPB( file, false );
+      manualSettingsPanel.loadRMPB( file, false, -1 );
       saveAction.setEnabled( true );
     }
     else if ( isTxt )
@@ -801,7 +798,7 @@ ChangeListener
   
   private void reset()
   {
-    manualSettingsPanel.reset();
+    manualSettingsPanel.reset( true );
     saveAction.setEnabled( false );
     saveAsAction.setEnabled( false );
   }
@@ -845,7 +842,6 @@ ChangeListener
   private JRadioButtonMenuItem[] lookAndFeelItems = null;
   private ActionEvent lfEvent = null;
   private JTabbedPane tabbedPane = null;
-  private JSplitPane outerPane = null;
   private JTextArea deviceText = null;
   private JComboBox< String > protNames = new JComboBox< String >();
   private JComboBox< Protocol > protList = new JComboBox< Protocol >();

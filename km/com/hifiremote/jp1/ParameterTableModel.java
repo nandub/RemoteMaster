@@ -178,6 +178,23 @@ public class ParameterTableModel extends AbstractTableModel
         break;
       default:
     }
+    setProtocolText( 0 );
+  }
+  
+  public void setProtocolText( int modeIndex )
+  {
+    if ( modeIndex >= 0 && modeIndex <= 1 && manualSettingsPanel != null )
+    {
+      // The cases where the device text is updated are for a manual protocol
+      // in RM that is new (0) or being edited (1).  The cases excluded are
+      // editing a non-manual protocol in RM (2) or any protocol in RMPB (-1)
+      manualSettingsPanel.getDeviceText().setText( manualSettingsPanel.getProtocolText( true, true ) );
+    }
+  }
+
+  public void setManualSettingsPanel( ManualSettingsPanel manualSettingsPanel )
+  {
+    this.manualSettingsPanel = manualSettingsPanel;
   }
 
   /** The parms. */
@@ -219,6 +236,8 @@ public class ParameterTableModel extends AbstractTableModel
   {
       "Name", "Bits", "LSB", "Comp"
   };
+  
+  private ManualSettingsPanel manualSettingsPanel = null;
 
   /** The Constant colClasses. */
   private final static Class< ? >[] colClasses =

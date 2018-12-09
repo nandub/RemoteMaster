@@ -3,15 +3,18 @@ package com.hifiremote.jp1;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
-import java.awt.FlowLayout;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
+import java.util.Arrays;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -64,6 +67,15 @@ public class ManualSettingsDialog extends JDialog implements ActionListener
    */
   private void createGui( Component owner, ManualProtocol protocol )
   {
+    addWindowListener( new WindowAdapter()
+    {
+      @Override
+      public void windowClosing( WindowEvent event )
+      {
+        resetProcBox();
+        dispose();
+      }
+    } );
     setLocationRelativeTo( null );
     // Was relative to owner, but this could cause it to run off top of screen.
     // Relative to null should center it on the screen.
@@ -99,7 +111,7 @@ public class ManualSettingsDialog extends JDialog implements ActionListener
     
     editorPanel = new ManualEditorPanel( this );
     manualSettingsPanel = editorPanel.getManualSettingsPanel(); 
-    manualSettingsPanel.reset();
+    manualSettingsPanel.reset( false );
     manualSettingsPanel.getDeviceText().setEditable( false );
     manualSettingsPanel.setProtocol( protocol, false );
     manualSettingsPanel.getProcBox().setSelectedIndex( 0 );
@@ -121,12 +133,15 @@ public class ManualSettingsDialog extends JDialog implements ActionListener
     {
       userAction = JOptionPane.OK_OPTION;
       manualSettingsPanel.getDevicePanel().updateFixedData();
+      protocol = manualSettingsPanel.getProtocol();
+      resetProcBox();
       setVisible( false );
       dispose();
     }
     else if ( source == cancel )
     {
       userAction = JOptionPane.CANCEL_OPTION;
+      resetProcBox();
       setVisible( false );
       dispose();
     }
@@ -173,7 +188,7 @@ public class ManualSettingsDialog extends JDialog implements ActionListener
         return;
       }
       boolean validFile = true;
-      String[] fileStrings = manualSettingsPanel.loadRMPB( file, true );
+      String[] fileStrings = manualSettingsPanel.loadRMPB( file, true, modeIndex );
 
       if ( modeIndex == 0 )
       {
@@ -203,7 +218,7 @@ public class ManualSettingsDialog extends JDialog implements ActionListener
       if ( validFile )
       {
         reset();
-        manualSettingsPanel.loadRMPB( file, false );
+        manualSettingsPanel.loadRMPB( file, false, modeIndex );
         save.setEnabled( true );
       }
       else
@@ -235,6 +250,7 @@ public class ManualSettingsDialog extends JDialog implements ActionListener
     editorPanel.getDevicePanel().setVisible( n != 2 );
     ManualCodePanel tablePanel = manualSettingsPanel.getTablePanel();
     DisplayArea noteArea = tablePanel.getNoteArea();
+    editorPanel.getTranslationButton().setEnabled( n < 0 );
 //    if ( n == 3 )
 //    {
 //      String text = "This is a cloned protocol.  The code for all processors may be "
@@ -300,8 +316,18 @@ public class ManualSettingsDialog extends JDialog implements ActionListener
   
   private void reset()
   {
-    manualSettingsPanel.reset();
+    manualSettingsPanel.reset( false );
     save.setEnabled( false );
+  }
+  
+  private void resetProcBox()
+  {
+    JComboBox< Processor > procBox = ManualCodePanel.getProcBox();
+    ActionListener[] als = procBox.getActionListeners();
+    for ( ActionListener al : Arrays.copyOf( als, als.length ) )
+    {
+      procBox.removeActionListener( al );
+    }
   }
 
   private ManualProtocol protocol = null;
