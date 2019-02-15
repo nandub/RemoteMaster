@@ -31,6 +31,7 @@ import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.net.URL;
@@ -129,7 +130,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
 
   /** Description of the Field. */
   public final static String version = "v2.07";
-  public final static int buildVer = 3;
+  public final static int buildVer = 4;
   
   public static class LanguageDescriptor
   {
@@ -176,7 +177,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
   {
     return version.replaceAll("\\s","") + "build" + getBuild();
   }
-  
+    
   public static class BatteryBar extends JLabel
   {
     private int bars = 0;
@@ -1678,7 +1679,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
               searchButton.setEnabled( true );
             }
             if ( btio != null )
-              btio.disconnecting = false;
+              btio.setDisconnecting( false );
             if ( result == 0 )
             {
               for ( JRadioButton btn : bleBtnMap.keySet() )
@@ -1891,7 +1892,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
               setInterfaceState( null );
             }
             // BGAPITransport runs a separate thread, which needs to be stopped.
-            btio.disconnecting = false;
+            btio.setDisconnecting( false );
             disconnectBLE();
           }
           boolean quit = false;
@@ -3182,7 +3183,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
       toolBar.add( bluetoothButton );
       bluetoothButton.setBorder( bluetoothButton.isSelected() ? BorderFactory.createLoweredBevelBorder()
           : BorderFactory.createRaisedBevelBorder());
-      if ( btio != null && btio.bleRemote != null && btio.bleRemote.hasFinder )
+      if ( btio != null && btio.getBleRemote() != null && btio.getBleRemote().hasFinder )
       {
         toolBar.add( Box.createHorizontalStrut( 5 ) );
         toolBar.add( finderButton );
@@ -3247,8 +3248,8 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
   {
     String temp = properties.getProperty( "Interface" );
     return temp != null && temp.equals( "JP2BT" ) ? 
-        btio != null && btio.bleRemote != null && btio.bleRemote.supportsUpload
-          && btio.connection >= 0 : true; 
+        btio != null && btio.getBleRemote() != null && btio.getBleRemote().supportsUpload
+          && btio.isConnected() : true; 
   }
 
   /**
@@ -4187,18 +4188,18 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
       }
       if ( btio == null )
       {
-        String message = "Failed to open BLE dongle on port " + properties.getProperty( "Port" );
+        String message = "Failed to open BLE interface on port " + properties.getProperty( "Port" );
         JOptionPane.showMessageDialog( null, message, "Connection error", JOptionPane.PLAIN_MESSAGE );
         bluetoothButton.setSelected( false );
         setInterfaceState( null );
       }
       else
       {
-        btio.disconnecting = false;
+        btio.setDisconnecting( false );
         btio.setProgressUpdater( this );;
         if ( use == Use.CONNECT && bleRemote != null )
         {
-          btio.bleRemote = bleRemote;
+          btio.setBleRemote( bleRemote );
           try
           {
             if ( btio.connectUEI() )
@@ -4230,14 +4231,39 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
         else if ( use == Use.SEARCH && bleRemote == null )
         {
           setInterfaceState( "SEARCHING..." );
-          btio.setBleMap( bleMap );
+//          btio.setBleMap( bleMap );
           btio.discoverUEI( true );
           searchButton.setEnabled( false );
           String lastRemote = properties.getProperty( "LastBLERemote" );
+          int listStart = 0;
           long waitStart = Calendar.getInstance().getTimeInMillis();
           // Allow a maximum scan time of 15 minutes
           while ( btio.isScanning() && ( Calendar.getInstance().getTimeInMillis() - waitStart) < 900000L )
           {
+            int size = btio.getListSize();
+            if ( size > listStart )
+            {
+              System.err.println( "Size now = " + size);
+              for ( int i = listStart; i < size; i++)
+              {
+                String addr = btio.getListItem( i );
+                if ( !bleMap.containsKey( addr ) )
+                {
+                  String ueiName = btio.getItemName( i );
+                  BLERemote dev = new BLERemote( ueiName + " " + addr.substring( 9 ), ueiName, addr );
+                  dev.found = true;
+                  dev.rssi = btio.getRssi( i );
+                  System.err.println("Create remote: " + dev.toString());
+                  bleMap.put( addr, dev );
+                }
+                else
+                {
+                  bleMap.get( addr ).found = true;
+                }
+              }
+              listStart = size;
+            }
+            
             for ( JRadioButton btn : bleBtnMap.keySet() )
             {
               BLERemote rem = bleBtnMap.get( btn );
@@ -4278,7 +4304,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
     {
       super.done();
       setInterfaceState( null );
-      if ( use == Use.CONNECT && btio != null && btio.bleRemote != null && !btio.bleRemote.supportsUpload )
+      if ( use == Use.CONNECT && btio != null && btio.getBleRemote() != null && !btio.getBleRemote().supportsUpload )
       {
         String title = "Connection";
         String message = "Please note that this remote needs an extender in order to\n"
@@ -4407,7 +4433,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
         System.err.println( "Testing interface: " + ( tempName == null ? "NULL" : tempName ) );
         if ( tempName.equals( interfaceName ) )
         {
-          String item = use == Use.CONNECT ? "BLE dongle" : "remote";
+          String item = use == Use.CONNECT ? "BLE interface" : "remote";
           System.err.println( "Interface matched.  Trying to open " + item );
           ioOut = testInterface( temp, portName, file, use, progressUpdater );
           if ( ioOut == null )
@@ -4509,15 +4535,16 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
       else if ( use == Use.CONNECT )
       {
         JP2BT iobt = ( JP2BT )ioIn;
-        String portResult = iobt.connectBLED112( portName );
+        iobt.setBleInterface( portName );
+        String portResult = iobt.connectBLE( portName );
         if ( portResult == null )
         {
-          System.err.println( "Failed to connect to BLED dongle on port " +  portName );
+          System.err.println( "Failed to connect to BLE interface on port " +  portName );
           portName = "";
         }
         else
         {
-          System.err.println( "Connected BLED dongle on port " +  portName );
+          System.err.println( "Connected BLE interface on port " +  portName );
         }
       }
     }
@@ -5439,11 +5466,13 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
   
   private void updateBleStatus()
   {
-    BLERemote rem = btio.bleRemote;
+    BLERemote rem = btio.getBleRemote();
     batteryBar.setBars( rem.batteryBars );
     batteryVoltage.setText( String.format( "(%4.2fv)", rem.batteryVoltage ) );
-    signalProgressBar.setValue( rem.signalStrength );
-    signalProgressBar.setString( rem.signalStrength + "dBm" );
+    int sigValue = rem.signalStrength == 1 ? signalProgressBar.getMinimum() : rem.signalStrength;
+    String sigString = rem.signalStrength == 1 ? "N/A" : rem.signalStrength + "dBm";
+    signalProgressBar.setValue( sigValue );
+    signalProgressBar.setString( sigString );
   }
 
   /**
@@ -5488,7 +5517,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
       advProgressLabel.setText( "Move/Macro:" );
     }
     
-    if ( btio != null && btio.bleRemote != null )
+    if ( btio != null && btio.getBleRemote() != null )
     {
       updateBleStatus();
     }
@@ -5547,9 +5576,9 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
       }
       showErrorMessage( message, title );
     }
-    if ( btio != null && btio.bleRemote != null )
+    if ( btio != null && btio.getBleRemote() != null )
     {
-      batteryBar.setBars( btio.bleRemote.batteryBars );
+      batteryBar.setBars( btio.getBleRemote().batteryBars );
     }
     return valid;
   }
@@ -5804,7 +5833,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
       {
         System.err.println( "   " + name + " = " + System.getProperty( name ) );
       }
-
+      
       DynamicURLClassLoader.getInstance().addFile( workDir );
 
       FilenameFilter filter = new FilenameFilter()
@@ -6568,11 +6597,11 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
       // btio.disconnecting will be false unless this is called from 
       // receive_connection_disconnected(), which is when the remote has initiated
       // the disconnection.
-      if ( !btio.disconnecting )
+      if ( !btio.isDisconnecting() )
         btio.disconnectUEI();
       else
         forced = true;
-      btio.disconnectBLED112();
+      btio.disconnectBLE();
       btio = null;
     }
     bluetoothButton.setSelected( false );
@@ -6588,4 +6617,66 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
     }
   }
   
+  private static int[] parseVersion( String version )
+  {
+    int[] parsedVersion = new int[ 3 ];
+    StringTokenizer st = new StringTokenizer( version.trim(), ". " );
+    for ( int i = 0; i < 3; i++ )
+    {
+      if ( st.hasMoreTokens() )
+        parsedVersion[ i ] = Integer.parseInt( st.nextToken() );
+      else
+        return null;
+    }
+    return parsedVersion;
+  }
+  
+  public static boolean testWindowsVersion( String base )
+  {
+    Runtime rt;
+    Process pr;
+    BufferedReader in;
+    String line = "";
+    String fullVersion = "";
+    int[] parsedVersion = null;
+    int[] parsedBase = null;
+    final String SEARCH_TERM = "OS Version:";
+
+    try
+    {
+      rt = Runtime.getRuntime();
+      pr = rt.exec( "SYSTEMINFO" );
+      in = new BufferedReader( new InputStreamReader( pr.getInputStream( ) ) );
+
+      while( ( line = in.readLine() ) != null )
+      {
+        if( line.contains( SEARCH_TERM ) )
+        {
+          fullVersion = line.substring( line.lastIndexOf( SEARCH_TERM ) 
+              + SEARCH_TERM.length(), line.length()-1) ;
+          break;
+        } 
+      }
+    }
+    catch( IOException ioe )      
+    {   
+      System.err.println( ioe.getMessage() );
+      return false;
+    }
+    
+    parsedVersion = parseVersion( fullVersion.trim() );
+    parsedBase = parseVersion( base );
+    if ( parsedVersion == null || parsedBase == null )
+      return false;
+    for ( int i = 0; i < 3; i++ )
+    {
+      if ( parsedVersion[ i ] < parsedBase[ i ] )
+        return false;
+      else if ( parsedVersion[ i ] > parsedBase[ i ] )
+        return true;
+    }
+    return true;
+  }
+
+
 }

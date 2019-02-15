@@ -29,7 +29,7 @@
 
         <target name="rmjar" depends="compile" description="Generate RemoteMaster.jar">
                 <jar destfile="RemoteMaster.jar" manifest="RemoteMaster.mf" update="true">
-                        <fileset dir="${build}" includes="com/**/*.class" />
+                        <fileset dir="${build}" includes="com/**/*.class,rmirwin10ble/**/*.class" />
                         <zipfileset src="${lib.dir}/TableLayout.jar" includes="**/*.class"/>
                         <zipfileset src="${src}/jlfgr-1_0.jar">
 							<include name="toolbarButtonGraphics/general/Open24.gif"/>
@@ -41,6 +41,8 @@
 							<include name="toolbarButtonGraphics/general/Paste24.gif"/>
 							<include name="toolbarButtonGraphics/media/Volume24.gif"/>
 						</zipfileset> 
+                		<fileset dir="${src}" includes="rmirwin10ble/**/*.dll"/>
+                		<zipfileset src="${src}/rmirwin10ble/jni4net.j-0.8.8.0.jar"/>
                         <zipfileset src="${lib.dir}/RMGraphics.jar"/>
                 		<zipfileset src="${lib.dir}/l2fprod-common-directorychooser.jar">
                 			<include name="com/l2fprod/common/**/*.*"/>

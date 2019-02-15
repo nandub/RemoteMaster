@@ -211,9 +211,9 @@ public class UEIPacket
     return true;
   }
 
-  public List< BGAPIPacket > toBGAPI(int connection, int atthandle)
+  public List< byte[] > toBLEpackets()
   {
-    List< BGAPIPacket > out = new ArrayList< BGAPIPacket >();
+    List< byte[] > out = new ArrayList< byte[] >();
     List< UEIPacket > list = new ArrayList< UEIPacket >();
     int immed = getFrameType( "Immediate" );
     if ( payload.length < 17 )
@@ -246,6 +246,9 @@ public class UEIPacket
       int headerSize = ( upkt.frameType & first ) == first ? 5 : 4;
       byte[] data = new byte[ upkt.payload.length + headerSize ];
       int n = 0;
+      //data[ n++ ] = ( byte ) connection;
+      //data[ n++ ] = ( byte ) ( atthandle & 0xFF );
+      //data[ n++ ] = ( byte ) ( ( atthandle >> 8 ) & 0xFF );
       data[ n++ ] = ( byte )(upkt.frameType & 0xFF);
       data[ n++ ] = ( byte )(upkt.sequence & 0xFF);
       data[ n++ ] = ( byte )(upkt.appCode & 0xFF);
@@ -255,11 +258,13 @@ public class UEIPacket
         data[ n++ ] = ( byte )(upkt.opCode & 0xFF);
       System.arraycopy( upkt.payload, 0, data, n, upkt.payload.length );
       // Now create a new BGAPI send_attclient_write_command packet to hold UEI packet
+      /*
       BGAPIPacket bpkt = new BGAPIPacket(0, 4, 6);
       bpkt.w_uint8(connection);
       bpkt.w_uint16(atthandle);
       bpkt.w_uint8array(data);
-      out.add( bpkt );
+      */
+      out.add( data );
     }
     return out;
   }

@@ -4,8 +4,6 @@ import java.io.UnsupportedEncodingException;
 import java.util.Calendar;
 import java.util.LinkedHashMap;
 
-import com.hifiremote.jp1.io.JP2BT.BLEService;
-
 public class BLERemote
 {
   public String address;
@@ -29,16 +27,6 @@ public class BLERemote
   public int batteryPercent = 0;
   public double batteryVoltage = 0.0;
   public int signalStrength= 0;
-  public LinkedHashMap<String, BLEService> services = new LinkedHashMap<String, BLEService>();
-  public LinkedHashMap<String, Integer> attributeHandles = new LinkedHashMap<String, Integer>();
-
-  public String getGATTDescription() 
-  {
-    String result = toString();
-    for (BLEService s : services.values()) 
-      result += "\n" + s.getDescription();
-    return result;
-  }
 
   public BLERemote(String name, String ueiName, String address)
   {
@@ -46,23 +34,18 @@ public class BLERemote
     this.ueiName = ueiName;
     this.address = address;
   }
-  
+/*  
   public boolean updateConnData( JP2BT btio, int sequence )
   {
-    signalStrength = 0;
-    long waitStart = Calendar.getInstance().getTimeInMillis();
-    long delay = 0;
-    btio.bgapi.send_connection_get_rssi( btio.connection );
-    while ( btio.bleRemote.signalStrength == 0 )
+    int newSignalStrength = btio.blei.readSignalStrength();
+
+    if ( newSignalStrength == 0 )
     {
-      delay = Calendar.getInstance().getTimeInMillis() - waitStart;
-      if ( delay > 1000 )
-      {
-        System.err.println( "Unable to read signal strength" );
-        return false;
-      }
+      System.err.println( "Unable to read signal strength" );
+      return false;
     }
-    
+    signalStrength = newSignalStrength;
+
     UEIPacket upkt = new UEIPacket( 0, sequence, 0x43, 0x42, null );
     if ( ( upkt = btio.getUEIPacketResponse( upkt, 0 ) ) == null || !interpret( null, upkt ) )
     {
@@ -75,7 +58,7 @@ public class BLERemote
 
     return true;
   }
-  
+*/  
   public boolean interpret( String cmd, UEIPacket upkt )
   {
     if( cmd == null )
