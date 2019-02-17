@@ -1,0 +1,10 @@
+C:\Users\graha\source\repos\RMIRWin10BLE\RMIRWin10BLE\bin\Debug\RMIRWin10BLE.dll
+C:\Users\graha\source\repos\RMIRWin10BLE\RMIRWin10BLE\bin\Debug\RMIRWin10BLE.pdb
+C:\Users\graha\source\repos\RMIRWin10BLE\RMIRWin10BLE\bin\Debug\System.Runtime.WindowsRuntime.dll
+C:\Users\graha\source\repos\RMIRWin10BLE\RMIRWin10BLE\bin\Debug\Windows.winmd
+C:\Users\graha\source\repos\RMIRWin10BLE\RMIRWin10BLE\bin\Debug\System.Runtime.WindowsRuntime.xml
+C:\Users\graha\source\repos\RMIRWin10BLE\RMIRWin10BLE\obj\Debug\RMIRWin10BLE.csprojAssemblyReference.cache
+C:\Users\graha\source\repos\RMIRWin10BLE\RMIRWin10BLE\obj\Debug\RMIRWin10BLE.csproj.CoreCompileInputs.cache
+C:\Users\graha\source\repos\RMIRWin10BLE\RMIRWin10BLE\obj\Debug\RMIRWin10BLE.csproj.CopyComplete
+C:\Users\graha\source\repos\RMIRWin10BLE\RMIRWin10BLE\obj\Debug\RMIRWin10BLE.dll
+C:\Users\graha\source\repos\RMIRWin10BLE\RMIRWin10BLE\obj\Debug\RMIRWin10BLE.pdb
