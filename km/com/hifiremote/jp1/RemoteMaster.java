@@ -4290,6 +4290,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
               }
               box.revalidate();
             }
+            Thread.sleep( 200 );
           }
           searchButton.setEnabled( true );
           btio.discoverUEI( false );

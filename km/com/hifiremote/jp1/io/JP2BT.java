@@ -307,7 +307,7 @@ public class JP2BT extends IO
   {
     if ( port.equals( win10n ) )
     {
-      File workdir = new File("rmirwin10ble");
+      File workdir = new File(RemoteMaster.getWorkDir(), "rmirwin10ble");
       try
       {
         Bridge.init(workdir);
@@ -398,6 +398,7 @@ public class JP2BT extends IO
     for ( int i = 0; i < 2; i++)
     {
       System.err.println( "Reading info and sig" );
+      long waitStart = Calendar.getInstance().getTimeInMillis();
       UEIPacket upkt = new CmdPacket( "APPINFOGET", new byte[]{} ).getUEIPacket( sequence++ );
       System.err.println( "AppInfoGet pkt: " + upkt );
       if ( ( upkt = getUEIPacketResponse( upkt, 75 ) ) == null || !bleRemote.interpret( "APPINFOGET", upkt ) )
@@ -407,6 +408,8 @@ public class JP2BT extends IO
         //return false;
       }
       didread = true;
+      long delay = Calendar.getInstance().getTimeInMillis() - waitStart;
+      System.err.println( "Successful read took " + delay + "ms" );
       break;
     } 
     if ( !didread)
