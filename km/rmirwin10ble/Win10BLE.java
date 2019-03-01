@@ -109,6 +109,9 @@ public class Win10BLE extends system.Object implements rmirwin10ble.IBleInterfac
     @net.sf.jni4net.attributes.ClrMethod("(IIII)V")
     public native void UpdateConnection(int interval_min, int interval_max, int latency, int timeout);
     
+    @net.sf.jni4net.attributes.ClrMethod("()LSystem/String;")
+    public native java.lang.String GetBLEStack();
+    
     public static system.Type typeof() {
         return rmirwin10ble.Win10BLE.staticType;
     }

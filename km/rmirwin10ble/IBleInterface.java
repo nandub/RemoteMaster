@@ -93,5 +93,8 @@ public interface IBleInterface {
     
     @net.sf.jni4net.attributes.ClrMethod("(IIII)V")
     void UpdateConnection(int interval_min, int interval_max, int latency, int timeout);
+    
+    @net.sf.jni4net.attributes.ClrMethod("()LSystem/String;")
+    java.lang.String GetBLEStack();
     //</generated-interface>
 }

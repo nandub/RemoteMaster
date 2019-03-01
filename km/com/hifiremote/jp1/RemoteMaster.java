@@ -130,7 +130,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
 
   /** Description of the Field. */
   public final static String version = "v2.07";
-  public final static int buildVer = 4;
+  public final static int buildVer = 5;
   
   public static class LanguageDescriptor
   {
@@ -4538,14 +4538,26 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
         JP2BT iobt = ( JP2BT )ioIn;
         iobt.setBleInterface( portName );
         String portResult = iobt.connectBLE( portName );
+        String bleStack = iobt.getBleStack();
         if ( portResult == null )
         {
           System.err.println( "Failed to connect to BLE interface on port " +  portName );
           portName = "";
         }
+        else if ( bleStack == null )
+        {
+          System.err.println( "Connected BLE interface but no supported BLE stack found" );
+          portName = "";
+        }
+        else if ( bleStack.equals( "Microsoft" ) && !testWindowsVersion( "10.0.0" ) )
+        {
+          System.err.println( "Connected BLE interface but Microsoft BLE stack needs Windows 10" );
+          portName = "";
+        }
         else
         {
           System.err.println( "Connected BLE interface on port " +  portName );
+          System.err.println( "BLE stack is " + bleStack );
         }
       }
     }
@@ -5965,6 +5977,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
   private static File addonDir = null;
   private static File upgradeSource = null;
   private static LanguageDescriptor upgradeLanguage = defaultLanguage;
+  private static int[] parsedWindowsVersion = null;
 
   public static File getWorkDir()
   {
@@ -6639,45 +6652,49 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
     BufferedReader in;
     String line = "";
     String fullVersion = "";
-    int[] parsedVersion = null;
     int[] parsedBase = null;
     final String SEARCH_TERM = "OS Version:";
 
-    try
-    {
-      rt = Runtime.getRuntime();
-      pr = rt.exec( "SYSTEMINFO" );
-      in = new BufferedReader( new InputStreamReader( pr.getInputStream( ) ) );
-
-      while( ( line = in.readLine() ) != null )
-      {
-        if( line.contains( SEARCH_TERM ) )
-        {
-          fullVersion = line.substring( line.lastIndexOf( SEARCH_TERM ) 
-              + SEARCH_TERM.length(), line.length()-1) ;
-          break;
-        } 
-      }
-    }
-    catch( IOException ioe )      
-    {   
-      System.err.println( ioe.getMessage() );
+    String osName = System.getProperty( "os.name" );
+    if ( !osName.startsWith( "Windows" ) )
       return false;
+    if ( parsedWindowsVersion == null )
+    {
+      try
+      {
+        rt = Runtime.getRuntime();
+        pr = rt.exec( "SYSTEMINFO" );
+        in = new BufferedReader( new InputStreamReader( pr.getInputStream( ) ) );
+
+        while( ( line = in.readLine() ) != null )
+        {
+          if( line.contains( SEARCH_TERM ) )
+          {
+            fullVersion = line.substring( line.lastIndexOf( SEARCH_TERM ) 
+                + SEARCH_TERM.length(), line.length()-1) ;
+            break;
+          } 
+        }
+      }
+      catch( IOException ioe )      
+      {   
+        System.err.println( ioe.getMessage() );
+        return false;
+      }
+      parsedWindowsVersion = parseVersion( fullVersion.trim() );
     }
     
-    parsedVersion = parseVersion( fullVersion.trim() );
     parsedBase = parseVersion( base );
-    if ( parsedVersion == null || parsedBase == null )
+    if ( parsedWindowsVersion == null || parsedBase == null )
       return false;
     for ( int i = 0; i < 3; i++ )
     {
-      if ( parsedVersion[ i ] < parsedBase[ i ] )
+      if ( parsedWindowsVersion[ i ] < parsedBase[ i ] )
         return false;
-      else if ( parsedVersion[ i ] > parsedBase[ i ] )
+      else if ( parsedWindowsVersion[ i ] > parsedBase[ i ] )
         return true;
     }
     return true;
   }
-
 
 }

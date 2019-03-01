@@ -13,6 +13,7 @@ import java.util.List;
 import javax.swing.JOptionPane;
 
 import rmirwin10ble.IBleInterface;
+import rmirwin10ble.WCLble;
 import rmirwin10ble.Win10BLE;
 import net.sf.jni4net.Bridge;
 
@@ -45,7 +46,7 @@ public class JP2BT extends IO
   @Override
   public String getInterfaceVersion()
   {
-    return "1.0";
+    return "1.1";
   }
   
   @Override
@@ -58,11 +59,13 @@ public class JP2BT extends IO
   {
     ArrayList<String> portList = new ArrayList<String>();
     String osName = System.getProperty( "os.name" );
-    if ( osName.startsWith( "Windows" ) 
-        && RemoteMaster.testWindowsVersion( "10.0.15063" ) 
-        && RemoteMaster.admin )
+    File wcl = new File( RemoteMaster.getWorkDir(), "rmirwin10ble\\wclBluetoothFramework.dll" );
+    if ( osName.startsWith( "Windows" ) && RemoteMaster.admin )
     {
-      portList.add( win10n );
+      if ( RemoteMaster.testWindowsVersion( "10.0.15063" ) )
+        portList.add( win10n );
+      if ( wcl.exists() )
+        portList.add( winWcl );
     }
 
     for (SerialPort serialPort : SerialPort.getCommPorts())
@@ -319,6 +322,20 @@ public class JP2BT extends IO
         e.printStackTrace();
       }
     }
+    else if ( port.equals( winWcl ) )
+    {
+      File workdir = new File(RemoteMaster.getWorkDir(), "rmirwin10ble");
+      try
+      {
+        Bridge.init(workdir);
+        Bridge.LoadAndRegisterAssemblyFrom(new java.io.File(workdir, "RMIRWCLble.j4n.dll"));
+        blei = new WCLble();
+      }
+      catch ( IOException e )
+      {
+        e.printStackTrace();
+      }
+    }
     else
     {
       blei = new BlueGiga();
@@ -390,7 +407,7 @@ public class JP2BT extends IO
       JOptionPane.showMessageDialog( owner, message, title, JOptionPane.WARNING_MESSAGE );
       return false;
     }
-    
+  
     System.err.println( blei.GetSubscription());
 
     //Thread.sleep( 1000 );
@@ -405,7 +422,6 @@ public class JP2BT extends IO
       {
         System.err.println( "Failed to read info and sig" );
         continue;
-        //return false;
       }
       didread = true;
       long delay = Calendar.getInstance().getTimeInMillis() - waitStart;
@@ -872,6 +888,11 @@ public class JP2BT extends IO
     this.bleRemote = bleRemote;
   }
   
+  public String getBleStack()
+  {
+    return blei.GetBLEStack();
+  }
+  
   public boolean isConnected()
   {
     return blei.IsConnected();
@@ -886,4 +907,5 @@ public class JP2BT extends IO
   private IBleInterface blei = null;
   private BLEDisconnecter disconnecter = null;
   public String win10n = "Win10 Native";
+  public String winWcl = "Windows WCL";
 }

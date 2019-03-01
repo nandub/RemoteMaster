@@ -709,6 +709,11 @@ public class BlueGiga implements IBleInterface
     return inCount;
   }
   
+  public String GetBLEStack()
+  {
+    return "Texas Instruments";
+  }
+  
   public void UpdateConnection(int interval_min, int interval_max, int latency, int timeout)
   {
     bgapi.send_connection_update( connection, interval_min, interval_max, latency, timeout );
