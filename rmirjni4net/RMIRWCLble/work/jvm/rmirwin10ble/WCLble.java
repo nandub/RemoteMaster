@@ -9,29 +9,24 @@
 
 package rmirwin10ble;
 
-@net.sf.jni4net.attributes.ClrTypeInfo
-public final class IBleInterface_ {
+@net.sf.jni4net.attributes.ClrType
+public class WCLble extends system.Object implements rmirwin10ble.IBleInterface {
     
-    //<generated-static>
+    //<generated-proxy>
     private static system.Type staticType;
     
-    public static system.Type typeof() {
-        return rmirwin10ble.IBleInterface_.staticType;
-    }
-    
-    private static void InitJNI(net.sf.jni4net.inj.INJEnv env, system.Type staticType) {
-        rmirwin10ble.IBleInterface_.staticType = staticType;
-    }
-    //</generated-static>
-}
-
-//<generated-proxy>
-@net.sf.jni4net.attributes.ClrProxy
-class __IBleInterface extends system.Object implements rmirwin10ble.IBleInterface {
-    
-    protected __IBleInterface(net.sf.jni4net.inj.INJEnv __env, long __handle) {
+    protected WCLble(net.sf.jni4net.inj.INJEnv __env, long __handle) {
             super(__env, __handle);
     }
+    
+    @net.sf.jni4net.attributes.ClrConstructor("()V")
+    public WCLble() {
+            super(((net.sf.jni4net.inj.INJEnv)(null)), 0);
+        rmirwin10ble.WCLble.__ctorWCLble0(this);
+    }
+    
+    @net.sf.jni4net.attributes.ClrMethod("()V")
+    private native static void __ctorWCLble0(net.sf.jni4net.inj.IClrProxy thiz);
     
     @net.sf.jni4net.attributes.ClrMethod("(LSystem/String;)LSystem/String;")
     public native java.lang.String ConnectBLE(java.lang.String portName);
@@ -116,5 +111,13 @@ class __IBleInterface extends system.Object implements rmirwin10ble.IBleInterfac
     
     @net.sf.jni4net.attributes.ClrMethod("()LSystem/String;")
     public native java.lang.String GetBLEStack();
+    
+    public static system.Type typeof() {
+        return rmirwin10ble.WCLble.staticType;
+    }
+    
+    private static void InitJNI(net.sf.jni4net.inj.INJEnv env, system.Type staticType) {
+        rmirwin10ble.WCLble.staticType = staticType;
+    }
+    //</generated-proxy>
 }
-//</generated-proxy>

@@ -12,33 +12,33 @@ namespace RMIRWin10BLE {
     
     
     #region Component Designer generated code 
-    public partial class Win10BLE_ {
+    public partial class WCLble_ {
         
         public static global::java.lang.Class _class {
             get {
-                return global::RMIRWin10BLE.@__Win10BLE.staticClass;
+                return global::RMIRWin10BLE.@__WCLble.staticClass;
             }
         }
     }
     #endregion
     
     #region Component Designer generated code 
-    [global::net.sf.jni4net.attributes.JavaProxyAttribute(typeof(global::RMIRWin10BLE.Win10BLE), typeof(global::RMIRWin10BLE.Win10BLE_))]
-    [global::net.sf.jni4net.attributes.ClrWrapperAttribute(typeof(global::RMIRWin10BLE.Win10BLE), typeof(global::RMIRWin10BLE.Win10BLE_))]
-    internal sealed partial class @__Win10BLE : global::java.lang.Object {
+    [global::net.sf.jni4net.attributes.JavaProxyAttribute(typeof(global::RMIRWin10BLE.WCLble), typeof(global::RMIRWin10BLE.WCLble_))]
+    [global::net.sf.jni4net.attributes.ClrWrapperAttribute(typeof(global::RMIRWin10BLE.WCLble), typeof(global::RMIRWin10BLE.WCLble_))]
+    internal sealed partial class @__WCLble : global::java.lang.Object {
         
         internal new static global::java.lang.Class staticClass;
         
-        private @__Win10BLE(global::net.sf.jni4net.jni.JNIEnv @__env) : 
+        private @__WCLble(global::net.sf.jni4net.jni.JNIEnv @__env) : 
                 base(@__env) {
         }
         
         private static void InitJNI(global::net.sf.jni4net.jni.JNIEnv @__env, java.lang.Class @__class) {
-            global::RMIRWin10BLE.@__Win10BLE.staticClass = @__class;
+            global::RMIRWin10BLE.@__WCLble.staticClass = @__class;
         }
         
         private static global::System.Collections.Generic.List<global::net.sf.jni4net.jni.JNINativeMethod> @__Init(global::net.sf.jni4net.jni.JNIEnv @__env, global::java.lang.Class @__class) {
-            global::System.Type @__type = typeof(__Win10BLE);
+            global::System.Type @__type = typeof(__WCLble);
             global::System.Collections.Generic.List<global::net.sf.jni4net.jni.JNINativeMethod> methods = new global::System.Collections.Generic.List<global::net.sf.jni4net.jni.JNINativeMethod>();
             methods.Add(global::net.sf.jni4net.jni.JNINativeMethod.Create(@__type, "ConnectBLE", "ConnectBLE0", "(Ljava/lang/String;)Ljava/lang/String;"));
             methods.Add(global::net.sf.jni4net.jni.JNINativeMethod.Create(@__type, "DisconnectBLE", "DisconnectBLE1", "()V"));
@@ -68,7 +68,7 @@ namespace RMIRWin10BLE {
             methods.Add(global::net.sf.jni4net.jni.JNINativeMethod.Create(@__type, "SetSentState", "SetSentState25", "(I)V"));
             methods.Add(global::net.sf.jni4net.jni.JNINativeMethod.Create(@__type, "UpdateConnection", "UpdateConnection26", "(IIII)V"));
             methods.Add(global::net.sf.jni4net.jni.JNINativeMethod.Create(@__type, "GetBLEStack", "GetBLEStack27", "()Ljava/lang/String;"));
-            methods.Add(global::net.sf.jni4net.jni.JNINativeMethod.Create(@__type, "__ctorWin10BLE0", "__ctorWin10BLE0", "(Lnet/sf/jni4net/inj/IClrProxy;)V"));
+            methods.Add(global::net.sf.jni4net.jni.JNINativeMethod.Create(@__type, "__ctorWCLble0", "__ctorWCLble0", "(Lnet/sf/jni4net/inj/IClrProxy;)V"));
             return methods;
         }
         
@@ -78,7 +78,7 @@ namespace RMIRWin10BLE {
             global::net.sf.jni4net.jni.JNIEnv @__env = global::net.sf.jni4net.jni.JNIEnv.Wrap(@__envp);
             global::net.sf.jni4net.utils.JniHandle @__return = default(global::net.sf.jni4net.utils.JniHandle);
             try {
-            global::RMIRWin10BLE.Win10BLE @__real = global::net.sf.jni4net.utils.Convertor.StrongJp2C<global::RMIRWin10BLE.Win10BLE>(@__env, @__obj);
+            global::RMIRWin10BLE.WCLble @__real = global::net.sf.jni4net.utils.Convertor.StrongJp2C<global::RMIRWin10BLE.WCLble>(@__env, @__obj);
             @__return = global::net.sf.jni4net.utils.Convertor.StrongC2JString(@__env, ((global::RMIRWin10BLE.IBleInterface)(@__real)).ConnectBLE(global::net.sf.jni4net.utils.Convertor.StrongJ2CString(@__env, portName)));
             }catch (global::System.Exception __ex){@__env.ThrowExisting(__ex);}
             return @__return;
@@ -89,7 +89,7 @@ namespace RMIRWin10BLE {
             // ()V
             global::net.sf.jni4net.jni.JNIEnv @__env = global::net.sf.jni4net.jni.JNIEnv.Wrap(@__envp);
             try {
-            global::RMIRWin10BLE.Win10BLE @__real = global::net.sf.jni4net.utils.Convertor.StrongJp2C<global::RMIRWin10BLE.Win10BLE>(@__env, @__obj);
+            global::RMIRWin10BLE.WCLble @__real = global::net.sf.jni4net.utils.Convertor.StrongJp2C<global::RMIRWin10BLE.WCLble>(@__env, @__obj);
             ((global::RMIRWin10BLE.IBleInterface)(@__real)).DisconnectBLE();
             }catch (global::System.Exception __ex){@__env.ThrowExisting(__ex);}
         }
@@ -99,7 +99,7 @@ namespace RMIRWin10BLE {
             // (Z)V
             global::net.sf.jni4net.jni.JNIEnv @__env = global::net.sf.jni4net.jni.JNIEnv.Wrap(@__envp);
             try {
-            global::RMIRWin10BLE.Win10BLE @__real = global::net.sf.jni4net.utils.Convertor.StrongJp2C<global::RMIRWin10BLE.Win10BLE>(@__env, @__obj);
+            global::RMIRWin10BLE.WCLble @__real = global::net.sf.jni4net.utils.Convertor.StrongJp2C<global::RMIRWin10BLE.WCLble>(@__env, @__obj);
             ((global::RMIRWin10BLE.IBleInterface)(@__real)).DiscoverUEI(start);
             }catch (global::System.Exception __ex){@__env.ThrowExisting(__ex);}
         }
@@ -110,7 +110,7 @@ namespace RMIRWin10BLE {
             global::net.sf.jni4net.jni.JNIEnv @__env = global::net.sf.jni4net.jni.JNIEnv.Wrap(@__envp);
             bool @__return = default(bool);
             try {
-            global::RMIRWin10BLE.Win10BLE @__real = global::net.sf.jni4net.utils.Convertor.StrongJp2C<global::RMIRWin10BLE.Win10BLE>(@__env, @__obj);
+            global::RMIRWin10BLE.WCLble @__real = global::net.sf.jni4net.utils.Convertor.StrongJp2C<global::RMIRWin10BLE.WCLble>(@__env, @__obj);
             @__return = ((bool)(((global::RMIRWin10BLE.IBleInterface)(@__real)).ConnectUEI(global::net.sf.jni4net.utils.Convertor.StrongJ2CString(@__env, address))));
             }catch (global::System.Exception __ex){@__env.ThrowExisting(__ex);}
             return @__return;
@@ -122,7 +122,7 @@ namespace RMIRWin10BLE {
             global::net.sf.jni4net.jni.JNIEnv @__env = global::net.sf.jni4net.jni.JNIEnv.Wrap(@__envp);
             global::net.sf.jni4net.utils.JniHandle @__return = default(global::net.sf.jni4net.utils.JniHandle);
             try {
-            global::RMIRWin10BLE.Win10BLE @__real = global::net.sf.jni4net.utils.Convertor.StrongJp2C<global::RMIRWin10BLE.Win10BLE>(@__env, @__obj);
+            global::RMIRWin10BLE.WCLble @__real = global::net.sf.jni4net.utils.Convertor.StrongJp2C<global::RMIRWin10BLE.WCLble>(@__env, @__obj);
             @__return = global::net.sf.jni4net.utils.Convertor.StrongC2JString(@__env, ((global::RMIRWin10BLE.IBleInterface)(@__real)).DisconnectUEI());
             }catch (global::System.Exception __ex){@__env.ThrowExisting(__ex);}
             return @__return;
@@ -134,7 +134,7 @@ namespace RMIRWin10BLE {
             global::net.sf.jni4net.jni.JNIEnv @__env = global::net.sf.jni4net.jni.JNIEnv.Wrap(@__envp);
             bool @__return = default(bool);
             try {
-            global::RMIRWin10BLE.Win10BLE @__real = global::net.sf.jni4net.utils.Convertor.StrongJp2C<global::RMIRWin10BLE.Win10BLE>(@__env, @__obj);
+            global::RMIRWin10BLE.WCLble @__real = global::net.sf.jni4net.utils.Convertor.StrongJp2C<global::RMIRWin10BLE.WCLble>(@__env, @__obj);
             @__return = ((bool)(((global::RMIRWin10BLE.IBleInterface)(@__real)).DiscoverServices()));
             }catch (global::System.Exception __ex){@__env.ThrowExisting(__ex);}
             return @__return;
@@ -146,7 +146,7 @@ namespace RMIRWin10BLE {
             global::net.sf.jni4net.jni.JNIEnv @__env = global::net.sf.jni4net.jni.JNIEnv.Wrap(@__envp);
             bool @__return = default(bool);
             try {
-            global::RMIRWin10BLE.Win10BLE @__real = global::net.sf.jni4net.utils.Convertor.StrongJp2C<global::RMIRWin10BLE.Win10BLE>(@__env, @__obj);
+            global::RMIRWin10BLE.WCLble @__real = global::net.sf.jni4net.utils.Convertor.StrongJp2C<global::RMIRWin10BLE.WCLble>(@__env, @__obj);
             @__return = ((bool)(((global::RMIRWin10BLE.IBleInterface)(@__real)).GetFeatures()));
             }catch (global::System.Exception __ex){@__env.ThrowExisting(__ex);}
             return @__return;
@@ -158,7 +158,7 @@ namespace RMIRWin10BLE {
             global::net.sf.jni4net.jni.JNIEnv @__env = global::net.sf.jni4net.jni.JNIEnv.Wrap(@__envp);
             global::net.sf.jni4net.utils.JniHandle @__return = default(global::net.sf.jni4net.utils.JniHandle);
             try {
-            global::RMIRWin10BLE.Win10BLE @__real = global::net.sf.jni4net.utils.Convertor.StrongJp2C<global::RMIRWin10BLE.Win10BLE>(@__env, @__obj);
+            global::RMIRWin10BLE.WCLble @__real = global::net.sf.jni4net.utils.Convertor.StrongJp2C<global::RMIRWin10BLE.WCLble>(@__env, @__obj);
             @__return = global::net.sf.jni4net.utils.Convertor.StrongC2JString(@__env, ((global::RMIRWin10BLE.IBleInterface)(@__real)).GetSubscription());
             }catch (global::System.Exception __ex){@__env.ThrowExisting(__ex);}
             return @__return;
@@ -170,7 +170,7 @@ namespace RMIRWin10BLE {
             global::net.sf.jni4net.jni.JNIEnv @__env = global::net.sf.jni4net.jni.JNIEnv.Wrap(@__envp);
             int @__return = default(int);
             try {
-            global::RMIRWin10BLE.Win10BLE @__real = global::net.sf.jni4net.utils.Convertor.StrongJp2C<global::RMIRWin10BLE.Win10BLE>(@__env, @__obj);
+            global::RMIRWin10BLE.WCLble @__real = global::net.sf.jni4net.utils.Convertor.StrongJp2C<global::RMIRWin10BLE.WCLble>(@__env, @__obj);
             @__return = ((int)(((global::RMIRWin10BLE.IBleInterface)(@__real)).GetStage()));
             }catch (global::System.Exception __ex){@__env.ThrowExisting(__ex);}
             return @__return;
@@ -181,7 +181,7 @@ namespace RMIRWin10BLE {
             // (Z)V
             global::net.sf.jni4net.jni.JNIEnv @__env = global::net.sf.jni4net.jni.JNIEnv.Wrap(@__envp);
             try {
-            global::RMIRWin10BLE.Win10BLE @__real = global::net.sf.jni4net.utils.Convertor.StrongJp2C<global::RMIRWin10BLE.Win10BLE>(@__env, @__obj);
+            global::RMIRWin10BLE.WCLble @__real = global::net.sf.jni4net.utils.Convertor.StrongJp2C<global::RMIRWin10BLE.WCLble>(@__env, @__obj);
             ((global::RMIRWin10BLE.IBleInterface)(@__real)).SetDisconnecting(disconnecting);
             }catch (global::System.Exception __ex){@__env.ThrowExisting(__ex);}
         }
@@ -192,7 +192,7 @@ namespace RMIRWin10BLE {
             global::net.sf.jni4net.jni.JNIEnv @__env = global::net.sf.jni4net.jni.JNIEnv.Wrap(@__envp);
             bool @__return = default(bool);
             try {
-            global::RMIRWin10BLE.Win10BLE @__real = global::net.sf.jni4net.utils.Convertor.StrongJp2C<global::RMIRWin10BLE.Win10BLE>(@__env, @__obj);
+            global::RMIRWin10BLE.WCLble @__real = global::net.sf.jni4net.utils.Convertor.StrongJp2C<global::RMIRWin10BLE.WCLble>(@__env, @__obj);
             @__return = ((bool)(((global::RMIRWin10BLE.IBleInterface)(@__real)).IsDisconnecting()));
             }catch (global::System.Exception __ex){@__env.ThrowExisting(__ex);}
             return @__return;
@@ -204,7 +204,7 @@ namespace RMIRWin10BLE {
             global::net.sf.jni4net.jni.JNIEnv @__env = global::net.sf.jni4net.jni.JNIEnv.Wrap(@__envp);
             bool @__return = default(bool);
             try {
-            global::RMIRWin10BLE.Win10BLE @__real = global::net.sf.jni4net.utils.Convertor.StrongJp2C<global::RMIRWin10BLE.Win10BLE>(@__env, @__obj);
+            global::RMIRWin10BLE.WCLble @__real = global::net.sf.jni4net.utils.Convertor.StrongJp2C<global::RMIRWin10BLE.WCLble>(@__env, @__obj);
             @__return = ((bool)(((global::RMIRWin10BLE.IBleInterface)(@__real)).IsScanning()));
             }catch (global::System.Exception __ex){@__env.ThrowExisting(__ex);}
             return @__return;
@@ -216,7 +216,7 @@ namespace RMIRWin10BLE {
             global::net.sf.jni4net.jni.JNIEnv @__env = global::net.sf.jni4net.jni.JNIEnv.Wrap(@__envp);
             bool @__return = default(bool);
             try {
-            global::RMIRWin10BLE.Win10BLE @__real = global::net.sf.jni4net.utils.Convertor.StrongJp2C<global::RMIRWin10BLE.Win10BLE>(@__env, @__obj);
+            global::RMIRWin10BLE.WCLble @__real = global::net.sf.jni4net.utils.Convertor.StrongJp2C<global::RMIRWin10BLE.WCLble>(@__env, @__obj);
             @__return = ((bool)(((global::RMIRWin10BLE.IBleInterface)(@__real)).IsConnected()));
             }catch (global::System.Exception __ex){@__env.ThrowExisting(__ex);}
             return @__return;
@@ -228,7 +228,7 @@ namespace RMIRWin10BLE {
             global::net.sf.jni4net.jni.JNIEnv @__env = global::net.sf.jni4net.jni.JNIEnv.Wrap(@__envp);
             bool @__return = default(bool);
             try {
-            global::RMIRWin10BLE.Win10BLE @__real = global::net.sf.jni4net.utils.Convertor.StrongJp2C<global::RMIRWin10BLE.Win10BLE>(@__env, @__obj);
+            global::RMIRWin10BLE.WCLble @__real = global::net.sf.jni4net.utils.Convertor.StrongJp2C<global::RMIRWin10BLE.WCLble>(@__env, @__obj);
             @__return = ((bool)(((global::RMIRWin10BLE.IBleInterface)(@__real)).HasCCCD()));
             }catch (global::System.Exception __ex){@__env.ThrowExisting(__ex);}
             return @__return;
@@ -240,7 +240,7 @@ namespace RMIRWin10BLE {
             global::net.sf.jni4net.jni.JNIEnv @__env = global::net.sf.jni4net.jni.JNIEnv.Wrap(@__envp);
             bool @__return = default(bool);
             try {
-            global::RMIRWin10BLE.Win10BLE @__real = global::net.sf.jni4net.utils.Convertor.StrongJp2C<global::RMIRWin10BLE.Win10BLE>(@__env, @__obj);
+            global::RMIRWin10BLE.WCLble @__real = global::net.sf.jni4net.utils.Convertor.StrongJp2C<global::RMIRWin10BLE.WCLble>(@__env, @__obj);
             @__return = ((bool)(((global::RMIRWin10BLE.IBleInterface)(@__real)).NeedsCCCD()));
             }catch (global::System.Exception __ex){@__env.ThrowExisting(__ex);}
             return @__return;
@@ -252,7 +252,7 @@ namespace RMIRWin10BLE {
             global::net.sf.jni4net.jni.JNIEnv @__env = global::net.sf.jni4net.jni.JNIEnv.Wrap(@__envp);
             int @__return = default(int);
             try {
-            global::RMIRWin10BLE.Win10BLE @__real = global::net.sf.jni4net.utils.Convertor.StrongJp2C<global::RMIRWin10BLE.Win10BLE>(@__env, @__obj);
+            global::RMIRWin10BLE.WCLble @__real = global::net.sf.jni4net.utils.Convertor.StrongJp2C<global::RMIRWin10BLE.WCLble>(@__env, @__obj);
             @__return = ((int)(((global::RMIRWin10BLE.IBleInterface)(@__real)).GetListSize()));
             }catch (global::System.Exception __ex){@__env.ThrowExisting(__ex);}
             return @__return;
@@ -264,7 +264,7 @@ namespace RMIRWin10BLE {
             global::net.sf.jni4net.jni.JNIEnv @__env = global::net.sf.jni4net.jni.JNIEnv.Wrap(@__envp);
             global::net.sf.jni4net.utils.JniHandle @__return = default(global::net.sf.jni4net.utils.JniHandle);
             try {
-            global::RMIRWin10BLE.Win10BLE @__real = global::net.sf.jni4net.utils.Convertor.StrongJp2C<global::RMIRWin10BLE.Win10BLE>(@__env, @__obj);
+            global::RMIRWin10BLE.WCLble @__real = global::net.sf.jni4net.utils.Convertor.StrongJp2C<global::RMIRWin10BLE.WCLble>(@__env, @__obj);
             @__return = global::net.sf.jni4net.utils.Convertor.StrongC2JString(@__env, ((global::RMIRWin10BLE.IBleInterface)(@__real)).GetListItem(ndx));
             }catch (global::System.Exception __ex){@__env.ThrowExisting(__ex);}
             return @__return;
@@ -276,7 +276,7 @@ namespace RMIRWin10BLE {
             global::net.sf.jni4net.jni.JNIEnv @__env = global::net.sf.jni4net.jni.JNIEnv.Wrap(@__envp);
             global::net.sf.jni4net.utils.JniHandle @__return = default(global::net.sf.jni4net.utils.JniHandle);
             try {
-            global::RMIRWin10BLE.Win10BLE @__real = global::net.sf.jni4net.utils.Convertor.StrongJp2C<global::RMIRWin10BLE.Win10BLE>(@__env, @__obj);
+            global::RMIRWin10BLE.WCLble @__real = global::net.sf.jni4net.utils.Convertor.StrongJp2C<global::RMIRWin10BLE.WCLble>(@__env, @__obj);
             @__return = global::net.sf.jni4net.utils.Convertor.StrongC2JString(@__env, ((global::RMIRWin10BLE.IBleInterface)(@__real)).GetItemName(ndx));
             }catch (global::System.Exception __ex){@__env.ThrowExisting(__ex);}
             return @__return;
@@ -288,7 +288,7 @@ namespace RMIRWin10BLE {
             global::net.sf.jni4net.jni.JNIEnv @__env = global::net.sf.jni4net.jni.JNIEnv.Wrap(@__envp);
             int @__return = default(int);
             try {
-            global::RMIRWin10BLE.Win10BLE @__real = global::net.sf.jni4net.utils.Convertor.StrongJp2C<global::RMIRWin10BLE.Win10BLE>(@__env, @__obj);
+            global::RMIRWin10BLE.WCLble @__real = global::net.sf.jni4net.utils.Convertor.StrongJp2C<global::RMIRWin10BLE.WCLble>(@__env, @__obj);
             @__return = ((int)(((global::RMIRWin10BLE.IBleInterface)(@__real)).GetRssi(ndx)));
             }catch (global::System.Exception __ex){@__env.ThrowExisting(__ex);}
             return @__return;
@@ -300,7 +300,7 @@ namespace RMIRWin10BLE {
             global::net.sf.jni4net.jni.JNIEnv @__env = global::net.sf.jni4net.jni.JNIEnv.Wrap(@__envp);
             int @__return = default(int);
             try {
-            global::RMIRWin10BLE.Win10BLE @__real = global::net.sf.jni4net.utils.Convertor.StrongJp2C<global::RMIRWin10BLE.Win10BLE>(@__env, @__obj);
+            global::RMIRWin10BLE.WCLble @__real = global::net.sf.jni4net.utils.Convertor.StrongJp2C<global::RMIRWin10BLE.WCLble>(@__env, @__obj);
             @__return = ((int)(((global::RMIRWin10BLE.IBleInterface)(@__real)).GetInCount()));
             }catch (global::System.Exception __ex){@__env.ThrowExisting(__ex);}
             return @__return;
@@ -312,7 +312,7 @@ namespace RMIRWin10BLE {
             global::net.sf.jni4net.jni.JNIEnv @__env = global::net.sf.jni4net.jni.JNIEnv.Wrap(@__envp);
             int @__return = default(int);
             try {
-            global::RMIRWin10BLE.Win10BLE @__real = global::net.sf.jni4net.utils.Convertor.StrongJp2C<global::RMIRWin10BLE.Win10BLE>(@__env, @__obj);
+            global::RMIRWin10BLE.WCLble @__real = global::net.sf.jni4net.utils.Convertor.StrongJp2C<global::RMIRWin10BLE.WCLble>(@__env, @__obj);
             @__return = ((int)(((global::RMIRWin10BLE.IBleInterface)(@__real)).GetInDataSize()));
             }catch (global::System.Exception __ex){@__env.ThrowExisting(__ex);}
             return @__return;
@@ -324,7 +324,7 @@ namespace RMIRWin10BLE {
             global::net.sf.jni4net.jni.JNIEnv @__env = global::net.sf.jni4net.jni.JNIEnv.Wrap(@__envp);
             global::net.sf.jni4net.utils.JniHandle @__return = default(global::net.sf.jni4net.utils.JniHandle);
             try {
-            global::RMIRWin10BLE.Win10BLE @__real = global::net.sf.jni4net.utils.Convertor.StrongJp2C<global::RMIRWin10BLE.Win10BLE>(@__env, @__obj);
+            global::RMIRWin10BLE.WCLble @__real = global::net.sf.jni4net.utils.Convertor.StrongJp2C<global::RMIRWin10BLE.WCLble>(@__env, @__obj);
             @__return = global::net.sf.jni4net.utils.Convertor.ArrayPrimC2J(@__env, ((global::RMIRWin10BLE.IBleInterface)(@__real)).GetInData(ndx));
             }catch (global::System.Exception __ex){@__env.ThrowExisting(__ex);}
             return @__return;
@@ -336,7 +336,7 @@ namespace RMIRWin10BLE {
             global::net.sf.jni4net.jni.JNIEnv @__env = global::net.sf.jni4net.jni.JNIEnv.Wrap(@__envp);
             int @__return = default(int);
             try {
-            global::RMIRWin10BLE.Win10BLE @__real = global::net.sf.jni4net.utils.Convertor.StrongJp2C<global::RMIRWin10BLE.Win10BLE>(@__env, @__obj);
+            global::RMIRWin10BLE.WCLble @__real = global::net.sf.jni4net.utils.Convertor.StrongJp2C<global::RMIRWin10BLE.WCLble>(@__env, @__obj);
             @__return = ((int)(((global::RMIRWin10BLE.IBleInterface)(@__real)).ReadSignalStrength()));
             }catch (global::System.Exception __ex){@__env.ThrowExisting(__ex);}
             return @__return;
@@ -347,7 +347,7 @@ namespace RMIRWin10BLE {
             // ([B)V
             global::net.sf.jni4net.jni.JNIEnv @__env = global::net.sf.jni4net.jni.JNIEnv.Wrap(@__envp);
             try {
-            global::RMIRWin10BLE.Win10BLE @__real = global::net.sf.jni4net.utils.Convertor.StrongJp2C<global::RMIRWin10BLE.Win10BLE>(@__env, @__obj);
+            global::RMIRWin10BLE.WCLble @__real = global::net.sf.jni4net.utils.Convertor.StrongJp2C<global::RMIRWin10BLE.WCLble>(@__env, @__obj);
             ((global::RMIRWin10BLE.IBleInterface)(@__real)).WritePacket(global::net.sf.jni4net.utils.Convertor.ArrayPrimJ2Cbyte(@__env, pkt));
             }catch (global::System.Exception __ex){@__env.ThrowExisting(__ex);}
         }
@@ -358,7 +358,7 @@ namespace RMIRWin10BLE {
             global::net.sf.jni4net.jni.JNIEnv @__env = global::net.sf.jni4net.jni.JNIEnv.Wrap(@__envp);
             int @__return = default(int);
             try {
-            global::RMIRWin10BLE.Win10BLE @__real = global::net.sf.jni4net.utils.Convertor.StrongJp2C<global::RMIRWin10BLE.Win10BLE>(@__env, @__obj);
+            global::RMIRWin10BLE.WCLble @__real = global::net.sf.jni4net.utils.Convertor.StrongJp2C<global::RMIRWin10BLE.WCLble>(@__env, @__obj);
             @__return = ((int)(((global::RMIRWin10BLE.IBleInterface)(@__real)).GetSentState()));
             }catch (global::System.Exception __ex){@__env.ThrowExisting(__ex);}
             return @__return;
@@ -369,7 +369,7 @@ namespace RMIRWin10BLE {
             // (I)V
             global::net.sf.jni4net.jni.JNIEnv @__env = global::net.sf.jni4net.jni.JNIEnv.Wrap(@__envp);
             try {
-            global::RMIRWin10BLE.Win10BLE @__real = global::net.sf.jni4net.utils.Convertor.StrongJp2C<global::RMIRWin10BLE.Win10BLE>(@__env, @__obj);
+            global::RMIRWin10BLE.WCLble @__real = global::net.sf.jni4net.utils.Convertor.StrongJp2C<global::RMIRWin10BLE.WCLble>(@__env, @__obj);
             ((global::RMIRWin10BLE.IBleInterface)(@__real)).SetSentState(state);
             }catch (global::System.Exception __ex){@__env.ThrowExisting(__ex);}
         }
@@ -379,7 +379,7 @@ namespace RMIRWin10BLE {
             // (IIII)V
             global::net.sf.jni4net.jni.JNIEnv @__env = global::net.sf.jni4net.jni.JNIEnv.Wrap(@__envp);
             try {
-            global::RMIRWin10BLE.Win10BLE @__real = global::net.sf.jni4net.utils.Convertor.StrongJp2C<global::RMIRWin10BLE.Win10BLE>(@__env, @__obj);
+            global::RMIRWin10BLE.WCLble @__real = global::net.sf.jni4net.utils.Convertor.StrongJp2C<global::RMIRWin10BLE.WCLble>(@__env, @__obj);
             ((global::RMIRWin10BLE.IBleInterface)(@__real)).UpdateConnection(interval_min, interval_max, latency, timeout);
             }catch (global::System.Exception __ex){@__env.ThrowExisting(__ex);}
         }
@@ -390,18 +390,18 @@ namespace RMIRWin10BLE {
             global::net.sf.jni4net.jni.JNIEnv @__env = global::net.sf.jni4net.jni.JNIEnv.Wrap(@__envp);
             global::net.sf.jni4net.utils.JniHandle @__return = default(global::net.sf.jni4net.utils.JniHandle);
             try {
-            global::RMIRWin10BLE.Win10BLE @__real = global::net.sf.jni4net.utils.Convertor.StrongJp2C<global::RMIRWin10BLE.Win10BLE>(@__env, @__obj);
+            global::RMIRWin10BLE.WCLble @__real = global::net.sf.jni4net.utils.Convertor.StrongJp2C<global::RMIRWin10BLE.WCLble>(@__env, @__obj);
             @__return = global::net.sf.jni4net.utils.Convertor.StrongC2JString(@__env, ((global::RMIRWin10BLE.IBleInterface)(@__real)).GetBLEStack());
             }catch (global::System.Exception __ex){@__env.ThrowExisting(__ex);}
             return @__return;
         }
         
-        private static void @__ctorWin10BLE0(global::System.IntPtr @__envp, global::net.sf.jni4net.utils.JniLocalHandle @__class, global::net.sf.jni4net.utils.JniLocalHandle @__obj) {
+        private static void @__ctorWCLble0(global::System.IntPtr @__envp, global::net.sf.jni4net.utils.JniLocalHandle @__class, global::net.sf.jni4net.utils.JniLocalHandle @__obj) {
             // ()V
             // ()V
             global::net.sf.jni4net.jni.JNIEnv @__env = global::net.sf.jni4net.jni.JNIEnv.Wrap(@__envp);
             try {
-            global::RMIRWin10BLE.Win10BLE @__real = new global::RMIRWin10BLE.Win10BLE();
+            global::RMIRWin10BLE.WCLble @__real = new global::RMIRWin10BLE.WCLble();
             global::net.sf.jni4net.utils.Convertor.InitProxy(@__env, @__obj, @__real);
             }catch (global::System.Exception __ex){@__env.ThrowExisting(__ex);}
         }
@@ -409,7 +409,7 @@ namespace RMIRWin10BLE {
         new internal sealed class ContructionHelper : global::net.sf.jni4net.utils.IConstructionHelper {
             
             public global::net.sf.jni4net.jni.IJvmProxy CreateProxy(global::net.sf.jni4net.jni.JNIEnv @__env) {
-                return new global::RMIRWin10BLE.@__Win10BLE(@__env);
+                return new global::RMIRWin10BLE.@__WCLble(@__env);
             }
         }
     }
