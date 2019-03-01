@@ -44,6 +44,7 @@ namespace RMIRWin10BLE
         int GetSentState();
         void SetSentState(int state);
         void UpdateConnection(int interval_min, int interval_max, int latency, int timeout);
+        string GetBLEStack();
     }
 
     public class Win10BLE : IBleInterface
@@ -385,6 +386,11 @@ namespace RMIRWin10BLE
         public void UpdateConnection(int interval_min, int interval_max, int latency, int timeout)
         {
             // Windows has no means of updating connection parameters
+        }
+
+        public string GetBLEStack()
+        {
+            return "Microsoft";
         }
 
         public void WritePacket(byte[] pkt)
