@@ -1,0 +1,14 @@
+C:\Users\graha\source\repos\RMIRWCLble\RMIRWCLble\obj\Debug\RMIRWCLble.csprojAssemblyReference.cache
+C:\Users\graha\source\repos\RMIRWCLble\RMIRWCLble\obj\Debug\RMIRWCLble.csproj.CoreCompileInputs.cache
+C:\Users\graha\source\repos\RMIRWCLble\RMIRWCLble\bin\Debug\RMIRWCLble.dll
+C:\Users\graha\source\repos\RMIRWCLble\RMIRWCLble\bin\Debug\RMIRWCLble.pdb
+C:\Users\graha\source\repos\RMIRWCLble\RMIRWCLble\bin\Debug\wclBluetoothFramework.dll
+C:\Users\graha\source\repos\RMIRWCLble\RMIRWCLble\bin\Debug\wclCommon.dll
+C:\Users\graha\source\repos\RMIRWCLble\RMIRWCLble\bin\Debug\wclCommunication.dll
+C:\Users\graha\source\repos\RMIRWCLble\RMIRWCLble\bin\Debug\wclBluetoothFramework.xml
+C:\Users\graha\source\repos\RMIRWCLble\RMIRWCLble\bin\Debug\wclCommon.xml
+C:\Users\graha\source\repos\RMIRWCLble\RMIRWCLble\bin\Debug\wclCommunication.xml
+C:\Users\graha\source\repos\RMIRWCLble\RMIRWCLble\obj\Debug\RMIRWCLble.csproj.CopyComplete
+C:\Users\graha\source\repos\RMIRWCLble\RMIRWCLble\obj\Debug\RMIRWCLble.dll
+C:\Users\graha\source\repos\RMIRWCLble\RMIRWCLble\obj\Debug\RMIRWCLble.pdb
+C:\Users\graha\source\repos\RMIRWCLble\RMIRWCLble\bin\Debug\wclBluetoothFramework.pdb
