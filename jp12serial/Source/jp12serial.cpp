@@ -82,6 +82,11 @@
 
       Note: Prior to version 0.14, no change log was kept.
 
+	  Version 0.24 (18 March 2019)
+	    This version adds a 20ms delay into writeBlock(...) between sending the data and the
+		checksum.  Without a delay, upload to the URC7980 has been seen intermittently to fail
+		with a checksum error.
+
 	  Version 0.23 (15 August 2018)
 		This version adds support for JP2 and similar remotes where the EEPROM area starts on
 		a flash page boundary but may not consist of a whole number of flash pages.  The only
@@ -1579,6 +1584,11 @@ int writeBlock( JP12ADDR addr, const unsigned char *data, int length )
 	bytesWritten = 0;				// send the data
 	if ( !WriteSerial( hSerial, data, length, &bytesWritten))
 		return 0;
+
+	// Upload to URC7980 has been seen to fail, with a checksum error, without a small delay here between
+	// sending the data and the checksum.  A 10ms delay seems to work but a 20ms delay is included here
+	// to give a safety margin.  Even on the 4Kb E2 area of the URC7980, this only adds 640ms to upload time.
+	Sleep(20);
 								 
 	bytesWritten = 0;				// send the checksum
 	if ( !WriteSerial( hSerial, &cs, 1, &bytesWritten))
@@ -1775,7 +1785,7 @@ JNIEXPORT jstring JNICALL Java_com_hifiremote_jp1_io_JP12Serial_getInterfaceName
 
 EXPORT const char *getInterfaceVersion( void )
 {
-  return "0.23";
+  return "0.24";
 }
 
 #ifdef JAVA_SDK_AVAILABLE
