@@ -60,9 +60,9 @@ public class JP2BT extends IO
     ArrayList<String> portList = new ArrayList<String>();
     String osName = System.getProperty( "os.name" );
     File wcl = new File( RemoteMaster.getWorkDir(), "rmirwin10ble\\wclBluetoothFramework.dll" );
-    if ( osName.startsWith( "Windows" ) && RemoteMaster.admin )
+    if ( osName.startsWith( "Windows" ) )
     {
-      if ( RemoteMaster.testWindowsVersion( "10.0.15063" ) )
+      if ( RemoteMaster.admin && RemoteMaster.testWindowsVersion( "10.0.15063" ) )
         portList.add( win10n );
       if ( wcl.exists() )
         portList.add( winWcl );
