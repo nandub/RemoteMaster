@@ -38,6 +38,7 @@ namespace RMIRWin10BLE
 
         int GetInDataSize();
         byte[] GetInData(int ndx);
+        byte[] ReadUserDescription(string uuid);
 
         int ReadSignalStrength();
         void WritePacket(byte[] pkt);
@@ -64,6 +65,8 @@ namespace RMIRWin10BLE
         private string subscription = null;
         private GattCharacteristic writeCh = null;
         private GattCharacteristic readCh = null;
+        private GattDescriptor writeChUserDesc = null;
+        private GattDescriptor readChUserDesc = null;
         private GattDeviceServicesResult services;
         private GattCharacteristicsResult ueiCharacteristics;
         private GattDescriptorsResult ueiDescriptors;
@@ -83,7 +86,7 @@ namespace RMIRWin10BLE
             rssi = ndx >= 0 ? (int)(short)rssiList[ndx] : 1;
 
             string addrStr = "0x";
-            for (int i=0; i<18; i+=3)
+            for (int i = 0; i < 18; i += 3)
                 addrStr += address.Substring(i, 2);
             ulong addrVal = Convert.ToUInt64(addrStr, 16);
             var selector = BluetoothLEDevice.GetDeviceSelectorFromBluetoothAddress(addrVal, BluetoothAddressType.Public);
@@ -95,7 +98,7 @@ namespace RMIRWin10BLE
             deviceWatcher.Start();
             while (!done) { };
             stage = 2;
-            if ( bleDevice != null )
+            if (bleDevice != null)
             {
                 bleDevice.ConnectionStatusChanged += BleDevice_ConnectionStatusChanged;
             }
@@ -116,7 +119,7 @@ namespace RMIRWin10BLE
             if (di.Name != null && !di.Name.Equals(""))
             {
                 sender.Stop();
-                var t = Task.Run(async() => await BluetoothLEDevice.FromIdAsync(di.Id));
+                var t = Task.Run(async () => await BluetoothLEDevice.FromIdAsync(di.Id));
                 bleDevice = WaitTask(t, 2) == t ? t.Result : null;
                 done = true;
             }
@@ -151,7 +154,7 @@ namespace RMIRWin10BLE
             bleDevice.Dispose();
             DateTime waitStart = DateTime.Now;
             TimeSpan delay;
-            while (bleDevice.ConnectionStatus == BluetoothConnectionStatus.Connected )
+            while (bleDevice.ConnectionStatus == BluetoothConnectionStatus.Connected)
             {
                 delay = DateTime.Now - waitStart;
                 if (delay.TotalSeconds > 10)
@@ -245,6 +248,10 @@ namespace RMIRWin10BLE
                     String s = descriptor.Uuid.ToString().Substring(4, 4);
                     if (chUuid.Equals("ffe2") && s.Equals("2902"))
                         hasCCCD = true;
+                    else if (chUuid.Equals("ffe2") && s.Equals("2901"))
+                        readChUserDesc = descriptor;
+                    else if (chUuid.Equals("ffe1") && s.Equals("2901"))
+                        writeChUserDesc = descriptor;
                 }
                 if (chUuid.Equals("ffe1"))
                     writeCh = characteristic;
@@ -264,6 +271,18 @@ namespace RMIRWin10BLE
             if (subscription == null)
                 return false;
             return true;
+        }
+
+        public byte[] ReadUserDescription(string uuid)
+        {
+            var descriptor = uuid.Equals("ffe1") ? writeChUserDesc : uuid.Equals("ffe2") ? readChUserDesc : null;
+            if (descriptor == null)
+                return null;
+            var t = Task.Run(async () => await descriptor.ReadValueAsync(BluetoothCacheMode.Uncached));
+            IBuffer value = WaitTask(t, 2) == t ? t.Result.Value : null;
+            byte[] data = new byte[value.Length];
+            DataReader.FromBuffer(value).ReadBytes(data);
+            return data;
         }
 
         public int GetStage()
