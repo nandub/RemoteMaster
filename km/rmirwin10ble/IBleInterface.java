@@ -79,6 +79,9 @@ public interface IBleInterface {
     @net.sf.jni4net.attributes.ClrMethod("(I)[B")
     byte[] GetInData(int ndx);
     
+    @net.sf.jni4net.attributes.ClrMethod("(LSystem/String;)[B")
+    byte[] ReadUserDescription(java.lang.String uuid);
+    
     @net.sf.jni4net.attributes.ClrMethod("()I")
     int ReadSignalStrength();
     

@@ -99,6 +99,9 @@ class __IBleInterface extends system.Object implements rmirwin10ble.IBleInterfac
     @net.sf.jni4net.attributes.ClrMethod("(I)[B")
     public native byte[] GetInData(int ndx);
     
+    @net.sf.jni4net.attributes.ClrMethod("(LSystem/String;)[B")
+    public native byte[] ReadUserDescription(java.lang.String uuid);
+    
     @net.sf.jni4net.attributes.ClrMethod("()I")
     public native int ReadSignalStrength();
     

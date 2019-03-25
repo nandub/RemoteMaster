@@ -140,7 +140,7 @@ public class BlueGiga implements IBleInterface
   public static SerialPort connectSerial(String portName) 
   {
     try {
-      System.err.println( "Trying to open serial port " + portName );
+      //System.err.println( "Trying to open serial port " + portName );
       SerialPort serialPort = SerialPort.getCommPort(portName);
       if (!serialPort.openPort()) {
         System.err.println("Error: Can't open port " + portName + ".");
@@ -148,7 +148,7 @@ public class BlueGiga implements IBleInterface
       }
       serialPort.setComPortParameters(115200, 8, SerialPort.ONE_STOP_BIT, SerialPort.NO_PARITY);
       serialPort.setComPortTimeouts(SerialPort.TIMEOUT_READ_SEMI_BLOCKING, 0, 0);
-      System.err.println("serial port = " + serialPort);
+      //System.err.println("serial port = " + serialPort);
       return serialPort;
     } catch (Exception e) {
       e.printStackTrace();
@@ -244,7 +244,7 @@ public class BlueGiga implements IBleInterface
         delay = Calendar.getInstance().getTimeInMillis() - waitStart;
         if ( delay > 1000 )
         {
-          System.err.println( "Scanning failed to end" );
+          //System.err.println( "Scanning failed to end" );
           scanning = false;
           break;
         }
@@ -254,7 +254,7 @@ public class BlueGiga implements IBleInterface
   
   public boolean DiscoverServices()
   {
-    System.err.println( "Starting service discovery" );
+    //System.err.println( "Starting service discovery" );
     discovery_state = SERVICES;
     long waitStart = Calendar.getInstance().getTimeInMillis();
     long delay = 0;
@@ -264,39 +264,29 @@ public class BlueGiga implements IBleInterface
       delay = Calendar.getInstance().getTimeInMillis() - waitStart;
       if ( delay > 10000 )
       {
-        System.err.println( "Service discovery failed to end" );
+        //System.err.println( "Service discovery failed to end" );
         discovery_state = IDLE;
         return false;
       }
     }
+    /*
     System.err.println( "Services discovered after " + delay + "ms" );
     for ( BLEService serv : services.values() )
     {
       System.err.println( serv.toString() );
     }
+    */
     return true;
   }
   
   public boolean GetFeatures()
   {
     stage = 5;
-    StringBuffer sb = new StringBuffer();
-    int handle = findDescriptor( "0xFFE0", "0xFFE1", "0x2901", true );
-    if ( handle != 0 )
-      for( byte b : receivedValue ) sb.append( (char)( b & 0xFF ) );
-    System.err.println( "FFE1 description = \"" + sb.toString() + "\"" );
-
-    sb = new StringBuffer();
-    handle = findDescriptor( "0xFFE0", "0xFFE2", "0x2901", true );
-    if ( handle != 0 )
-      for( byte b : receivedValue ) sb.append( (char)( b & 0xFF ) );
-    System.err.println( "FFE2 description = \"" + sb.toString() + "\"" );
-
-    handle = findDescriptor( "0xFFE0", "0xFFE2", "0x2902", false );
+    int handle = findDescriptor( "0xFFE0", "0xFFE2", "0x2902", false );
     if ( handle != 0 )
     {
       hasCCCD = true;
-      System.err.println( "Subscribing to notification for characteristic 0xFFE2" );
+      //System.err.println( "Subscribing to notification for characteristic 0xFFE2" );
       long waitStart = Calendar.getInstance().getTimeInMillis();
       completed = false;
       bgapi.send_attclient_attribute_write( connection, handle, new byte[]{ 0x01, 0x00 } );
@@ -305,7 +295,7 @@ public class BlueGiga implements IBleInterface
         long delay = Calendar.getInstance().getTimeInMillis() - waitStart;
         if ( delay > 2000 )
         {
-          System.err.println( "Unable to write 0xFFE2 CCCD" );
+          //System.err.println( "Unable to write 0xFFE2 CCCD" );
           return false;
         }
       }
@@ -397,7 +387,7 @@ public class BlueGiga implements IBleInterface
     receivedValue = null;
     if ( handle != 0 )
     {
-      System.err.println( "Reading handle 0x" + Integer.toHexString( handle ).toUpperCase() );
+      //System.err.println( "Reading handle 0x" + Integer.toHexString( handle ).toUpperCase() );
       long waitStart = Calendar.getInstance().getTimeInMillis();
       long delay = 0;
       receivedValue = null;
@@ -407,7 +397,7 @@ public class BlueGiga implements IBleInterface
         delay = Calendar.getInstance().getTimeInMillis() - waitStart;
         if ( delay > 2000 )
         {
-          System.err.println( "Unable to read descriptor with handle " + handle );
+          //System.err.println( "Unable to read descriptor with handle " + handle );
           return 0;
         }
       }
@@ -428,7 +418,7 @@ public class BlueGiga implements IBleInterface
     bpkt.w_uint8( connection);
     bpkt.w_uint16( ueiOut );
     bpkt.w_uint8array( pkt );
-    System.err.println( "Writing bpkt: " + bpkt.toString() );
+    //System.err.println( "Writing bpkt: " + bpkt.toString() );
     transport.sendPacket( bpkt );
   }
 
@@ -438,7 +428,7 @@ public class BlueGiga implements IBleInterface
     public void receive_system_get_info(int major, int minor, int patch, int build, int ll_version, int protocol_version, int hw) 
     {
       bledConn = true;        
-      System.err.println("Connected. BLED112:" + major + "." + minor + "." + patch + " (" + build + ") " + "ll=" + ll_version + " hw=" + hw);
+      //System.err.println("Connected. BLED112:" + major + "." + minor + "." + patch + " (" + build + ") " + "ll=" + ll_version + " hw=" + hw);
     }
 
     // Callbacks for class attributes (index = 2)
@@ -449,21 +439,21 @@ public class BlueGiga implements IBleInterface
 
     // Callbacks for class connection (index = 3)
     public void receive_connection_status(int conn, int flags, BDAddr address, int address_type, int conn_interval, int timeout, int latency, int bonding) {
-      System.err.println("[" + address.toString() + "] Conn = " + conn + " Flags = " + flags);
+      //System.err.println("[" + address.toString() + "] Conn = " + conn + " Flags = " + flags);
       if (flags != 0) 
       {
         connection = conn;
       }
       else 
       {
-        System.err.println("Connection lost!");
+        //System.err.println("Connection lost!");
         connection = -1;
       } 
     }
     
     public void receive_connection_update(int connection, int result) 
     {
-      System.err.println( "Connection update result = " + result );
+      //System.err.println( "Connection update result = " + result );
     }
     
     public void receive_connection_get_rssi(int connection, int rssi)
@@ -484,7 +474,7 @@ public class BlueGiga implements IBleInterface
 
     // Callbacks for class attclient (index = 4)
     public void receive_attclient_read_by_group_type(int connection, int result) {
-      System.err.println( "Read by group type returned connection="+connection+", result=" + result );
+      //System.err.println( "Read by group type returned connection="+connection+", result=" + result );
     }
 
     public void receive_attclient_procedure_completed(int connection, int result, int chrhandle) {
@@ -506,7 +496,7 @@ public class BlueGiga implements IBleInterface
           }
           else 
           { // Discovery is done
-            System.err.println("Discovery completed:");
+            //System.err.println("Discovery completed:");
 //            System.err.println(bleRemote.getGATTDescription());
             discovery_state = IDLE;
           }
@@ -519,7 +509,7 @@ public class BlueGiga implements IBleInterface
       
       if (result != 0) 
       {
-        System.err.println("ERROR: Attribute Procedure Completed with error code 0x" + Integer.toHexString(result));
+        //System.err.println("ERROR: Attribute Procedure Completed with error code 0x" + Integer.toHexString(result));
       }
     }
     
@@ -557,14 +547,14 @@ public class BlueGiga implements IBleInterface
     
     public void receive_attclient_write_command(int connection, int result)
     {
-      System.err.println( "Write command ack returned result " + result );
+      //System.err.println( "Write command ack returned result " + result );
       sentState = 1 + result;
     }
 
     // Callbacks for class gap (index = 6)
     public void receive_gap_connect_direct(int result, int connection_handle) 
     {
-      System.err.println( "Connect direct returned result " + result + ", handle " +  connection_handle );
+      //System.err.println( "Connect direct returned result " + result + ", handle " +  connection_handle );
       reserved_connection = connection_handle;
     }
     
@@ -665,7 +655,7 @@ public class BlueGiga implements IBleInterface
       delay = Calendar.getInstance().getTimeInMillis() - waitStart;
       if ( delay > 1000 )
       {
-        System.err.println( "Unable to read signal strength" );
+        //System.err.println( "Unable to read signal strength" );
         return 0;
       }
     }
@@ -752,5 +742,12 @@ public class BlueGiga implements IBleInterface
   private ArrayList<String> nameList = new ArrayList<String>();
   private ArrayList<Integer> rssiList = new ArrayList<Integer>();
   private ArrayList<byte[]> inData = new ArrayList< byte[] >();
+
+  @Override
+  public byte[] ReadUserDescription( String uuid )
+  {
+    int handle = findDescriptor( "0xFFE0", "0x"+uuid.toUpperCase(), "0x2901", true );
+    return handle != 0 ? receivedValue : null;
+  }
 
 }

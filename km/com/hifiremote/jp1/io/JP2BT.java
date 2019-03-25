@@ -342,6 +342,7 @@ public class JP2BT extends IO
     }
   }
   
+  /*
   public static SerialPort connectSerial(String portName) {
     try {
       System.err.println( "Trying to open serial port " + portName );
@@ -359,6 +360,7 @@ public class JP2BT extends IO
     }
     return null;
   }
+  */
   
   public String connectBLE( String portName )
   {
@@ -395,6 +397,10 @@ public class JP2BT extends IO
       System.err.println("Failed at stage " + blei.GetStage());
       return false;
     }
+    System.err.println( "FFE1 description = \"" + readUserDescription( "ffe1" ) + "\"");
+    System.err.println( "FFE2 description = \"" + readUserDescription( "ffe2" ) + "\"");
+    
+    
     if ( needsCCCD() && !hasCCCD() )
     {
       String title = "Interface issue";
@@ -410,26 +416,55 @@ public class JP2BT extends IO
   
     System.err.println( blei.GetSubscription());
 
-    //Thread.sleep( 1000 );
+    Thread.sleep( 200 );
+    int rptCount = 1;
     boolean didread = false;
-    for ( int i = 0; i < 2; i++)
+    for ( ; rptCount < 4; rptCount++ )
+    {
+      long waitStart = Calendar.getInstance().getTimeInMillis();
+      UEIPacket upkt = new UEIPacket( 0, sequence++, 0x43, 0x42, null );
+      if ( ( upkt = getUEIPacketResponse( upkt, 60, 1500 ) ) == null )
+        continue;
+      didread = true;
+      long delay = Calendar.getInstance().getTimeInMillis() - waitStart;
+      System.err.println( "Battery read on attempt " + rptCount + " in " + delay + "ms" );
+      break;
+    }
+    if ( !didread)
+    {
+      System.err.println( "Battery read failed" );
+      return false;
+    }
+
+    rptCount = 1;
+    didread = false;
+    for ( ; rptCount < 3; rptCount++)
     {
       System.err.println( "Reading info and sig" );
       long waitStart = Calendar.getInstance().getTimeInMillis();
       UEIPacket upkt = new CmdPacket( "APPINFOGET", new byte[]{} ).getUEIPacket( sequence++ );
-      System.err.println( "AppInfoGet pkt: " + upkt );
-      if ( ( upkt = getUEIPacketResponse( upkt, 75 ) ) == null || !bleRemote.interpret( "APPINFOGET", upkt ) )
+      //System.err.println( "AppInfoGet pkt: " + upkt );
+      if ( ( upkt = getUEIPacketResponse( upkt, 75, 3000 ) ) == null || !bleRemote.interpret( "APPINFOGET", upkt ) )
       {
         System.err.println( "Failed to read info and sig" );
         continue;
       }
       didread = true;
       long delay = Calendar.getInstance().getTimeInMillis() - waitStart;
-      System.err.println( "Successful read took " + delay + "ms" );
+      System.err.println( "Successful read of info and sig took " + delay + "ms" );
       break;
     } 
     if ( !didread)
       return false;
+    
+    /*
+    if( rptCount > 1 )
+    {
+      String title = "Connection report";
+      String message ="Read info and sig took " + rptCount + " attempts";
+      JOptionPane.showMessageDialog( null, message, title, JOptionPane.INFORMATION_MESSAGE );
+    }
+    */
 
     if ( !updateConnData( sequence++ ) )
     {
@@ -477,7 +512,7 @@ public class JP2BT extends IO
   public int sendUEIPacket( UEIPacket upkt )
   {
     int n = 0;
-    System.err.println( "Sending " + upkt.toString() );
+    //System.err.println( "Sending " + upkt.toString() );
     List< byte[] > bleList = upkt.toBLEpackets();
     for ( byte[] bleData : bleList )
     {
@@ -523,25 +558,35 @@ public class JP2BT extends IO
   
   public UEIPacket getUEIPacketResponse( UEIPacket upkt, int progress )
   {
+    return getUEIPacketResponse( upkt, progress, 6000 );
+  }
+  
+  public UEIPacket getUEIPacketResponse( UEIPacket upkt, int progress, int maxDelay )
+  {
     // Progress updater is only updated when value supplied is > 0
     if ( sendUEIPacket( upkt ) != 0 )
       return null;
-    System.err.println( "Packet sent");
+    //System.err.println( "Packet sent");
     if ( progressUpdater != null && progress > 0 )
       progressUpdater.updateProgress( progress );
-    UEIPacket upktRcvd = getUEIPacketIn();
+    UEIPacket upktRcvd = getUEIPacketIn( maxDelay );
     if ( upktRcvd == null )
       return null;
     if ( progressUpdater != null && progress > 0 )
       progressUpdater.updateProgress( progress + 2 );
     return upktRcvd;
   }
- 
+  
   public UEIPacket getUEIPacketIn()
+  {
+    return getUEIPacketIn( 6000 );
+  }
+ 
+  public UEIPacket getUEIPacketIn( int maxDelay )
   {
     ueiInStart = Calendar.getInstance().getTimeInMillis();
     long delay = 0;
-    System.err.println( "Getting UEI packet.  Incoming list size = " + incoming.size());
+    //System.err.println( "Getting UEI packet.  Incoming list size = " + incoming.size());
     int pktCount = -1;
     while ( true )
     {
@@ -549,12 +594,12 @@ public class JP2BT extends IO
       if ( pktCount != bCount)
       {
         pktCount = bCount;
-        System.err.println( "Current incoming count = " + pktCount );
+        //System.err.println( "Current incoming count = " + pktCount );
       }
       
       if ( blei.GetInDataSize() > 0 )
       {
-        System.err.println("Incoming ble pkt");
+        //System.err.println("Incoming ble pkt");
         byte[] value = blei.GetInData( 0 );
         UEIPacket upkt = null;
         boolean ueiInOk = true;
@@ -568,9 +613,9 @@ public class JP2BT extends IO
           ueiInStart = Calendar.getInstance().getTimeInMillis();
           upkt = new UEIPacket( frameType, sequence, value[ 2 ], 
               value[ 3 ], Arrays.copyOfRange( value, 4, value.length ) );
-          System.err.println( upkt.toString() );
+          //System.err.println( upkt.toString() );
           incoming.add( upkt );
-          System.err.println( "Queueing UEIPacket with id " + System.identityHashCode( upkt ) );
+          //System.err.println( "Queueing UEIPacket with id " + System.identityHashCode( upkt ) );
           break;
         }
         else if ( state == UEIPacket.getFrameType( "FragmentStart" ) )
@@ -579,7 +624,7 @@ public class JP2BT extends IO
           ueiInStart = Calendar.getInstance().getTimeInMillis();
           upkt = new UEIPacket( frameType, sequence, value[ 2 ], 
               value[ 4 ], value[ 3 ], Arrays.copyOfRange( value, 5, value.length ) );
-          System.err.println( "Start " + upkt.toString() );
+          //System.err.println( "Start " + upkt.toString() );
           ueiIn.put( sequence, upkt );
         }
         else if ( state == UEIPacket.getFrameType( "Fragmented" ) )
@@ -594,7 +639,7 @@ public class JP2BT extends IO
             ueiInOk = false;
             break;
           }
-          System.err.println( "Incomplete " + upkt.toString() );
+          //System.err.println( "Incomplete " + upkt.toString() );
         }
         else if ( state == UEIPacket.getFrameType( "FragmentEnd" ) )
         {
@@ -604,30 +649,36 @@ public class JP2BT extends IO
               value[ 3 ], Arrays.copyOfRange( value, 4, value.length ) ) ) )
           {
             ueiInOk = false;
-            System.err.println( "Error in incoming end fragment" );
+            //System.err.println( "Error in incoming end fragment" );
             break;
           }
           else if ( ueiInOk )
           {
-            System.err.println( "Complete " + upkt.toString() );
+            //System.err.println( "Complete " + upkt.toString() );
             incoming.add( upkt );
-            System.err.println( "Queueing UEIPacket with id " + System.identityHashCode( upkt ) );
+            //System.err.println( "Queueing UEIPacket with id " + System.identityHashCode( upkt ) );
             break;
           }
         }
       }
 
       delay = Calendar.getInstance().getTimeInMillis() - ueiInStart;
-      if ( delay > 6000 )
+      if ( delay > maxDelay )
       {
         System.err.println( "Incoming UEI packet timed out, incoming queue size " + incoming.size() );
         return null;
       }
+      try
+      {
+        Thread.sleep( 50 );
+      }
+      catch ( InterruptedException e )
+      {}
     }
-    System.err.println( "Incoming UEI packet received" );
+    //System.err.println( "Incoming UEI packet received" );
     UEIPacket upkt = incoming.remove( 0 );
-    System.err.println( "Removing UEIPacket with id " + System.identityHashCode( upkt ) );
-    System.err.println("Packet data: " + upkt);
+    //System.err.println( "Removing UEIPacket with id " + System.identityHashCode( upkt ) );
+    //System.err.println("Packet data: " + upkt);
     return upkt;
   }
   
@@ -896,6 +947,14 @@ public class JP2BT extends IO
   public boolean isConnected()
   {
     return blei.IsConnected();
+  }
+  
+  public String readUserDescription( String uuid )
+  {
+    byte[] value = blei.ReadUserDescription( uuid );
+    StringBuffer sb = new StringBuffer();
+    for( byte b : value ) sb.append( (char)( b & 0xFF ) );
+    return sb.toString();  
   }
 
   private long ueiInStart = 0;  // Timer start for incoming UEI packet fragments
