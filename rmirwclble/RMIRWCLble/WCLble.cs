@@ -38,6 +38,7 @@ namespace RMIRWin10BLE
 
         int GetInDataSize();
         byte[] GetInData(int ndx);
+        byte[] ReadUserDescription(string uuid);
 
         int ReadSignalStrength();
         void WritePacket(byte[] pkt);
@@ -61,6 +62,8 @@ namespace RMIRWin10BLE
         private wclGattCharacteristic ReadCh;
         private wclGattDescriptor[] Descriptors;
         private wclGattDescriptor CCCDdescriptor;
+        private wclGattDescriptor WriteChUserDesc;
+        private wclGattDescriptor ReadChUserDesc;
 
         private ArrayList addressList = new ArrayList();
         private ArrayList nameList = new ArrayList();
@@ -348,10 +351,38 @@ namespace RMIRWin10BLE
                     hasCCCD = true;
                     CCCDdescriptor = Descriptor;
                 }
+                else if (s.Equals("2901"))
+                    ReadChUserDesc = Descriptor;
             }
+
+            stage = 8;
+            Res = Client.ReadDescriptors(WriteCh, wclGattOperationFlag.goReadFromDevice, out Descriptors);
+            if (Res != wclErrors.WCL_E_SUCCESS || Descriptors == null)
+                return false;
+            foreach (wclGattDescriptor Descriptor in Descriptors)
+            {
+                String s;
+                if (Descriptor.Uuid.IsShortUuid)
+                    s = Descriptor.Uuid.ShortUuid.ToString("X4");
+                else
+                    s = Descriptor.Uuid.LongUuid.ToString();
+                if (s.Equals("2901"))
+                    WriteChUserDesc = Descriptor;
+            }
+
+            stage = 9;
             Subscribe(true);
             Client.OnCharacteristicChanged += Client_OnCharacteristicChanged;
             return true;
+        }
+
+        public byte[] ReadUserDescription(string uuid)
+        {
+            if (!uuid.Equals("ffe1") && !uuid.Equals("ffe2"))
+                return null;
+            wclGattDescriptor descriptor = uuid.Equals("ffe1") ? WriteChUserDesc : ReadChUserDesc;
+            Client.ReadDescriptorValue(descriptor, wclGattOperationFlag.goReadFromDevice, out wclGattDescriptorValue value);
+            return (byte[])value.Data.Clone();
         }
 
         void Client_OnCharacteristicChanged(object Sender, ushort Handle, byte[] Value)
