@@ -397,6 +397,9 @@ public class JP2BT extends IO
       System.err.println("Failed at stage " + blei.GetStage());
       return false;
     }
+    
+    if ( progressUpdater != null )
+      progressUpdater.updateProgress( 55 );
     System.err.println( "FFE1 description = \"" + readUserDescription( "ffe1" ) + "\"");
     System.err.println( "FFE2 description = \"" + readUserDescription( "ffe2" ) + "\"");
     
