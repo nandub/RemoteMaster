@@ -633,13 +633,28 @@ public class ProntoSignal
 
     int length;
     length = 3 + 4*bursts.size();
+    if ( oneTime > 0xFF )
+    {
+      error = "Maximum length of 127 bits for one-time signal exceeded";
+      return null;
+    }
     if ( oneTime > 0 ) 
     {  
       length += ( oneTime/2 + 1 )/2 + 1;
     }
+    if ( repeat > 0xFF )
+    {
+      error = "Maximum length of 127 bits for repeat signal exceeded";
+      return null;
+    }
     if ( repeat > 0 )
     {
       length += ( repeat/2 + 1 )/2 + 1;
+    }
+    if ( extra > 0xFF )
+    {
+      error = "Maximum length of 127 bits for extra signal exceeded";
+      return null;
     }
     if ( extra > 0 )
     {
@@ -680,11 +695,13 @@ public class ProntoSignal
         {
           tOn = 0xFFF;
           error = "Burst MARK duration out of range for format " + format;
+          return null;
         }
         if ( tOff > 0xFFFFF ) 
         {
           tOff = 0xFFFFF;
           error = "Burst SPACE duration out of range for format " + format;
+          return null;
         }
         tOn = ( tOn << 4 ) | ( tOff >> 16 );  // 3 nibbles for On, 5 for Off
         tOff &= 0xFFFF;
@@ -695,11 +712,13 @@ public class ProntoSignal
         {
           tOn = 0xFFFF;
           error = "Burst MARK duration out of range for format 0";
+          return null;
         }
         if ( tOff > 0xFFFF )
         {
           tOff = 0xFFFF;
           error = "Burst SPACE duration out of range for format 0";
+          return null;
         }
       }
       hex.put( tOn, ndx );

@@ -24,6 +24,7 @@ import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 
 import com.hifiremote.jp1.GeneralFunction.RMIcon;
+import com.hifiremote.jp1.ProtocolManager.QualifiedID;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -3085,16 +3086,15 @@ public class Remote implements Comparable< Remote >
         while ( st.hasMoreTokens() )
         {
           String token = st.nextToken().trim();
-          String variantName = "";
-          int colon = token.indexOf( ':' );
-          // String name = token;
-          if ( colon != -1 )
-          {
-            variantName = token.substring( colon + 1 );
-            token = token.substring( 0, colon );
-          }
-          Hex pid = new Hex( token );
-          java.util.List< String > v = protocolVariantNames.get( pid );
+          ProtocolManager pm = ProtocolManager.getProtocolManager();
+          // Get current version of protocol entry if different
+          String ref = pm.getOldRefMap().get( token );
+          if ( ref != null )
+            token = ref;
+          QualifiedID qid = new QualifiedID( token );
+          String variantName = qid.variantName;
+          Hex pid = qid.pid;
+          List< String > v = protocolVariantNames.get( pid );
           if ( v == null )
           {
             v = new ArrayList< String >();

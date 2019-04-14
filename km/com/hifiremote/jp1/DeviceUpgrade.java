@@ -39,6 +39,7 @@ import javax.swing.WindowConstants;
 import javax.swing.event.SwingPropertyChangeSupport;
 
 import com.hifiremote.jp1.Activity.Assister;
+import com.hifiremote.jp1.ProtocolManager.QualifiedID;
 import com.hifiremote.jp1.RemoteConfiguration.KeySpec;
 import com.hifiremote.jp1.SetupPanel.AltPIDStatus;
 import com.hifiremote.jp1.translate.Translate;
@@ -2599,7 +2600,12 @@ public class DeviceUpgrade extends Highlight
       String name = props.getProperty( "Protocol.name", "" );
       String variantName = props.getProperty( "Protocol.variantName", "" );
 
+      // Need now to convert old values of pid and variant name to current ones
       ProtocolManager pm = ProtocolManager.getProtocolManager();
+      QualifiedID qid = pm.getCurrentQID( pid, variantName );
+      pid = qid.pid;
+      variantName = qid.variantName;
+      
       if ( name.startsWith( "Manual Settings" ) || name.equals( "Manual" )
           || name.equalsIgnoreCase( "PID " + pid.toString() ) )
       {
@@ -3238,7 +3244,11 @@ public class DeviceUpgrade extends Highlight
     }
     else
     {
-      // protocol = protocolManager.findProtocolForRemote( remote, protocolName );
+      // Update pid if necessary
+      Hex temp = protocolManager.getCurrentPID( protocolName, pid );
+      if ( temp != null )
+        pid = temp;
+      
       Protocol p = protocolManager.findNearestProtocol( remote, protocolName, pid, null );
 
       if ( p == null )

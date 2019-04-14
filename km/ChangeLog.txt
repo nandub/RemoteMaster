@@ -12,6 +12,22 @@ Changes for v2.07
 - When creating/editing manual protocol in RM, update data translation panel when parameter settings are edited (Graham)
 - Fix bug in RM that a loaded manual protocol did not show in protocol drop-down list (Graham)
 - Fix bug in RM protocol editor causing procBox listeners to persist after editor closed (Graham)
+-- Private build 4
+- Fix a number of issues concerning the creation and editing of protocols in RM (Graham)
+- Add RMIR Bluetooth support via the native Bluetooth support of Windows 10 (Graham)
+-- Private build 5
+- Add RMIR Bluetooth support via the Bluetooth Framework of Wireless Communication Library (WCL) from Soft Service Company (Graham)
+-- Private build 6
+- Upgrade jSerialComm to v2.5.0 to fix RMIR crashing with 32-bit Java in 64-bit Windows (Graham)
+- Upgrade jp12serial from v0.23 to 0.24 to fix issues with uploading when using newer, faster, computers (Graham)
+-- Private build 7
+- Add new protocol property OldRefs which converts, on the fly, RDFs and upgrades with old PID and variant names to current values (Graham)
+- Give error message when importing Pronto signal that converts to learned signal with >128 bits (Graham)
+- For BLED112 dongle, recognise Bluetooth manufacturer code 9c:ac:6d used in URC-7880 as equivalent to 48:do:cf used in URC-7980 and URC-7955 (Graham)
+- Update digitmaps.bin to 729, values 693-729 arising from URC-7880 support (Graham)
+-- Private build 8
+- Add recognition of manufacturer code 9c:ac:6d for the other Bluetooth interfaces (Graham)
+- Add delay before, and retries of, DiscoverServices() for BLED112 dongle (Graham)
 
 Changes for v2.06
 -- Release build 1

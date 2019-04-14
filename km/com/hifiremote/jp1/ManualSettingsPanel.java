@@ -62,6 +62,7 @@ import com.hifiremote.jp1.ProtocolDataPanel.PDMainPanel;
 import com.hifiremote.jp1.ProtocolDataPanel.PFMainPanel;
 import com.hifiremote.jp1.ProtocolDataPanel.FunctionMainPanel;
 import com.hifiremote.jp1.ProtocolDataPanel.Mode;
+import com.hifiremote.jp1.ProtocolManager.QualifiedID;
 
 public class ManualSettingsPanel extends JPanel implements ActionListener, PropertyChangeListener, DocumentListener,
 ChangeListener, ListSelectionListener, ItemListener
@@ -539,7 +540,9 @@ ChangeListener, ListSelectionListener, ItemListener
         fields = LineTokenizer.tokenize( line, delim );        
         if ( ( f = fields.get( 0 ) ) != null && f.equals( "Protocol ID:" ) )
         {
-          pid.setValue( new Hex( fields.get( 1 ) ) );
+          ProtocolManager pm = ProtocolManager.getProtocolManager();
+          Hex temp = new Hex( fields.get( 1 ) );
+          pid.setValue( pm.getCurrentPID( description, temp ) );
         }
         if ( 12 < fields.size() && ( f = fields.get( 12 ) ) != null )
         {
@@ -638,6 +641,12 @@ ChangeListener, ListSelectionListener, ItemListener
               idStrings[ 2 ] = line.substring( 4 ).trim();
             }
           }
+          // Now update idStrings if necessary
+          ProtocolManager pm = ProtocolManager.getProtocolManager();
+          QualifiedID qid = pm.getCurrentQID( new Hex( idStrings[ 2 ] ), idStrings[ 1 ] );
+          idStrings[ 1 ] = qid.variantName.isEmpty() ? null : qid.variantName;
+          idStrings[ 2 ] = qid.pid.toString();          
+          
           if( modeIndex == 2 && idStrings[ 1 ] == null )
             idStrings[ 1 ] = "Custom";
           

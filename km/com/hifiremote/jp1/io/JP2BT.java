@@ -384,6 +384,7 @@ public class JP2BT extends IO
     System.err.println( "Basic connection to remote succeeded");
     if ( progressUpdater != null )
       progressUpdater.updateProgress( 20 );
+    Thread.sleep( 50 );
     if ( !blei.DiscoverServices() )
     {
       System.err.println("Failed at stage " + blei.GetStage());

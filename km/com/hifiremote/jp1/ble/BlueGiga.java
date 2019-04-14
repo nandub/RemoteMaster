@@ -252,6 +252,16 @@ public class BlueGiga implements IBleInterface
     }
   }
   
+  private void sleep( int ms )
+  {
+    try
+    {
+      Thread.sleep( ms );
+    }
+    catch ( InterruptedException e )
+    {}
+  }
+  
   public boolean DiscoverServices()
   {
     //System.err.println( "Starting service discovery" );
@@ -259,15 +269,27 @@ public class BlueGiga implements IBleInterface
     long waitStart = Calendar.getInstance().getTimeInMillis();
     long delay = 0;
     bgapi.send_attclient_read_by_group_type( connection, 1, 0xffff, new byte[]{0x00, 0x28} );
+    int i = 0;
     while ( discovery_state != IDLE )
     {
       delay = Calendar.getInstance().getTimeInMillis() - waitStart;
+      if ( i < 3 && discovery_state == SERVICES && services.isEmpty() && delay > 2000 )
+      {
+        // No receive_attclient_group_found(..) response has been received in 2 secs.
+        // Assume the packet not received and try again
+        i++;
+        System.err.println( "Attempt " + i + " to discover services failed" );
+        sleep( 50 );
+        waitStart = Calendar.getInstance().getTimeInMillis();
+        bgapi.send_attclient_read_by_group_type( connection, 1, 0xffff, new byte[]{0x00, 0x28} );
+      }
       if ( delay > 10000 )
       {
-        //System.err.println( "Service discovery failed to end" );
+        System.err.println( "Service discovery failed to end" );
         discovery_state = IDLE;
         return false;
       }
+      sleep( 20 );
     }
     /*
     System.err.println( "Services discovered after " + delay + "ms" );
@@ -331,7 +353,7 @@ public class BlueGiga implements IBleInterface
     stage = 1;
     incoming.clear();
     BDAddr addr = BDAddr.fromString( address );
-    bgapi.send_gap_connect_direct( addr, 0, 60, 76, 500, 0 );
+    bgapi.send_gap_connect_direct( addr, 0, 20, 100, 1000, 0 );//( addr, 0, 60, 76, 500, 0 );
     long waitStart = Calendar.getInstance().getTimeInMillis();
     long delay = 0;
     while ( connection == -1 )
@@ -439,14 +461,14 @@ public class BlueGiga implements IBleInterface
 
     // Callbacks for class connection (index = 3)
     public void receive_connection_status(int conn, int flags, BDAddr address, int address_type, int conn_interval, int timeout, int latency, int bonding) {
-      //System.err.println("[" + address.toString() + "] Conn = " + conn + " Flags = " + flags);
+      System.err.println("[" + address.toString() + "] Conn = " + conn + " Flags = " + flags);
       if (flags != 0) 
       {
         connection = conn;
       }
       else 
       {
-        //System.err.println("Connection lost!");
+        System.err.println("Connection lost!");
         connection = -1;
       } 
     }
@@ -554,7 +576,7 @@ public class BlueGiga implements IBleInterface
     // Callbacks for class gap (index = 6)
     public void receive_gap_connect_direct(int result, int connection_handle) 
     {
-      //System.err.println( "Connect direct returned result " + result + ", handle " +  connection_handle );
+      System.err.println( "Connect direct returned result " + result + ", handle " +  connection_handle );
       reserved_connection = connection_handle;
     }
     
@@ -567,9 +589,9 @@ public class BlueGiga implements IBleInterface
     {
       byte[] b = sender.getByteAddr();
       String addr = String.format( "%02x:%02x:%02x:%02x:%02x:%02x", b[5],b[4],b[3],b[2],b[1],b[0] );
-      if ( addr.startsWith( "48:d0:cf" ) )
+      if ( addr.startsWith( "48:d0:cf" ) || addr.startsWith( "9c:ac:6d" ) )
       {
-//        System.err.println( "Found " + addr );
+        // System.err.println( "Found " + addr );
         if ( addressList.indexOf( addr ) < 0 )
         {
           addressList.add( addr );

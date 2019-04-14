@@ -84,7 +84,19 @@ public class Protocol
         altPIDOverrideList.add( st.nextToken() );
       }
     }
-
+    
+    temp = props.getProperty( "OldRefs" );
+    if ( temp != null )
+    {
+      if ( oldRefList == null )
+        oldRefList = new ArrayList< String >();
+      StringTokenizer st = new StringTokenizer( temp.trim(), "," );
+      while ( st.hasMoreTokens() )
+      {
+        oldRefList.add( st.nextToken().trim() );
+      }
+    }
+      
     temp = props.getProperty( "DevParms", "" );
     if ( temp != null )
     {
@@ -1182,6 +1194,11 @@ public class Protocol
     return alternatePID;
   }
   
+  public List< String > getOldRefList()
+  {
+    return oldRefList;
+  }
+
   public void saveAltPID( Remote remote )
   {
     if ( this instanceof ManualProtocol )
@@ -2108,10 +2125,12 @@ public class Protocol
   protected String notes = null;
 
   /** The old names. */
-  private java.util.List< String > oldNames = new ArrayList< String >();
+  private List< String > oldNames = new ArrayList< String >();
 
   /** The alt pid override list. */
-  private java.util.List< String > altPIDOverrideList = new ArrayList< String >();
+  private List< String > altPIDOverrideList = new ArrayList< String >();
+  
+  private List< String > oldRefList = null;
 
   /** The key moves only. */
   private boolean keyMovesOnly = false;

@@ -8,9 +8,11 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
@@ -20,6 +22,56 @@ import javax.swing.JOptionPane;
 
 public class ProtocolManager
 {
+
+  public static class QualifiedID
+  {
+    public Hex pid = null;
+    public String variantName = "";
+    
+    public QualifiedID( Hex pid, String variantName )
+    {
+      this.pid = pid;
+      if ( variantName == null || variantName.trim().isEmpty() )
+        return;
+      this.variantName = variantName.trim();
+    }
+    
+    public QualifiedID( String reference )
+    {
+      variantName = "";
+      if ( reference == null )
+      {
+        pid = null;
+        return;
+      }
+      int colon = reference.indexOf( ':' );
+      if ( colon != -1 )
+      {
+        variantName = reference.substring( colon + 1 ).trim();
+        reference = reference.substring( 0, colon );
+      }
+      pid = new Hex( reference );
+    }
+    
+    public String toReference()
+    {
+      if ( pid == null )
+        return null;
+      String ref = pid.toString().replace( " ", "" );
+      if ( variantName != null && !variantName.trim().isEmpty() )
+        ref += ":" + variantName.trim();
+      return ref;
+    }
+    
+    @Override
+    public boolean equals( Object obj )
+    {
+      if ( obj == null )
+        return false;
+      QualifiedID q = ( QualifiedID )obj;
+      return q.pid.equals( pid ) && q.variantName.equals( variantName );
+    }
+  }
 
   /**
    * Instantiates a new protocol manager.
@@ -68,6 +120,8 @@ public class ProtocolManager
         f = chooser.getSelectedFile();
       }
     }
+    
+    codeMap.clear();
     extra = false;
     showSlingboxProtocols = Boolean.parseBoolean( properties.getProperty( "ShowSlingboxProtocols", "false" ) );
     loadProtocolFile( f, false );
@@ -84,6 +138,36 @@ public class ProtocolManager
       for ( File protFile : files )
       {
         loadProtocolFile( protFile, true );
+      }
+    }
+    
+    oldRefMap.clear();
+    for ( List< Protocol > pList : byName.values() )
+    {
+      for ( Protocol p : pList )
+      {
+        if  ( p.getOldRefList() != null )
+        {
+          String newRef = ( new QualifiedID( p.getID(), p.getVariantName() )).toReference();
+          for ( String oldRef : p.getOldRefList() )
+          {
+            if ( oldRefMap.containsKey( oldRef ) )
+              System.err.println( "**** Warning: multiple protocols with old reference " + oldRef );
+            QualifiedID qid = new QualifiedID( oldRef );
+            List< Protocol > qList = byPID.get( qid.pid );
+            if ( qList != null )
+            {
+              for ( Protocol q : qList )
+              {
+                String qvName = q.getVariantName().trim();
+                if ( ( qvName == null || qvName.isEmpty() ) && qid.variantName.isEmpty() || qvName != null && qvName.equalsIgnoreCase( qid.variantName ) )
+                  System.err.println( "**** Warning:  old reference " + oldRef + " is current reference of protocol " + q.getName() );
+                break;
+              }
+            }
+            oldRefMap.put( oldRef, newRef );
+          }
+        }
       }
     }
     
@@ -297,6 +381,8 @@ public class ProtocolManager
 
     // add the protocol to the byPID hashtable
     Hex id = p.getID();
+    String pvName = p.getVariantName();
+    QualifiedID qid = codeMapKey( new QualifiedID( id, pvName ) );
     v = byPID.get( id );
     if ( v == null )
     {
@@ -305,18 +391,27 @@ public class ProtocolManager
     }
     else
     {
-      String pvName = p.getVariantName();
       for ( Protocol tryit : v )
       {
         String tryName = tryit.getVariantName();
-        if ( pvName == null && tryName == null || pvName.equals( tryName ) )
+        if ( ( pvName == null && tryName == null || pvName != null && pvName.equals( tryName ) )
+            && !testProtocolCode( qid, p ) )
         {
-          System.err.println( "**** Warning: multiple protocols with PID " + id + " and variantName " + pvName );
+          System.err.println( "**** Warning: protocols with PID " + id + " and variantName " 
+              + ( pvName.isEmpty() ? "null" : pvName ) + " have conflicting code" );
           break;
         }
       }
     }
     v.add( p );
+    if ( !codeMap.containsKey( qid ) )
+    {
+      codeMap.put( qid, new HashMap< String, Hex >() );
+    }
+    HashMap< String, Hex > cm = codeMap.get( qid );
+    for ( String proc : p.getCode().keySet() )
+      if ( !cm.containsKey( proc ) )
+        cm.put( proc, p.getCode().get( proc ) );
        
     if ( p instanceof ManualProtocol )
     {
@@ -459,6 +554,11 @@ public class ProtocolManager
   public List< String > getNames()
   {
     return names;
+  }
+
+  public LinkedHashMap< String, String > getOldRefMap()
+  {
+    return oldRefMap;
   }
 
   /**
@@ -1077,6 +1177,90 @@ public class ProtocolManager
     return null;
   }
   
+  public QualifiedID getCurrentQID( Hex pid, String variantName )
+  {
+    QualifiedID qid = new QualifiedID( pid, variantName );
+    String newRef = oldRefMap.get( qid.toReference() );
+    return newRef == null ? qid : new QualifiedID( newRef );
+  }
+  
+  public Hex getCurrentPID( String name, Hex pid )
+  {
+    // This is needed only for old KM upgrades and PB protocols where the .txt file
+    // does not contain a variant name.
+    Hex temp = testProtocolList( byName.get( name ), pid );
+    if ( temp != null )
+      return temp;
+    
+    for ( List< Protocol > pList : byName.values() )
+    {
+      for ( Protocol p : pList )
+      {
+        if  ( p.getOldNames().contains( name ) )
+        {
+          temp = testProtocolList( pList, pid );
+          if ( temp != null )
+            return temp;
+        }
+      }
+    }
+    return pid;
+  }
+        
+  private Hex testProtocolList( List< Protocol > pList, Hex pid )
+  {
+    Hex temp = null;
+    if ( pList == null )
+      return null;
+    for ( Protocol p : pList )
+    {
+      if ( p.getID().equals( pid ) )
+        return pid;
+      List< String > oldRefs = p.getOldRefList();
+      if ( temp == null && oldRefs != null )
+      {
+        for ( String ref : oldRefs )
+        {
+          QualifiedID qid = new QualifiedID( ref );
+          if ( qid.pid.equals( pid ) )
+            temp = p.getID();
+        }
+      }
+    }
+    return temp;
+  }
+  
+  private QualifiedID codeMapKey( QualifiedID qid )
+  {
+    // This workaround seems necessary as codeMap.get(..) does not seem to use the
+    // override of equals defined in QualifiedID 
+    for ( QualifiedID q : codeMap.keySet() )
+    {
+      if ( q.equals( qid ) )
+      {
+        return q;
+      }
+    }
+    return qid;
+  }
+  
+  private boolean testProtocolCode( QualifiedID qid, Protocol p )
+  {
+    HashMap< String, Hex > cMap = codeMap.get( codeMapKey( qid ) );
+    if ( cMap == null )
+      return true;
+    
+    HashMap< String, Hex > pMap = p.getCode();
+    for ( String proc : pMap.keySet() )
+    {
+      if ( cMap.containsKey( proc ) && !cMap.get( proc ).equals( pMap.get( proc ) ) )
+        return false;
+    }
+    return true;
+  }
+  
+  
+  
   public static int getManualSettingsIndex( Hex pid )
   {
     Integer index = manualSettingsIndex.get( pid );
@@ -1155,6 +1339,10 @@ public class ProtocolManager
   /** By remote-specific alt PID, remote keyed by signature */
   private Hashtable< String, Hashtable< Hex, List< Protocol > > > byAltPIDRemote = new Hashtable< String, Hashtable< Hex, List<Protocol > > >();
 
+  private HashMap< QualifiedID, HashMap< String, Hex > > codeMap = new HashMap< QualifiedID, HashMap<String,Hex> >();
+  
+  private LinkedHashMap< String, String > oldRefMap = new LinkedHashMap< String, String >();
+  
   private boolean extra = true;
   private boolean showSlingboxProtocols = false;
   

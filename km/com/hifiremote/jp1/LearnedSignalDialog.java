@@ -681,7 +681,9 @@ public class LearnedSignalDialog extends JDialog implements ActionListener, Docu
         if ( ps != null && ps.error != null )
         {
           ok = false;
-          String message = "Malformed Pronto signal: " + ps.error;
+          String message = ps.error.startsWith( "Maximum length" ) ? "Conversion error: "
+              : "Malformed Pronto signal: ";
+          message += ps.error;
           String title = "Pronto Signal Error";
           JOptionPane.showMessageDialog( this, message, title, JOptionPane.ERROR_MESSAGE );
         }
