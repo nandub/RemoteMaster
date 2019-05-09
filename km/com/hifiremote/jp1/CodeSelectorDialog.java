@@ -114,7 +114,7 @@ public class CodeSelectorDialog extends JDialog implements ActionListener
     internalArea.setEditable( false );
     internalArea.addMouseListener( mouseAdapter );
 
-    JScrollPane internalPane = new JScrollPane( internalArea  );
+    internalPane = new JScrollPane( internalArea  );
     internalPane.setVerticalScrollBarPolicy( ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS );
 
     Box labelBox1 = Box.createHorizontalBox();
@@ -361,6 +361,13 @@ public class CodeSelectorDialog extends JDialog implements ActionListener
       }
       upgradeArea.setText( getCodeText( codes ) );
       setSelectedCode( "" );
+      javax.swing.SwingUtilities.invokeLater( new Runnable()
+      {
+        public void run()
+        {
+          internalPane.getVerticalScrollBar().setValue( 0 );
+        }
+      } );
     }
     else if ( source == assignButton )
     {
@@ -465,6 +472,7 @@ public class CodeSelectorDialog extends JDialog implements ActionListener
   private JComboBox deviceComboBox = null;
   private JTextArea internalArea = null;
   private JTextArea upgradeArea = null;
+  private JScrollPane internalPane = null;
   private String selectedCode = "";
   private RemoteMaster owner = null;
   private RemoteConfiguration remoteConfig = null;

@@ -28,6 +28,18 @@ Changes for v2.07
 -- Private build 8
 - Add recognition of manufacturer code 9c:ac:6d for the other Bluetooth interfaces (Graham)
 - Add delay before, and retries of, DiscoverServices() for BLED112 dongle (Graham)
+-- Private build 9
+- Make NumBits=0 be a legal value in a [Settings] entry for single-byte setting, distinguished from multi-byte setting by form of OptionList entries (Graham)
+- Improve the consistency checks made, and consequent error messages, when reading in protocols.ini (Graham)
+- Revise protocols.ini to make it more systematic and consistent (Rob & Graham)
+- Make Code Selector scrollbar be scrolled to top rather than bottom when opened (Graham)
+- In loadSegments(..), distinguish between type $1D segments in EZ-RC remotes and those in others, as semantics is totally different (Graham)
+- Allow inner lists in RDF button maps to be empty, to support remotes such as URC7935 without digit buttons (Graham)
+- Fix bug when RDF has [General+] section that caused processor to be reset to S3C80 (Graham)
+- Support RDF entry DeviceSelection=2 to mean no device selection yet device button values used in learned signal segments (Graham)
+- Support new entry LEDColor in RDF {General] section to assign colors to devices for remotes such as URC7935 (Graham)
+- Create Ring Color column in Device Buttons table of [General] section to show assigned colors and allow editing where permitted (Graham)
+- Support variable keycode for certain buttons, such as Input button of URC7935, and allow editing via Layout tab (Graham)
 
 Changes for v2.06
 -- Release build 1

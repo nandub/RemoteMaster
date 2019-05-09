@@ -1971,6 +1971,51 @@ public class RemoteConfiguration
     remote.getCheckSums()[ 0 ].getAddressRange().setEnd( pos - 1 );
     setDeviceButtonSegments();
     
+    if ( remote.usesLedColor() && segments.get( 0x2E ) != null && segments.get( 0x2E ).size() > 0 )
+    {
+      Segment streamingData = segments.get( 0x2E ).get( 0 );
+      Hex hex = streamingData.getHex();
+      DeviceButton db = null;
+      for ( DeviceButton test : remote.getDeviceButtons() )
+      {
+        if ( test.getColorIndex() >= 0 )
+          db = test;
+      }
+      if ( db != null )
+      {
+        int[] params = new int[ 3 ];
+        for ( int i = 0; i < 3; i++ )
+          params[ i ] = hex.getData()[ i + 2 ];
+        db.setColorIndex( hex.getData()[ 5 ] );
+        db.setColorParams( params );
+      }
+    }
+    
+    if ( remote.getButtonGroups().containsKey( "Input" ) && segments.get( 0x2F ) != null && segments.get( 0x2F ).size() > 0 )
+    {
+      Segment inputKeyData = segments.get( 0x2F ).get( 0 );
+      int inputKeyCode = inputKeyData.getHex().getData()[ 3 ];
+      Button inputButton = remote.getButton( inputKeyCode );
+      ButtonShape inputShape = remote.getInputButtonShape();
+      ButtonShape phantomShape = null;
+      if ( inputShape != null && inputShape.getButton() != inputButton )
+      {
+        for ( ButtonShape bs : remote.getPhantomShapes() )
+        {
+          if ( bs.getButton() == inputButton )
+          {
+            phantomShape = bs;
+            break;
+          }
+        }
+        if ( phantomShape != null )
+        {
+          phantomShape.setButton( inputShape.getButton() );
+          inputShape.setButton( inputButton );  
+        }
+      } 
+    }
+
     if ( !decode )
       return;
 
@@ -2297,7 +2342,9 @@ public class RemoteConfiguration
       }
     }
 
-    if ( segments.get( 0x1D ) != null && segments.get( 0x1D ).size() > 0 )
+    // Segment type 0x1D is used differently in URC7935 than in FDRA remotes, so
+    // it needs to be tested.  The usage in URC7935 is not currently understood.
+    if ( remote.isFDRA() && segments.get( 0x1D ) != null && segments.get( 0x1D ).size() > 0 )
     {
       Segment favDefinitions = segments.get( 0x1D ).get( 0 );
       Hex hex = favDefinitions.getHex();
@@ -5233,6 +5280,8 @@ public class RemoteConfiguration
     {
       updateActivities();
       updateFavorites();
+      updateLEDColor();
+      updateInputKeySetting();
       int pos = 2;
       int e2Offset = remote.getE2FormatOffset();
       
@@ -7921,6 +7970,66 @@ public class RemoteConfiguration
     while ( ( signal = LearnedSignal.read( reader, remote ) ) != null )
     {
       learned.add( signal );
+    }
+  }
+  
+  private void updateInputKeySetting()
+  {
+    if ( !hasSegments() || !remote.getSegmentTypes().contains( 0x2F ) || !remote.getButtonGroups().containsKey( "Input" ) )
+      return;
+    
+    segments.remove( 0x2F );
+    ButtonShape inputShape = remote.getInputButtonShape();
+    int inputKeyCode = inputShape.getButton().getKeyCode();
+    Hex segData = new Hex( 4 );
+    segData.put( 0, 0 );
+    if ( ( inputKeyCode & 0xC0 ) == 0 )
+    {
+      // Assume keycodes < 0xC0 are used for normal buttons, so input key
+      // has default keycode and does not need reassignment
+      segData.getData()[ 2 ] = 0x11; // sets setup sequence to default
+      segData.getData()[ 3 ] = 0xFF;
+    }
+    else
+    {
+      segData.getData()[ 2 ] = 0x12;  // sets setup sequence to continue from current setting
+      segData.getData()[ 3 ] = ( short )inputKeyCode;
+    }
+    if ( segments.get( 0x2F ) == null )
+    {
+      segments.put( 0x2F, new ArrayList< Segment >() );
+    }
+    segments.get( 0x2F ).add( new Segment( 0x2F, 0xFF, segData ) );
+  }
+  
+  private void updateLEDColor()
+  {
+    if ( !hasSegments() || !remote.getSegmentTypes().contains( 0x2E ) || !remote.usesLedColor() )
+      return;
+    
+    segments.remove( 0x2E );
+    DeviceButton db = null;
+    for ( DeviceButton test : remote.getDeviceButtons() )
+    {
+      if ( test.getColorParams() != null )
+      {
+        db = test;
+        break;
+      }
+    }
+    if ( db != null )
+    {
+      Hex segData = new Hex( 6 );
+      int[] params = db.getColorParams();
+      segData.put( 0, 0 );
+      for ( int i = 0; i < 3 && i < params.length; i++ )
+        segData.getData()[ i + 2 ] = ( short )params[ i ];
+      segData.getData()[ 5 ] = ( short )db.getColorIndex();
+      if ( segments.get( 0x2E ) == null )
+      {
+        segments.put( 0x2E, new ArrayList< Segment >() );
+      }
+      segments.get( 0x2E ).add( new Segment( 0x2E, 0xFF, segData ) );
     }
   }
 

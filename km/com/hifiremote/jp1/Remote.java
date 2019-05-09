@@ -1255,6 +1255,29 @@ public class Remote implements Comparable< Remote >
       return rc;
     }
   }
+  
+  public ButtonShape getInputButtonShape()
+  {
+    List< Button > inputButtons = getButtonGroups().get( "Input" );
+    if ( inputButtons == null )
+      return null;
+    if ( inputButtonShape != null )
+      return inputButtonShape;
+    
+    ImageMap map = getImageMaps( getDeviceTypes()[ 0 ] )[ 0 ];
+    List< ButtonShape > shapes = map.getShapes();
+    ButtonShape inputShape = null;
+    for ( ButtonShape bs : shapes )
+    {
+      if ( inputButtons.contains( bs.getButton() ) && !getPhantomShapes().contains( bs ) )
+      {
+        inputShape = bs;
+        break;
+      }
+    }
+    inputButtonShape = inputShape;
+    return inputShape;
+  }
 
   /**
    * Gets the adv code format.
@@ -1321,12 +1344,14 @@ public class Remote implements Comparable< Remote >
    */
   private String parseGeneralSection( RDFReader rdr ) throws Exception
   {
-    String processorName = "S3C80";
+    String processorName = processor == null ? "S3C80" : processor.getName();
     String processorVersion = null;
     String line = null;
     String parm = null;
     String value = null;
     String rawValue = null;
+    if ( processor == null )
+      colorHex = null;  // Only re-initialize on first call
     boolean hasForceEvenStartsEntry = false;
     while ( true )
     {
@@ -1399,7 +1424,43 @@ public class Remote implements Comparable< Remote >
       }
       else if ( parm.equals( "DeviceSelection" ) )
       {
-        deviceSelection = RDFReader.parseFlag( value );
+        if ( value.equals( "2" ) )
+        {
+          deviceSelectionMessage = true;
+          deviceSelection = true; 
+        }
+        else
+        {
+          deviceSelection = RDFReader.parseFlag( value );
+          deviceSelectionMessage = !deviceSelection;
+        }
+      }
+      else if ( parm.equalsIgnoreCase( "LEDColor" ) )
+      {
+        // This entry is a list of colorIndex values, one per device in the order
+        // of devices in the [DeviceButtons] section.  A value > 0 is the uneditable
+        // colorIndex for that device, a value 0 signifies that the value is editable
+        // and is passed to the remote in a type 0x2E segment.  The values >0 are
+        // negated when assigned to the colorIndex of the device, to distinguish
+        // them from values set by the segment or editor which are all > 0.
+        // The values are stored in the array ledParams as this RDF entry is read
+        // before [DeviceButtons].  They are assigned to devices by parseDeviceButtons.
+        StringTokenizer st = new StringTokenizer( value, ", \t" );
+        List< Integer > paramList = new ArrayList< Integer >();
+        while ( st.hasMoreTokens() )
+        {
+          String token = st.nextToken().trim();
+          int n = 0;
+          try
+          {
+            n = RDFReader.parseNumber( token );
+          }
+          catch ( Exception e ){};
+          paramList.add( -n );
+        }
+        ledParams = paramList.toArray( new Integer[ 0 ] );
+        ledColor = true;
+        colorHex = new Hex( colorData );
       }
       else if ( parm.equals( "MacroSupport" ) )
       {
@@ -2266,6 +2327,15 @@ public class Remote implements Comparable< Remote >
       index++ ;
     }
     deviceButtons = work.toArray( deviceButtons );
+    if ( ledParams != null )
+    {
+      // Assign the colorIndex values that have been read from the LEDColor entry
+      // in the [General] section.
+      for ( int i = 0; i < deviceButtons.length && i < ledParams.length; i++ )
+      {
+        deviceButtons[ i ].setColorIndex( ledParams[ i ] );
+      }
+    }
     return line;
   }
 
@@ -3013,8 +3083,8 @@ public class Remote implements Comparable< Remote >
           nested = false;
           token = token.substring( 0, closeParen );
         }
-
-        inner.add( new Integer( RDFReader.parseNumber( token ) ) );
+        if ( !token.isEmpty() )
+          inner.add( new Integer( RDFReader.parseNumber( token ) ) );
       }
     }
     {
@@ -3863,17 +3933,37 @@ public class Remote implements Comparable< Remote >
     return keyMoveSupport;
   }
   
+  public boolean ledColor = false;
+  private Integer[] ledParams = null;
+  
   private boolean deviceSelection = true;
+  
+  private boolean deviceSelectionMessage = false;
   
   /**
    *  Certain remotes, such as the URC-6820Z Zapper+, support more than one device
    *  but have no means of selecting between them.  Instead there are fixed punchthroughs
    *  that assign certain buttons to each device that has an assigned setup code.  For
-   *  such remotes, hasDeviceSelection() will return false. 
+   *  such remotes, hasDeviceSelection() will return false.  The URC-7935 is of this type
+   *  but needs hasDeviceSelection() returning true, as it uses device button values
+   *  in learned signal segments even though it has no means of device selection.  To
+   *  handle this, there is also deviceSelectionMessage, which when true means that the
+   *  General Panel message about no device selection is displayed while deviceSelection
+   *  remains true.  
    */
   public boolean hasDeviceSelection()
   {
     return deviceSelection;
+  }
+
+  public boolean needsDeviceSelectionMessage()
+  {
+    return deviceSelectionMessage;
+  }
+
+  public boolean usesLedColor()
+  {
+    return ledColor;
   }
 
   /** The upgrade address. */
@@ -3973,6 +4063,7 @@ public class Remote implements Comparable< Remote >
   /** The processor. */
   private Processor processor = null;
   // private String processorVersion = null;
+  
   /** The RAM address. */
   private int RAMAddress = 0;  // unset
 
@@ -4104,6 +4195,8 @@ public class Remote implements Comparable< Remote >
   private ButtonMap[] buttonMaps = new ButtonMap[ 0 ];
   
   private LinkedHashMap< String, List< Button > > buttonGroups = null;
+  
+  private ButtonShape inputButtonShape = null;
   
   private Button[][] activityButtonGroups = null;
   
@@ -4569,6 +4662,8 @@ public class Remote implements Comparable< Remote >
   {
     return gidMap;
   }
+  
+  public static Hex colorHex = null;
 
   public final static String[] ueiNames = {
     "0", "1", "2", "3", "4", "5", "6", "7", "8", "9",
@@ -4592,5 +4687,17 @@ public class Remote implements Comparable< Remote >
   };
   
   public static boolean prelimLoad = false;
+  
+  private final static String colorData = "28 28 28 28 00 00 00 28 00 00 00 28 28 28 00 00 28 28 28 00 "
+      + "28 1E 1E 1E 14 14 14 14 00 00 14 14 00 00 14 00 14 00 14 00 14 14 00 00 14 28 05 00 16 00 00 1A "
+      + "07 07 1C 05 05 22 03 09 28 0F 0B 28 14 0D 20 0E 0E 26 14 14 24 17 13 27 14 11 28 19 13 28 0A 00 "
+      + "28 16 00 28 1A 00 28 22 00 1D 15 02 22 1A 05 25 24 1B 1E 1D 11 26 24 16 18 20 08 0D 11 07 11 16 "
+      + "05 12 1D 00 13 27 00 14 28 00 1B 28 07 02 13 00 00 10 00 00 14 00 05 16 05 08 20 08 17 25 17 18 "
+      + "27 18 16 1D 16 00 27 18 00 28 14 07 16 0E 10 20 1B 09 1C 12 05 1C 1B 07 0C 0C 00 14 14 00 16 16 "
+      + "23 28 28 00 20 21 0A 23 21 0B 20 21 1B 25 25 14 28 21 1C 23 24 0F 1B 19 0B 14 1C 10 17 25 00 1E "
+      + "28 05 17 28 1B 22 24 15 20 25 15 20 27 04 04 12 00 00 16 00 00 20 0A 10 23 16 07 23 0C 00 14 0B "
+      + "0A 16 11 0E 20 13 10 25 17 12 22 16 00 16 17 00 21 18 08 20 1D 0D 21 22 1E 22 23 19 23 25 14 25 "
+      + "22 12 21 1F 03 15 22 12 17 28 03 17 28 10 1C 28 1E 20 27 25 22 26 26 18 16 0B 03 1D 16 16 12 14 "
+      + "17 1C 1F 23 24 24 27 28 27 26 26 27 28 04 01";
 
 }

@@ -30,7 +30,40 @@ public class RMColorRenderer extends DefaultTableCellRenderer
     {
       Object item = ( ( JP1TableModel< ? > )model ).getRow( row );
       int mem = 0;
-      if ( item instanceof Highlight )
+      
+      if ( model instanceof DeviceButtonTableModel
+          && ( ( DeviceButtonTableModel )model ).getEffectiveColumn( col ) == 8 )
+      {
+        DeviceButton db = ( DeviceButton )item;
+        int ndx = db.getColorIndex();
+        if ( ndx < 0 )
+        {
+          // Color is not editable and its color parameters need to be read from
+          // the color table
+          ndx = - ndx - 1;
+          usage = "" + ( ndx + 1 );
+          int r = Remote.colorHex.getData()[ 3*ndx ] * 6;
+          int g = Remote.colorHex.getData()[ 3*ndx + 1 ] * 6;
+          int b = Remote.colorHex.getData()[ 3*ndx + 2 ] * 6;
+          value = new Color( r, g, b );
+        }
+        else if ( ndx == 0 || db.getColorParams() == null )
+        {
+          // This should not occur and sets no color
+          usage = "0";
+        }
+        else // ndx > 0
+        {
+          // Color parameters are given by colorParams of the device
+          usage = "" + ndx;
+          int[] params = db.getColorParams();
+          int r = params[ 0 ] * 6;
+          int g = params[ 1 ] * 6;
+          int b = params[ 2 ] * 6;
+          value = new Color( r, g, b );
+        }
+      }
+      else if ( item instanceof Highlight )
       {
         mem = ( ( Highlight )item ).getMemoryUsage();
         usage = Integer.toString( mem < 0 ? ( - mem ) : mem );

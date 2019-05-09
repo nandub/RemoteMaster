@@ -21,6 +21,11 @@ public class ButtonShape
     this.button = button;
   }
 
+  public void setButton( Button button )
+  {
+    this.button = button;
+  }
+
   /**
    * Sets the name.
    * 

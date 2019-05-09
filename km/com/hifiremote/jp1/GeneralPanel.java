@@ -177,6 +177,8 @@ public class GeneralPanel extends RMPanel implements ListSelectionListener, Acti
         notesScrollPane.getBorder() ) );
     
     remoteNotes = new JTextArea( 6, 20 );
+    remoteNotes.setLineWrap( true );
+    remoteNotes.setWrapStyleWord( true );
     remoteNotes.setEditable( false );
     remoteNotesScrollPane = new JScrollPane( remoteNotes );
     remoteNotesScrollPane.setVisible( false );
@@ -271,7 +273,7 @@ public class GeneralPanel extends RMPanel implements ListSelectionListener, Acti
     String message5 = "This remote supports more than one device but has no means of device selection.  The device "
       + "controlled by any button is determined by a fixed internal algorithm dependent on which devices have assigned "
       + "setup codes.";
-    String text = !remote.hasDeviceSelection() ? message5 : remote.usesSimpleset() ? message4 : remote.usesEZRC() ? message3 : 
+    String text = remote.needsDeviceSelectionMessage() ? message5 : remote.usesSimpleset() ? message4 : remote.usesEZRC() ? message3 : 
       softDevices != null && softDevices.isSetupCodesOnly() ? "Note:  " + message1 : "Note:  " + message2;
     messageArea.setText( text );
     messageArea.setVisible( softDevices != null );

@@ -286,6 +286,8 @@ public class DeviceButton extends Highlight
   private int deviceCodeOffset = 0;
   
   private int buttonIndex = 0;
+  private int colorIndex = -1;  // Default -1 is white, non-editable
+  private int[] colorParams = null;  // Only set for devices with editable led colors
   private DeviceButton volumePT = noButton;
   private DeviceButton transportPT = noButton;
   private DeviceButton channelPT = noButton;
@@ -363,6 +365,26 @@ public class DeviceButton extends Highlight
   public void setVpt( int vpt )
   {
     this.vpt = vpt;
+  }
+
+  public int getColorIndex()
+  {
+    return colorIndex;
+  }
+
+  public void setColorIndex( int colorIndex )
+  {
+    this.colorIndex = colorIndex;
+  }
+
+  public int[] getColorParams()
+  {
+    return colorParams;
+  }
+
+  public void setColorParams( int[] colorParams )
+  {
+    this.colorParams = colorParams;
   }
 
   public void doHighlight( Color[] highlight )

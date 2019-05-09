@@ -161,7 +161,7 @@ public class Setting extends Highlight
     inverted = invert; 
     sectionName = section;
     value = initVal;
-    if ( numberOfBits == 0 )
+    if ( numberOfBits == 0 && options.length > 0 && ( ( String )options[ 0 ] ).contains( ":" ) )
     {
       NamedHex named[] = new NamedHex[ options.length ];
       for ( int i = 0; i < options.length; i++ )
@@ -294,7 +294,7 @@ public class Setting extends Highlight
   public int[] getMasks()
   {
     int[] masks = null;
-    if ( numberOfBits == 0 )
+    if ( numberOfBits == 0 && optionList.length > 0 && optionList[ 0 ] instanceof NamedHex )
     {
       int maxSize = 0;
       for ( int i = 0; i < optionList.length; i++ )
@@ -334,7 +334,7 @@ public class Setting extends Highlight
       return;
     }
     
-    if ( numberOfBits == 0 )
+    if ( numberOfBits == 0 && optionList.length > 0 && optionList[ 0 ] instanceof NamedHex )
     {
       NamedHex nh = ( NamedHex )( optionList[ value ] );
       Hex.put( nh.getHex().getData(), data, byteAddr );

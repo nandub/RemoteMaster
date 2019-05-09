@@ -146,6 +146,38 @@ public class ProtocolManager
     {
       for ( Protocol p : pList )
       {
+        // The check on alt pids is commented out as of the four used in protocols.ini, three
+        // conflict.  It seems better to leave them than to remove this protocol feature.
+        //
+        // Hex altPid = p.getAlternatePID();
+        // if ( altPid != null && byPID.keySet().contains( altPid ) )
+        // {
+        //   System.err.println( "**** Warning: Alternate PID " + altPid + " conflicts with a main PID of this value" );
+        // }
+        
+        for ( String oldName : p.getOldNames() )
+        {
+          if ( byName.keySet().contains( oldName ) )
+          {
+            System.err.println( "**** Warning:  Protocol old name " + oldName + " is also in use as a current name" );
+          }
+        }
+        
+        int cmdLen = p.getDefaultCmd().length();
+        int devLen = p.getFixedDataLength();
+        for ( String proc : p.getCode().keySet() )
+        {
+          Hex code = p.getCode().get( proc );
+          if ( Protocol.getCmdLengthFromCode( proc, code ) != cmdLen 
+              || Protocol.getFixedDataLengthFromCode( proc, code ) != devLen )
+          {
+            String pvName = p.getVariantName();
+            Hex id = p.getID();
+            System.err.println( "**** Warning: Inconsistent cmd or fixed data lengths for protocol "
+                + "with PID " + id + " and variantName " + ( pvName.isEmpty() ? "null" : pvName ) );
+            break;
+          }
+        }
         if  ( p.getOldRefList() != null )
         {
           String newRef = ( new QualifiedID( p.getID(), p.getVariantName() )).toReference();
