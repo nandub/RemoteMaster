@@ -868,11 +868,18 @@ public class LayoutPanel extends KMPanel implements ActionListener, Runnable
             oldPhantomShape = bs;
           }
         }
-        if ( oldPhantomShape != null && newPhantomShape != null )
+        if ( newPhantomShape != null )
         {
-          newPhantomShape.setButton( oldPhantomShape.getButton() );
-          oldPhantomShape.setButton( inputShape.getButton() );
-          inputShape.setButton( newInputButton );  
+          if ( oldPhantomShape != null )
+          {
+            newPhantomShape.setButton( oldPhantomShape.getButton() );
+            oldPhantomShape.setButton( inputShape.getButton() );
+          }
+          else
+          {
+            newPhantomShape.setButton( inputShape.getButton() );
+          }
+          inputShape.setButton( newInputButton );
         }
         deviceUpgrade.getRemoteConfig().updateImage();
         setButtonText( inputShape, inputShape.getButton() );

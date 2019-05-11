@@ -374,7 +374,7 @@ public class DeviceButtonTableModel extends JP1TableModel< DeviceButton >
     return editable && col > 0 && ( col > 1 || ezrc ) && ( col < 2 || col > 3 || !ezrc )
         && ( col == 2 || col == 7 || getExtendedTypeIndex( row ) != 0xFF )
         && ( col != 3 || ( softDevices != null && softDevices.isSetupCodesOnly() ) || getValueAt( row, col ) != null )
-        && ( col != 8 || getRow( row ).getColorParams() != null );
+        && ( col != 8 || getRow( row ).getColorIndex() > 0 );
   }
   
   private short[] getData( int row )

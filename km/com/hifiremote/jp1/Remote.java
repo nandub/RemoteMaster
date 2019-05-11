@@ -1,5 +1,6 @@
 package com.hifiremote.jp1;
 
+import java.awt.Color;
 import java.awt.Shape;
 import java.awt.geom.Ellipse2D;
 import java.io.File;
@@ -1439,10 +1440,11 @@ public class Remote implements Comparable< Remote >
       {
         // This entry is a list of colorIndex values, one per device in the order
         // of devices in the [DeviceButtons] section.  A value > 0 is the uneditable
-        // colorIndex for that device, a value 0 signifies that the value is editable
-        // and is passed to the remote in a type 0x2E segment.  The values >0 are
-        // negated when assigned to the colorIndex of the device, to distinguish
-        // them from values set by the segment or editor which are all > 0.
+        // colorIndex for that device, a value < 0 signifies that the value is editable
+        // and the absolute value is the default colorIndex, non-default values 
+        // being passed to the remote in a type 0x2E segment.  All values are
+        // negated when assigned to the colorIndex of the device, with values
+        // set by the segment or editor being > 0.
         // The values are stored in the array ledParams as this RDF entry is read
         // before [DeviceButtons].  They are assigned to devices by parseDeviceButtons.
         StringTokenizer st = new StringTokenizer( value, ", \t" );
@@ -1450,7 +1452,7 @@ public class Remote implements Comparable< Remote >
         while ( st.hasMoreTokens() )
         {
           String token = st.nextToken().trim();
-          int n = 0;
+          int n = 1;  // uneditable WHITE
           try
           {
             n = RDFReader.parseNumber( token );
@@ -4661,6 +4663,15 @@ public class Remote implements Comparable< Remote >
   public LinkedHashMap< String, Integer > getGidMap()
   {
     return gidMap;
+  }
+  
+  public static Color getColorByIndex( int ndx )
+  {
+    ndx--;
+    int r = colorHex.getData()[ 3*ndx ] * 6;
+    int g = colorHex.getData()[ 3*ndx + 1 ] * 6;
+    int b = colorHex.getData()[ 3*ndx + 2 ] * 6;
+    return new Color( r, g, b );
   }
   
   public static Hex colorHex = null;

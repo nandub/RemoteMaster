@@ -40,27 +40,32 @@ public class RMColorRenderer extends DefaultTableCellRenderer
         {
           // Color is not editable and its color parameters need to be read from
           // the color table
-          ndx = - ndx - 1;
-          usage = "" + ( ndx + 1 );
-          int r = Remote.colorHex.getData()[ 3*ndx ] * 6;
-          int g = Remote.colorHex.getData()[ 3*ndx + 1 ] * 6;
-          int b = Remote.colorHex.getData()[ 3*ndx + 2 ] * 6;
-          value = new Color( r, g, b );
+          ndx = - ndx;
+          usage = "" + ndx;
+          value = Remote.getColorByIndex( ndx );
         }
-        else if ( ndx == 0 || db.getColorParams() == null )
+        else if ( ndx == 0 )
         {
-          // This should not occur and sets no color
+          // This should not occur and sets color WHITE
           usage = "0";
+          value = Remote.getColorByIndex( 1 );
         }
         else // ndx > 0
         {
           // Color parameters are given by colorParams of the device
           usage = "" + ndx;
           int[] params = db.getColorParams();
-          int r = params[ 0 ] * 6;
-          int g = params[ 1 ] * 6;
-          int b = params[ 2 ] * 6;
-          value = new Color( r, g, b );
+          if ( params != null )
+          {
+            int r = params[ 0 ] * 6;
+            int g = params[ 1 ] * 6;
+            int b = params[ 2 ] * 6;
+            value = new Color( r, g, b );
+          }
+          else
+          {
+            value = Remote.getColorByIndex( ndx );
+          }
         }
       }
       else if ( item instanceof Highlight )

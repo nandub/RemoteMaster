@@ -40,6 +40,8 @@ Changes for v2.07
 - Support new entry LEDColor in RDF {General] section to assign colors to devices for remotes such as URC7935 (Graham)
 - Create Ring Color column in Device Buttons table of [General] section to show assigned colors and allow editing where permitted (Graham)
 - Support variable keycode for certain buttons, such as Input button of URC7935, and allow editing via Layout tab (Graham)
+-- Private build 10
+- Fix two bugs with URC-7935 support in build 9 (Graham)
 
 Changes for v2.06
 -- Release build 1

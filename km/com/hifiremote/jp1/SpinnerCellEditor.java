@@ -80,13 +80,9 @@ public class SpinnerCellEditor
   {
     if ( colorHex != null )
     {
-      int ndx = ( Integer )value - 1;
-      int r = Remote.colorHex.getData()[ 3*ndx ] * 6;
-      int g = Remote.colorHex.getData()[ 3*ndx + 1 ] * 6;
-      int b = Remote.colorHex.getData()[ 3*ndx + 2 ] * 6;
-      Color color = new Color( r, g, b );
+      int ndx = ( Integer )value;
       if ( textField != null )
-        textField.setBackground( color );
+        textField.setBackground( Remote.getColorByIndex( ndx ) );
     }
   }
   
