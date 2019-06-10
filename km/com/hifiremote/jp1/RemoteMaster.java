@@ -130,7 +130,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
 
   /** Description of the Field. */
   public final static String version = "v2.07";
-  public final static int buildVer = 10;
+  public final static int buildVer = 11;
   
   public static class LanguageDescriptor
   {
@@ -5630,6 +5630,12 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
     if ( !event.getPropertyName().equals( "highlight" ) )
     {
       changed = true;
+    }
+    if ( currentPanel == generalPanel && remoteConfig.hasSegments() && remoteConfig.getRemote().hasSettings() )
+    {
+      // Changing settings requires consequential changes to the Device Buttons panel 
+      // for remotes such as the URC7935
+      generalPanel.repaint();
     }
   }
 

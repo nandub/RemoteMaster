@@ -233,7 +233,7 @@ public class Activity extends Highlight
   public Activity( Button button, Remote remote )
   {
     this.button = button;
-    name = button.getName();
+    name = button != null ? button.getName() : null;
     setSegmentFlags( 0xFF );
     boolean onlyHardButtons = remote.isSSD() && !remote.getButtonGroups().get( "Activity" ).contains( button );
     List< Integer > indices = new ArrayList< Integer >();
@@ -315,7 +315,8 @@ public class Activity extends Highlight
     {
       selector = remote.getButton( selectorName );
     }
-    button = remote.usesEZRC() && selector != null ? selector : remote.getButton( name );
+    button = remote.usesEZRC() && selector != null ? selector : 
+      name != null ? remote.getButton( name ) : null;
     
     if ( activityGroups != null )
     {

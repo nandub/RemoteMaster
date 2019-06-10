@@ -42,6 +42,14 @@ Changes for v2.07
 - Support variable keycode for certain buttons, such as Input button of URC7935, and allow editing via Layout tab (Graham)
 -- Private build 10
 - Fix two bugs with URC-7935 support in build 9 (Graham)
+-- Private build 11
+- Scale the Ring Color data used in remotes such as the URC7935 to give better representation of the LED color (Graham)
+- Augment LEDColor syntax in RDF [General] section to support colors dependent on RDF [Settings] entries (Graham)
+- Preserve backup segments with flag byte 0x5F in segmented remotes (Graham)
+- Augment RDF [Settings] syntax to allow sectionName to be a button group name enclosed in square brackets (Graham)
+- Use the Activity panel of RMIR to show the assignment of devices to buttons for the URC7935 (Graham)
+- Change the editing method for variable keycodes in the URC7935 from the DUE Layout tab to a Settings table in the main General tab (Graham)
+- Fix bugs in loading and saving device upgrades that overflow into learned and advanced code areas (Graham)
 
 Changes for v2.06
 -- Release build 1

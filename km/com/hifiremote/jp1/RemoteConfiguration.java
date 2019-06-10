@@ -29,7 +29,6 @@ import java.util.Properties;
 import java.util.Random;
 import java.util.StringTokenizer;
 
-import javax.activity.ActivityCompletedException;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
@@ -38,6 +37,7 @@ import com.hifiremote.jp1.AdvancedCode.BindFormat;
 import com.hifiremote.jp1.FixedData.Location;
 import com.hifiremote.jp1.GeneralFunction.RMIcon;
 import com.hifiremote.jp1.GeneralFunction.User;
+import com.hifiremote.jp1.Remote.KeyButtonGroup;
 import com.hifiremote.jp1.io.CommHID;
 import com.hifiremote.jp1.io.IO;
 import com.hifiremote.jp1.io.JPS;
@@ -117,6 +117,13 @@ public class RemoteConfiguration
     for ( Button btn : activityBtns )
     {
       Activity activity = new Activity( btn, remote );
+      if ( btn == null )
+      {
+        // This is the case of a single activity that represents a remote where the
+        // assignment of devices to buttons is determined by algorithm rather than
+        // through activity buttons.  That single activity is permanently active.
+        activity.setActive( true );
+      }
       Setting setting = remote.getSetting( "AudioHelp" );
       if ( setting != null )
       {
@@ -1949,16 +1956,27 @@ public class RemoteConfiguration
       int segFlags = data[ pos + 3 ];
       Hex segData = new Hex( data, pos + 4, segLength - 4 );
       pos += segLength;
-      if ( ( segFlags & 0x80 ) == 0 || segType == 0xDD && !remote.getSegmentTypes().contains( 0xDD ) )
-      {
-        // Do not load segments flagged for deletion by having flag bit 7 clear.
-        // Do not load region segment (type 0xDD) for remotes that do not support it.
-        continue;
-      }
       if ( !segmentLoadOrder.contains( segType ) )
       {
         segmentLoadOrder.add( segType );
       }
+      if ( ( segFlags & 0x80 ) == 0 || segType == 0xDD && !remote.getSegmentTypes().contains( 0xDD ) )
+      {
+        // Of segments with flag bit 7 clear, only type 0x5F has a known use.  These are backup segments, so save these
+        // but skip the rest.  Also, do not load region segment (type 0xDD) for remotes that do not support it.
+        if ( segFlags != 0x5F )
+          continue;
+        if ( segmentBackups == null )
+          segmentBackups = new LinkedHashMap< Integer, List<Segment> >();
+        List< Segment > list = segmentBackups.get( segType );
+        if ( list == null )
+        {
+          list = new ArrayList< Segment >();
+        }
+        list.add( new Segment( segType, segFlags, segData ) );
+        segmentBackups.put( segType, list );
+      }
+     
       List< Segment > list = segments.get( segType );
       if ( list == null )
       {
@@ -1989,31 +2007,6 @@ public class RemoteConfiguration
         db.setColorIndex( hex.getData()[ 5 ] );
         db.setColorParams( params );
       }
-    }
-    
-    if ( remote.getButtonGroups().containsKey( "Input" ) && segments.get( 0x2F ) != null && segments.get( 0x2F ).size() > 0 )
-    {
-      Segment inputKeyData = segments.get( 0x2F ).get( 0 );
-      int inputKeyCode = inputKeyData.getHex().getData()[ 3 ];
-      Button inputButton = remote.getButton( inputKeyCode );
-      ButtonShape inputShape = remote.getInputButtonShape();
-      ButtonShape phantomShape = null;
-      if ( inputShape != null && inputShape.getButton() != inputButton )
-      {
-        for ( ButtonShape bs : remote.getPhantomShapes() )
-        {
-          if ( bs.getButton() == inputButton )
-          {
-            phantomShape = bs;
-            break;
-          }
-        }
-        if ( phantomShape != null )
-        {
-          phantomShape.setButton( inputShape.getButton() );
-          inputShape.setButton( inputButton );  
-        }
-      } 
     }
 
     if ( !decode )
@@ -5263,6 +5256,11 @@ public class RemoteConfiguration
     updateFixedData( false );
     updateAutoSet();
     updateDeviceButtons();
+    if ( hasSegments() )
+    {
+      // Need to create default type 2F segment if absent, before updating Settings
+      updateInputKeySetting();
+    }
     updateSettings();
     updateAdvancedCodes();
     if ( remote.hasFavKey() && remote.getFavKey().isSegregated() )
@@ -5279,9 +5277,9 @@ public class RemoteConfiguration
     if ( hasSegments() )
     {
       updateActivities();
+      updateKeyAssignments();
       updateFavorites();
       updateLEDColor();
-      updateInputKeySetting();
       int pos = 2;
       int e2Offset = remote.getE2FormatOffset();
       
@@ -5309,6 +5307,15 @@ public class RemoteConfiguration
         segments.put(  0xDD, new ArrayList< Segment >() );
         segments.get( 0xDD ).add( new Segment( 0xDD, 0xFF, segData ) );   
       }
+      
+      if ( segments.get( 0x1D ) != null && !remote.hasFavorites() )
+      {
+        Hex hex = segments.get( 0x1D ).get( 0 ).getHex();
+        if ( hex.length() > 3 )
+        {
+          hex.getData()[ 2 ] = 0;
+        }
+      }
 
       for ( int type : segmentLoadOrder )
       {
@@ -5318,6 +5325,18 @@ public class RemoteConfiguration
           pos = Segment.writeData( list, data, pos );
         }
       }
+      if ( segmentBackups != null )
+      {
+        for ( int type : segmentLoadOrder )
+        {
+          List< Segment > list = segmentBackups.get( type );
+          if ( list != null )
+          {
+            pos = Segment.writeData( list, data, pos );
+          }
+        }
+      }
+      
       Hex.put( 0xFFFF, data, pos );
       remote.getUsageRange().setFreeStart( pos + 2 );
       
@@ -5850,9 +5869,8 @@ public class RemoteConfiguration
   
   private void updateFavorites()
   {
-    List< Integer > types = remote.getSegmentTypes();
     int count = favScans.size();
-    if ( !types.contains( 0x1D ) || count == 0 )
+    if ( !remote.hasFavorites() || count == 0 )
     {
       return;
     }
@@ -6172,6 +6190,24 @@ public class RemoteConfiguration
       {
         updateActivityData( activity, true );
       }
+    }
+    else if ( types.contains( 0x2F ) )
+    {
+      // These are remotes with remote.hasActivityAlgorithm = true.  At present the
+      // only known one is the URC7935 and the following is specific to that.  If
+      // more such remotes are found then this code may need modifying.
+      int flags = segments.get( 0x2F ).get( 0 ).getHex().getData()[ 2 ];
+      Activity activity = activities.get( null );
+      ActivityGroup[] groups = activity.getActivityGroups();
+      groups[ 0 ].setDevice( remote.getDeviceButtons()[ 2 ] );
+      groups[ 1 ].setDevice( remote.getDeviceButtons()[ 0 ] );
+      DeviceButton audio = remote.getDeviceButtons()[ 1 ];
+      short[] audioData = audio.getSegment().getHex().getData();
+      short audioSetupCode = audio.getSetupCode( audioData );
+      groups[ 2 ].setDevice( remote.getDeviceButtons()[ audioSetupCode < 0 ? 0 : 1 ] );
+      groups[ 3 ].setDevice( remote.getDeviceButtons()[ ( flags & 0x08 ) > 0 ? 0 : 2 ] );
+      groups[ 4 ].setDevice( remote.getDeviceButtons()[ ( flags & 0x08 ) > 0 ? 0 : 2 ] );
+      groups[ 3 ].setOverride( ( flags & 0x01 ) > 0 ? remote.getDeviceButtons()[ 0 ] : null );
     }
   }
   
@@ -6924,7 +6960,7 @@ public class RemoteConfiguration
         setting.store( segs.get( 0 ).getHex().getData(), remote );
       }
       else
-      {;
+      {
         setting.store( data, remote );
       }
       int index = remote.getSettingAddresses().get( setting.getByteAddress() );
@@ -7031,6 +7067,22 @@ public class RemoteConfiguration
     }
     return limit;
   }
+  
+  private int getAddressIndex( int address, AddressRange[] ranges )
+  {
+    int ndx = -1;
+    for ( int i = 0; i < ranges.length; i++ )
+    {
+      if ( ranges[ i ] == null )
+        continue;
+      if ( ranges[ i ].contains( address ) )
+      {
+        ndx = i;
+        break;
+      } 
+    }
+    return ndx;
+  }
 
   /**
    * Decode upgrades.
@@ -7038,20 +7090,26 @@ public class RemoteConfiguration
   private void decodeUpgrades()
   {
     System.err.println( "Decoding upgrades" );
-    AddressRange addr = remote.getUpgradeAddress();
+    AddressRange upgRange = remote.getUpgradeAddress();
+    
+    // Get the ranges of allowed overflow regions
+    AddressRange lrnRange = remote.getLearnedAddress();
+    AddressRange advRange = remote.getAdvancedCodeAddress();
+    AddressRange[] addrRanges = { upgRange, lrnRange, advRange };
+
     // Also get address range for device specific upgrades, which will be null
     // if these are not used by the remote.
     AddressRange devAddr = remote.getDeviceUpgradeAddress();
 
     Processor processor = remote.getProcessor();
-    if ( addr == null || processor == null )
+    if ( upgRange == null || processor == null )
     {
       return;
     }
     // get the offsets to the device and protocol tables
-    int deviceTableOffset = processor.getInt( data, addr.getStart() ) - remote.getBaseAddress(); // get offset of device
+    int deviceTableOffset = processor.getInt( data, upgRange.getStart() ) - remote.getBaseAddress(); // get offset of device
     // table
-    int protocolTableOffset = processor.getInt( data, addr.getStart() + 2 ) - remote.getBaseAddress(); // get offset of
+    int protocolTableOffset = processor.getInt( data, upgRange.getStart() + 2 ) - remote.getBaseAddress(); // get offset of
     // protocol table
     int devDependentTableOffset = devAddr == null ? 0 : processor.getInt( data, devAddr.getStart() )
         + devAddr.getStart();
@@ -7064,18 +7122,18 @@ public class RemoteConfiguration
     bounds[ 1 ] = 0; // leave space for the previous entry in the table (except the first)
     bounds[ 2 ] = deviceTableOffset;
     bounds[ 3 ] = protocolTableOffset;
-    bounds[ 4 ] = addr.getEnd() + 1;
-    if ( remote.getAdvancedCodeAddress() != null )
+    bounds[ 4 ] = upgRange.getEnd() + 1;
+    if ( advRange != null )
     {
-      bounds[ 5 ] = remote.getAdvancedCodeAddress().getEnd() + 1;
+      bounds[ 5 ] = advRange.getEnd() + 1;
     }
     else
     {
       bounds[ 5 ] = 0;
     }
-    if ( remote.getLearnedAddress() != null )
+    if ( lrnRange != null )
     {
-      bounds[ 6 ] = remote.getLearnedAddress().getEnd() + 1;
+      bounds[ 6 ] = lrnRange.getEnd() + 1;
     }
     else
     {
@@ -7100,13 +7158,21 @@ public class RemoteConfiguration
     {
       int pid = processor.getInt( data, offset );
       int codeOffset = processor.getInt( data, offset + 2 * count ) - remote.getBaseAddress();
+      int addrIndex = getAddressIndex( codeOffset, addrRanges );
       if ( i == 0 )
       {
         bounds[ 1 ] = codeOffset;
       }
       else
       {
-        bounds[ 1 ] = processor.getInt( data, offset + 2 * ( count - 1 ) ) - remote.getBaseAddress();
+        for ( int j = 1; j <= i; j++ )
+        {
+          bounds[ 1 ] = processor.getInt( data, offset + 2 * ( count - j ) ) - remote.getBaseAddress();
+          if ( getAddressIndex( bounds[ 1 ], addrRanges ) == addrIndex )
+            break;
+          if ( j == i )
+            bounds[ 1 ] = codeOffset;
+        }
       }
       if ( i == count - 1 )
       {
@@ -7114,7 +7180,14 @@ public class RemoteConfiguration
       }
       else
       {
-        bounds[ 0 ] = processor.getInt( data, offset + 2 * ( count + 1 ) ) - remote.getBaseAddress();
+        for ( int j = 1; j < count - i; j++ )
+        {
+          bounds[ 0 ] = processor.getInt( data, offset + 2 * ( count + j ) ) - remote.getBaseAddress();
+          if ( getAddressIndex( bounds[ 0 ], addrRanges ) == addrIndex )
+            break;
+          if ( j == count - i - 1 )
+            bounds[ 0 ] = 0;
+        }
       }
 
       int limit = getLimit( codeOffset, bounds );
@@ -7140,6 +7213,7 @@ public class RemoteConfiguration
       setupCode += remote.getDeviceCodeOffset();
       DeviceType devType = remote.getDeviceTypeByIndex( fullCode >> 12 & 0xF );
       int codeOffset = offset + 2 * count; // compute offset to offset of upgrade code
+      int addrIndex = getAddressIndex( codeOffset, addrRanges );
       codeOffset = processor.getInt( data, codeOffset ) - remote.getBaseAddress(); // get offset of upgrade code
       int pid = data[ codeOffset ];
       if ( remote.usesTwoBytePID() )
@@ -7159,7 +7233,14 @@ public class RemoteConfiguration
       }
       else
       {
-        bounds[ 1 ] = processor.getInt( data, offset + 2 * ( count - 1 ) ) - remote.getBaseAddress();
+        for ( int j = 1; j <= i; j++ )
+        {
+          bounds[ 1 ] = processor.getInt( data, offset + 2 * ( count - j ) ) - remote.getBaseAddress();
+          if ( getAddressIndex( bounds[ 1 ], addrRanges ) == addrIndex )
+            break;
+          if ( j == i )
+            bounds[ 1 ] = codeOffset;
+        }
       }
       if ( i == count - 1 )
       {
@@ -7167,7 +7248,14 @@ public class RemoteConfiguration
       }
       else
       {
-        bounds[ 0 ] = processor.getInt( data, offset + 2 * ( count + 1 ) ) - remote.getBaseAddress(); // next device
+        for ( int j = 1; j < count - i; j++ )
+        {
+          bounds[ 0 ] = processor.getInt( data, offset + 2 * ( count + j ) ) - remote.getBaseAddress();
+          if ( getAddressIndex( bounds[ 0 ], addrRanges ) == addrIndex )
+            break;
+          if ( j == count - i - 1 )
+            bounds[ 0 ] = 0;
+        }
       }
       // upgrade
       int limit = getLimit( codeOffset, bounds );
@@ -7428,31 +7516,28 @@ public class RemoteConfiguration
     
     public int nextOffset( int length )
     {
-      if ( activeRegion == 0 )
+      int end = upgRange.getFreeStart() + length;
+      if ( end + tableSize <= upgRange.getEnd() + 1 )
       {
-        int end = upgRange.getFreeStart() + length;
-        if ( end + tableSize <= upgRange.getEnd() + 1 )
-        {
-          full = false;
-          upgRange.setFreeStart( end );
-          return end - length;
-        }
-        else if ( lrnRange != null )
-        {
-          activeRegion = 1;
-        }
-        else if ( advRange != null )
-        {
-          activeRegion = 2;
-        }
-        else
-        {
-          full = true;
-          upgRange.setFreeStart( end );
-          return end - length;
-        }
+        full = false;
+        upgRange.setFreeStart( end );
+        return end - length;
       }
-      
+      else if ( lrnRange != null )
+      {
+        activeRegion = 1;
+      }
+      else if ( advRange != null )
+      {
+        activeRegion = 2;
+      }
+      else
+      {
+        full = true;
+        upgRange.setFreeStart( end );
+        return end - length;
+      }
+
       if ( activeRegion == 1)
       {
         int start = lrnRange.getFreeEnd() - length + 1;
@@ -7975,37 +8060,40 @@ public class RemoteConfiguration
   
   private void updateInputKeySetting()
   {
-    if ( !hasSegments() || !remote.getSegmentTypes().contains( 0x2F ) || !remote.getButtonGroups().containsKey( "Input" ) )
+    if ( !hasSegments() || !remote.getSegmentTypes().contains( 0x2F ) 
+        || remote.getKeyButtonGroups() == null )
       return;
-    
-    segments.remove( 0x2F );
-    ButtonShape inputShape = remote.getInputButtonShape();
-    int inputKeyCode = inputShape.getButton().getKeyCode();
+
     Hex segData = new Hex( 4 );
     segData.put( 0, 0 );
-    if ( ( inputKeyCode & 0xC0 ) == 0 )
-    {
-      // Assume keycodes < 0xC0 are used for normal buttons, so input key
-      // has default keycode and does not need reassignment
-      segData.getData()[ 2 ] = 0x11; // sets setup sequence to default
-      segData.getData()[ 3 ] = 0xFF;
-    }
-    else
-    {
-      segData.getData()[ 2 ] = 0x12;  // sets setup sequence to continue from current setting
-      segData.getData()[ 3 ] = ( short )inputKeyCode;
-    }
+    segData.getData()[ 2 ] = 0x11;
+    segData.getData()[ 3 ] = 0xFF;
+
     if ( segments.get( 0x2F ) == null )
     {
+      // Create default type 2F segment if it is absent, for use by updateSettings()
       segments.put( 0x2F, new ArrayList< Segment >() );
+      segments.get( 0x2F ).add( new Segment( 0x2F, 0xFF, segData ) );
     }
-    segments.get( 0x2F ).add( new Segment( 0x2F, 0xFF, segData ) );
   }
   
   private void updateLEDColor()
   {
     if ( !hasSegments() || !remote.getSegmentTypes().contains( 0x2E ) || !remote.usesLedColor() )
       return;
+    
+    int devCount = remote.getDeviceButtons().length;
+    if ( remote.getLedParams().length > devCount && remote.getLedSettings() != null )
+    {
+      for ( int i = 0; i < Math.min( remote.getLedParams().length - devCount, remote.getLedSettings().length ); i++ )
+      {
+        Setting s = remote.getSetting( remote.getLedSettings()[ i ] );
+        if ( s != null )
+        {
+          remote.getDeviceButtons()[ i ].setColorIndex( Math.abs( remote.getLedParams()[ devCount * s.getValue() + i ] ) );
+        }
+      }
+    }
     
     segments.remove( 0x2E );
     DeviceButton db = null;
@@ -8605,6 +8693,8 @@ public class RemoteConfiguration
   private short[] baselineData = null;
   
   private LinkedHashMap< Integer, List<Segment> > segments = new LinkedHashMap< Integer, List<Segment> >();
+  
+  private LinkedHashMap< Integer, List<Segment> > segmentBackups = null;
   
   private LinkedHashMap< String, SSDFile > ssdFiles = new LinkedHashMap< String, SSDFile >();
   
@@ -10143,6 +10233,89 @@ public class RemoteConfiguration
     }
   }
   
+  public void updateKeyAssignments()
+  {
+    if ( remote.getKeyButtonGroups() == null )
+      return;
+    
+    for ( KeyButtonGroup kbg : remote.getKeyButtonGroups() )
+    {
+
+      Setting keySetting = remote.getSetting( kbg.name + " key" );
+      Setting keyAssign = remote.getSetting( kbg.name + " assign" );
+      if ( keySetting == null )
+        continue;
+
+      int ndx = keyAssign == null || keyAssign.getValue() == 1 ? keySetting.getValue() : 0;
+      Button newButton = kbg.buttons.get( ndx );
+      
+      if ( remote.hasActivityAlgorithm() )
+      {
+        // Make sure the new button is in the button map for its device.
+        Activity activity = activities.get( null );
+        ActivityGroup group = null;
+        for ( ActivityGroup temp : activity.getActivityGroups() )
+        {
+          if ( Arrays.asList( temp.getButtonGroup() ).contains( newButton ) )
+          {
+            group = temp;
+            break;
+          }
+        }
+        DeviceButton db = group.getDevice();
+        short[] devData = db.getSegment().getHex().getData();
+        int devTypeIndex = db.getDeviceTypeIndex( devData );
+        DeviceType type = remote.getDeviceTypeByIndex( devTypeIndex );
+        ButtonMap map = type.getButtonMap();
+        if ( !map.isPresent( newButton ) )
+        {
+          for ( Button b : kbg.buttons )
+          {
+            if ( map.isPresent( b ) )
+            {
+              newButton = b;
+              break;
+            }
+          }
+        }
+      }
+      
+      kbg.setButtonShape();
+      ButtonShape shape = kbg.shape;
+      ButtonShape oldPhantomShape = null;
+      ButtonShape newPhantomShape = null;
+      if ( shape != null && shape.getButton() != newButton )
+      {
+        for ( ButtonShape bs : remote.getPhantomShapes() )
+        {
+          if ( bs.getButton() == newButton )
+          {
+            newPhantomShape = bs;
+          }
+          else if ( ( bs.getButton().getKeyCode() & 0xC0 ) == 0 )
+          {
+            oldPhantomShape = bs;
+          }
+        }
+        if ( newPhantomShape != null )
+        {
+          if ( oldPhantomShape != null )
+          {
+            newPhantomShape.setButton( oldPhantomShape.getButton() );
+            oldPhantomShape.setButton( shape.getButton() );
+          }
+          else
+          {
+            newPhantomShape.setButton( shape.getButton() );
+          }
+          shape.setButton( newButton );
+        }
+        //        deviceUpgrade.getRemoteConfig().updateImage();
+        //        setButtonText( inputShape, inputShape.getButton() );
+      } 
+    }
+  }
+
   public List< Integer > getSegmentLoadOrder()
   {
     return segmentLoadOrder;

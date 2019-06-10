@@ -34,6 +34,36 @@ import com.hifiremote.jp1.ProtocolManager.QualifiedID;
 public class Remote implements Comparable< Remote >
 {
 
+  public class KeyButtonGroup
+  {
+    public String name;
+    public ButtonShape shape;
+    public List< Button > buttons;
+
+    public KeyButtonGroup( String name, List< Button > buttons )
+    {
+      this.name = name;
+      this.buttons = buttons;
+    }
+    
+    public void setButtonShape()
+    {
+      if ( shape != null || buttons == null )
+        return;
+      
+      ImageMap map = getImageMaps( getDeviceTypes()[ 0 ] )[ 0 ];
+      List< ButtonShape > shapes = map.getShapes();
+      for ( ButtonShape bs : shapes )
+      {
+        if ( buttons.contains( bs.getButton() ) && !getPhantomShapes().contains( bs ) )
+        {
+          shape = bs;
+          return;
+        }
+      }
+    }
+  }
+
   public enum SetupValidation
   {
     OFF, WARN, ENFORCE
@@ -370,6 +400,14 @@ public class Remote implements Comparable< Remote >
         Arrays.sort( deviceTypeAliasNames );
       }
 
+      if ( settings != null )
+      {
+        for ( Setting setting : settings )
+        {
+          setting.optionsFromButtonGroup( this );
+        }
+      }
+      
       // find the longest button map
       ButtonMap longestMap = null;
       for ( DeviceType type : deviceTypes.values() )
@@ -1099,6 +1137,11 @@ public class Remote implements Comparable< Remote >
     return activityButtonGroups;
   }
 
+  public KeyButtonGroup[] getKeyButtonGroups()
+  {
+    return keyButtonGroups;
+  }
+
   /**
    * Gets the upgrade buttons.
    * 
@@ -1256,7 +1299,7 @@ public class Remote implements Comparable< Remote >
       return rc;
     }
   }
-  
+/*
   public ButtonShape getInputButtonShape()
   {
     List< Button > inputButtons = getButtonGroups().get( "Input" );
@@ -1279,6 +1322,7 @@ public class Remote implements Comparable< Remote >
     inputButtonShape = inputShape;
     return inputShape;
   }
+*/
 
   /**
    * Gets the adv code format.
@@ -1438,15 +1482,20 @@ public class Remote implements Comparable< Remote >
       }
       else if ( parm.equalsIgnoreCase( "LEDColor" ) )
       {
-        // This entry is a list of colorIndex values, one per device in the order
-        // of devices in the [DeviceButtons] section.  A value > 0 is the uneditable
-        // colorIndex for that device, a value < 0 signifies that the value is editable
-        // and the absolute value is the default colorIndex, non-default values 
+        // This entry is a list of colorIndex values, one per device in the order of
+        // devices in the [DeviceButtons] section.  If there are more values than devices
+        // then they are alternates, again in order of the devices.  A value > 0 is the
+        // uneditable colorIndex for that device, a value < 0 signifies that the value is
+        // editable and the absolute value is the default colorIndex, non-default values 
         // being passed to the remote in a type 0x2E segment.  All values are
         // negated when assigned to the colorIndex of the device, with values
         // set by the segment or editor being > 0.
         // The values are stored in the array ledParams as this RDF entry is read
         // before [DeviceButtons].  They are assigned to devices by parseDeviceButtons.
+        int paren = value.indexOf( "(" );
+        String temp = paren >= 0 ? value.substring( paren ).trim() : null;
+        if ( paren >= 0 )
+          value = value.substring( 0, paren ).trim();
         StringTokenizer st = new StringTokenizer( value, ", \t" );
         List< Integer > paramList = new ArrayList< Integer >();
         while ( st.hasMoreTokens() )
@@ -1460,9 +1509,21 @@ public class Remote implements Comparable< Remote >
           catch ( Exception e ){};
           paramList.add( -n );
         }
+        
+        if ( temp != null )
+        {
+          temp = temp.substring( 1, temp.length() - 1 );
+          List< String > strList = new ArrayList< String >();
+          st = new StringTokenizer( temp, ",\t" );
+          while ( st.hasMoreTokens() )
+            strList.add( st.nextToken().trim() );
+          ledSettings = strList.toArray( new String[ 0 ] );
+        }
+        
         ledParams = paramList.toArray( new Integer[ 0 ] );
         ledColor = true;
         colorHex = new Hex( colorData );
+        
       }
       else if ( parm.equals( "MacroSupport" ) )
       {
@@ -2211,7 +2272,7 @@ public class Remote implements Comparable< Remote >
   {
     for ( Setting setting : settings )
     {
-      if ( setting.getTitle().equals( title ) )
+      if ( setting.getTitle().trim().equals( title.trim() ) )
       {
         return setting;
       }
@@ -2734,6 +2795,16 @@ public class Remote implements Comparable< Remote >
             }
             group.add( b );
           }
+          if ( hasActivityAlgorithm() )
+          {
+            // Remotes such as URC7935, with a type 0x2F segment, do not use activities in
+            // the normal way.  Instead, a single activity is used to represent the assignment
+            // of devices to buttons that is made algorithmically, depending on setting flags
+            // in this segment.  A null activity button is used to represent this activity.
+            List< Button > list = new ArrayList< Button >();
+            list.add( null );
+            buttonGroups.put( "Activity", list );
+          }
         }
         keycode++ ;
         addButton( b );
@@ -2757,6 +2828,17 @@ public class Remote implements Comparable< Remote >
       {
         activityButtonGroups[ i ] = groupList.get( i );
       }
+      
+      List< KeyButtonGroup > keyGroups = new ArrayList< KeyButtonGroup >();
+      for ( String name : buttonGroups.keySet() )
+      {
+        if ( name.startsWith( "key" ) )
+        {
+          KeyButtonGroup kbg = new KeyButtonGroup( name.substring( 3 ), buttonGroups.get( name ) );
+          keyGroups.add( kbg );
+        }
+      }
+      keyButtonGroups = keyGroups.toArray( new KeyButtonGroup[ 0 ] );
     }
 //    
 //    Button favBtn = getButtonByStandardName( "fav/scan" );
@@ -3849,7 +3931,13 @@ public class Remote implements Comparable< Remote >
   public boolean hasActivitySupport()
   {
     return segmentTypes != null && ( segmentTypes.contains( 0xDB ) || segmentTypes.contains( 0xE9 )
-        || segmentTypes.contains( 0xCD ) || segmentTypes.contains( 0x1E ) || usesSimpleset() || isSSD() );
+        || segmentTypes.contains( 0xCD ) || segmentTypes.contains( 0x1E ) || hasActivityAlgorithm()
+        || usesSimpleset() || isSSD() );
+  }
+  
+  public boolean hasActivityAlgorithm()
+  {
+    return segmentTypes.contains( 0x2F );
   }
   
   public boolean hasActivityInitialMacro()
@@ -3937,7 +4025,18 @@ public class Remote implements Comparable< Remote >
   
   public boolean ledColor = false;
   private Integer[] ledParams = null;
+  private String[] ledSettings = null;
   
+  public Integer[] getLedParams()
+  {
+    return ledParams;
+  }
+
+  public String[] getLedSettings()
+  {
+    return ledSettings;
+  }
+
   private boolean deviceSelection = true;
   
   private boolean deviceSelectionMessage = false;
@@ -4201,6 +4300,7 @@ public class Remote implements Comparable< Remote >
   private ButtonShape inputButtonShape = null;
   
   private Button[][] activityButtonGroups = null;
+  private KeyButtonGroup[] keyButtonGroups = null;
   
 //  private DeviceButton[][][] activityControl = new DeviceButton[ 0 ][ 0 ][ 0 ];
   private Activity.Control[] activityControl = new Activity.Control[ 0 ];
@@ -4665,12 +4765,20 @@ public class Remote implements Comparable< Remote >
     return gidMap;
   }
   
+  public static int scaleColor( int val )
+  {
+    double top = 40.0;
+    double frac = val*top/40.0;
+    frac = Math.log1p( frac );
+    return (int)Math.round( 255*frac/Math.log1p( top ) );
+  }
+  
   public static Color getColorByIndex( int ndx )
   {
     ndx--;
-    int r = colorHex.getData()[ 3*ndx ] * 6;
-    int g = colorHex.getData()[ 3*ndx + 1 ] * 6;
-    int b = colorHex.getData()[ 3*ndx + 2 ] * 6;
+    int r = scaleColor( colorHex.getData()[ 3*ndx ] );
+    int g = scaleColor( colorHex.getData()[ 3*ndx + 1] );
+    int b = scaleColor( colorHex.getData()[ 3*ndx + 2 ] );
     return new Color( r, g, b );
   }
   
@@ -4709,6 +4817,6 @@ public class Remote implements Comparable< Remote >
       + "28 05 17 28 1B 22 24 15 20 25 15 20 27 04 04 12 00 00 16 00 00 20 0A 10 23 16 07 23 0C 00 14 0B "
       + "0A 16 11 0E 20 13 10 25 17 12 22 16 00 16 17 00 21 18 08 20 1D 0D 21 22 1E 22 23 19 23 25 14 25 "
       + "22 12 21 1F 03 15 22 12 17 28 03 17 28 10 1C 28 1E 20 27 25 22 26 26 18 16 0B 03 1D 16 16 12 14 "
-      + "17 1C 1F 23 24 24 27 28 27 26 26 27 28 04 01";
+      + "17 1C 1F 23 24 24 27 28 27 26 26 27 28";
 
 }

@@ -176,6 +176,16 @@ public class ActivityGroup extends Highlight
     deviceIndex = device == null ? 0xFF : device.getButtonIndex() & 0xFF;
   }
 
+  public DeviceButton getOverride()
+  {
+    return override;
+  }
+
+  public void setOverride( DeviceButton override )
+  {
+    this.override = override;
+  }
+
   public void setNotes( String notes )
   {
     this.notes = notes;
@@ -214,6 +224,7 @@ public class ActivityGroup extends Highlight
   private int index = 0;
   private Button[] buttonGroup = null;
   private DeviceButton device = DeviceButton.noButton;
+  private DeviceButton override = null;
   private int deviceIndex = 0xFF;
   private Segment softNamesSegment = null;
   private Macro target = null;

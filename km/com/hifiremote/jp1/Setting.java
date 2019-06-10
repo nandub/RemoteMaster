@@ -161,28 +161,54 @@ public class Setting extends Highlight
     inverted = invert; 
     sectionName = section;
     value = initVal;
-    if ( numberOfBits == 0 && options.length > 0 && ( ( String )options[ 0 ] ).contains( ":" ) )
+    if ( numberOfBits == 0 && ( options != null && options.length > 0 && ( ( String )options[ 0 ] ).contains( ":" )
+        || sectionName != null && sectionName.startsWith( "[" ) && sectionName.endsWith( "]" ) ) )
     {
-      NamedHex named[] = new NamedHex[ options.length ];
-      for ( int i = 0; i < options.length; i++ )
+      if ( sectionName == null )
       {
-        String str = ( String )options[ i ];
-        int pos = str.indexOf( ':' );
-        if ( pos <= 0 || pos == str.length() - 1 )
+        NamedHex named[] = new NamedHex[ options.length ];
+        for ( int i = 0; i < options.length; i++ )
         {
-          System.err.println( "Illegal format of Named Hex option \"" + options[ i ] + "\"" );
-          named[ i ] = null;
-          continue;
+          String str = ( String )options[ i ];
+          int pos = str.indexOf( ':' );
+          if ( pos <= 0 || pos == str.length() - 1 )
+          {
+            System.err.println( "Illegal format of Named Hex option \"" + options[ i ] + "\"" );
+            named[ i ] = null;
+            continue;
+          }
+          String hexName = str.substring( 0, pos ).trim();
+          Hex hexVal = new Hex( str.substring( pos + 1 ).trim() );
+          named[ i ] = new NamedHex( hexName, hexVal );
         }
-        String hexName = str.substring( 0, pos ).trim();
-        Hex hexVal = new Hex( str.substring( pos + 1 ).trim() );
-        named[ i ] = new NamedHex( hexName, hexVal );
+        optionList = named;
       }
-      optionList = named;
     }
     else
     {
       optionList = options;
+    }
+  }
+  
+  public void optionsFromButtonGroup( Remote remote )
+  {
+    
+    if ( numberOfBits > 0 || optionList != null || sectionName == null || remote.getButtonGroups() == null )
+      return;
+    
+    String groupName = sectionName.substring( 1, sectionName.length() - 1 ).trim();
+    List< Button > btnList = remote.getButtonGroups().get( groupName );
+    if ( btnList == null )
+      return;
+    
+    optionList = new NamedHex[ btnList.size() ];
+    int i = 0;
+    for ( Button btn : btnList )
+    {
+      Hex hex = new Hex( 1 );
+      hex.getData()[ 0 ] = btn.getKeyCode();
+      NamedHex nh = new NamedHex( btn.getName(), hex );
+      optionList[ i++ ] = nh;
     }
   }
 
@@ -294,12 +320,20 @@ public class Setting extends Highlight
   public int[] getMasks()
   {
     int[] masks = null;
-    if ( numberOfBits == 0 && optionList.length > 0 && optionList[ 0 ] instanceof NamedHex )
+    if ( numberOfBits == 0 && ( optionList != null && optionList.length > 0 && optionList[ 0 ] instanceof NamedHex )
+        || sectionName != null && sectionName.startsWith( "[" ) && sectionName.endsWith( "]" ) )
     {
       int maxSize = 0;
-      for ( int i = 0; i < optionList.length; i++ )
+      if ( optionList != null )
       {
-        maxSize = Math.max( maxSize, ( ( NamedHex )( optionList[ i ] ) ).hex.length() );   
+        for ( int i = 0; i < optionList.length; i++ )
+        {
+          maxSize = Math.max( maxSize, ( ( NamedHex )( optionList[ i ] ) ).hex.length() );   
+        }
+      }
+      else
+      {
+        maxSize = 1;
       }
       masks = new int[ maxSize ];
       Arrays.fill( masks, 0 );

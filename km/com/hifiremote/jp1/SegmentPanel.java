@@ -211,10 +211,14 @@ public class SegmentPanel extends RMPanel implements ActionListener, ListSelecti
     }
     else if ( source == rmirButton )
     {
-      LinkedHashMap< Integer, List<Segment> > segMap = new LinkedHashMap< Integer, List<Segment> >();
+      LinkedHashMap< Integer, List<Segment> > segMap1 = new LinkedHashMap< Integer, List<Segment> >();
+      LinkedHashMap< Integer, List<Segment> > segMap2 = new LinkedHashMap< Integer, List<Segment> >();
+      LinkedHashMap< Integer, List<Segment> > segMap = null;
       for ( Segment seg : model.getData() )
       {
         int type = seg.get_Type();
+        int flags = seg.getFlags();
+        segMap = ( flags & 0x80 ) == 0x80 ? segMap1 : segMap2;
         List< Segment > list = segMap.get( type );
         if ( list == null )
         {
@@ -224,24 +228,28 @@ public class SegmentPanel extends RMPanel implements ActionListener, ListSelecti
         list.add( seg );
       }
       model.getData().clear();
-      for ( int key : remote.getSegmentTypes() )
+      for ( int i = 0; i < 2; i++ )
       {
-        List< Segment > list = segMap.get( key );
-        if ( list != null )
+        segMap = i == 0 ? segMap1 : segMap2;
+        for ( int key : remote.getSegmentTypes() )
         {
-          model.getData().addAll( list );
+          List< Segment > list = segMap.get( key );
+          if ( list != null )
+          {
+            model.getData().addAll( list );
+          }
         }
-      }
-      for ( int key : segMap.keySet() )
-      {
-        if ( remote.getSegmentTypes().contains( key ) )
+        for ( int key : segMap.keySet() )
         {
-          continue;
-        }
-        List< Segment > list = segMap.get( key );
-        if ( list != null )
-        {
-          model.getData().addAll( list );
+          if ( remote.getSegmentTypes().contains( key ) )
+          {
+            continue;
+          }
+          List< Segment > list = segMap.get( key );
+          if ( list != null )
+          {
+            model.getData().addAll( list );
+          }
         }
       }
       model.fireTableDataChanged();

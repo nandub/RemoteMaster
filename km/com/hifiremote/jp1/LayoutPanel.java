@@ -29,7 +29,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.geom.AffineTransform;
 import java.util.Arrays;
-import java.util.List;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
@@ -37,7 +36,6 @@ import javax.swing.Box;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
@@ -201,21 +199,13 @@ public class LayoutPanel extends KMPanel implements ActionListener, Runnable
     double rowSize[] = remote.usesEZRC() ? new double[]{  b, pr, b, pr, b, pr, b, pr, b } :  new double[]{ b, pr, b, pr, b };
     size[ 1 ] = rowSize;
 //    JPanel infoPanel = new JPanel( new GridLayout( 2, 2 ) );
-    infoPanel = new JPanel( new TableLayout( size ) );
+    JPanel infoPanel = new JPanel( new TableLayout( size ) );
     JLabel label = new JLabel( "Button:" );
     label.setToolTipText( "button label" );
     infoPanel.add( label, "1, 1" );
     buttonName = new JTextField();
     buttonName.setEditable( false );
-    List< Button > inputButtons = null;
-    if ( remote.getButtonGroups() != null && ( inputButtons = remote.getButtonGroups().get( "Input" ) ) != null )
-    {
-      buttonBox = new JComboBox< Button >( inputButtons.toArray( new Button[ 0 ] ) );
-      buttonBox.setEditable( false );
-      buttonBox.addActionListener( this );
-    }
     infoPanel.add( buttonName, "3, 1" );
-    buttonObject = buttonName;
     String sRow = "3";
     if ( remote.usesEZRC() )
     {
@@ -520,24 +510,8 @@ public class LayoutPanel extends KMPanel implements ActionListener, Runnable
   private void setButtonText( ButtonShape buttonShape, Button b )
   {
     Remote remote = deviceUpgrade.getRemote();
-    
     if ( ( buttonShape != null ) && ( b != null ) )
     {
-      if ( buttonShape == remote.getInputButtonShape() && buttonObject == buttonName )
-      {
-        infoPanel.remove( buttonName );
-        infoPanel.add( buttonBox, "3,1" );
-        buttonObject = buttonBox;
-        infoPanel.validate();
-      }
-      else if ( buttonShape != remote.getInputButtonShape() && buttonObject == buttonBox )
-      {
-        infoPanel.remove( buttonBox );
-        infoPanel.add( buttonName, "3,1" );
-        buttonObject = buttonName;
-        infoPanel.validate();
-      }
-      
       String name = buttonShape.getName();
       if ( name == null )
       {
@@ -548,10 +522,7 @@ public class LayoutPanel extends KMPanel implements ActionListener, Runnable
         else if ( xShiftMode.isSelected() )
           name = b.getXShiftedName();
       }
-      if ( buttonObject == buttonName )
-        buttonName.setText( name );
-      else
-        buttonBox.setSelectedItem( b );
+      buttonName.setText( name );
       GeneralFunction f = getFunction( b );
       boolean doEnable = f != null;
       if ( f != null )
@@ -598,14 +569,6 @@ public class LayoutPanel extends KMPanel implements ActionListener, Runnable
     }
     else
     {
-      if ( buttonObject == buttonBox )
-      {
-        infoPanel.remove( buttonBox );
-        infoPanel.add( buttonName, "3,1" );
-        buttonObject = buttonName;
-        infoPanel.validate();
-      }
-      
       buttonName.setText( "" );
       function.setText( "" );
       if ( remote.usesEZRC() )
@@ -618,7 +581,6 @@ public class LayoutPanel extends KMPanel implements ActionListener, Runnable
       }
       deleteAction.setEnabled( false );
     }
-    infoPanel.repaint();
   }
 
   /**
@@ -848,42 +810,6 @@ public class LayoutPanel extends KMPanel implements ActionListener, Runnable
     {
       setFunctions();
       functionPanel.revalidate();
-    }
-    else if ( source == buttonBox )
-    {
-      Button newInputButton = ( Button )buttonBox.getSelectedItem();
-      ButtonShape inputShape = remote.getInputButtonShape();
-      ButtonShape oldPhantomShape = null;
-      ButtonShape newPhantomShape = null;
-      if ( inputShape != null && inputShape.getButton() != newInputButton )
-      {
-        for ( ButtonShape bs : remote.getPhantomShapes() )
-        {
-          if ( bs.getButton() == newInputButton )
-          {
-            newPhantomShape = bs;
-          }
-          else if ( ( bs.getButton().getKeyCode() & 0xC0 ) == 0 )
-          {
-            oldPhantomShape = bs;
-          }
-        }
-        if ( newPhantomShape != null )
-        {
-          if ( oldPhantomShape != null )
-          {
-            newPhantomShape.setButton( oldPhantomShape.getButton() );
-            oldPhantomShape.setButton( inputShape.getButton() );
-          }
-          else
-          {
-            newPhantomShape.setButton( inputShape.getButton() );
-          }
-          inputShape.setButton( newInputButton );
-        }
-        deviceUpgrade.getRemoteConfig().updateImage();
-        setButtonText( inputShape, inputShape.getButton() );
-      } 
     }
     else
     {
@@ -1198,8 +1124,6 @@ public class LayoutPanel extends KMPanel implements ActionListener, Runnable
   /** The image panel. */
   private ImagePanel imagePanel = null;
   
-  private JPanel infoPanel = null;
-  
   private JPanel pagePanel = null;
   private JRadioButton pageUp = null;
   private JRadioButton pageDown = null;
@@ -1217,10 +1141,6 @@ public class LayoutPanel extends KMPanel implements ActionListener, Runnable
 
   /** The button name. */
   private JTextField buttonName = null;
-  
-  private Object buttonObject = null;
-  
-  private JComboBox< Button > buttonBox = null;
 
   /** The function. */
   private JTextField function = null;
@@ -1267,5 +1187,4 @@ public class LayoutPanel extends KMPanel implements ActionListener, Runnable
   {
     doRepaint();
   }
-
 }

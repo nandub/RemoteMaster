@@ -109,7 +109,7 @@ public class ActivityGroupTableModel extends JP1TableModel< ActivityGroup > impl
 //          && group.getDevice() != DeviceButton.noButton 
 //          && activityControl[ tabIndex ][ row ].length > 1 );
 //    }
-    if ( remote.hasActivityControl() && col < 4 )
+    if ( ( remote.hasActivityControl() || remote.hasActivityAlgorithm() ) && col < 3 )
     {
       return false;
     }
@@ -201,6 +201,10 @@ public class ActivityGroupTableModel extends JP1TableModel< ActivityGroup > impl
     {
       Activity.Control ac = remote.getActivityControl()[ tabIndex ];
       override = ac.overrides[ row ];
+    }
+    else if ( remote.hasActivityAlgorithm() )
+    {
+      override = group.getOverride();
     }
     switch ( column )
     {

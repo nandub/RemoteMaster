@@ -70,6 +70,7 @@ public class SegmentTableModel extends JP1TableModel< Segment >
   
   private String segmentDescription( int type )
   {
+    Remote remote = config.getRemote();
     switch ( type )
     {
       case 0:
@@ -102,16 +103,23 @@ public class SegmentTableModel extends JP1TableModel< Segment >
         return "Upgrade Assignments segment";
       case 0x12:
         return "Language Setting segment";
+      case 0x14:
+        return "Vendor Setup ID segment";
       case 0x15:
         return "Device Names segment";
       case 0x1D:
-        return "Favorites Definition segment";
+        return remote.hasFavorites() ? "Favorites Definition segment" : null;
       case 0x1E:
         return "Activity Definition segment";
       case 0x1F:
         return "Activity Assist Definition segment";
       case 0x20:
         return "Function Names segment";
+      case 0x2E:
+        return remote.usesLedColor() ? "Streamer LED Color segment" : null;
+      case 0x2F:
+        return remote.getSettings() != null && remote.getSettings().length > 0
+          ? "Settings Assignment segment" : null;
       case 0xCD:
         return "WatchTV Assignment segment";
       case 0xCE:

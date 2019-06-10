@@ -57,9 +57,9 @@ public class RMColorRenderer extends DefaultTableCellRenderer
           int[] params = db.getColorParams();
           if ( params != null )
           {
-            int r = params[ 0 ] * 6;
-            int g = params[ 1 ] * 6;
-            int b = params[ 2 ] * 6;
+            int r = Remote.scaleColor( params[ 0 ] );
+            int g = Remote.scaleColor( params[ 1 ] );
+            int b = Remote.scaleColor( params[ 2 ] );
             value = new Color( r, g, b );
           }
           else

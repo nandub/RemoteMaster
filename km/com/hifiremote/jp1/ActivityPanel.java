@@ -40,15 +40,15 @@ public class ActivityPanel extends RMPanel implements ChangeListener, ActionList
     super();
     tabPanel = new JPanel ( new BorderLayout() );
     add( tabPanel, BorderLayout.CENTER );
-    JPanel panel = new JPanel( new BorderLayout() );
-    panel.setBorder( BorderFactory.createTitledBorder( "Activity Functions" ) );
+    activityFunctionPanel = new JPanel( new BorderLayout() );
+    activityFunctionPanel.setBorder( BorderFactory.createTitledBorder( "Activity Functions" ) );
     activityFunctionTable = new JP1Table( activityFunctionModel );
     activityFunctionTable.setSelectionMode( ListSelectionModel.SINGLE_INTERVAL_SELECTION );
     activityFunctionTable.getSelectionModel().addListSelectionListener( this );
     activityFunctionModel.setPanel( this );
-    JScrollPane scrollPane = new JScrollPane( activityFunctionTable );
+    activityFunctionScrollPane = new JScrollPane( activityFunctionTable );
     JPanel upper = new JPanel( new BorderLayout() );
-    upper.add( scrollPane, BorderLayout.CENTER );
+    upper.add( activityFunctionScrollPane, BorderLayout.CENTER );
     messageArea = new JTextArea();
     JLabel label = new JLabel();
     messageArea.setFont( label.getFont() );
@@ -58,21 +58,21 @@ public class ActivityPanel extends RMPanel implements ChangeListener, ActionList
     messageArea.setEditable( false );
     messageArea.setBorder( BorderFactory.createEmptyBorder( 5, 5, 10, 5 ) );
     upper.add( messageArea, BorderLayout.PAGE_END );
-    panel.add( upper, BorderLayout.CENTER );
-    tabPanel.add( panel, BorderLayout.PAGE_START );
+    activityFunctionPanel.add( upper, BorderLayout.CENTER );
+    tabPanel.add( activityFunctionPanel, BorderLayout.PAGE_START );
     
     JPanel inner = new JPanel( new BorderLayout() );
 
     for ( int i = 0; i < 3; i++ )
     {   
-      panel = new JPanel( new BorderLayout() );
+      JPanel panel = new JPanel( new BorderLayout() );
       panel.setBorder( BorderFactory.createTitledBorder( Activity.assistType[ i ] + " Assist" ) );
       activityAssistModels[ i ] = new ActivityAssistTableModel();
       activityAssistTables[ i ] = new JP1Table( activityAssistModels[ i ] );
       activityAssistTables[ i ].setCellEditorModel( activityAssistModels[ i ] );
       activityAssistTables[ i ].setSelectionMode( ListSelectionModel.SINGLE_SELECTION );
       activityAssistTables[ i ].getSelectionModel().addListSelectionListener( this );
-      scrollPane = new JScrollPane( activityAssistTables[ i ] );
+      JScrollPane scrollPane = new JScrollPane( activityAssistTables[ i ] );
       panel.add( scrollPane, BorderLayout.CENTER );
       Dimension dd = activityAssistTables[ i ].getPreferredSize();
       dd.height = 4 * activityAssistTables[ i ].getRowHeight();
@@ -95,13 +95,13 @@ public class ActivityPanel extends RMPanel implements ChangeListener, ActionList
     inner.add( grid, BorderLayout.PAGE_START );
     grid.setVisible( false );
     
-    panel = new JPanel( new BorderLayout() );
+    JPanel panel = new JPanel( new BorderLayout() );
     panel.setBorder( BorderFactory.createTitledBorder( "Activity Group Assignments" ) );
     activityGroupTable = new JP1Table( activityGroupModel );
     activityGroupTable.setCellEditorModel( activityGroupModel );
     activityGroupTable.setSelectionMode( ListSelectionModel.SINGLE_INTERVAL_SELECTION );
     activityFunctionModel.setActivityGroupModel( activityGroupModel );
-    scrollPane = new JScrollPane( activityGroupTable );
+    JScrollPane scrollPane = new JScrollPane( activityGroupTable );
     panel.add( scrollPane, BorderLayout.CENTER );
     
     inner.add( panel, BorderLayout.CENTER);
@@ -202,6 +202,9 @@ public class ActivityPanel extends RMPanel implements ChangeListener, ActionList
     if ( remoteConfig != null && ( remote = remoteConfig.getRemote() ).getButtonGroups() != null
         && remote.getButtonGroups().keySet().contains( "Activity" ) )
     {
+      // Hide the Activity Function Panel for remotes such as URC7935 which have a single activity
+      // that represents an algorithmic assignment of devices to buttons.
+      activityFunctionScrollPane.setVisible( !remote.hasActivityAlgorithm() );
       newActivity.setVisible( remote.usesEZRC() );
       deleteActivity.setVisible( remote.usesEZRC() );
       moveRight.setVisible( remote.usesEZRC() );
@@ -238,7 +241,15 @@ public class ActivityPanel extends RMPanel implements ChangeListener, ActionList
           + "but this changes to TV for 10 seconds after the AV button is pressed." );
         }
       }
-      messageArea.setVisible( remote.hasMasterPowerSupport() || remote.hasActivityControl() );
+      else if ( remote.hasActivityAlgorithm() )
+      {
+        messageArea.setText( "This panel is for information only.  The remote does not have selectable activities but "
+        + "instead, devices are assigned to buttons by algorithms in the remote.  The group table below shows "
+        + "the assignment of devices to buttons for the current setup.  An assignment of the form XX/TV means that "
+        + "the device for that group is normally XX but this changes temporarily to TV after the Input "
+        + "button is pressed, remaining so until 10 seconds without a button of this group being pressed." );
+      }
+      messageArea.setVisible( remote.hasMasterPowerSupport() || remote.hasActivityControl() || remote.hasActivityAlgorithm() );
       tabbedPane.removeAll();
       activityList.clear();
       lastIndex = 0;
@@ -280,7 +291,9 @@ public class ActivityPanel extends RMPanel implements ChangeListener, ActionList
   private JPanel grid = new JPanel( new GridLayout( 1, 3 ) );
   private JP1Table activityGroupTable = null;
   private ActivityGroupTableModel activityGroupModel = new ActivityGroupTableModel();
+  private JPanel activityFunctionPanel = null;
   private JP1Table activityFunctionTable = null;
+  private JScrollPane activityFunctionScrollPane = null;
   private ActivityFunctionTableModel activityFunctionModel = new ActivityFunctionTableModel();
   private JP1Table[] activityAssistTables = { null, null, null };
   private ActivityAssistTableModel[] activityAssistModels = { null, null, null };

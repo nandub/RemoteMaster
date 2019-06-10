@@ -100,6 +100,11 @@ public class AddressRange extends RDFParameter
     return end + 1 - start;
   }
 
+  public boolean contains( int address )
+  {
+    return address >= start && address <= end;
+  }
+
   /*
    * (non-Javadoc)
    * 
