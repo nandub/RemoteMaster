@@ -183,7 +183,7 @@ public class KeyMoveDialog extends JDialog implements ActionListener, PropertyCh
     NumberFormatter formatter = new NumberFormatter( format );
     formatter.setValueClass( Integer.class );
     formatter.setMinimum( new Integer( 0 ) );
-    formatter.setMaximum( new Integer( 2047 ) );
+    formatter.setMaximum( new Integer( SetupCode.getMax() ) );
     setupCode = new JFormattedTextField( formatter );
     setupCode.setColumns( 4 );
     FocusSelector.selectOnFocus( setupCode );
@@ -548,10 +548,7 @@ public class KeyMoveDialog extends JDialog implements ActionListener, PropertyCh
         showWarning( "You must specify a setup code for the function to perform." );
         return;
       }
-      if ( !setupCode.isEditValid() )
-      {
-        showWarning( setupCode.getText() + " isn't an integer between 0 and 2047." );
-      }
+
       int setupId = ( ( Integer )setupCode.getValue() ).intValue();
 
       String notesStr = notes.getText();
@@ -876,7 +873,23 @@ public class KeyMoveDialog extends JDialog implements ActionListener, PropertyCh
     Object source = event.getSource();
     if ( source == setupCode )
     {
-      checkForUpgrade();
+      if ( !setupCode.isEditValid() )
+      {
+        String value = setupCode.getText();
+        if ( value != null ) value = value.trim();
+        if ( value == null || value.isEmpty() )
+        {
+          setupCode.setValue( null );
+        }
+        else
+        {
+          showWarning( "Setup code " + value + " is invalid.  It must be an integer between 0 and " + SetupCode.getMax() + "." );
+        }
+      }
+      else
+      {
+        checkForUpgrade();
+      }
     }
     else if ( source == efcField )
     {

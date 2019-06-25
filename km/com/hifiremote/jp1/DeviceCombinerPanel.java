@@ -170,12 +170,12 @@ public class DeviceCombinerPanel extends KMPanel implements ListSelectionListene
                 return;
               }
             }
-            if ( importedProtocol.getDefaultCmd().length() > 1 )
+            if ( importedProtocol.getDefaultCmdLength() > 1 )
             {
               JOptionPane.showMessageDialog( null,
                   "Device Combiner can only combine protocol that use 1-byte commands.  "
                       + "The device upgrade you tried to import uses the '" + importedProtocol.getName()
-                      + "' protocol, which uses " + importedProtocol.getDefaultCmd().length() + "-byte commands.",
+                      + "' protocol, which uses " + importedProtocol.getDefaultCmdLength() + "-byte commands.",
                   "Incompatible Upgrade", JOptionPane.ERROR_MESSAGE );
               return;
             }

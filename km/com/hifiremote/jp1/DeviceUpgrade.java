@@ -237,7 +237,7 @@ public class DeviceUpgrade extends Highlight
       selectorMap = new LinkedHashMap< Integer, GeneralFunction >();
     }
 
-    sizeCmdBytes = protocol.getDefaultCmd().length();
+    sizeCmdBytes = protocol.getDefaultCmdLength();
     sizeDevBytes = protocol.getFixedDataLength();
     
     setRemoteConfig( remoteConfig );
@@ -1183,7 +1183,7 @@ public class DeviceUpgrade extends Highlight
       return -1;
     }
 
-    int cmdLength = protocol.getDefaultCmd().length();
+    int cmdLength = protocol.getDefaultCmdLength();
     short[] digitKeyCodes = new short[ 10 * cmdLength ];
     Button[] buttons = remote.getUpgradeButtons();
     int offset = 0;
@@ -1358,7 +1358,7 @@ public class DeviceUpgrade extends Highlight
         System.arraycopy( code, fixedDataOffset, fixedData, 0, tempLength );
         fixedDataHex = new Hex( fixedData );
       }
-      else if ( cmdLength != p.getDefaultCmd().length() || fixedDataLength != p.getFixedDataLength() )
+      else if ( cmdLength != p.getDefaultCmdLength() || fixedDataLength != p.getFixedDataLength() )
       {
         // This can only happen when length is determined by raw upgrade.
         if ( isBuiltIn )
@@ -1370,7 +1370,7 @@ public class DeviceUpgrade extends Highlight
             // Check not yet performed
             matchLenCount = 0;
             for ( Protocol pTest : protocols )
-              if ( cmdLength == pTest.getDefaultCmd().length() && fixedDataLength == pTest.getFixedDataLength() )
+              if ( cmdLength == pTest.getDefaultCmdLength() && fixedDataLength == pTest.getFixedDataLength() )
                 matchLenCount++;
           }
           if ( matchLenCount > 0 )
@@ -1386,7 +1386,7 @@ public class DeviceUpgrade extends Highlight
               pid + ".  Number of fixed/command bytes\n" +
               "should be " + fixedDataLength + "/" + cmdLength +
               ", for specified variant it is " + p.getFixedDataLength() +
-              "/" + p.getDefaultCmd().length() + ".";
+              "/" + p.getDefaultCmdLength() + ".";
           JOptionPane.showMessageDialog( null, message, title, JOptionPane.WARNING_MESSAGE );
         }
         System.err.println( "Command or fixed data length doesn't match!" );
@@ -1484,7 +1484,7 @@ public class DeviceUpgrade extends Highlight
       p = tentative;
       System.err.println( "Using " + p.getDiagnosticName() );
       fixedDataLength = p.getFixedDataLength();
-      cmdLength = p.getDefaultCmd().length();
+      cmdLength = p.getDefaultCmdLength();
       parmValues = tentativeVals;
       ProtocolUpgrade newProtocolUpgrade = null;
       isBuiltIn = ProtocolManager.getProtocolManager().getBuiltinProtocolsForRemote( remote, pid ).contains( p );
@@ -1542,7 +1542,7 @@ public class DeviceUpgrade extends Highlight
             {
               if ( pu.getPid() == pid.get( 0 )
                   && Protocol.getFixedDataLengthFromCode( proc, pu.getCode() ) == p.getFixedDataLength()
-                  && Protocol.getCmdLengthFromCode( proc, pu.getCode() ) == p.getDefaultCmd().length() )
+                  && Protocol.getCmdLengthFromCode( proc, pu.getCode() ) == p.getDefaultCmdLength() )
               {
                 remoteConfig.protocolUpgradeUsed = pu;
                 pCode = pu.getCode();
@@ -1588,7 +1588,7 @@ public class DeviceUpgrade extends Highlight
       p = ProtocolFactory.createProtocol( "pid: " + pid.toString(), pid, "Protocol", props );
       ProtocolManager.getProtocolManager().add( p );
       fixedDataLength = p.getFixedDataLength();
-      cmdLength = p.getDefaultCmd().length();
+      cmdLength = p.getDefaultCmdLength();
       parmValues = p.importFixedData( fixedDataHex );
     }
     else if ( isBuiltIn )
@@ -2695,7 +2695,7 @@ public class DeviceUpgrade extends Highlight
       }
       if ( remote.getSegmentTypes() != null )
       {
-        sizeCmdBytes = protocol.getDefaultCmd().length();
+        sizeCmdBytes = protocol.getDefaultCmdLength();
         sizeDevBytes = protocol.getFixedDataLength();
       }
     }

@@ -70,7 +70,7 @@ public class DeviceUpgradeEditor extends JFrame implements ActionListener
       Hex pCode = p.getCode( remote );
       if ( pCode != null
           && pCode.length() > 4
-          && ( p.getFixedDataLength() != Protocol.getFixedDataLengthFromCode( proc, pCode ) || p.getDefaultCmd().length() != Protocol
+          && ( p.getFixedDataLength() != Protocol.getFixedDataLengthFromCode( proc, pCode ) || p.getDefaultCmdLength() != Protocol
           .getCmdLengthFromCode( proc, pCode ) ) )
       {
         String title = "Device Upgrade Editor";

@@ -121,9 +121,11 @@ public class ProtocolManager
       }
     }
     
+    System.err.println( "Loading protocols from '" + f.getAbsolutePath() + "'" );
     codeMap.clear();
     extra = false;
     showSlingboxProtocols = Boolean.parseBoolean( properties.getProperty( "ShowSlingboxProtocols", "false" ) );
+    System.err.println( "Option to include Slingbox protocols is " + ( showSlingboxProtocols ? "On" : "Off" ) );
     loadProtocolFile( f, false );
     File addonDir = RemoteMaster.getAddonDir();
     if ( addonDir.exists() && addonDir.isDirectory() )
@@ -137,6 +139,7 @@ public class ProtocolManager
       } );
       for ( File protFile : files )
       {
+        System.err.println( "Loading add-on protocols from '" + protFile.getAbsolutePath() + "'" );
         loadProtocolFile( protFile, true );
       }
     }
@@ -163,7 +166,7 @@ public class ProtocolManager
           }
         }
         
-        int cmdLen = p.getDefaultCmd().length();
+        int cmdLen = p.getDefaultCmdLength();
         int devLen = p.getFixedDataLength();
         for ( String proc : p.getCode().keySet() )
         {
@@ -421,8 +424,10 @@ public class ProtocolManager
       v = new ArrayList< Protocol >();
       byPID.put( id, v );
     }
-    else
+    else if ( !loaded )
     {
+      // This error check is only made during loading of protocols.ini and any 
+      // add-on .prot files, during which "loaded" is false.
       for ( Protocol tryit : v )
       {
         String tryName = tryit.getVariantName();
@@ -1114,7 +1119,7 @@ public class ProtocolManager
   public Protocol findNearestProtocol( Remote remote, String name, Hex id, String variantName )
   {
     System.err
-        .println( "ProtocolManager.findNearestProtocol( " + remote + ", " + name + ", " + id + ", " + variantName );
+        .println( "ProtocolManager.findNearestProtocol( " + remote + ", " + name + ", " + id + ", " + variantName + " )" );
     Protocol near = null;
     Protocol derived = null;
     List< Protocol > protocols = findByPID( id );

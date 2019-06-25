@@ -129,8 +129,8 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
   private static JP1Frame frame = null;
 
   /** Description of the Field. */
-  public final static String version = "v2.07";
-  public final static int buildVer = 11;
+  public final static String version = "v2.08";
+  public final static int buildVer = 1;
   
   public static class LanguageDescriptor
   {
@@ -3409,47 +3409,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
    */
   public void openFile() throws Exception
   {
-    //TESTING
-//    Hex hex = new Hex( "008200ec5700001000363033373034"+ 
-//        "ffffffffffffffff001000ffe00001ff"+ 
-//        "ffffe0e0e0e0e0e0001000ffe10000ff"+ 
-//        "ffffe1e1e1e1e1e1001000ffe20002ff"+ 
-//        "ffffe2e2e2e2e2e2001000ffe30003ff"+ 
-//        "ffffe3e3e3e3e3e3001000ffe40002ff"+ 
-//        "ffffe4e4e4e4e4e4001000ffe50000ff"+ 
-//        "ffffe5e5e5e5e5e5001000ffe60000ff"+ 
-//        "ffffe6e6da");
-//    byte[] payload = hex.toByteArray();
-//    UEIPacket p = new UEIPacket( 0, 1, 0x11, 0x40, hex.toByteArray() );
-//    byte[] payload = new byte[]{ 0x00, 0x08, 0x01, 0x00, 0x03c, 0x00, 0x00, 0x08, 0x03d };
-//    UEIPacket upkt = new UEIPacket( 0, 1, 0x11, 0x41, payload );
-//    
-//      CmdPacket cp = new CmdPacket( 1, new byte[]{ 0x00, 0x03, (byte)0xc0, 0x00, 0x00, (byte)0x80 } );
-//      UEIPacket upkt = cp.getUEIPacket( 1 );
-//      System.err.println( upkt.toString());
-    
-//    
-//    int chksum = upkt.doChecksum( payload );
-//    System.err.println( "checksum = " + String.format( "%02X", chksum ) );
-    
-//    List< BGAPIPacket > list = p.toBGAPI( 0, 0x25 );
-//    for ( BGAPIPacket b : list )
-//    {
-//      hex = new Hex( b.getPacketBytes() );
-//      System.err.println( hex.toString() );
-//    }
-//    JP2BT j = new JP2BT();
-//    for ( BGAPIPacket b : list )
-//    {
-//      BGAPIPacketReader r = b.getPayloadReader();
-//      int connection = r.r_uint8();
-//      int atthandle = r.r_uint16();
-//      byte[] value = r.r_uint8array();
-//      j.receive_attclient_attribute_value( connection, atthandle, 1, value );
-//    }
-    
-
-     openFile( null );
+    openFile( null );
   }
 
   /**
@@ -3494,6 +3454,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
       }
     }
 
+    System.err.println();
     System.err.println( "Opening " + file.getCanonicalPath() + ", last modified "
         + DateFormat.getInstance().format( new Date( file.lastModified() ) ) );
 
@@ -5853,6 +5814,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
       {
         System.err.println( "   " + name + " = " + System.getProperty( name ) );
       }
+      System.err.println();
       
       DynamicURLClassLoader.getInstance().addFile( workDir );
 
@@ -5890,6 +5852,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
       RemoteManager.getRemoteManager().loadRemotes( properties );
 
       ProtocolManager.getProtocolManager().load( new File( workDir, "protocols.ini" ), properties );
+      System.err.println();
 
       DigitMaps.load( new File( workDir, "digitmaps.bin" ) );
 

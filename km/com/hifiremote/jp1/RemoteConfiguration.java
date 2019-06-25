@@ -3013,14 +3013,14 @@ public class RemoteConfiguration
                       }
                       du.classifyButtons();
                       Protocol protocol = du.getProtocol();
-                      if ( protocol.getDefaultCmd().length() != numVar
+                      if ( protocol.getDefaultCmdLength() != numVar
                           || protocol.getFixedDataLength() != numFixed )
                       {
                         String title = "Protocol Variant Error";
                         String message = "Error in RDF.  Wrong variant specified for PID = " + 
                             protocol.getID().toString() + ".  Number of fixed/command bytes\n" +
                             "should be " + numFixed + "/" + numVar +
-                            ", for specified variant it is " + protocol.getDefaultCmd().length() +
+                            ", for specified variant it is " + protocol.getDefaultCmdLength() +
                             "/" + protocol.getFixedDataLength() + ".";
                         JOptionPane.showMessageDialog( null, message, title, JOptionPane.WARNING_MESSAGE );
                       }
@@ -3231,14 +3231,14 @@ public class RemoteConfiguration
           du.setRemote( remote );
           //          du.classifyButtons();
           Protocol protocol = du.getProtocol();
-          if ( protocol.getDefaultCmd().length() != numVar
+          if ( protocol.getDefaultCmdLength() != numVar
               || protocol.getFixedDataLength() != numFixed )
           {
             String title = "Protocol Variant Error";
             String message = "Error in RDF.  Wrong variant specified for PID = " + 
                 protocol.getID().toString() + ".  Number of fixed/command bytes\n" +
                 "should be " + numFixed + "/" + numVar +
-                ", for specified variant it is " + protocol.getDefaultCmd().length() +
+                ", for specified variant it is " + protocol.getDefaultCmdLength() +
                 "/" + protocol.getFixedDataLength() + ".";
             JOptionPane.showMessageDialog( null, message, title, JOptionPane.WARNING_MESSAGE );
           }
@@ -4791,7 +4791,7 @@ public class RemoteConfiguration
       Hex cmd = keyMove.getCmd();
       if ( remote.getAdvCodeBindFormat() == AdvancedCode.BindFormat.LONG 
           && remote.getAdvCodeFormat() == AdvancedCode.Format.HEX && moveUpgrade != null
-          && moveUpgrade.getProtocol().getDefaultCmd().length() == 1 && cmd.length() == 2 )
+          && moveUpgrade.getProtocol().getDefaultCmdLength() == 1 && cmd.length() == 2 )
       {
         int segFlags = keyMove.getSegmentFlags();
         cmd = cmd.subHex( 0, 1 );

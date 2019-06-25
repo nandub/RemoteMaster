@@ -45,7 +45,7 @@ public class LibraryLoader
 
     if ( libraries.get( libraryName ) == null )
     {
-      System.err.println( "LibraryLoader: Java version '" + System.getProperty( "java.version" ) + "' from '" + System.getProperty( "java.home" ) + "' running on '" + System.getProperty( "os.name" ) + "' (" + System.getProperty( "os.arch" ) + ")" );
+      // System.err.println( "LibraryLoader: Java version '" + System.getProperty( "java.version" ) + "' from '" + System.getProperty( "java.home" ) + "' running on '" + System.getProperty( "os.name" ) + "' (" + System.getProperty( "os.arch" ) + ")" );
       String mappedName = System.mapLibraryName( libraryName );
       if ( osName.equalsIgnoreCase( "Mac OS X" ) )
       {
@@ -110,7 +110,7 @@ public class LibraryLoader
   {
     if ( libraries.get( libraryName ) == null )
     {
-      System.err.println( "LibraryLoader: Java version '" + System.getProperty( "java.version" ) + "' from '" + System.getProperty( "java.home" ) + "' running on '" + System.getProperty( "os.name" ) + "' (" + System.getProperty( "os.arch" ) + ")" );
+      // System.err.println( "LibraryLoader: Java version '" + System.getProperty( "java.version" ) + "' from '" + System.getProperty( "java.home" ) + "' running on '" + System.getProperty( "os.name" ) + "' (" + System.getProperty( "os.arch" ) + ")" );
       System.err.println( "LibraryLoader: Attempting to load '" + libraryName + "' from java library path..." );
       System.err.println( "LibraryLoader: Java library path is '" + System.getProperty( "java.library.path" ) + "'" );
       System.loadLibrary( libraryName );

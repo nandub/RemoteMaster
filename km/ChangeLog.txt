@@ -1,3 +1,12 @@
+Changes for v2.08
+-- Release build 1
+- Include Rob's major revision of protocols.ini (Rob & Graham)
+- Fix poor coding causing numerous spurious error messages about missing parameter values (Graham)
+- Comment out the messages in Protocol.java about generating deviceImporters as they produce numerous irrelevant messages (Graham)
+- Add messages into rmaster.err concerning loading of protocols, and others to improve readability (Graham)
+- Fix bug preventing Key Move dialog from accepting setup codes > 2047 where permitted (Graham)
+- Fix bug preventing Key Move dialog error message appearing for setup code out of range (Graham)
+
 Changes for v2.07
 -- Release build 1
 - As v2.06 build 15 with some diagnostic printouts commented out (Graham)

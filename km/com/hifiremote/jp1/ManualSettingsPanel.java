@@ -693,7 +693,7 @@ ChangeListener, ListSelectionListener, ItemListener
             protocol.setDeviceTranslators( Arrays.asList( temp.getDeviceTranslators() ) );
             protocol.setCommandTranslators( Arrays.asList( temp.getCmdTranslators() ) );
             protocol.setDefaultCmd( temp.getDefaultCmd() );
-            protocol.setRawHex( temp.getFixedData( new Value[ 0 ] ) );
+            protocol.setRawHex( temp.getFixedData( new Value[ protocol.getFixedDataLength() ] ) );
             protocol.setCmdIndex( temp.getCmdIndex() );
           }
         }

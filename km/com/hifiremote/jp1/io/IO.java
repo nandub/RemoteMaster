@@ -18,6 +18,10 @@ public abstract class IO
     {
       LibraryLoader.loadLibrary( homeFolder, libraryName );
     }
+    else
+    {
+      System.err.println( "Loading internal library " + getInterfaceName() );
+    }
   }
 
   protected IO( String libraryName ) throws UnsatisfiedLinkError
@@ -25,6 +29,10 @@ public abstract class IO
     if ( libraryName != null )
     {
       LibraryLoader.loadLibrary( libraryName );
+    }
+    else
+    {
+      System.err.println( "Loading internal library " + getInterfaceName() );
     }
   }
 

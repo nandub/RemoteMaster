@@ -126,7 +126,7 @@ public class ImportRawUpgradeDialog extends JDialog implements ActionListener, D
       int cmdLen = 1;
       try
       {
-        cmdLen = deviceUpgrade.getProtocol().getDefaultCmd().length();
+        cmdLen = deviceUpgrade.getProtocol().getDefaultCmdLength();
       }
       catch ( Exception ex )
       {

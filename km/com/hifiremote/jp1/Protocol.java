@@ -116,14 +116,14 @@ public class Protocol
     }
     else
     {
-      System.err.println( "Generating deviceImporter for protocol " + name );
+      // System.err.println( "Generating deviceImporter for protocol " + name );
       int mappedIndex = 0;
       boolean needRemap = false;
       String[] map = new String[ 6 ];
       int maxParm = Math.min( map.length, devParms.length );
       for ( int i = 0; i < maxParm; i++ )
       {
-        System.err.println( "DevParm is " + devParms[ i ].getName() );
+        // System.err.println( "DevParm is " + devParms[ i ].getName() );
         if ( devParms[ i ].getClass() != FlagDeviceParm.class )
         {
           map[ i ] = Integer.toString( mappedIndex );
@@ -582,7 +582,7 @@ public class Protocol
         if ( p != this && p.getID( remote ).get( 0 ) == pid && code != null )
         {
           match = ( ( Protocol.getFixedDataLengthFromCode( proc, code ) == getFixedDataLength() ) && ( Protocol
-              .getCmdLengthFromCode( proc, code ) == getDefaultCmd().length() ) );
+              .getCmdLengthFromCode( proc, code ) == getDefaultCmdLength() ) );
           return new ProtocolUpgrade( pid, code, null );
         }
       }
@@ -604,7 +604,7 @@ public class Protocol
         // Check the matching conditions
         match = ( !puCode.equals( code ) )
             && ( Protocol.getFixedDataLengthFromCode( proc, puCode ) == getFixedDataLength() )
-            && ( Protocol.getCmdLengthFromCode( proc, puCode ) == getDefaultCmd().length() );
+            && ( Protocol.getCmdLengthFromCode( proc, puCode ) == getDefaultCmdLength() );
         if ( match )
           return pu;
       }
@@ -1484,9 +1484,14 @@ public class Protocol
     return defaultFixedData.length();
   }
   
+  public int getDefaultCmdLength()
+  {
+    return defaultCmd.length();
+  }
+  
   public ManualProtocol convertToManual( Remote remote, Value[] parmValues, Hex customCode )
   {
-    int cmdLen = getDefaultCmd().length();
+    int cmdLen = getDefaultCmdLength();
     int cmdType = ( cmdLen == 1 ) ? 0 : 1;
     Hex pid = null;
     try
@@ -1530,7 +1535,7 @@ public class Protocol
     {
       // Preserve hex rather than command parameters
       int oldLength = defaultCmd.length();
-      int newLength = newProtocol.getDefaultCmd().length();
+      int newLength = newProtocol.getDefaultCmdLength();
       if ( newLength == oldLength )
       {
         return true;
@@ -1858,7 +1863,7 @@ public class Protocol
         pu = new ProtocolUpgrade( getID( remote ).get( 0 ), new Hex( 0 ), null );
       }
       int fixedDataLength = getFixedDataLength();
-      int cmdLength = getDefaultCmd().length();
+      int cmdLength = getDefaultCmdLength();
 
       pu.setManualProtocol( remote, fixedDataLength, cmdLength );
       mp = pu.getManualProtocol( remote );

@@ -71,7 +71,7 @@ public class ManualDevicePanel extends JPanel implements ChangeListener, Documen
     add( label, "1, 3" );
     rawHexData = new JTextField();
     rawHexData.getDocument().addDocumentListener( this );
-    rawHexData.setText( protocol.getFixedData( new Value[ 0 ] ).toString() );
+    rawHexData.setText( protocol.getFixedData( new Value[ protocol.getFixedDataLength() ] ).toString() );
     new TextPopupMenu( rawHexData );
     add( rawHexData, "3, 3" );
 
@@ -94,7 +94,7 @@ public class ManualDevicePanel extends JPanel implements ChangeListener, Documen
 
     label = new JLabel( "Command Index:", SwingConstants.RIGHT );
     add( label, "1, 7" );
-    cmdIndex = new JSpinner( new SpinnerNumberModel( protocol.getCmdIndex(), 0, protocol.getDefaultCmd().length() - 1,
+    cmdIndex = new JSpinner( new SpinnerNumberModel( protocol.getCmdIndex(), 0, protocol.getDefaultCmdLength() - 1,
         1 ) );
     cmdIndex.addChangeListener( this );
     add( cmdIndex, "3, 7" );
@@ -128,9 +128,9 @@ public class ManualDevicePanel extends JPanel implements ChangeListener, Documen
     deviceTable.setModel( deviceModel );
     commandModel = new ParameterTableModel( protocol, ParameterTableModel.Type.COMMAND );
     commandTable.setModel( commandModel );
-    SpinnerNumberModel spinnerModel = new SpinnerNumberModel( protocol.getCmdIndex(), 0, protocol.getDefaultCmd().length() - 1, 1 );
+    SpinnerNumberModel spinnerModel = new SpinnerNumberModel( protocol.getCmdIndex(), 0, protocol.getDefaultCmdLength() - 1, 1 );
     cmdIndex.setModel( spinnerModel );
-    rawHexData.setText( protocol.getFixedData( new Value[ 0 ] ).toString() );
+    rawHexData.setText( protocol.getFixedData( new Value[ protocol.getFixedDataLength() ] ).toString() );
     if ( settingsDialog != null )
     {
       deviceModel.setManualSettingsPanel( settingsDialog.getManualSettingsPanel() );

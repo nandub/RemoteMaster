@@ -112,7 +112,7 @@ public class CombinerDeviceDialog
       protocols.add( new ManualProtocol( null, null ));
     for ( Protocol protocol : allProtocols )
     {
-      if ( protocol.getDefaultCmd().length() == 1 )
+      if ( protocol.getDefaultCmdLength() == 1 )
         protocols.add( protocol );
     }
     if ( dev == null )

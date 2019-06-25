@@ -194,7 +194,7 @@ public class DeviceUpgradePanel extends RMTablePanel< DeviceUpgrade >
     if ( remoteConfig.hasSegments() && newUpgrade != null && newUpgrade.getProtocol() != null )
     {
       Protocol p = newUpgrade.getProtocol();
-      newUpgrade.setSizeCmdBytes( p.getDefaultCmd().length() );
+      newUpgrade.setSizeCmdBytes( p.getDefaultCmdLength() );
       newUpgrade.setSizeDevBytes( p.getFixedDataLength() );
       newUpgrade.setSegmentFlags( 0xFF );   // Default value
     }

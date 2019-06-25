@@ -62,7 +62,7 @@ public class LearnedSignalDecode
       values[ i ] = new Value( null, protocol.cmdParms[ i ].getDefaultValue() );
     }
 
-    Hex pHex = new Hex( protocol.getDefaultCmd().length() );
+    Hex pHex = new Hex( protocol.getDefaultCmdLength() );
     CmdParameter[] parms = protocol.cmdParms;
     for ( int i = 0; i < parms.length; i++ )
     {
