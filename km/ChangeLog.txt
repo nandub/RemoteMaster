@@ -6,6 +6,9 @@ Changes for v2.08
 - Add messages into rmaster.err concerning loading of protocols, and others to improve readability (Graham)
 - Fix bug preventing Key Move dialog from accepting setup codes > 2047 where permitted (Graham)
 - Fix bug preventing Key Move dialog error message appearing for setup code out of range (Graham)
+-- Private build 2
+- In disassembly of S3C80/S3F80 code indeterminate between the two, use RDF to determine start address (Graham)
+- Update build.xml to include jp1usb v0.04 in the distribution package (Graham)
 
 Changes for v2.07
 -- Release build 1

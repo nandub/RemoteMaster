@@ -30,6 +30,7 @@ public class AssemblerTableModel extends JP1TableModel< AssemblerItem >
   private int codeIndex = 0;
   private int midFrameIndex = 0;
   private int forcedRptCount = 0;
+  private Remote remote = null;  // Used to resolve S3C80/S3F80 ambiguities
   private short[] data = null;
   
   private static final String[] colNames =
@@ -46,6 +47,11 @@ public class AssemblerTableModel extends JP1TableModel< AssemblerItem >
   {
     setData( itemList );
     assemblerCellEditor.setClickCountToStart( 1 );
+  }
+
+  public void setRemote( Remote remote )
+  {
+    this.remote = remote;
   }
 
   @Override
@@ -381,12 +387,18 @@ public class AssemblerTableModel extends JP1TableModel< AssemblerItem >
 
     if ( hex != null && hex.length() > 0 )
     {
-      if ( processor instanceof S3C80Processor 
-          && ( ( S3C80Processor )processor ).testCode( hex ) == S3C80Processor.CodeType.NEW )
+      if ( processor instanceof S3C80Processor )
       {
-        addr = S3C80Processor.newRAMAddress;  // S3C8+ code
-        processor = ProcessorManager.getProcessor( "S3F80" );
-        settingsPanel.setProcessor( processor );
+        S3C80Processor.CodeType type = ( ( S3C80Processor )processor ).testCode( hex );
+        if ( type == S3C80Processor.CodeType.NEW 
+            || type == S3C80Processor.CodeType.UNKNOWN && remote != null 
+              && remote.getProcessor().getEquivalentName().equals( "S3C80" )
+              && remote.getRAMAddress() == S3C80Processor.newRAMAddress )
+        {
+          addr = S3C80Processor.newRAMAddress;  // S3C8+ code
+          processor = ProcessorManager.getProcessor( "S3F80" );
+          settingsPanel.setProcessor( processor );
+        }
       }
       
 //      // Add ORG statement

@@ -1891,6 +1891,7 @@ public class Protocol
     }
 
     ManualSettingsDialog dialog = new ManualSettingsDialog( ( JFrame )SwingUtilities.getRoot( locator ), mp );
+    dialog.setRemote( remote );
     ManualSettingsPanel settingsPanel = dialog.getManualSettingsPanel();
     settingsPanel.pid.setEditable( false );
     settingsPanel.pid.setEnabled( false );

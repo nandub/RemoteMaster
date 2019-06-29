@@ -125,6 +125,11 @@ public class ManualSettingsDialog extends JDialog implements ActionListener
     int y = rect.y - rect.height / 2;
     setLocation( x, y );
   }
+  
+  public void setRemote( Remote remote )
+  {
+    editorPanel.setRemote( remote );
+  }
 
   public void actionPerformed( ActionEvent e )
   {

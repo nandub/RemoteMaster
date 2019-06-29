@@ -106,6 +106,11 @@ public class ManualEditorPanel extends JPanel implements ActionListener, ChangeL
     devicePanel.add( buttonPanel, "1, 11, 3, 11" );
   }
   
+  public void setRemote( Remote remote )
+  {
+    manualSettingsPanel.getAssemblerModel().setRemote( remote );
+  }
+  
   public JButton getTranslationButton()
   {
     return translationButton;
