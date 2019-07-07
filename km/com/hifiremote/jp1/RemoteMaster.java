@@ -4626,8 +4626,14 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
       }
       else if (!interfaceState.isIndeterminate())
       {
-        interfaceState.setIndeterminate( true );
-        interfaceState.setValue( 0 );
+        javax.swing.SwingUtilities.invokeLater( new Runnable()
+        {
+          public void run()
+          {
+            interfaceState.setIndeterminate( true );
+            interfaceState.setValue( 0 );
+          }
+        } );
       }
 
       interfaceState.setString( state );
