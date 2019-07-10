@@ -780,7 +780,8 @@ public class GeneralFunction
     else if ( this instanceof Macro )
     {
       Macro m = ( Macro )this;
-      return !m.isSystemMacro() && m.getActivity() == null;
+      return !m.isSystemMacro() && ( m.getActivity() == null
+          || m.getUsers() != null && !m.getUsers().isEmpty() );
     }
     else return true;
     

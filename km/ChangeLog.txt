@@ -10,6 +10,9 @@ Changes for v2.08
 - In disassembly of S3C80/S3F80 code indeterminate between the two, use RDF to determine start address (Graham)
 - Update build.xml to include jp1usb v0.04 in the distribution package (Graham)
 - Use invokeLater(...) in RemoteMaster.setInterfaceState(...) to avoid concurrency problems with progress bar (Graham)
+-- Private build 3
+- In generalFunction.accept(), accept activity macro that also has users (Graham)
+- In RemoteConfiguration.decodeItem(...), support macroref tag adding activity to macro that already has users (Graham)
 
 Changes for v2.07
 -- Release build 1

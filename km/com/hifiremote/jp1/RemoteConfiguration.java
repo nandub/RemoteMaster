@@ -1325,7 +1325,15 @@ public class RemoteConfiguration
         Macro macro = items.macroMap.get( ref );
         if ( macro != null )
         {
-          macro.addReference( items.db, remote.getButton( items.key.keycode ) );
+          if ( items.db != null )
+          {
+            macro.addReference( items.db, remote.getButton( items.key.keycode ) );
+          }
+          else if ( items.activity != null )
+          {
+            items.activity.setMacro( macro );
+            macro.setActivity( items.activity );
+          }
         }
         else
         {
