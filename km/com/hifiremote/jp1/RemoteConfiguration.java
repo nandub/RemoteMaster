@@ -451,6 +451,20 @@ public class RemoteConfiguration
         {
           activity.setSelector( remote.getButton( macro.getKeyCode() ) );
         }
+        if ( macro.getUserItems() != null && !macro.getUserItems().isEmpty() )
+        {
+          // This is the case of an activity macro that is also assigned to keys.
+          // The Macro section has the device button index and keycode both set as
+          // the keycode of the activity selector button.  This has now been used to
+          // assign the macro to the activity.  These values now need resetting to
+          // those of the first key user, as these are the values used in the Macros
+          // panel, which is then removed from the list of user items as the
+          // corresponding user will be created by updateReferences() from the 
+          // device button index and keycode.
+          int ui = macro.getUserItems().remove( 0 );
+          macro.setDeviceButtonIndex( ui >> 16 );
+          macro.setKeyCode( ui & 0xFFFF );
+        }
       }
     }
     if ( remote.usesEZRC() )
@@ -1327,10 +1341,32 @@ public class RemoteConfiguration
         {
           if ( items.db != null )
           {
+            if ( macro.getUsers().isEmpty() )
+            {
+              // This is the case where an activity macro has been created but with
+              // no users yet added to it.  The keycode and deviceButtonIndex
+              // of the macro are set to the values for the first button reference 
+              // whenever there are button references.  Here this will override their
+              // current setting to the keycode of the activity selector button.
+              macro.setDeviceButtonIndex( items.db.getButtonIndex() );
+              macro.setKeyCode( items.key.keycode );
+            }
+            // A new user is added in all cases, the above being the only case where
+            // the device and button assignment of the macro is also changed.
             macro.addReference( items.db, remote.getButton( items.key.keycode ) );
           }
           else if ( items.activity != null )
           {
+            if ( macro.getActivity() != null )
+            {
+              // A second activity is being added to this macro.  This has never been seen and is not
+              // supported by the current data structures of RMIR.
+              System.err.println( "*** Error: RMIR does not support the same macro being assigned to more than one Activity" );
+            }
+            
+            // This is the case where a key macro has been created and an activity
+            // reference is being added to it.  The device and button assignment
+            // of the macro is left unchanged.
             items.activity.setMacro( macro );
             macro.setActivity( items.activity );
           }
@@ -3532,6 +3568,9 @@ public class RemoteConfiguration
       }
       if ( macro.getUserItems() != null )
       {
+        // UserItems includes all key assignments of the macro other than that given
+        // by the device button and keycode values of the macro, for which the
+        // reference will have already been created.  
         for ( Integer i : macro.getUserItems() )
         {
           DeviceButton uidb = remote.getDeviceButton( i >> 16 );

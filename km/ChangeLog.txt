@@ -13,6 +13,10 @@ Changes for v2.08
 -- Private build 3
 - In generalFunction.accept(), accept activity macro that also has users (Graham)
 - In RemoteConfiguration.decodeItem(...), support macroref tag adding activity to macro that already has users (Graham)
+-- Private build 4
+- Improve the fix to RemoteConfiguration.decodeItem(...) made in build 3 (Graham)
+- Update Macro.store(PropertyWriter) to handle macros that are both activity and key macros (Graham)
+- Update RemoteConfiguration.parse(PropertyWriter) to handle the Macro.store(...) update (Graham)
 
 Changes for v2.07
 -- Release build 1

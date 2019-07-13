@@ -448,14 +448,17 @@ public class Macro extends AdvancedCode
         }
       }
       pw.print( "Name", name );
-      pw.print( "DeviceIndex", deviceButtonIndex );
-      pw.print( "KeyCode", keyCode );
+      int activityCode = activity != null ? activity.getSelector().getKeyCode() : -1;
+      pw.print( "KeyCode", activityCode < 0 ? keyCode : activityCode );
+      pw.print( "DeviceIndex", activityCode < 0 ? deviceButtonIndex : activityCode );
       String userStr = "";
       for ( User u : users )
       {
+        // userStr includes all key references if the macro is also an activity macro,
+        // otherwise it excludes the one to which the macro is assigned.
         int dbi = u.db.getButtonIndex();
         int kc = u.button.getKeyCode();
-        if ( dbi != deviceButtonIndex || kc != keyCode )
+        if ( activityCode >= 0 || dbi != deviceButtonIndex || kc != keyCode )
         {
           userStr += ( userStr.isEmpty() ? "" : "," ) + Integer.toString( dbi ) + "/" + Integer.toString( kc );
         }
