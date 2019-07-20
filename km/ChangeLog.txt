@@ -17,6 +17,10 @@ Changes for v2.08
 - Improve the fix to RemoteConfiguration.decodeItem(...) made in build 3 (Graham)
 - Update Macro.store(PropertyWriter) to handle macros that are both activity and key macros (Graham)
 - Update RemoteConfiguration.parse(PropertyWriter) to handle the Macro.store(...) update (Graham)
+-- Private build 5
+- Make MacroPanel.editMacro(...) preserve any assignment of the macro to an activity (Graham)
+- Fix bug in JPS.java preventing a Simpleset remote to be saved as a .bin file in certain circumstances (Graham)
+- Fix bug in RMExtInstall for Simpleset extenders when E2 area of extender differs from that of unextended remote (Graham)
 
 Changes for v2.07
 -- Release build 1

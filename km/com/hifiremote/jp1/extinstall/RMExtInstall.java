@@ -283,6 +283,7 @@ public class RMExtInstall extends ExtInstall
       Rdf rdf, int sigAddr ) throws IOException
   {
     int oldSetupMax = SetupCode.getMax();
+    int eepromSize = 0;
     Remote remote = null;
     short[] sigData = null;
     BufferedReader rdr = null;
@@ -361,7 +362,7 @@ public class RMExtInstall extends ExtInstall
       // by first finding the end address from the unextended remote then subtracting the
       // base address for the extender.  For non-simpleset remotes the two base addresses will
       // be the same and the E2 size will simply be that of the unextended remote.
-      int eepromSize = ( ( extenderMerge ) ? remoteConfig.getRemote().getEepromSize() 
+      eepromSize = ( ( extenderMerge ) ? remoteConfig.getRemote().getEepromSize() 
           + remoteConfig.getRemote().getBaseAddress() : Config.size() ) - baseAddr;
       if ( Config.size() > baseAddr + eepromSize )
       {
@@ -472,6 +473,20 @@ public class RMExtInstall extends ExtInstall
           missingDev.add( i );
         }
       }
+      int dataEnd = remoteConfig.getRemote().getCheckSums()[ 0 ].getAddressRange().getEnd();
+      if ( dataEnd >= eepromSize )
+      {
+        // Current data will not fit into the smaller eeprom area of the extender
+        int maxAddress = remoteConfig.getRemote().getBaseAddress() + eepromSize;
+        String message = "<html>"
+            + "The current setup is too large to fit into the reduced data area of the extended remote.<br>"
+            + "If you still wish to install the extender, please delete some data so that all the values<br>"
+            + "shown on the Raw Data tab beyond address " + Integer.toHexString( maxAddress ) + " are FF.</html>";
+        String title = "Data too large to fit";
+        JOptionPane.showMessageDialog( null, message, title, JOptionPane.INFORMATION_MESSAGE );
+        errorMsg = "Aborting installation.";
+        return;
+      }
       remoteConfig.setRemote( remote );
       for ( DeviceUpgrade du : remoteConfig.getDeviceUpgrades() )
       {
@@ -479,6 +494,8 @@ public class RMExtInstall extends ExtInstall
       }
       remoteConfig.setSigData( sigData );
       remoteConfig.setDeviceButtonSegments();
+      if ( remoteConfig.getData().length != eepromSize )
+        remoteConfig.resizeData( eepromSize );
       List< Activity > list = new ArrayList< Activity >();
       LinkedHashMap< Button, Activity > activities = remoteConfig.getActivities();
       if ( activities != null )

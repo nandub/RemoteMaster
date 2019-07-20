@@ -70,6 +70,12 @@ public class MacroPanel extends RMTablePanel< Macro >
           }
         }
       }
+      Activity activity = baseMacro.getActivity();
+      if ( activity != null )
+      {
+        newMacro.setActivity( activity );
+        activity.setMacro( newMacro );
+      }
       model.setRow( sorter.modelIndex( row ), newMacro );
     }
   }

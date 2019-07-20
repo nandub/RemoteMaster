@@ -387,7 +387,7 @@ public class JPS extends IO
       {
         maxChunkSize = 512;
       }
-      FileChannel o = FileChannel.open( Paths.get( filePath ), StandardOpenOption.WRITE, StandardOpenOption.SYNC );
+      FileChannel o = FileChannel.open( Paths.get( filePath ), StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.SYNC );
       int dataWritten = 0, total = bao.size(), dataLeft = total, chunkSize;
       byte[] data = bao.toByteArray();
       setProgressName( "UPLOADING:" );
@@ -407,6 +407,7 @@ public class JPS extends IO
     }
     catch ( Exception e )
     {
+      System.err.println( e.getMessage() );
       return -1;
     }
 

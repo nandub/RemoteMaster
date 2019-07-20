@@ -8510,6 +8510,22 @@ public class RemoteConfiguration
     return data;
   }
   
+  public void resizeData( int newLength )
+  {
+    if ( data.length == newLength )
+      return;
+    
+    short[] newData = Arrays.copyOf( data, newLength );
+    short[] newSavedData = Arrays.copyOf( savedData, newLength );
+    if ( newLength > data.length )
+    {
+      Arrays.fill( newData, data.length, newLength, ( short )0xFF );
+      Arrays.fill( newSavedData, data.length, newLength, ( short )0xFF );
+    }
+    data = newData;
+    savedData = newSavedData;
+  }
+  
   public String getSigString()
   {
     if ( sigData == null || ( sigData[ 0 ] + sigData[ 1 ] ) == 0xFF )
