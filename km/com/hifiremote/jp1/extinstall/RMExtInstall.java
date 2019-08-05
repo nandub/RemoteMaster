@@ -362,7 +362,7 @@ public class RMExtInstall extends ExtInstall
       // by first finding the end address from the unextended remote then subtracting the
       // base address for the extender.  For non-simpleset remotes the two base addresses will
       // be the same and the E2 size will simply be that of the unextended remote.
-      eepromSize = ( ( extenderMerge ) ? remoteConfig.getRemote().getEepromSize() 
+      eepromSize = ( ( /*extenderMerge*/ true ) ? remoteConfig.getRemote().getEepromSize() 
           + remoteConfig.getRemote().getBaseAddress() : Config.size() ) - baseAddr;
       if ( Config.size() > baseAddr + eepromSize )
       {

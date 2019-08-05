@@ -3791,12 +3791,14 @@ public class RemoteConfiguration
     // Filter on matching eeprom size.  JP2style remotes where the EEPROM size is 
     // not a whole number of flash pages are considered as matching if the data
     // size is the EEPROM size rounded up to a whole number of flash pages.
+    // If data == null then dataSize is the end of an address range and so must
+    // be no more than the EEPROM size.  This case arises when importing a WAV file.
     for ( Iterator< Remote > it = remotes.iterator(); it.hasNext(); )
     {
       Remote r = it.next();
       int pageSize = r.getProcessor().getPageSize();
       if ( !( r.getEepromSize() == dataSize
-          || r.isSSD() && r.getEepromSize() > dataSize 
+          || ( r.isSSD() || data == null ) && r.getEepromSize() > dataSize 
           || r.isJP2style() && dataSize % pageSize == 0
                 && r.getEepromSize() < dataSize  
                 && ( dataSize - r.getEepromSize()) < pageSize ) )
@@ -3809,7 +3811,8 @@ public class RemoteConfiguration
       // The addition of 0x3FF is to handle cases such as the URC7955, with a EEPROM size of
       // 0xFFC which is more appropriately referred to as 4k than 3k.
       String message = "No remote found with signature starting " + signature
-        + " and EEPROM size " + ( ( dataSize + 0x3FF ) >> 10 ) + "k";
+        + " and EEPROM size " + ( data == null ? "at least " : "" ) 
+        + ( ( dataSize + 0x3FF ) >> 10 ) + "k";
       JOptionPane.showMessageDialog( null, message, "Unknown remote", JOptionPane.ERROR_MESSAGE );
       return null;
     }
@@ -3840,7 +3843,7 @@ public class RemoteConfiguration
       }
       else
       {
-        String message = "The file you are loading is for a remote with signature \"" + signature
+        String message = "The file you are loading is for a remote with signature " + ( data == null ? "starting " : "") + "\"" + signature
         + "\".\nThere are multiple remotes with that signature.  Please choose the best match from the list below:";
 
         remote = ( Remote )JOptionPane.showInputDialog( null, message, "Unknown Remote", JOptionPane.ERROR_MESSAGE,
@@ -3984,7 +3987,7 @@ public class RemoteConfiguration
    * @throws IOException
    *           Signals that an I/O exception has occurred.
    */
-  private void importIR( PropertyReader pr, boolean deleteUsedProts ) throws IOException
+  public void importIR( PropertyReader pr, boolean deleteUsedProts ) throws IOException
   {
     Property property = null;
     if ( pr != null )
@@ -8524,6 +8527,13 @@ public class RemoteConfiguration
     }
     data = newData;
     savedData = newSavedData;
+    if ( baselineData != null )
+    {
+      short[] newBaselineData = Arrays.copyOf( baselineData, newLength );
+      if ( newLength > data.length )
+        Arrays.fill( newBaselineData, data.length, newLength, ( short )0xFF );
+      baselineData = newBaselineData;
+    }
   }
   
   public String getSigString()
@@ -8743,7 +8753,7 @@ public class RemoteConfiguration
   /** The data. */
   private short[] data = null;
   
-  protected short[] origData = null;
+//  protected short[] origData = null;
   
   private short[] sigData = null;
   

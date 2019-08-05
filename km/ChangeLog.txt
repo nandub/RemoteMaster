@@ -21,6 +21,10 @@ Changes for v2.08
 - Make MacroPanel.editMacro(...) preserve any assignment of the macro to an activity (Graham)
 - Fix bug in JPS.java preventing a Simpleset remote to be saved as a .bin file in certain circumstances (Graham)
 - Fix bug in RMExtInstall for Simpleset extenders when E2 area of extender differs from that of unextended remote (Graham)
+-- Release build 6
+- Make remoteConfiguration.resizeData(..) handle baselineData correctly (Graham)
+- Make functionBox be populated when opening MacroDialog for remotes that use EZRC (Graham)
+- Add support for importing, exporting and playing Wav files for legacy remotes with modem upgrade capability (Graham)
 
 Changes for v2.07
 -- Release build 1

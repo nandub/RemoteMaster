@@ -97,7 +97,11 @@ import com.hifiremote.jp1.FixedData.Location;
 import com.hifiremote.jp1.JP2Analyzer;
 import com.hifiremote.jp1.extinstall.BTExtInstall;
 import com.hifiremote.jp1.extinstall.ExtInstall;
+import com.hifiremote.jp1.extinstall.RMWavConverter;
+import com.hifiremote.jp1.extinstall.IrHex;
 import com.hifiremote.jp1.extinstall.RMExtInstall;
+import com.hifiremote.jp1.extinstall.IrHexArray;
+import com.hifiremote.jp1.extinstall.RMWavPlayer;
 import com.hifiremote.jp1.io.BLERemote;
 import com.hifiremote.jp1.io.CommHID;
 import com.hifiremote.jp1.io.JP2BT;
@@ -130,7 +134,9 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
 
   /** Description of the Field. */
   public final static String version = "v2.08";
-  public final static int buildVer = 5;
+  public final static int buildVer = 6;
+  
+  public enum WavOp { NEW, MERGE, SAVE, PLAY };
   
   public static class LanguageDescriptor
   {
@@ -246,6 +252,16 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
   private RMAction saveAsAction = null;
 
   private JMenuItem installExtenderItem = null;
+  private JMenuItem importFromWavNewItem = null;
+  private JMenuItem importFromWavMergeItem = null;
+  
+  private JMenu exportToWavSubMenu = null;
+  private JMenuItem exportToWavImageItem = null;
+  private JMenuItem exportToWavSettingsItem = null;
+  private JMenuItem exportToWavMacrosEtcItem = null;
+  private JMenuItem exportToWavTimedMacrosItem = null;
+  private JMenuItem exportToWavUpgradesItem = null;
+  private JMenuItem exportToWavLearnedItem = null;
 
   private RMAction openRdfAction = null;
 
@@ -293,15 +309,15 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
 
   /** The upload action. */
   private RMAction uploadAction = null;
+  
+  private JMenuItem uploadWavItem = null;
+  private JMenuItem cancelWavUploadItem = null;
 
   /** The raw download item */
   private JMenuItem downloadRawItem = null;
 
   /** The verify upload item */
   private JCheckBoxMenuItem verifyUploadItem = null;
-
-  /** The upload wav item. */
-  private JMenuItem uploadWavItem = null;
 
   // Options menu items
   /** The look and feel items. */
@@ -474,6 +490,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
   }
 
   private TextFileViewer rdfViewer = null;
+  private RMWavPlayer wavPlayer = null;
 
   private List< AssemblerItem > clipBoardItems = new ArrayList< AssemblerItem >();
   
@@ -1373,25 +1390,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
             JOptionPane.showMessageDialog( RemoteMaster.this, message, title, JOptionPane.INFORMATION_MESSAGE );
             return;
           }
-
-          ProtocolManager.getProtocolManager().reset();
-          clearAllInterfaces();
-          remoteConfig = new RemoteConfiguration( remote, RemoteMaster.this );
-          recreateToolbar();
-          remoteConfig.initializeSetup( 0 );
-          remoteConfig.updateImage();
-          remoteConfig.setDateIndicator();
-          remoteConfig.setSavedData();
-          update();
-          saveAction.setEnabled( false );
-          saveAsAction.setEnabled( true );
-          openRdfAction.setEnabled( true );
-          installExtenderItem.setEnabled( true );
-          cleanUpperMemoryItem.setEnabled( true );
-          initializeTo00Item.setEnabled( !interfaces.isEmpty() );
-          initializeToFFItem.setEnabled( !interfaces.isEmpty() );
-          uploadable = !interfaces.isEmpty();
-          uploadAction.setEnabled( uploadable && allowUpload() );
+          resetConfig( remote, null );
         }
         else if ( command.equals( "NEWDEVICE" ) )
         {
@@ -2393,7 +2392,62 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
     installExtenderItem.addActionListener( this );
     installExtenderItem.setEnabled( false );
     menu.add( installExtenderItem );
+    
+    JMenu importFromWavSubMenu = new JMenu( "Import from Wav" );
+    importFromWavSubMenu.setMnemonic( KeyEvent.VK_M );
+    importFromWavSubMenu.setToolTipText( "Load into RMIR a .wav file created for modem upgrade." );
+    menu.add( importFromWavSubMenu );
+    
+    importFromWavNewItem = new JMenuItem( "New Image..." );
+    importFromWavNewItem.setMnemonic( KeyEvent.VK_N );
+    importFromWavNewItem.addActionListener( this );
+    importFromWavSubMenu.add( importFromWavNewItem );
+    
+    importFromWavMergeItem = new JMenuItem( "Merge with Current..." );
+    importFromWavMergeItem.setMnemonic( KeyEvent.VK_M );
+    importFromWavMergeItem.addActionListener( this );
+    importFromWavMergeItem.setEnabled( false );
+    importFromWavSubMenu.add( importFromWavMergeItem );
+    
+    exportToWavSubMenu = new JMenu( "Export to Wav" );
+    exportToWavSubMenu.setMnemonic( KeyEvent.VK_E );
+    exportToWavSubMenu.setToolTipText( 
+        "<html>Export the whole or part of the current setup of a modem-enabled remote<br>"
+            + "as a .wav file for modem upgrade.  The item &quot;Upload using Wav&quot; on the<br>"
+            + "Remote menu may be used to play the file for uploading to the remote.</html>" );
+    exportToWavSubMenu.setEnabled( false );
+    menu.add( exportToWavSubMenu );
+    
+    exportToWavImageItem = new JMenuItem( "Entire Image..." );
+    exportToWavImageItem.setMnemonic( KeyEvent.VK_E );
+    exportToWavImageItem.addActionListener( this );
+    exportToWavSubMenu.add( exportToWavImageItem );
+    
+    exportToWavSettingsItem = new JMenuItem( "Settings..." );
+    exportToWavSettingsItem.setMnemonic( KeyEvent.VK_S );
+    exportToWavSettingsItem.addActionListener( this );
+    exportToWavSubMenu.add( exportToWavSettingsItem );
 
+    exportToWavMacrosEtcItem = new JMenuItem( "KeyMoves, Macros, Fav Lists..." );
+    exportToWavMacrosEtcItem.setMnemonic( KeyEvent.VK_K );
+    exportToWavMacrosEtcItem.addActionListener( this );
+    exportToWavSubMenu.add( exportToWavMacrosEtcItem );
+    
+    exportToWavTimedMacrosItem = new JMenuItem( "Timed Macros..." );
+    exportToWavTimedMacrosItem.setMnemonic( KeyEvent.VK_T );
+    exportToWavTimedMacrosItem.addActionListener( this );
+    exportToWavSubMenu.add( exportToWavTimedMacrosItem );
+ 
+    exportToWavUpgradesItem = new JMenuItem( "Upgrades..." );
+    exportToWavUpgradesItem.setMnemonic( KeyEvent.VK_U );
+    exportToWavUpgradesItem.addActionListener( this );
+    exportToWavSubMenu.add( exportToWavUpgradesItem );
+    
+    exportToWavLearnedItem = new JMenuItem( "Learned Signals..." );
+    exportToWavLearnedItem.setMnemonic( KeyEvent.VK_L );
+    exportToWavLearnedItem.addActionListener( this );
+    exportToWavSubMenu.add( exportToWavLearnedItem );
+    
     menu.addSeparator();
 
     JMenu menuSetDirectory = new JMenu( "Set Directory" );
@@ -2705,16 +2759,26 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
         "Select highlight color", null );
     highlightAction.setEnabled( false );
 
-    uploadWavItem = new JMenuItem( "Create WAV", KeyEvent.VK_W );
-    uploadWavItem.setVisible( false );
-    uploadWavItem.addActionListener( this );
-    menu.add( uploadWavItem );
-
     menu.addSeparator();
     downloadRawItem = new JMenuItem( "Raw download", KeyEvent.VK_R );
     downloadRawItem.setEnabled( true );
     downloadRawItem.addActionListener( this );
     menu.add( downloadRawItem );
+    
+    uploadWavItem = new JMenuItem( "Upload using Wav...", KeyEvent.VK_W );
+    uploadWavItem.setToolTipText( 
+        "<html>Play a .wav file for uploading to a remote with modem upgrade<br>"
+            + "capability.  See the Wiki on the JP1 website for guidance.  You<br>"
+            + "can use the item &quot;Export to Wav&quot; on the File menu to<br>"
+            + "create a .wav file from an existing setup for such a remote.</html>" );
+    uploadWavItem.addActionListener( this );
+    menu.add( uploadWavItem );
+    
+    cancelWavUploadItem = new JMenuItem( "Cancel Wav Upload", KeyEvent.VK_C );
+    cancelWavUploadItem.setToolTipText( "Cancel the playback of a .wav file during a modem upgrade." );
+    cancelWavUploadItem.addActionListener( this );
+    cancelWavUploadItem.setEnabled( false );
+    menu.add( cancelWavUploadItem );
 
     menu.addSeparator();
     verifyUploadItem = new JCheckBoxMenuItem( "Verify after upload" );
@@ -3286,6 +3350,17 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
 
     return chooser;
   }
+  
+  public RMFileChooser getWavFileChooser( WavOp wavOp )
+  {
+    RMFileChooser chooser = new RMFileChooser( dir );
+    EndingFileFilter wavFilter = new EndingFileFilter( "Sound files (*.wav)", wavEndings );
+    chooser.setDialogTitle( "Select the sound file to " + ( wavOp == WavOp.PLAY ? "play" : "import" ) );
+    chooser.addChoosableFileFilter( wavFilter );
+    chooser.setFileFilter( wavFilter );
+
+    return chooser;
+  }
 
   public RMFileChooser getFileSaveChooser( boolean validConfiguration )
   {
@@ -3308,6 +3383,16 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
       }
     }
     chooser.setFileFilter( useFilter );
+    return chooser;
+  }
+  
+  public RMFileChooser getWavFileSaveChooser()
+  {
+    RMFileChooser chooser = new RMFileChooser( dir );
+    chooser.setAcceptAllFileFilterUsed( false );
+    EndingFileFilter wavFilter = new EndingFileFilter( "Sound files (*.wav)", wavEndings );
+    chooser.addChoosableFileFilter( wavFilter );
+    chooser.setFileFilter( wavFilter );
     return chooser;
   }
 
@@ -3412,26 +3497,20 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
     openFile( null );
   }
 
-  /**
-   * Description of the Method.
-   * 
-   * @param file
-   *          the file
-   * @return Description of the Return Value
-   * @throws Exception
-   *           the exception
-   * @exception Exception
-   *              Description of the Exception
-   */
   public void openFile( File file ) throws Exception
   {
-    if ( !promptToSave() )
+    openFile( file, null );
+  }
+  
+  public void openFile( File file, WavOp wavOp ) throws Exception
+  {
+    if ( ( wavOp == null || wavOp != WavOp.PLAY ) && !promptToSave() )
     {
       return;
     }
     while ( file == null )
     {
-      RMFileChooser chooser = getFileChooser();
+      RMFileChooser chooser = wavOp == null ? getFileChooser() : getWavFileChooser( wavOp );
       int returnVal = chooser.showOpenDialog( this );
       if ( returnVal == RMFileChooser.APPROVE_OPTION )
       {
@@ -3534,6 +3613,37 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
       return;
     }
     
+    if ( wavOp != null && ext.equals( ".wav" ) )
+    {
+      if ( wavOp == WavOp.PLAY )
+      {
+        wavPlayer = new RMWavPlayer();
+        wavPlayer.open( file );
+        int duration = wavPlayer.getDuration();  // in tenths of a second
+        String durStr = duration >= 600 ? "" + duration / 600 + "min " : "";
+        int secStr = duration % 600;
+        durStr += secStr / 10 + "." + secStr % 10 + "sec";
+        String title = "Modem upload";
+        String message = 
+            "The duration of this audio file for modem upload is " + durStr + ".  Before\n"
+                + "continuing, you need to set your remote ready to receive the upgrade.\n"
+                + "See the guide \"Modem Upgrade Procedure\" in the Wiki of the JP1 website\n"
+                + "for information on how to do this.\n\n"
+                + "Do you wish to continue?";
+        if ( JOptionPane.showConfirmDialog( this, message, title, JOptionPane.YES_NO_OPTION, 
+            JOptionPane.INFORMATION_MESSAGE ) != JOptionPane.YES_OPTION )
+          return;
+        uploadWavItem.setEnabled( false );
+        cancelWavUploadItem.setEnabled( true );
+        TimingTask timer = new TimingTask( "PLAYING WAV (" + durStr + "):", duration );
+        wavPlayer.setTimer( timer );
+        wavPlayer.play();
+      }
+      else
+        ( new LoadTask( file, wavOp ) ).execute();     
+      return;
+    }
+    
     if ( admin && ext.equals( ".ctl" ) )
     {
       String title = "Control file updater";
@@ -3589,6 +3699,46 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
     ( new LoadTask( file ) ).execute();
     return;
   }
+   
+  private void resetConfig( Remote remote, RMWavConverter converter )
+  {
+    if ( remote != null )
+    {
+      ProtocolManager.getProtocolManager().reset();
+      clearAllInterfaces();
+      remoteConfig = new RemoteConfiguration( remote, RemoteMaster.this );
+      recreateToolbar();
+      remoteConfig.initializeSetup( 0 );
+      remoteConfig.updateImage();
+    }
+    if ( converter != null )
+    {
+      converter.mergeData( remoteConfig.getData() );
+      try
+      {
+        remoteConfig.importIR( null, true );
+      }
+      catch ( IOException e )
+      {
+        System.err.println( "Unable to parse imported data" );
+      }
+      remoteConfig.updateImage();
+    }
+    
+    remoteConfig.setDateIndicator();
+    remoteConfig.setSavedData();
+    update();
+    saveAction.setEnabled( false );
+    saveAsAction.setEnabled( true );
+    openRdfAction.setEnabled( true );
+    installExtenderItem.setEnabled( true );
+    cleanUpperMemoryItem.setEnabled( true );
+    initializeTo00Item.setEnabled( !interfaces.isEmpty() );
+    initializeToFFItem.setEnabled( !interfaces.isEmpty() );
+    uploadable = !interfaces.isEmpty();
+    uploadAction.setEnabled( uploadable && allowUpload() );
+  }
+  
 
   private void installExtender() throws Exception
   {
@@ -3881,15 +4031,12 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
     }
   }
 
-  /**
-   * Description of the Method.
-   * 
-   * @throws IOException
-   *           Signals that an I/O exception has occurred.
-   * @exception IOException
-   *              Description of the Exception
-   */
   public void saveAs() throws IOException
+  {
+    saveAs( null, 0 );
+  }
+
+  public void saveAs( WavOp wavOp, int wavIndex ) throws IOException
   {   
     boolean validConfiguration = updateUsage();
     if ( !validConfiguration )
@@ -3897,13 +4044,15 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
       String title = "Invalid Configuration";
       String message = "This configuration is not valid.  It can be saved as a .rmir file\n"
           + "which can be re-loaded to give again this same invalid configuration,\n"
-          + "but it cannot be saved as a .ir file as it could cause the remote\n"
-          + "to crash if it were uploaded to it by another application.";
+          + "but it cannot be saved as a .ir or .wav file as it could cause the\n"
+          + "remote to crash if it were uploaded to it by another application.";
       JOptionPane.showMessageDialog( RemoteMaster.this, message, title, JOptionPane.WARNING_MESSAGE );
+      if ( wavOp != null )
+        return;
     }
-    RMFileChooser chooser = getFileSaveChooser( validConfiguration );
+    RMFileChooser chooser = wavOp == null ? getFileSaveChooser( validConfiguration ) : getWavFileSaveChooser();
     File oldFile = file;
-    if ( oldFile != null )
+    if ( wavOp == null && oldFile != null )
     {
       String name = oldFile.getName();
       if ( name.toLowerCase().endsWith( ".ir" ) || name.toLowerCase().endsWith( ".txt" ) )
@@ -3963,6 +4112,17 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
       {
         save( newFile, true );
       }
+      else if ( ending.equals( wavEndings[ 0 ] ) )
+      {
+        Remote remote = remoteConfig.getRemote();
+        AddressRange settingsAddress = new AddressRange( 0, remote.getAdvancedCodeAddress().getStart() - 1 );
+        settingsAddress.setFreeStart( settingsAddress.getEnd() + 1 );
+        AddressRange entireAddress = new AddressRange( 0, remote.getEepromSize() - 1 );
+        entireAddress.setFreeStart( entireAddress.getEnd() + 1 );
+        AddressRange[] ranges = { entireAddress, settingsAddress, remote.getAdvancedCodeAddress(), 
+            remote.getTimedMacroAddress(), remote.getUpgradeAddress(), remote.getLearnedAddress() };
+        ( new SaveTask( newFile, Use.EXPORT, ranges[ wavIndex] ) ).execute();
+      }
       else
       {
         setInterfaceState( "SAVING..." );
@@ -3972,19 +4132,57 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
     }
   }
   
-  private class LoadTask extends SwingWorker< RemoteConfiguration, Void >
+  private class LoadTask extends SwingWorker< RemoteConfiguration, Void > implements ProgressUpdater
   {
     private File loadFile;
+    private WavOp wavOp = null;
+    private RMWavConverter converter = null;
     
     public LoadTask( File file )
     {
       loadFile = file;
     }
     
+    public LoadTask( File file, WavOp wavOp )
+    {
+      loadFile = file;
+      this.wavOp = wavOp;
+      if ( wavOp != null )
+      {
+        converter = new RMWavConverter( wavOp == WavOp.MERGE ? remoteConfig : null );
+        converter.setProgressUpdater( this );
+      }
+    }
+    
     @Override
     protected RemoteConfiguration doInBackground() throws Exception
     {
-      return new RemoteConfiguration( loadFile, RemoteMaster.this );
+      if ( wavOp == null )
+      {
+        return new RemoteConfiguration( loadFile, RemoteMaster.this );
+      }
+      else
+      {
+        converter.importWav( loadFile );
+        String importedSig = converter.getImportedSignature();
+        String currentSig = remoteConfig == null ? null
+            : remoteConfig.getRemote().getSignature();
+        boolean mismatch = importedSig != null && currentSig != null
+            && !importedSig.substring( 0, 4 ).equals( currentSig.substring( 0, 4 ) );
+        if ( wavOp == WavOp.MERGE && mismatch )
+        {
+          String title = "Inconsistent merge";
+          String message = 
+                 "The imported data includes a signature that differs from that of\n"
+              +  "the current setup and so cannot be merged into it.  Do you want\n"
+              +  "instead to create a new image from the imported data?";
+          if ( JOptionPane.showConfirmDialog( RemoteMaster.this, message, title, JOptionPane.YES_NO_OPTION, 
+              JOptionPane.QUESTION_MESSAGE ) != JOptionPane.YES_OPTION )
+            return remoteConfig;
+        }
+        resetConfig( wavOp == WavOp.MERGE && !mismatch ? null : converter.getRemote(), converter );
+        return remoteConfig;
+      }
     }
     
     @Override
@@ -4022,6 +4220,20 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
       setTitleFile( loadFile );
       setInterfaceState( null );
       file = loadFile;
+    }
+    
+    @Override
+    public void updateProgress( int value )
+    {
+      if ( value < 0 )
+      {
+        setInterfaceState( "DOWNLOADING..." );
+      }
+      else
+      {
+        String name = converter != null ? converter.getProgressName() : null;
+        setInterfaceState( name != null ? name : "PREPARING:", value );
+      }
     }
   }
   
@@ -4083,6 +4295,56 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
     }
   }
   
+  public class TimingTask extends WriteTask implements ProgressUpdater
+  {
+    String name = null; // Name to display on progress bar
+    int duration = 0;   // Duration of task in tenths of a second
+    boolean cancelled = false;
+    
+    public TimingTask( String name, int duration )
+    {
+      this.name = name;
+      this.duration = duration + 1;
+    }
+    
+    @Override
+    protected Void doInBackground() throws Exception
+    {
+      long start = Calendar.getInstance().getTimeInMillis();
+      long current = start;
+      int progress = 0;
+      do
+      {
+        updateProgress( progress );
+        Thread.sleep( 200 );
+        current = Calendar.getInstance().getTimeInMillis();
+        progress = Math.min( ( int )( ( current - start ) / duration ), 100 );
+      }
+      while ( !cancelled );
+      return null;
+    }
+    
+    @Override
+    public void done()
+    {
+      super.done();
+      setInterfaceState( null );
+      uploadWavItem.setEnabled( true );
+      cancelWavUploadItem.setEnabled( false );
+    }
+    
+    public void setCancelled( boolean cancelled )
+    {
+      this.cancelled = cancelled;
+    }
+
+    @Override
+    public void updateProgress( int value )
+    {     
+      setInterfaceState( name, value );
+    }
+  }
+  
   private class InstallTask extends WriteTask implements ProgressUpdater
   {
     private File file = null;
@@ -4115,7 +4377,6 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
       setInterfaceState( null );
       if ( !ok )
       {
-
         return;
       }
     }
@@ -4295,10 +4556,12 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
     
   }
   
-  private class SaveTask extends WriteTask
+  private class SaveTask extends WriteTask implements ProgressUpdater
   {
     private File file = null;
     private Use use = null;
+    private RMWavConverter converter = null;
+    private AddressRange range = null;
     
     public SaveTask( File file, Use use )
     {
@@ -4306,11 +4569,20 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
       this.use = use;
     }
     
+    public SaveTask( File file, Use use, AddressRange range )
+    {
+      this.file = file;
+      this.use = use;
+      converter = new RMWavConverter( remoteConfig );
+      converter.setProgressUpdater( this );
+      this.range = range;
+    }
+    
     @Override
     protected Void doInBackground() throws Exception
     {
       resetInterfaceState();
-      if ( use == Use.EXPORT )
+      if ( use == Use.EXPORT && range == null )
       {
         remoteConfig.exportIR( file );
         if ( exitPrompt )
@@ -4318,6 +4590,10 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
           changed = false;
         }
         updateRecentFiles( file );
+      }
+      else if ( use == Use.EXPORT )
+      {
+        converter.exportWav( file, range );
       }
       else
       {
@@ -4348,6 +4624,19 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
       {
         exitPrompt = false;
         dispatchEvent( new WindowEvent( RemoteMaster.this, WindowEvent.WINDOW_CLOSING ) );
+      }
+    }
+    
+    public void updateProgress( int value )
+    {
+      if ( value < 0 )
+      {
+        setInterfaceState( "DOWNLOADING..." );
+      }
+      else
+      {
+        String name = converter != null ? converter.getProgressName() : null;
+        setInterfaceState( name != null ? name : "PREPARING:", value );
       }
     }
   }
@@ -4686,12 +4975,35 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
   public void actionPerformed( ActionEvent e )
   {
     finishEditing();
+    List< JMenuItem > exportToWavList = Arrays.asList( exportToWavImageItem, 
+        exportToWavSettingsItem, exportToWavMacrosEtcItem, exportToWavTimedMacrosItem, 
+        exportToWavUpgradesItem, exportToWavLearnedItem );
+    int wavIndex = -1;
     try
     {
       Object source = e.getSource(); 
       if ( source == installExtenderItem )
       {
         installExtender();
+      }
+      else if ( source == importFromWavNewItem || source == importFromWavMergeItem )
+      {
+        openFile( null, source == importFromWavNewItem ? WavOp.NEW : WavOp.MERGE );
+      }
+      else if ( ( wavIndex = exportToWavList.indexOf( source ) ) >= 0 )
+      {
+        saveAs( WavOp.SAVE, wavIndex );
+      }
+      else if ( source == uploadWavItem )
+      {
+        openFile( null, WavOp.PLAY );
+      }
+      else if ( source == cancelWavUploadItem )
+      {
+        if ( wavPlayer != null )
+        {
+          wavPlayer.close();
+        }
       }
       else if ( source == exitItem )
       {
@@ -5304,10 +5616,14 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
     if ( remoteConfig != null )
     {
       setTitle( "RMIR - " + remoteConfig.getRemote().getName() );
+      importFromWavMergeItem.setEnabled( remoteConfig.getRemote().supportWaveUpgrade() );
+      exportToWavSubMenu.setEnabled( remoteConfig.getRemote().supportWaveUpgrade() );
     }
     else
     {
       setTitle( "RMIR" );
+      importFromWavMergeItem.setEnabled( false );
+      exportToWavSubMenu.setEnabled( false );
       return;
     }
 
@@ -5349,6 +5665,9 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
       }
       rdfViewer = null;
     }
+    exportToWavUpgradesItem.setVisible( remote.getUpgradeAddress() != null );
+    exportToWavTimedMacrosItem.setVisible( remote.getTimedMacroAddress() != null );
+    exportToWavLearnedItem.setVisible( remote.getLearnedAddress() != null );
 
     updateUsage();
 
@@ -6039,6 +6358,11 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
   private final static String[] extenderEndings =
   {
     ".hex"
+  };
+  
+  private final static String[] wavEndings =
+  {
+    ".wav"
   };
 
   private final static String[] otherMergeEndings =

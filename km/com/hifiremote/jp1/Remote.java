@@ -4530,10 +4530,11 @@ public class Remote implements Comparable< Remote >
     return powerButtons;
   }
 
-  private boolean waveUpgrade = true;
+  private boolean waveUpgrade = false;
 
   public boolean supportWaveUpgrade()
   {
+    load();
     return waveUpgrade;
   }
   

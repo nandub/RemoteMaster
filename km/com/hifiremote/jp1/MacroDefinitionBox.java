@@ -319,6 +319,12 @@ PropertyChangeListener, RMSetter< Object >
         duration.setValue( 0.0f );
         duration.setEnabled( false );
         durationLabel.setEnabled( false );
+        int ndx = deviceBox.getSelectedIndex();
+        if ( ndx >= 0 )
+        {
+          // Reset this index to activate its action to set functionBox model
+          deviceBox.setSelectedIndex( ndx );
+        }
         //      duration.setFocusLostBehavior( JFormattedTextField.COMMIT_OR_REVERT );
       }
       else

@@ -148,6 +148,10 @@ public class FixedData
 
   public boolean check( Remote remote, short[] buffer )
   {
+    if ( buffer == null )
+    {
+      return true;
+    }
     if ( ( address + data.length ) > buffer.length )
     {
       return false;
@@ -182,7 +186,7 @@ public class FixedData
             break;
           }
         }
-        else if ( sigData != null ) // location = Location.SIGBLK
+        else // location = Location.SIGBLK
         {
           if ( ! fixedData.check( null, sigData ) )
           {
