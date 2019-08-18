@@ -134,9 +134,19 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
 
   /** Description of the Field. */
   public final static String version = "v2.08";
-  public final static int buildVer = 6;
+  public final static int buildVer = 7;
   
   public enum WavOp { NEW, MERGE, SAVE, PLAY };
+  
+  public static class SummarySection
+  {
+    public JP1TableModel< ? > model = null;
+    public String title = null;
+    public Activity activity = null;
+    public String subtitle = null;
+    public TableSorter sorter = null;
+    public JP1Table table = null;
+  }
   
   public static class LanguageDescriptor
   {
@@ -262,6 +272,8 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
   private JMenuItem exportToWavTimedMacrosItem = null;
   private JMenuItem exportToWavUpgradesItem = null;
   private JMenuItem exportToWavLearnedItem = null;
+  
+  private JMenuItem summaryItem = null;
 
   private RMAction openRdfAction = null;
 
@@ -2468,6 +2480,17 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
     addonPathItem.setMnemonic( KeyEvent.VK_A );
     addonPathItem.addActionListener( this );
     menuSetDirectory.add( addonPathItem );
+    
+    menu.addSeparator();
+
+    summaryItem = new JMenuItem( "Create Summary" );
+    summaryItem.setMnemonic( KeyEvent.VK_C );
+    summaryItem.addActionListener( this );
+    summaryItem.setToolTipText( "<html>Creates an HTML file of the RMIR tables and opens the default<br>"
+        + "web browser to display it.  The file is saved as summary.html<br>"
+        + "in the RMIR installation folder.</html>" );
+    summaryItem.setEnabled( false );
+    menu.add( summaryItem );
     
     menu.addSeparator();
 
@@ -4966,6 +4989,79 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
     return sig;
   }
   
+  public List< SummarySection > getSummarySections( JTabbedPane pane, int index )
+  {
+    if ( index < 0 || index >= pane.getTabCount() )
+      return null;
+
+    List< SummarySection > list = new ArrayList< SummarySection >();
+    SummarySection ss = new SummarySection();
+    Component c = pane.getComponentAt( index );
+    if ( c == null )
+    {
+      return null;
+    }
+    else if ( c instanceof RMTablePanel< ? > )
+    {
+      ss.model = ( ( RMTablePanel< ? > )c ).getModel();
+      ss.title = pane.getTitleAt( index );
+      ss.sorter = ( ( RMTablePanel< ? > )c ).getSorter();
+      ss.table = ( ( RMTablePanel< ? > )c ).getTable();
+      list.add( ss );
+      return list;
+    }
+    else if ( c instanceof GeneralPanel )
+    {
+      ss.model = ( ( GeneralPanel )c ).getDeviceButtonTableModel();
+      ss.title = "Device Buttons";
+      list.add( ss );
+
+      if ( remoteConfig != null && remoteConfig.getRemote().hasSettings() )
+      {
+        ss = new SummarySection();
+        ss.model = ( ( GeneralPanel )c ).getSettingModel();
+        ss.title = "Other Settings";
+        list.add( ss );
+      }
+      return list;
+    }
+    else if ( c instanceof FavoritesPanel )
+    {
+      FavoritesPanel fp = ( FavoritesPanel )c;
+      ss.model = fp.getFavModel();
+      ss.title = "Favorites Macros";
+      list.add( ss );
+      ss = new SummarySection();
+      ss.model = fp.getActivityGroupModel();
+      ss.title = "Favorites Group Assignments";
+      list.add( ss );
+      return list;     
+    }
+    else if ( c instanceof ActivityPanel )
+    {
+      ActivityPanel ap = ( ActivityPanel )c;
+      List< Activity > aList = ap.getActivityList();
+      ActivityFunctionTableModel aftm = ap.getActivityFunctionModel();
+      ActivityGroupTableModel agtm = ap.getActivityGroupModel();
+      for ( Activity activity : aList )
+      {
+        ss = new SummarySection();
+        ss.model = aftm;
+        ss.subtitle = activity.getName();
+        ss.activity = activity;
+        list.add( ss );
+        ss = new SummarySection();
+        ss.model = agtm;
+        ss.activity = activity;
+        list.add( ss );
+      }
+      if ( list.size() > 0 )
+        list.get( 0 ).title = "Activities";
+      return list;
+    }
+    else return null;
+  }
+
   /**
    * Description of the Method.
    * 
@@ -5003,6 +5099,24 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
         if ( wavPlayer != null )
         {
           wavPlayer.close();
+        }
+      }
+      else if ( source == summaryItem )
+      {
+        List< SummarySection > ssList = new ArrayList< SummarySection >();
+        for ( int i = 0; i < tabbedPane.getTabCount(); i++ )
+        {
+          if ( getSummarySections( tabbedPane, i ) != null )
+          {
+            ssList.addAll( getSummarySections( tabbedPane, i ) );
+          }
+        }
+
+        HtmlGenerator htmlGen = new HtmlGenerator( remoteConfig );
+        File file = htmlGen.makeHtml( ssList );
+        if ( desktop != null && file != null )
+        {
+          desktop.browse( file.toURI() );
         }
       }
       else if ( source == exitItem )
@@ -5618,12 +5732,14 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
       setTitle( "RMIR - " + remoteConfig.getRemote().getName() );
       importFromWavMergeItem.setEnabled( remoteConfig.getRemote().supportWaveUpgrade() );
       exportToWavSubMenu.setEnabled( remoteConfig.getRemote().supportWaveUpgrade() );
+      summaryItem.setEnabled( true );
     }
     else
     {
       setTitle( "RMIR" );
       importFromWavMergeItem.setEnabled( false );
       exportToWavSubMenu.setEnabled( false );
+      summaryItem.setEnabled( false );
       return;
     }
 
@@ -6418,7 +6534,16 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
   {
     return devicePanel;
   }
+  
+  public FavoritesPanel getFavoritesPanel()
+  {
+    return favoritesPanel;
+  }
 
+  public ActivityPanel getActivityPanel()
+  {
+    return activityPanel;
+  }
   private boolean changed = false;
 
   public boolean isChanged()

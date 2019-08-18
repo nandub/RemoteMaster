@@ -648,6 +648,16 @@ public abstract class RMTablePanel< E > extends RMPanel implements ActionListene
     return model;
   }
 
+  public TableSorter getSorter()
+  {
+    return sorter;
+  }
+
+  public JP1Table getTable()
+  {
+    return table;
+  }
+
   /** The table. */
   protected JP1Table table = null;
 

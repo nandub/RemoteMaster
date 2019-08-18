@@ -860,6 +860,16 @@ public class FavoritesPanel extends RMPanel implements ActionListener,
 //    }
 //  }
   
+  public FavScanTableModel getFavModel()
+  {
+    return favModel;
+  }
+
+  public ActivityGroupTableModel getActivityGroupModel()
+  {
+    return activityGroupModel;
+  }
+
   public JList getProfiles()
   {
     return profiles;

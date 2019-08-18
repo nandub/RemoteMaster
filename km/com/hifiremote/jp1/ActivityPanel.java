@@ -363,7 +363,27 @@ public class ActivityPanel extends RMPanel implements ChangeListener, ActionList
       repaint();
     }
   }
-  
+
+  public List< Activity > getActivityList()
+  {
+    return activityList;
+  }
+
+  public JTabbedPane getTabbedPane()
+  {
+    return tabbedPane;
+  }
+
+  public ActivityGroupTableModel getActivityGroupModel()
+  {
+    return activityGroupModel;
+  }
+
+  public ActivityFunctionTableModel getActivityFunctionModel()
+  {
+    return activityFunctionModel;
+  }
+
   public void finishEditing()
   {
     if ( activityFunctionTable.getCellEditor() != null )
