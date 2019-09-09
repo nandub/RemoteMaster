@@ -12,5 +12,6 @@
 	<classpathentry kind="lib" path="lib/org.thingml.bglib-protocol-1.0.3-43.jar"/>
 	<classpathentry kind="lib" path="rmirwin10ble/jni4net.j-0.8.8.0.jar"/>
 	<classpathentry kind="lib" path="lib/jSerialComm-2.5.0.jar"/>
+	<classpathentry kind="lib" path="lib/IrpTransmogrifier-1.1.0-jar-with-dependencies.jar"/>
 	<classpathentry kind="output" path="classes"/>
 </classpath>

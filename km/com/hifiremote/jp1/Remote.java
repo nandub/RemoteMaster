@@ -3937,7 +3937,7 @@ public class Remote implements Comparable< Remote >
   
   public boolean hasActivityAlgorithm()
   {
-    return segmentTypes.contains( 0x2F );
+    return segmentTypes != null && segmentTypes.contains( 0x2F );
   }
   
   public boolean hasActivityInitialMacro()

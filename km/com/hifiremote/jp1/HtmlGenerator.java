@@ -1,5 +1,6 @@
 package com.hifiremote.jp1;
 
+import java.awt.Color;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -75,7 +76,7 @@ public class HtmlGenerator
         val = "";
       }
       
-      if ( model.getColumnRenderer( xcol ) instanceof RMColorRenderer )
+      if ( model.getColumnClass( xcol ) == Color.class )
       {
         Object item = model.getRow( row );
         if ( item instanceof Highlight )
@@ -142,22 +143,20 @@ public class HtmlGenerator
     return sb.toString();
   }
   
-  public File makeHtml( List< SummarySection > ssList )
+  public boolean makeHtml( List< SummarySection > ssList )
   {
     if ( ssList == null )
-      return null;
+      return false;
     
-    File htmlFile = null;
     FileWriter fw = null;
     try
     {
-      htmlFile = new File( RemoteMaster.getWorkDir(), "summary.html" );
-      fw = new FileWriter( htmlFile );
+      fw = new FileWriter( RemoteMaster.getSummaryFile() );
     }
     catch ( IOException e )
     {
       e.printStackTrace();
-      return null;
+      return false;
     }
     PrintWriter pw = new PrintWriter( fw );
     pw.println( "<html>" );
@@ -259,8 +258,9 @@ public class HtmlGenerator
     catch ( IOException e )
     {
       e.printStackTrace();
+      return false;
     }
-    return htmlFile;
+    return true;
   }
   
   private String getTableHead( SummarySection ss )

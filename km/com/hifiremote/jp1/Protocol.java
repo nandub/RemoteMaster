@@ -162,6 +162,7 @@ public class Protocol
     if ( temp != null )
     {
       cmdTranslators = TranslatorFactory.createTranslators( temp );
+      cmdTranslatorText = temp;
     }
     else
     {
@@ -2037,6 +2038,11 @@ public class Protocol
     return cmdTranslators;
   }
 
+  public String getCmdTranslatorText()
+  {
+    return cmdTranslatorText;
+  }
+
   /**
    * Checks if is column width fixed.
    * 
@@ -2109,6 +2115,7 @@ public class Protocol
 
   /** The cmd translators. */
   protected Translate[] cmdTranslators = null;
+  private String cmdTranslatorText = null;
 
   /** The import cmd translators. */
   protected Translate[] importCmdTranslators = null;

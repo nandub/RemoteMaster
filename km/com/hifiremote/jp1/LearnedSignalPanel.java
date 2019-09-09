@@ -1,32 +1,52 @@
 package com.hifiremote.jp1;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.ListIterator;
+import java.util.Set;
 
+import javax.swing.BorderFactory;
+import javax.swing.DefaultListCellRenderer;
+import javax.swing.DefaultListModel;
 import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JTable;
+import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
 import javax.swing.JButton;
 import javax.swing.TransferHandler;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.table.DefaultTableCellRenderer;
 
-import com.hifiremote.jp1.GeneralFunction.RMIcon;
+import org.harctoolbox.irp.IrpDatabase;
+import org.harctoolbox.irp.NamedProtocol;
 
-// TODO: Auto-generated Javadoc
+import com.hifiremote.jp1.LearnedSignalDecode.Executor;
+
 /**
  * The Class LearnedSignalPanel.
  */
 public class LearnedSignalPanel extends RMTablePanel< LearnedSignal >
 {
-
+  private static class ExecutorData
+  {
+    public List< Protocol > protocols = null;
+    public LinkedHashMap< LearnedSignal, LinkedHashMap< Protocol, Executor > > map;
+  }
+  
   /**
    * Instantiates a new learned signal panel.
    */
@@ -98,22 +118,22 @@ public class LearnedSignalPanel extends RMTablePanel< LearnedSignal >
     convertToUpgradeButton = new JButton( "Convert to Device Upgrade" );
     convertToUpgradeButton.addActionListener( this );
     convertToUpgradeButton.setToolTipText( "Convert the selected item to a Device Upgrade." );
-    convertToUpgradeButton.setEnabled( false );
-    convertToUpgradeButton.setVisible( Boolean.parseBoolean( RemoteMaster.getProperties().getProperty( "LearnUpgradeConversion", "false" ) ) );    
     buttonPanel.add( convertToUpgradeButton );
 
     timingSummaryButton = new JButton( "Timing Summary" );
     timingSummaryButton.addActionListener( this );
     timingSummaryButton.setToolTipText( "View the Timing Summary for all of the Learned Signals." );
     timingSummaryButton.setEnabled( true );
-    timingSummaryButton.setVisible( Boolean.parseBoolean( RemoteMaster.getProperties().getProperty( "LearnedSignalTimingAnalysis", "false" ) ) );
+//    timingSummaryButton.setVisible( Boolean.parseBoolean( RemoteMaster.getProperties().getProperty( "LearnedSignalTimingAnalysis", "false" ) ) );
     buttonPanel.add( timingSummaryButton );
+    
+    refresh();
   }
 
   @Override
   protected void refresh()
   {
-    convertToUpgradeButton.setVisible( Boolean.parseBoolean( RemoteMaster.getProperties().getProperty( "LearnUpgradeConversion", "false" ) ) );    
+    convertToUpgradeButton.setEnabled( !Boolean.parseBoolean( RemoteMaster.getProperties().getProperty( "UseDecodeIR", "false" ) ) );    
     timingSummaryButton.setVisible( Boolean.parseBoolean( RemoteMaster.getProperties().getProperty( "LearnedSignalTimingAnalysis", "false" ) ) );
   }
 
@@ -193,6 +213,8 @@ public class LearnedSignalPanel extends RMTablePanel< LearnedSignal >
     if ( source == convertToUpgradeButton )
     {
       finishEditing();
+      if ( table.getRowCount() == 0 )
+        return;
       int[] rows = table.getSelectedRows();
       ArrayList<LearnedSignal> signals = new ArrayList<LearnedSignal>();
       for ( int i =0; i < rows.length; i++ )
@@ -216,119 +238,260 @@ public class LearnedSignalPanel extends RMTablePanel< LearnedSignal >
       super.actionPerformed( e );
   }
   
-  private boolean validateLearnedSignalsForUpgradeConversion( LearnedSignal[] signals )
+  private ExecutorData getConsistentProtocols( LearnedSignal[] signals )
   {
-    LearnedSignalDecode d = signals[0].getDecodes().get( 0 );
-    String protocolName = d.protocolName;
-    if ( protocolName.startsWith("48-NEC") )
-      protocolName = protocolName.substring(3);
-    int device = d.device;
-    int subDevice = d.subDevice;
-
-    for ( LearnedSignal s: signals )
-    {
-      d = s.getDecodes().get( 0 );
-      String p = d.protocolName;
-      if ( p.startsWith("48-NEC") )
-        p = p.substring(3);
-      if ( !p.equals(protocolName) || device != d.device || subDevice != d.subDevice )
-        return false;
-    }
-
-    return true;
-  }
-  private void convertToDeviceUpgrade( LearnedSignal[] signals )
-  {
-    if ( !validateLearnedSignalsForUpgradeConversion( signals ) )
-    {
-      JOptionPane.showMessageDialog( RemoteMaster.getFrame(), "The Learned Signals you have selected do not all have the\nsame protocol, device, and subdevice so they cannot\nbe automatically converted to a Device Upgrade.", "Unable to convert Learned Signals to Device Upgrade", JOptionPane.ERROR_MESSAGE );
-      return;
-    }
-
-    LearnedSignalDecode d = signals[0].getDecodes().get( 0 );
-    String protocolName = d.protocolName;
-    if ( protocolName.startsWith("48-NEC") )
-      protocolName = protocolName.substring(3);
-    int device = d.device;
-    int subDevice = d.subDevice;
+    if ( signals == null || signals.length == 0 )
+      return null;
+    ExecutorData execData = new ExecutorData();
+    execData.map = new LinkedHashMap< LearnedSignal, LinkedHashMap<Protocol, Executor> >();
+    execData.protocols = new ArrayList< Protocol >();
     
-    boolean convert = false;
-    Remote remote = remoteConfig.getRemote();
-    Protocol protocol = null;
-    List< Protocol > protocols = ProtocolManager.getProtocolManager().findByName( protocolName );
-    if ( protocols != null )
+    for ( LearnedSignal ls : signals )
     {
-      protocol = protocols.get( 0 );
+      execData.map.put( ls, getProtocolMap( ls ) );
     }
-    else
+    for ( Protocol p : execData.map.get( signals[ 0 ] ).keySet() )
     {
-      convert = true;
-      String title = "Protocol Chooser";
-      String message = 
-            "There is no protocol with the precise name " + protocolName + ".\n"
-          + "Please choose a compatible protocol from the list below.\n\n"
-          + "Please note that conversion to the selected protocol may not\n"
-          + "be possible, or may require manual adjustment to the device\n"
-          + "or command parameters after conversion.  Use the Device Upgrade\n"
-          + "Editor to check and to make any necessary adjustments.\n";
-      protocols = ProtocolManager.getProtocolManager().getProtocolsForRemote( remote );
-      protocol = ( Protocol )JOptionPane.showInputDialog( remoteConfig.getOwner(), message, title, JOptionPane.QUESTION_MESSAGE, null, 
-          protocols.toArray(), protocols.get( 0 ) );
+      // Initial protocol list is that of first signal
+      execData.protocols.add( p );
     }
-    
-    //System.err.println("Checking if can append for protocol " + protocolName + ", device " + device + ", subDevice " + subDevice + "...");
-    DeviceUpgrade appendUpgrade = null;
-    List<DeviceUpgrade> upgrades = remoteConfig.getDeviceUpgrades();
-    for ( DeviceUpgrade u: upgrades )
+
+    // Now delete protocols that are not present in lists of all other signals
+    ListIterator< Protocol > it = execData.protocols.listIterator();
+    while ( it.hasNext() )
     {
-      if ( (
-          ( u.getDescription() != null && u.getDescription().contains( "Learned Signal" )) || (u.getNotes() != null && u.getNotes().contains( "Learned Signal" ) )
-          ) && protocol != null && protocol == u.protocol )
-          // u.protocol.getName().equals( protocolName ) )
+      Protocol p = it.next();
+      for ( LearnedSignal ls : signals )
       {
-        int uDevice = -1;
-        int uSubDevice = -1;
-        DeviceParameter[] protocolDevParms = u.protocol.getDeviceParameters();
-        for ( int i = 0; i < protocolDevParms.length; i++ )
+        Set< Protocol > pSet = execData.map.get( ls ).keySet();
+        if ( !pSet.contains( p ) )
         {
-          if ( protocolDevParms[i].getName().startsWith( "Device" ) )
-            uDevice = ((Integer)u.getParmValues()[i].getValue()).intValue();
-          if ( protocolDevParms[i].getName().startsWith( "Sub Device" ) )
-            uSubDevice = ((Integer)u.getParmValues()[i].getValue()).intValue();
-        }
-        //System.err.println("Device Upgrade (" + u.getDescription() + ") has protocol " + protocolName + ", device " + uDevice + ", subDevice " + uSubDevice + "...");
-        if ( uDevice == device && uSubDevice == subDevice )
-        {
-          //System.err.println( "Device Upgrade (" + u.getDescription() + ") is a match." );
-          appendUpgrade = u;
+          it.remove();
           break;
         }
       }
     }
+    return execData;
+  }
+  
+  private LinkedHashMap< Protocol, Executor > getProtocolMap( LearnedSignal ls )
+  {
+    IrpDatabase tmDatabase = LearnedSignal.getTmDatabase();
+    LinkedHashMap< Protocol, Executor > pMap = new LinkedHashMap< Protocol, LearnedSignalDecode.Executor >();
+    if ( tmDatabase == null )
+      return pMap;
+    Remote remote = remoteConfig.getRemote();
+    List< Protocol > protocols = ProtocolManager.getProtocolManager().getProtocolsForRemote( remote );
+    for ( LearnedSignalDecode lsd : ls.getDecodes() )
+    {
+      NamedProtocol np = lsd.decode.getNamedProtocol();
+      String npName = np.getName();
+      List< String > execs = tmDatabase.getProperties( npName, "uei-executor" );
+      for ( String exec : execs )
+      {
+        Executor e = LearnedSignalDecode.getExecutor( np, exec );
+        if ( e == null ) continue;
+        Protocol p = e.protocol;
+        if ( p != null && protocols.contains( p ) )
+        {
+          pMap.put( p, e );
+        }
+      }
+    }
+    return pMap;
+  }
+/*  
+  private JList< Protocol > getProtocolList( List< Protocol > protocols )
+  {
+    DefaultListModel< Protocol > protocolModel = new DefaultListModel< Protocol >();
+    for ( Protocol p : protocols )
+      protocolModel.addElement( p );
+    JList< Protocol > protocolList = new JList< Protocol >( protocolModel );
+    protocolList.setSelectedIndex( 0 );
+    protocolList.setCellRenderer( new DefaultListCellRenderer()
+    {
+      @Override
+      public Component getListCellRendererComponent(JList< ? > list, Object value,
+          int index, boolean isSelected, boolean cellHasFocus)
+      {
+        Protocol p = ( Protocol )value;
+        String varName = p.getVariantName();
+        String text = p.getName() + " (" + p.id.toString().replace( " ", "" )
+            + ( varName == null || varName.isEmpty() ? "" : ":" + varName ) + ")";
+        return super.getListCellRendererComponent( list, text, index, 
+            isSelected, cellHasFocus );
+        
+      }
+    });
+    return protocolList;
+  }
+*/
+  
+  private < E > JList< E > getJList( List< E > list )
+  {
+    DefaultListModel< E > eModel = new DefaultListModel< E >();
+    for ( E item : list )
+      eModel.addElement( item );
+    JList< E > eList = new JList< E >( eModel );
+    eList.setSelectedIndex( 0 );
+    eList.setCellRenderer( new DefaultListCellRenderer()
+    {
+      @Override
+      public Component getListCellRendererComponent(JList< ? > list, Object value,
+          int index, boolean isSelected, boolean cellHasFocus)
+      {
+        String text = null;
+        if ( value instanceof Protocol )
+        {
+          Protocol p = ( Protocol )value;
+          String varName = p.getVariantName();
+          text = p.getName() + " (" + p.id.toString().replace( " ", "" )
+              + ( varName == null || varName.isEmpty() ? "" : ":" + varName ) 
+              + ( p.needsCode( remoteConfig.getRemote() ) ? "*" : "" ) + ")";
+        }
+        else if ( value instanceof DeviceUpgrade )
+        {
+          DeviceUpgrade du = ( DeviceUpgrade )value;
+          int setupInt = du.getSetupCode();
+          text = du.getDeviceTypeAliasName();
+          if ( setupInt >= 0 )
+          {
+            text += "/" + ( new SetupCode( setupInt ) );
+          }
+        }
+        else
+        {
+          text = value.toString();
+        }
+        return super.getListCellRendererComponent( list, text, index, 
+            isSelected, cellHasFocus );
+        
+      }
+    });
+    return eList;
+  }
+  
+  
+  private < E > JPanel getOptionPanel( String message, JList< ? > optionList )
+  {
+    JPanel textPanel = new JPanel( new BorderLayout() );
+    JPanel panel = new JPanel( new BorderLayout() );
+    JPanel protPanel = new JPanel( new BorderLayout() );
+    JTextArea txtArea = new JTextArea( message );
+    txtArea.setFont( ( new JLabel() ).getFont() );
+    txtArea.setBackground( panel.getBackground() );
+    
+    textPanel.add( txtArea, BorderLayout.CENTER );
+    textPanel.setBorder( BorderFactory.createEmptyBorder( 5,5,5,5 ) );
+    protPanel.setBorder( BorderFactory.createLineBorder( Color.GRAY ) );
+    protPanel.add( optionList, BorderLayout.CENTER );
+    panel.add( textPanel, BorderLayout.PAGE_START );
+    panel.add( protPanel, BorderLayout.CENTER );
+    return panel;
+  }
+  
+  private void convertToDeviceUpgrade( LearnedSignal[] signals )
+  {
+    ExecutorData execData = getConsistentProtocols( signals );
+    if ( execData == null )
+    {
+      showMessage( "There are no signals to convert.", JOptionPane.ERROR_MESSAGE );
+      return;
+    }
+    if ( execData.protocols.isEmpty() )
+    {
+      showMessage( "There is no protocol that is compatible with all the\n"
+          + "selected signals.  Conversion aborting.", JOptionPane.ERROR_MESSAGE );
+      return;
+    }
+    Protocol protocol = execData.protocols.get( 0 );
+    if ( execData.protocols.size() > 1 )
+    {
+      // Let user choose the protocol to use
+      String message = 
+          "There is more than one executor that is compatible both with\n"
+        + "your remote and with the learned signals you have selected.\n"
+        + "The compatible ones are listed below.  A * after the PID means\n"
+        + "that the executor is not built in to the remote, so a new device\n"
+        + "upgrade will include a protocol upgrade.\n\n"
+        + "Please choose an executor from the list and press Convert, or\n"
+        + "press Cancel to cancel the conversion.";
+      String[] options = { "Convert", "Cancel" };
+      JList< Protocol > pList = getJList( execData.protocols );
+      int result = JOptionPane.showOptionDialog( null, getOptionPanel( message, pList ), "Protocol chooser", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE,
+          null, options, options[ 0 ] );
+      protocol = result == 0 ? pList.getSelectedValue() : null;
+    }
+    if ( protocol == null )
+    {
+      //showMessage( "No protocol chosen, conversion aborted.", JOptionPane.INFORMATION_MESSAGE );
+      return;
+    }
+    
+    LinkedHashMap< LearnedSignal, Executor > lsMap = new LinkedHashMap< LearnedSignal, Executor >();
+    for ( LearnedSignal ls : signals )
+    {
+      lsMap.put( ls, execData.map.get( ls ).get( protocol) );
+    }
+    
+    System.err.println("Checking if we can append to an existing learned signal conversion" );
+    DeviceUpgrade appendUpgrade = null;
+    List< DeviceUpgrade > upgrades = new ArrayList< DeviceUpgrade >();
+    for ( DeviceUpgrade du: remoteConfig.getDeviceUpgrades() )
+    {
+      if ( du.protocol == protocol )
+      {
+        upgrades.add( du );
+      }
+    }
+    if ( upgrades.size() > 0 )
+    {
+      String message =
+          "The selected learned signals can be appended to an existing\n"
+              + "device upgrade as the upgrades listed below use the same\n"
+              + "executor.  The compatible existing upgrades are listed below.\n\n"
+              + "If you want to append the signals, select the required existing\n"
+              + "upgrade and press Append.  To create a new upgrade for the\n"
+              + "signals, press New, or to cancel the conversion, press Cancel.";
+      String[] options = { "Append", "New", "Cancel" };
+      JList< DeviceUpgrade > pList = getJList( upgrades );
+      int result = JOptionPane.showOptionDialog( null, getOptionPanel( message, pList ), "Upgrade chooser", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE,
+          null, options, options[ 1 ] );
+      if ( result == 0 )
+      {
+        appendUpgrade = pList.getSelectedValue();
+      }
+      else if ( result != 1 )
+      {
+        return;
+      }
+    }
 
+    Remote remote = remoteConfig.getRemote();
+    List< List< String >> failedToConvert = new ArrayList< List< String > >();
     if ( appendUpgrade == null )
     {
       DeviceUpgrade upgrade = null;
-      if ( protocol != null )
-      {
-        upgrade = new DeviceUpgrade( signals, remoteConfig, protocol, convert );
-        protocol = upgrade.getProtocol();
-      }
- 
+      upgrade = new DeviceUpgrade( signals, remoteConfig, lsMap, null, failedToConvert );
       String msg = null;
-      
-      if ( protocol != null )
+      if ( upgrade.protocol == null )     
+      {
+        // User has chosen not to continue the append process
+        msg = "The conversion of Learned Signals to a new device upgrade\nhas been aborted.";
+      }
+      else
       {
         DeviceButton defaultDev = null;
         if ( remote.hasDeviceDependentUpgrades() == 1 )
         {
+          // This is the case for remotes that use EZ-RC.
           for ( DeviceButton db : remote.getDeviceButtons() )
           {
             if ( db.getSegment() == null || db.getDeviceSlot( db.getSegment().getHex().getData() ) == 0xFFFF )
             {
               String message = "The new upgrade that has been created will be assigned automatically\n" +
-                               "to an unassigned device.  What name do you want to give to this\n" +
-                               "device?";
+                  "to an unassigned device.  What name do you want to give to this\n" +
+                  "device?";
               String name = JOptionPane.showInputDialog( RemoteMaster.getFrame(), message, "New device" );
               if ( name == null )
               {
@@ -367,10 +530,6 @@ public class LearnedSignalPanel extends RMTablePanel< LearnedSignal >
           }
         }
       }
-      if ( msg == null && protocol == null )
-      {
-        msg = "The conversion of Learned Signals to device upgrade\nhas been aborted.";
-      }
       if ( msg == null )
       {
         if ( remote.usesEZRC() )
@@ -397,49 +556,36 @@ public class LearnedSignalPanel extends RMTablePanel< LearnedSignal >
         {
           msg = "Of the " + signals.length + " selected Learned Signals, " + upgrade.getFunctions().size();
         }
-        msg += " have been converted\ninto a new Device Upgrade of type CBL\nwith the Setup Code " + upgrade.getSetupCode() + ".\n\nSwitch to the Devices tab to view/edit/etc this new Upgrade.";
+        msg += " have been converted\ninto a new Device Upgrade of type CBL\nwith the Setup Code " 
+            + upgrade.getSetupCode() + ".\n\nSwitch to the Devices tab to view/edit/etc this new Upgrade.";
       }
       JOptionPane.showMessageDialog( RemoteMaster.getFrame(), msg, "Learned Signals converted to New Device Upgrade", JOptionPane.PLAIN_MESSAGE );
     }
     else
     {
-      // Append the Learned Signals to the existing upgrade
+      // Append the Learned Signals to the selected existing upgrade
       ArrayList<String> existingFunctions = new ArrayList<String>();
       ArrayList<String> renamedFunctions = new ArrayList<String>();
       ArrayList<String> shiftedFunctions = new ArrayList<String>();
       ArrayList<String> unassignedFunctions = new ArrayList<String>();
-      List< List< String >> failedToConvert = new ArrayList< List< String > >();
-      LinkedHashMap< LearnedSignal, Hex > converted = new LinkedHashMap< LearnedSignal, Hex >();
-      for ( LearnedSignal s : signals )
-      {
-        d = s.getDecodes().get( 0 );
-        List< String > error = new ArrayList< String >( 2 );
-        Hex funcHex = convert ? d.getProtocolHex( protocol, error ) : d.getSignalHex();
-        if ( funcHex == null )
-        {
-          error.set( 0, s.getSignalName( remote ) );
-          failedToConvert.add( error );
-        }
-        else
-        {
-          converted.put( s, funcHex );
-        }
-      }
+
+      DeviceUpgrade upgrade = new DeviceUpgrade( signals, remoteConfig, lsMap, appendUpgrade, failedToConvert );
+
       String msg = null;
-      if ( !failedToConvert.isEmpty() 
-          && !LearnedSignalDecode.displayErrors( protocol.getName(), failedToConvert ) )
+      if ( upgrade.protocol == null )     
       {
+        // User has chosen not to continue the append process
         msg = "The appending of Learned Signals to an existing device upgrade\nhas been aborted.";
       }
       else
       {
-        for ( LearnedSignal s : converted.keySet() )
+        appendUpgrade.protocol.setDeviceParms( upgrade.getParmValues() );
+        appendUpgrade.setParmValues( upgrade.getParmValues() );
+        for ( Function fu : upgrade.getFunctions() )
         {
-          String origName = s.getSignalName( remote );
-          Button b = remoteConfig.getRemote().getButton( s.getKeyCode() );
-          Hex funcHex = converted.get( s );
-          Function f = appendUpgrade.getFunction( funcHex );
-          if ( f != null )
+          String origName = fu.getName();
+          Function fo = appendUpgrade.getFunction( fu.getHex() );
+          if ( fo != null )
           {
             existingFunctions.add( origName );
           }
@@ -453,24 +599,21 @@ public class LearnedSignalPanel extends RMTablePanel< LearnedSignal >
               name = origName + "_" + i;
             }
             if ( i > 1 )
+            {
               renamedFunctions.add( origName );
-            f = new Function( name, funcHex, s.getNotes() );
-            if ( remote.isSSD() )
-            {
-              f.icon = new RMIcon( 9 );
+              fu.setName( name );
             }
-            if ( remote.usesEZRC() )
-            {
-              f.setGid( Function.defaultGID );
-            }   
-            f.setUpgrade( appendUpgrade );
-            appendUpgrade.getFunctions().add( f );
+            fu.setUpgrade( appendUpgrade );
+            appendUpgrade.getFunctions().add( fu );
+            
+            int keyCode = Arrays.asList( upgrade.getAssignments().getAssignedFunctions() ).indexOf( fu );
+            Button b = remote.getButton( keyCode );
 
             if ( appendUpgrade.getFunction( b, Button.NORMAL_STATE ) == null )
-              appendUpgrade.setFunction( b, f, Button.NORMAL_STATE );
+              appendUpgrade.setFunction( b, fu, Button.NORMAL_STATE );
             else if ( remote.getShiftEnabled() && b.allowsKeyMove( Button.SHIFTED_STATE ) && appendUpgrade.getFunction( b, Button.SHIFTED_STATE ) == null )
             {
-              appendUpgrade.setFunction( b, f, Button.SHIFTED_STATE );
+              appendUpgrade.setFunction( b, fu, Button.SHIFTED_STATE );
               shiftedFunctions.add( origName );
             }
             else
@@ -487,14 +630,6 @@ public class LearnedSignalPanel extends RMTablePanel< LearnedSignal >
         }
         msg += " were appended to existing\n"
             + "Device Upgrade (" + appendUpgrade.getDescription() + ") with protocol " + appendUpgrade.getProtocol().getName();
-        if ( device >= 0 )
-        {
-          msg += ",\ndevice " + device;
-        }
-        if ( subDevice >= 0 )
-        {
-          msg += ", subdevice " + subDevice;
-        }
         msg += ".\n";
 
         boolean comma;
@@ -556,23 +691,12 @@ public class LearnedSignalPanel extends RMTablePanel< LearnedSignal >
       }
       JOptionPane.showMessageDialog( RemoteMaster.getFrame(), msg, "Learned Signals appended to Existing Device Upgrade", JOptionPane.PLAIN_MESSAGE );
     }
-
-    /*
-    for ( LearnedSignal s: signals )
-    {
-      LearnedSignalDecode d = s.getDecodes().get( 0 );
-      System.err.println( d.protocolName + ": device " + d.device + " with obc " + d.obc + " on key " + s.getKeyCode() + " on device " + remoteConfig.getRemote().getDeviceButton(s.getDeviceButtonIndex()).getName() );
-    }
-    if (!signal.getDecodes().isEmpty())
-    {
-      LearnedSignalDecode d = signal.getDecodes().get( 0 );
-      System.err.println( d.protocolName + ": " + d.device + " " + d.obc );
-    }
-    else
-    {
-      JOptionPane.showMessageDialog( RemoteMaster.getFrame(), "Unable to convert the selected Learned Signal to a Device Upgrade since the signal cannot be decoded by DecodeIR.", "Unable to convert to Device Upgrade", JOptionPane.PLAIN_MESSAGE );
-    }
-    */
+  }
+  
+  private void showMessage( String message, int msgType )
+  {
+    String title = "Learned to Upgrade Conversion";
+    JOptionPane.showMessageDialog( remoteConfig.getOwner(), message, title, msgType );
   }
   
   public void valueChanged( ListSelectionEvent e )
@@ -580,7 +704,7 @@ public class LearnedSignalPanel extends RMTablePanel< LearnedSignal >
     super.valueChanged( e );
     if ( !e.getValueIsAdjusting() )
     {
-      convertToUpgradeButton.setEnabled( table.getSelectedRowCount() >= 1 );
+//      convertToUpgradeButton.setEnabled( table.getSelectedRowCount() >= 1 );
       copyButton.setEnabled( table.getSelectedRowCount() >= 1 );
     }
   }

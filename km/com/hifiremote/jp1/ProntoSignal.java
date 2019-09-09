@@ -786,6 +786,19 @@ public class ProntoSignal
     return sb.length() > 0 ? sb.toString() :  "** No pronto signal **";
   }
   
+  public String[] toStringArray()
+  {
+    List< String > list = new ArrayList< String >();
+    if ( pronto != null && pronto.length > 0 )
+    {
+      for ( int val : pronto )
+      {
+        list.add( String.format( "%04X", val ) );
+      }
+    }
+    return list.toArray( new String[ 0 ] );
+  }
+
   // Expanded sections for zMasks
 
   private static short[][] zMaskWords = {

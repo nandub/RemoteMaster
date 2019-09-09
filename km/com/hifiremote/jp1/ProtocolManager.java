@@ -641,6 +641,11 @@ public class ProtocolManager
     return byName;
   }
   
+  public Hashtable< Hex, List< Protocol >> getByPID()
+  {
+    return byPID;
+  }
+
   public Hashtable< String, List< Protocol >> getByNameForRemote( Remote remote )
   {
     Hashtable< String, List< Protocol >> byNameForRemote = new Hashtable< String, List< Protocol >>();

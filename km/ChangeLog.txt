@@ -1,3 +1,10 @@
+Changes for v2.09
+-- Private build 1
+- Set IrpTransmogrifier 1.1.0 as default IR decoder, with DecodeIR as selectable option (Graham)
+- Make conversion of learned signals to device upgrade be reliable, and available only with IrpTransmogrifier (Graham)
+- Improve summary menu, adding new items to view and save last created summary (Graham)
+- Fix bug affecting some macros on URC-7935 (Graham)
+
 Changes for v2.08
 -- Release build 1
 - Include Rob's major revision of protocols.ini (Rob & Graham)
@@ -25,7 +32,7 @@ Changes for v2.08
 - Make remoteConfiguration.resizeData(..) handle baselineData correctly (Graham)
 - Make functionBox be populated when opening MacroDialog for remotes that use EZRC (Graham)
 - Add support for importing, exporting and playing Wav files for legacy remotes with modem upgrade capability (Graham)
--- Private build 7
+-- Release build 7
 - Add menu item to create and then open an HTML summary file, summary.html in the installation folder (Graham)
 
 Changes for v2.07

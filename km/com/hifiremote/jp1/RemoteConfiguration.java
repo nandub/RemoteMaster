@@ -321,7 +321,8 @@ public class RemoteConfiguration
             {
               button = remote.getButton( macro.getDeviceButtonIndex() );
             }
-            if ( activityMacros != null && remote.getButtonGroups().get( "Activity" ).contains( button ) )
+            if ( activityMacros != null && !remote.hasActivityAlgorithm()
+                && remote.getButtonGroups().get( "Activity" ).contains( button ) )
             {
               activityMacros.put( button, macro );
               if ( remote.isSSD() )

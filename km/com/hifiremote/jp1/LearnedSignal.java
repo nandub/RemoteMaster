@@ -1,10 +1,41 @@
 package com.hifiremote.jp1;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
+import org.harctoolbox.analyze.Analyzer;
+import org.harctoolbox.analyze.Cleaner;
+import org.harctoolbox.analyze.NoDecoderMatchException;
+import org.harctoolbox.ircore.InvalidArgumentException;
+import org.harctoolbox.ircore.IrCoreUtils;
+import org.harctoolbox.ircore.IrSequence;
+import org.harctoolbox.ircore.IrSignal;
+import org.harctoolbox.ircore.ModulatedIrSequence;
+import org.harctoolbox.ircore.Pronto;
+import org.harctoolbox.irp.Decoder;
+import org.harctoolbox.irp.Decoder.Decode;
+import org.harctoolbox.irp.Decoder.DecodeTree;
+import org.harctoolbox.irp.Decoder.DecoderParameters;
+import org.harctoolbox.irp.Decoder.TrunkDecodeTree;
+import org.harctoolbox.irp.Expression;
+import org.harctoolbox.irp.InvalidNameException;
+import org.harctoolbox.irp.IrpDatabase;
+import org.harctoolbox.irp.IrpParseException;
+import org.harctoolbox.irp.NameEngine;
+import org.harctoolbox.irp.NameUnassignedException;
+
 import com.hifiremote.decodeir.DecodeIRCaller;
+import com.hifiremote.jp1.LearnedSignalDecode.Executor;
+import com.hifiremote.jp1.LearnedSignalDecode.Executor.Selector;
+import com.sun.xml.internal.bind.v2.runtime.unmarshaller.XsiNilLoader.Array;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -13,6 +44,46 @@ import com.hifiremote.decodeir.DecodeIRCaller;
 public class LearnedSignal extends Highlight
 {
 
+  public static void main(String[] args) { 
+    try 
+    { 
+        String s = "  Cat_Dog  Mouse-123*%$_Rat( Sausage)dog";
+        System.out.println( LearnedSignalDecode.getMatchName( s ));
+      
+        s = "DXT:U? 1 2 AB Cd_>";
+        System.out.println( LearnedSignalDecode.Executor.getSelector( s ) );
+        
+        Executor ex = new Executor();
+        ex.parms.devParms = Arrays.asList( "D:2? 2 AX", "X", "Y:V?5", "C4?2BB", "CC?3A", "CD?4BB" );
+        ex.setSelectors();
+        for ( String key : ex.selectorList.keySet() )
+        {
+          List< Integer > l = ex.selectorList.get( key );
+          System.out.print( key + ": " );
+          for ( Integer i : l) System.out.print( "" + i + " " );
+          System.out.println();
+        }
+       
+        String expr = "D: 3 (? ?B B) 7 ??BB? 2 AX";
+        System.out.println( "Processed expression: " + ex.preprocess( expr, 1 ));
+        
+      
+        IrSignal irSignal = Pronto.parse(
+            "0000 006D 001A 0000 0157 00AC 0013 0055 0013 00AC 0013 0055 0013 00AC 0013 00AC 0013 0055 0013 0055 0013 0055 0013 0055 0013 0055 0013 0055 0013 0055 0013 00AC 0013 0055 0013 00AC 0013 0055 0013 0498 0157 0055 0013 0D24 0157 0055 0013 0D24 0157 0055 0013 0D24 0157 0055 0013 1365"
+            );
+        IrpDatabase irpDatabase = new IrpDatabase((String) null); 
+        System.out.println("We have " + irpDatabase.size() + " protocols in the data base!"); 
+        System.out.println("PID: " + irpDatabase.getFirstProperty( "Aiwa", "uei-executor" ));
+        
+        Decoder decoder = new Decoder(irpDatabase); 
+        Map<String, Decode> sigDecodes = decoder.decodeIrSignal(irSignal); 
+        for (Decode decode :  sigDecodes.values()) 
+            System.out.println(decode); 
+    } catch (Exception ex) { 
+        ex.printStackTrace(); 
+    } 
+} 
+  
   /**
    * Instantiates a new learned signal.
    * 
@@ -282,29 +353,103 @@ public class LearnedSignal extends Highlight
 
   /** The decodes. */
   private ArrayList< LearnedSignalDecode > decodes = null;
+  private LearnedSignalDecode preferredLSDecode = null;
+  private boolean usingDecodeIR = false;
+
+  public LearnedSignalDecode getPreferredLSDecode()
+  {
+    return preferredLSDecode;
+  }
+
+  public void setPreferredLSDecode( LearnedSignalDecode preferredLSDecode )
+  {
+    this.preferredLSDecode = preferredLSDecode;
+  }
 
   /**
    * Gets the decodes.
    * 
    * @return the decodes
+   * @throws InvalidNameException 
    */
   public ArrayList< LearnedSignalDecode > getDecodes()
   {
-    if ( decodes == null )
+    boolean nowUsingDecodeIR = Boolean.parseBoolean( RemoteMaster.getProperties().getProperty( "UseDecodeIR", "false" ) );
+    boolean decoderChanged = decodes == null ? false : usingDecodeIR != nowUsingDecodeIR;
+    usingDecodeIR = nowUsingDecodeIR;
+      
+    if ( decodes == null || decoderChanged )
     {
       UnpackLearned ul = getUnpackLearned();
       if ( !ul.ok )
       {
         return null;
       }
-      getDecodeIR();
-      decodeIR.setBursts( ul.durations, ul.repeat, ul.extra );
-      decodeIR.setFrequency( ul.frequency );
-      decodeIR.initDecoder();
+      
       decodes = new ArrayList< LearnedSignalDecode >();
-      while ( decodeIR.decode() )
+
+      if ( usingDecodeIR )
       {
-        decodes.add( new LearnedSignalDecode( decodeIR ) );
+        getDecodeIR();
+        decodeIR.setBursts( ul.durations, ul.repeat, ul.extra );
+        decodeIR.setFrequency( ul.frequency );
+        decodeIR.initDecoder();
+
+        while ( decodeIR.decode() )
+        {
+          decodes.add( new LearnedSignalDecode( decodeIR ) );
+        }
+      }     
+      else
+      {
+        try
+        {
+          if ( ( tmDecoder = getTmDecoder() ) == null )
+          {
+            return null;
+          }
+
+          IrSignal irSignal = new IrSignal( ul.durations, ul.oneTime, ul.repeat, ul.frequency );
+          Map<String, Decode> sigDecodes = tmDecoder.decodeIrSignal( irSignal, tmDecoderParams );
+          
+          if ( sigDecodes == null || sigDecodes.size() == 0 )
+          {
+            int[] dur = Arrays.copyOfRange( ul.durations, ul.oneTime, ul.durations.length);            
+            IrSignal irSignal2 = new IrSignal( dur, 0, ul.repeat, ul.frequency);
+            sigDecodes = tmDecoder.decodeIrSignal( irSignal2, tmDecoderParams );
+          }
+          
+          if ( ( sigDecodes == null || sigDecodes.size() == 0 ) 
+              && ( irSignal.introOnly() || irSignal.repeatOnly() ) )
+          { 
+            ModulatedIrSequence sequence = irSignal.toModulatedIrSequence();
+            //sequence = Cleaner.clean(sequence, IrCoreUtils.DEFAULT_ABSOLUTE_TOLERANCE, IrCoreUtils.DEFAULT_RELATIVE_TOLERANCE);
+            
+            //DecodeTree sDecodes =  tmDecoder.decode( sequence, tmDecoderParams );
+            Iterator<  TrunkDecodeTree > it = tmDecoder.decode( sequence, tmDecoderParams ).iterator();
+            sigDecodes = new Hashtable< String, Decode >();
+            while ( it.hasNext() )
+            {
+              TrunkDecodeTree tree = it.next();
+              sigDecodes.put( tree.getName(), tree.getTrunk() );
+//              System.err.println( tree.toString() );
+            }            
+          }
+
+          for ( Decode dc : sigDecodes.values() )
+          {
+            //System.out.println( dc );
+            LearnedSignalDecode lsd = new LearnedSignalDecode( dc );
+            if ( lsd.decode != null )
+              decodes.add( lsd );
+          };
+
+        }
+        catch ( InvalidArgumentException e )
+        {
+          System.err.println( "*** Error: Invalid argument in IrSignal" );
+          return null;
+        }
       }
     }
     return decodes;
@@ -344,6 +489,7 @@ public class LearnedSignal extends Highlight
   {
     if ( decodeIR == null )
     {
+      System.err.println( "Using DecodeIR to decode Learned Signals" );
       try
       {
         decodeIR = new DecodeIRCaller( RemoteMaster.getWorkDir() );
@@ -355,11 +501,122 @@ public class LearnedSignal extends Highlight
         hasDecodeIR = 1; // no
       }
     }
-
     return decodeIR;
+  }
+  
+  private static Decoder getTmDecoder()
+  {
+    if ( tmDecoder == null )
+    {
+      try
+      {
+        ProtocolManager pm = ProtocolManager.getProtocolManager();
+        
+        for ( Hex hex : pm.getByPID().keySet() )
+        {
+          Hashtable< String, List< Protocol > > ht = new Hashtable< String, List<Protocol> >();
+          for  ( Protocol pr : pm.getByPID().get( hex ) )
+          {
+            String var = pr.getVariantName();
+            if ( !ht.containsKey( var ) )
+              ht.put( var, new ArrayList< Protocol >() );
+            ht.get( var ).add( pr );
+          }
+          for ( String var : ht.keySet() )
+          {
+            if ( ht.get( var ).size() > 1 )
+            {
+              System.err.println();
+              System.err.println( "PID: " + hex);
+              System.err.println( "  Variant: " + var );
+              System.err.print( "    " );
+              for ( Protocol pr : ht.get( var ) )
+                System.err.print( pr.getName() + ";" );
+              System.err.println();
+            }
+          }
+        }
+        System.err.println();
+        
+        
+        System.err.println( "Using IrpTransmogrifier to decode Learned Signals" );
+        //tmDatabase = new IrpDatabase( ( String )null ); 
+        tmDatabase = new IrpDatabase( new File( RemoteMaster.getWorkDir(), "IrpProtocols.xml" ) );
+        System.err.println( "There are " + tmDatabase.size() + " protocols in the database" );
+        
+        System.err.println();
+        List< String > pmNames = pm.getNames();
+        List< String > inProtIni = new ArrayList< String >();
+        System.err.println( "Protocols also in protocols.ini:");
+        for ( String name : tmDatabase.getNames() )
+        {
+          if ( pmNames.contains( name ))
+          {
+            System.err.println( "  " + name );
+            inProtIni.add( name );
+            for ( Protocol p : pm.getByName().get( name ) )
+            {
+              System.err.println( "    Variant: " 
+                  + ( p.getVariantName() == null ? "null" : p.getVariantName() ));
+              String pid = tmDatabase.getFirstProperty( name, "uei-executor" );
+              if ( pid != null )
+                System.err.println( "    TM PID: " + pid );
+              System.err.println( "    Ini PID: " + p.getID() );
+              System.err.print( "    Cmd params: " );
+              for ( Parameter param : p.getCommandParameters() )
+              {
+                System.err.print( param.getName() + ", ");
+              }
+              System.err.println();
+              System.err.println( "    Cmd translators: " + p.getCmdTranslatorText() );
+              System.err.println();
+            }
+          }
+        }
+        System.err.println();
+        System.err.println( "Protocols not in protocols.ini:");
+        for ( String name : tmDatabase.getNames() )
+        {
+          if ( !pmNames.contains( name ))
+            System.err.println( "  " + name );
+        }
+        System.err.println();
+        System.err.println( "Unmatched protocols.ini protocols" );
+        for ( String name : pmNames )
+        {
+          if ( !inProtIni.contains( name ) )
+            System.err.println( "  " + name );
+        }
+        
+        
+        tmDecoder = new Decoder( tmDatabase ); 
+        tmDecoderParams = new Decoder.DecoderParameters(); 
+        tmDecoderParams.setRemoveDefaultedParameters( false ); 
+      }
+      catch ( IOException ioe )
+      {
+        System.err.println( "*** Error: Unable to open protocol database" );
+        return null;
+      }
+      catch ( IrpParseException ipe )
+      {
+        System.err.println( "*** Error: Unable to parse protocol database" );
+        return null;
+      }
+    }
+    return tmDecoder;
+  }
+
+  public static IrpDatabase getTmDatabase()
+  {
+    return tmDatabase;
   }
 
   /** The decode ir. */
   private static DecodeIRCaller decodeIR = null;
   private static int hasDecodeIR = 0;
+  private static Decoder tmDecoder = null;
+  private static IrpDatabase tmDatabase = null;
+  private static DecoderParameters tmDecoderParams = null;
+  //private IrSignal irSignal = null;
 }

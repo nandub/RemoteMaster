@@ -36,6 +36,8 @@ import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.net.URL;
 import java.net.URLDecoder;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.security.CodeSource;
 import java.text.DateFormat;
 import java.util.ArrayList;
@@ -133,8 +135,8 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
   private static JP1Frame frame = null;
 
   /** Description of the Field. */
-  public final static String version = "v2.08";
-  public final static int buildVer = 7;
+  public final static String version = "v2.09";
+  public final static int buildVer = 1;
   
   public enum WavOp { NEW, MERGE, SAVE, PLAY };
   
@@ -273,7 +275,9 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
   private JMenuItem exportToWavUpgradesItem = null;
   private JMenuItem exportToWavLearnedItem = null;
   
-  private JMenuItem summaryItem = null;
+  private JMenuItem createSummaryItem = null;
+  private JMenuItem viewSummaryItem = null;
+  private JMenuItem saveSummaryItem = null;
 
   private RMAction openRdfAction = null;
 
@@ -334,6 +338,9 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
   // Options menu items
   /** The look and feel items. */
   private JRadioButtonMenuItem[] lookAndFeelItems = null;
+  
+  private JRadioButtonMenuItem irpTransmogrifierItem = null;
+  private JRadioButtonMenuItem decodeIRItem = null;
 
   protected JCheckBoxMenuItem highlightItem = null;
 
@@ -2482,15 +2489,31 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
     menuSetDirectory.add( addonPathItem );
     
     menu.addSeparator();
+    
+    JMenu menuSummary = new JMenu( "Summary" );
+    menuSummary.setMnemonic( KeyEvent.VK_Y );
+    menu.add( menuSummary );
 
-    summaryItem = new JMenuItem( "Create Summary" );
-    summaryItem.setMnemonic( KeyEvent.VK_C );
-    summaryItem.addActionListener( this );
-    summaryItem.setToolTipText( "<html>Creates an HTML file of the RMIR tables and opens the default<br>"
-        + "web browser to display it.  The file is saved as summary.html<br>"
-        + "in the RMIR installation folder.</html>" );
-    summaryItem.setEnabled( false );
-    menu.add( summaryItem );
+    createSummaryItem = new JMenuItem( "Create summary" );
+    createSummaryItem.setMnemonic( KeyEvent.VK_C );
+    createSummaryItem.addActionListener( this );
+    createSummaryItem.setToolTipText( "<html>Opens a printable summary of the current setup in the default web<br>"
+        + "browser, showing all RMIR tables in tabular form.</html>" );
+    createSummaryItem.setEnabled( false );
+    menuSummary.add( createSummaryItem );
+    
+    viewSummaryItem = new JMenuItem( "View last summary" );
+    viewSummaryItem.setMnemonic( KeyEvent.VK_V );
+    viewSummaryItem.addActionListener( this );
+    viewSummaryItem.setToolTipText( "Opens the most recently created summary in the default web browser." );
+    menuSummary.add( viewSummaryItem );
+    
+    saveSummaryItem = new JMenuItem( "Save last summary..." );
+    saveSummaryItem.setMnemonic( KeyEvent.VK_S );
+    saveSummaryItem.addActionListener( this );
+    saveSummaryItem.setToolTipText( "<html>Opens a dialog to save the most recently created summary as an HTML<br>"
+          + "file, whether or not that summary is still open in the browser.</html>");
+    menuSummary.add( saveSummaryItem );
     
     menu.addSeparator();
 
@@ -2817,6 +2840,23 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
     JMenu subMenu = new JMenu( "Look and Feel" );
     subMenu.setMnemonic( KeyEvent.VK_L );
     menu.add( subMenu );
+    
+    String temp = properties.getProperty( "UseDecodeIR" );
+    JMenu irSubMenu = new JMenu( "Set IR Decoder" );
+    ButtonGroup group = new ButtonGroup();
+    irpTransmogrifierItem = new JRadioButtonMenuItem( "IrpTransmogrifier" );
+    irpTransmogrifierItem.addActionListener( this );
+    irpTransmogrifierItem.setSelected( temp == null );
+    irpTransmogrifierItem.setMnemonic( KeyEvent.VK_I );
+    group.add( irpTransmogrifierItem );
+    irSubMenu.add( irpTransmogrifierItem );
+    decodeIRItem = new JRadioButtonMenuItem( "DecodeIR" );
+    decodeIRItem.addActionListener( this );
+    decodeIRItem.setSelected( temp != null );
+    decodeIRItem.setMnemonic( KeyEvent.VK_D );
+    group.add( decodeIRItem );
+    irSubMenu.add( decodeIRItem );
+    menu.add( irSubMenu );
 
     highlightItem = new JCheckBoxMenuItem( "Highlighting" );
     highlightItem.setMnemonic( KeyEvent.VK_H );
@@ -2847,11 +2887,11 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
     menu.add( tooltipSubMenu );
     ToolTipManager tm = ToolTipManager.sharedInstance();
     tooltipDefaultDelay = tm.getInitialDelay();
-    String temp = properties.getProperty( "TooltipDelay" );
+    temp = properties.getProperty( "TooltipDelay" );
     tooltipDelay = temp != null ? Integer.parseInt( temp ) : tooltipDefaultDelay;
     tm.setInitialDelay( tooltipDelay );
     
-    ButtonGroup group = new ButtonGroup();
+    group = new ButtonGroup();
     defaultDelayItem = new JRadioButtonMenuItem( "Default delay" );
     defaultDelayItem.setSelected( temp == null );
     defaultDelayItem.addActionListener( this );
@@ -3215,12 +3255,9 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
     item.addActionListener( listener );
     advancedSubMenu.add( item );
 
-    item = new JCheckBoxMenuItem( "Learn to Upgrade Conversion" );
-    item.setActionCommand( "LearnUpgradeConversion" );
-    item.setSelected( Boolean.parseBoolean( properties.getProperty( item.getActionCommand(), "false" ) ) );
-    item.addActionListener( listener );
-    advancedSubMenu.add( item );
-
+    // Remove property no longer used
+    properties.remove( "LearnUpgradeConversion" );    
+    
     // Suppress Messages sub menu
     JMenu suppressSubMenu = new JMenu( "Suppress Messages" );
     suppressSubMenu.setMnemonic( KeyEvent.VK_S );
@@ -3409,13 +3446,13 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
     return chooser;
   }
   
-  public RMFileChooser getWavFileSaveChooser()
+  public RMFileChooser getFileSaveChooser( EndingFileFilter filter )
   {
     RMFileChooser chooser = new RMFileChooser( dir );
     chooser.setAcceptAllFileFilterUsed( false );
-    EndingFileFilter wavFilter = new EndingFileFilter( "Sound files (*.wav)", wavEndings );
-    chooser.addChoosableFileFilter( wavFilter );
-    chooser.setFileFilter( wavFilter );
+ //   EndingFileFilter wavFilter = new EndingFileFilter( "Sound files (*.wav)", wavEndings );
+    chooser.addChoosableFileFilter( filter );
+    chooser.setFileFilter( filter );
     return chooser;
   }
 
@@ -4056,13 +4093,18 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
 
   public void saveAs() throws IOException
   {
-    saveAs( null, 0 );
+    saveAs( null, null, 0 );
+  }
+  
+  public void saveAs( WavOp wavOp, int wavIndex ) throws IOException
+  {
+    saveAs( null, wavOp, wavIndex );
   }
 
-  public void saveAs( WavOp wavOp, int wavIndex ) throws IOException
+  private void saveAs( File sourceFile, WavOp wavOp, int wavIndex ) throws IOException
   {   
-    boolean validConfiguration = updateUsage();
-    if ( !validConfiguration )
+    boolean validConfiguration = sourceFile == null ? updateUsage() : true;
+    if ( sourceFile == null && !validConfiguration )
     {
       String title = "Invalid Configuration";
       String message = "This configuration is not valid.  It can be saved as a .rmir file\n"
@@ -4073,9 +4115,12 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
       if ( wavOp != null )
         return;
     }
-    RMFileChooser chooser = wavOp == null ? getFileSaveChooser( validConfiguration ) : getWavFileSaveChooser();
+    
+    EndingFileFilter filter = wavOp != null ? new EndingFileFilter( "Sound files (*.wav)", wavEndings )
+      : sourceFile != null ?  new EndingFileFilter( "Summary files (*.html)", summaryEndings ) : null;    
+    RMFileChooser chooser = filter == null ? getFileSaveChooser( validConfiguration ) : getFileSaveChooser( filter );
     File oldFile = file;
-    if ( wavOp == null && oldFile != null )
+    if ( sourceFile == null && wavOp == null && oldFile != null )
     {
       String name = oldFile.getName();
       if ( name.toLowerCase().endsWith( ".ir" ) || name.toLowerCase().endsWith( ".txt" ) )
@@ -4145,6 +4190,11 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
         AddressRange[] ranges = { entireAddress, settingsAddress, remote.getAdvancedCodeAddress(), 
             remote.getTimedMacroAddress(), remote.getUpgradeAddress(), remote.getLearnedAddress() };
         ( new SaveTask( newFile, Use.EXPORT, ranges[ wavIndex] ) ).execute();
+      }
+      else if ( ending.equals( summaryEndings[ 0 ] ) )
+      {
+        if ( sourceFile != null )
+          Files.copy( sourceFile.toPath(), newFile.toPath(), StandardCopyOption.REPLACE_EXISTING );
       }
       else
       {
@@ -4994,6 +5044,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
     if ( index < 0 || index >= pane.getTabCount() )
       return null;
 
+    Remote remote = remoteConfig.getRemote();
     List< SummarySection > list = new ArrayList< SummarySection >();
     SummarySection ss = new SummarySection();
     Component c = pane.getComponentAt( index );
@@ -5016,7 +5067,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
       ss.title = "Device Buttons";
       list.add( ss );
 
-      if ( remoteConfig != null && remoteConfig.getRemote().hasSettings() )
+      if ( remoteConfig != null && remote.hasSettings() )
       {
         ss = new SummarySection();
         ss.model = ( ( GeneralPanel )c ).getSettingModel();
@@ -5045,11 +5096,14 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
       ActivityGroupTableModel agtm = ap.getActivityGroupModel();
       for ( Activity activity : aList )
       {
-        ss = new SummarySection();
-        ss.model = aftm;
-        ss.subtitle = activity.getName();
-        ss.activity = activity;
-        list.add( ss );
+        if ( !remote.hasActivityAlgorithm() )
+        {
+          ss = new SummarySection();
+          ss.model = aftm;
+          ss.subtitle = activity.getName();
+          ss.activity = activity;
+          list.add( ss );
+        }
         ss = new SummarySection();
         ss.model = agtm;
         ss.activity = activity;
@@ -5101,7 +5155,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
           wavPlayer.close();
         }
       }
-      else if ( source == summaryItem )
+      else if ( source == createSummaryItem )
       {
         List< SummarySection > ssList = new ArrayList< SummarySection >();
         for ( int i = 0; i < tabbedPane.getTabCount(); i++ )
@@ -5113,10 +5167,35 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
         }
 
         HtmlGenerator htmlGen = new HtmlGenerator( remoteConfig );
-        File file = htmlGen.makeHtml( ssList );
-        if ( desktop != null && file != null )
+        if ( desktop != null && htmlGen.makeHtml( ssList ) )
         {
-          desktop.browse( file.toURI() );
+          desktop.browse( summaryFile.toURI() );
+        }
+      }
+      else if ( source == viewSummaryItem )
+      {
+        if ( !summaryFile.exists() )
+        {
+          String message = "There is no summary available to view.";
+          String title = "View Summary";
+          JOptionPane.showMessageDialog( this, message, title, JOptionPane.INFORMATION_MESSAGE );
+        }
+        else if ( desktop != null )
+        {
+          desktop.browse( summaryFile.toURI() );
+        }
+      }
+      else if ( source == saveSummaryItem )
+      {
+        if ( !summaryFile.exists() )
+        {
+          String message = "There is no summary available to save.";
+          String title = "Save Summary";
+          JOptionPane.showMessageDialog( this, message, title, JOptionPane.INFORMATION_MESSAGE );
+        }
+        else
+        {
+          saveAs( summaryFile, null, 0 );
         }
       }
       else if ( source == exitItem )
@@ -5705,6 +5784,26 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
         URL url = new URL( "http://www.hifi-remote.com/forums/dload.php?action=file&file_id=14564" );
         desktop.browse( url.toURI() );
       }
+      else if ( source == irpTransmogrifierItem )
+      {
+        if ( irpTransmogrifierItem.isSelected() )
+          properties.remove( "UseDecodeIR" );
+        if ( learnedPanel != null )
+        {
+          learnedPanel.refresh();
+          learnedPanel.getModel().fireTableDataChanged();
+        } 
+      }
+      else if ( source == decodeIRItem )
+      {
+        if ( decodeIRItem.isSelected() )
+          properties.setProperty( "UseDecodeIR", "true" );
+        if ( learnedPanel != null )
+        {
+          learnedPanel.refresh();
+          learnedPanel.getModel().fireTableDataChanged();
+        } 
+      }
       else
       {
         JMenuItem item = ( JMenuItem )source;
@@ -5732,14 +5831,14 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
       setTitle( "RMIR - " + remoteConfig.getRemote().getName() );
       importFromWavMergeItem.setEnabled( remoteConfig.getRemote().supportWaveUpgrade() );
       exportToWavSubMenu.setEnabled( remoteConfig.getRemote().supportWaveUpgrade() );
-      summaryItem.setEnabled( true );
+      createSummaryItem.setEnabled( true );
     }
     else
     {
       setTitle( "RMIR" );
       importFromWavMergeItem.setEnabled( false );
       exportToWavSubMenu.setEnabled( false );
-      summaryItem.setEnabled( false );
+      createSummaryItem.setEnabled( false );
       return;
     }
 
@@ -6177,6 +6276,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
       workDir = getJarContainingFolder( RemoteMaster.class );
       rmirSys = new File( workDir, "RMIR.sys" );
       rmpbIcon = new File( workDir, "RMPB.ico" );
+      summaryFile = new File( workDir, "summary.html" );
       File propertiesFile = null;
       File errorsFile = null;
       File fileToOpen = null;
@@ -6386,6 +6486,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
   private static File rmirSys = null;
   private static File rmpbIcon = null;
   private static File addonDir = null;
+  private static File summaryFile = null;
   private static File upgradeSource = null;
   private static LanguageDescriptor upgradeLanguage = defaultLanguage;
   private static int[] parsedWindowsVersion = null;
@@ -6398,6 +6499,11 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
   public static File getRmirSys()
   {
     return rmirSys;
+  }
+
+  public static File getSummaryFile()
+  {
+    return summaryFile;
   }
 
   public static File getAddonDir()
@@ -6480,6 +6586,11 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
   {
     ".wav"
   };
+  
+  private final static String[] summaryEndings =
+    {
+      ".html"
+    };
 
   private final static String[] otherMergeEndings =
   {

@@ -39,6 +39,7 @@ import javax.swing.WindowConstants;
 import javax.swing.event.SwingPropertyChangeSupport;
 
 import com.hifiremote.jp1.Activity.Assister;
+import com.hifiremote.jp1.LearnedSignalDecode.Executor;
 import com.hifiremote.jp1.ProtocolManager.QualifiedID;
 import com.hifiremote.jp1.RemoteConfiguration.KeySpec;
 import com.hifiremote.jp1.SetupPanel.AltPIDStatus;
@@ -192,25 +193,14 @@ public class DeviceUpgrade extends Highlight
    * @param base
    *          the base
    */
-  public DeviceUpgrade( LearnedSignal[] signals, RemoteConfiguration remoteConfig, Protocol protocol, boolean convert )
+  public DeviceUpgrade( LearnedSignal[] signals, RemoteConfiguration remoteConfig,
+      LinkedHashMap< LearnedSignal, Executor > lsMap, DeviceUpgrade baseUpgrade,
+      List< List< String >> failedToConvert )
   {
     Remote remote = remoteConfig.getRemote();
-    LearnedSignalDecode d = signals[0].getDecodes().get(0);
-    int device = d.device;
-    int subDevice = d.subDevice;
-
     description = "Learned Signal Upgrade";
-    notes =  "Device Upgrade automatically created by RemoteMaster from " + signals.length + " Learned Signals all with protocol " + d.protocolName;
-    if ( device >= 0 )
-    {
-      notes += ", device " + device;
-    }
-    if ( subDevice >= 0 )
-    {
-      notes += ", subdevice " + subDevice;
-    }
-    notes += ".";
-    this.protocol = protocol;
+    notes =  "Device Upgrade automatically created by RemoteMaster from " + signals.length + " Learned Signals.";
+    this.protocol = lsMap.get( signals[ 0 ] ).protocol;  // At this stage, all signals have same protocol
     setupCode = 2000;
     List<DeviceUpgrade> upgrades = remoteConfig.getDeviceUpgrades();
     boolean setupCodeNotAvail = true;
@@ -244,32 +234,48 @@ public class DeviceUpgrade extends Highlight
 
     // copy the device parameter values
     DeviceParameter[] protocolDevParms = protocol.getDeviceParameters();
-    parmValues = new Value[protocolDevParms.length];
+    parmValues = new Value[ protocolDevParms.length ];
+    Value[] baseValues = baseUpgrade == null ? null : baseUpgrade.getParmValues();
     for ( int i = 0; i < parmValues.length; i++ )
     {
-      if ( protocolDevParms.length > i )
+      if ( baseValues == null )
       {
-        if ( protocolDevParms[i].getName().startsWith("Device") )
-          parmValues[i] = new Value( d.device );
-        else if ( protocolDevParms[i].getName().startsWith("Sub Device") )
-        {
-          System.err.println("New upgrade's subdevice is " + d.subDevice);
-          parmValues[i] = new Value( d.subDevice );
-        }
-        else
-          parmValues[i] = new Value( protocolDevParms[i].getValueOrDefault() );
+        parmValues[ i ] = new Value( null, protocol.devParms[ i ].getDefaultValue() );
+      }
+      else
+      {
+        parmValues[ i ] = new Value( baseValues[ i ].getUserValue(), baseValues[ i ].getDefaultValue() );
       }
     }
+    for ( LearnedSignal ls : signals )
+    {
+      ls.setPreferredLSDecode( null );
+      String name = ls.getSignalName( remote );
+      if ( ls.getDecodes() == null || ls.getDecodes().isEmpty() )
+      {
+        failedToConvert.add( Arrays.asList( name, "Signal has no decodes" ) );
+        continue;
+      }
+      LearnedSignalDecode lsd = new LearnedSignalDecode( ls.getDecodes().get( 0 ).decode, parmValues, lsMap.get( ls ) );
+      if ( lsd.isMatch() )
+        ls.setPreferredLSDecode( lsd );
+      else
+      {
+        failedToConvert.add( Arrays.asList( name,
+            "Device parameters not consistent with those already set" )  );
+      }
+    }
+    protocol.setDeviceParms( parmValues );
     
     // Copy the functions and their assignments
-    List< List< String >> failedToConvert = new ArrayList< List< String > >();
     for ( LearnedSignal s : signals )
     {
-      d = s.getDecodes().get( 0 );
+      LearnedSignalDecode d = s.getPreferredLSDecode();
+      if ( d == null ) continue;
       Button b = remote.getButton( s.getKeyCode() );
       String name = s.getSignalName( remote );
       List< String > error = new ArrayList< String >( 2 );
-      Hex hex = convert ? d.getProtocolHex( protocol, error ) : d.getSignalHex();
+      Hex hex = d.getProtocolHex( error );
       if ( hex != null )
       {
         Function f = new Function( name, new Hex( hex ), s.getNotes() );
