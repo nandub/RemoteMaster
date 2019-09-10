@@ -11,6 +11,7 @@ import java.awt.Font;
 import java.awt.Frame;
 import java.awt.Graphics;
 import java.awt.GridLayout;
+import java.awt.HeadlessException;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -4131,7 +4132,13 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
       }
       chooser.setSelectedFile( oldFile );
     }
-    int returnVal = chooser.showSaveDialog( this );
+    
+    int returnVal = -1;
+    try
+    {
+      returnVal = chooser.showSaveDialog( this );
+    }
+    catch ( HeadlessException e ){}
     if ( returnVal == RMFileChooser.APPROVE_OPTION )
     {
       String ending = ( ( EndingFileFilter )chooser.getFileFilter() ).getEndings()[ 0 ];

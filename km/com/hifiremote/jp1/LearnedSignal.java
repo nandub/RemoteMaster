@@ -43,7 +43,7 @@ import com.sun.xml.internal.bind.v2.runtime.unmarshaller.XsiNilLoader.Array;
  */
 public class LearnedSignal extends Highlight
 {
-
+/*
   public static void main(String[] args) { 
     try 
     { 
@@ -83,7 +83,7 @@ public class LearnedSignal extends Highlight
         ex.printStackTrace(); 
     } 
 } 
-  
+*/
   /**
    * Instantiates a new learned signal.
    * 
@@ -544,6 +544,7 @@ public class LearnedSignal extends Highlight
         tmDatabase = new IrpDatabase( new File( RemoteMaster.getWorkDir(), "IrpProtocols.xml" ) );
         System.err.println( "There are " + tmDatabase.size() + " protocols in the database" );
         
+        /*
         System.err.println();
         List< String > pmNames = pm.getNames();
         List< String > inProtIni = new ArrayList< String >();
@@ -587,7 +588,7 @@ public class LearnedSignal extends Highlight
           if ( !inProtIni.contains( name ) )
             System.err.println( "  " + name );
         }
-        
+        */
         
         tmDecoder = new Decoder( tmDatabase ); 
         tmDecoderParams = new Decoder.DecoderParameters(); 

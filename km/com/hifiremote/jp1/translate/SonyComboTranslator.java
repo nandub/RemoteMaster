@@ -82,9 +82,13 @@ public class SonyComboTranslator extends Translate
       case 2: // SubDevice
       {
         int subDevice = parm;
+        boolean isSony15 = extract( hexData, 7, 1 ) == 1;
         if ( subDevice == 0 )
         {
-          insert( hexData, 13, 3, 0 ); // clear index and Sony20 bit
+          if ( !isSony15)
+          {
+            insert( hexData, 13, 3, 0 ); // clear index and Sony20 bit
+          }
         }
         else
         {

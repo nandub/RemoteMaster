@@ -1,7 +1,6 @@
 package com.hifiremote.jp1;
 
 import java.awt.Color;
-import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -16,10 +15,12 @@ import com.hifiremote.jp1.RemoteMaster.SummarySection;
 
 public class HtmlGenerator
 {
+  /*
   public static void main(String[] args) 
   {
     System.out.println( getHtmlString( "<html>Size, Test    &amp<br>color</html>" ));
   }
+  */
   
   public HtmlGenerator( RemoteConfiguration remoteConfig )
   {

@@ -1,0 +1,1 @@
+"%JAVA%" -cp RemoteMaster.jar org.harctoolbox.irp.IrpTransmogrifier  %* 

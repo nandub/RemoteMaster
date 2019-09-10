@@ -4,6 +4,8 @@ Changes for v2.09
 - Make conversion of learned signals to device upgrade be reliable, and available only with IrpTransmogrifier (Graham)
 - Improve summary menu, adding new items to view and save last created summary (Graham)
 - Fix bug affecting some macros on URC-7935 (Graham)
+-- Private build 2
+- Fix longstanding obscure bug in SonyComboTranslator (Graham)
 
 Changes for v2.08
 -- Release build 1
