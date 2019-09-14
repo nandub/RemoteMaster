@@ -56,6 +56,7 @@ public class LearnedSignalDialog extends JDialog implements ActionListener, Docu
       dialog = new LearnedSignalDialog( locationComp );
     }
 
+    dialog.cancelOnExit = true;
     dialog.setRemoteConfiguration( config );
     dialog.setLearnedSignal( learnedSignal, false );
     
@@ -70,6 +71,11 @@ public class LearnedSignalDialog extends JDialog implements ActionListener, Docu
 
     dialog.setLocationRelativeTo( locationComp );
     dialog.setVisible( true );
+    if ( dialog.cancelOnExit )
+    {
+      dialog.learnedSignal.getTimingAnalyzer().restoreState();
+      dialog.learnedSignal = null;
+    }
     return dialog.learnedSignal;
   }
   
@@ -159,7 +165,7 @@ public class LearnedSignalDialog extends JDialog implements ActionListener, Docu
     ButtonGroup bg1 = new ButtonGroup();
     bg1.add( learnButton );
     bg1.add( prontoButton );
-    learnButton.setSelected( true );
+    prontoButton.setSelected( true );
     learnButton.addItemListener( this );
     prontoButton.addItemListener( this );
     
@@ -167,9 +173,9 @@ public class LearnedSignalDialog extends JDialog implements ActionListener, Docu
     bg2.add( oddButton );
     bg2.add( evenButton );
     oddButton.setSelected( true );
-    oddButton.setEnabled( false );
-    evenButton.setEnabled( false );
-    keypressLabel.setEnabled( false );
+    oddButton.setEnabled( prontoButton.isSelected() );
+    evenButton.setEnabled( prontoButton.isSelected() );
+    keypressLabel.setEnabled( prontoButton.isSelected() );
     
     JPanel formatPanel = new JPanel( new FlowLayout() );
     JLabel formatLabel = new JLabel( "Data format:" );
@@ -311,7 +317,7 @@ public class LearnedSignalDialog extends JDialog implements ActionListener, Docu
     
     // End of duration panels. Now add the action buttons.
     JPanel buttonPanel = new JPanel( new FlowLayout( FlowLayout.RIGHT ) );
-    advancedArea.add( buttonPanel, BorderLayout.PAGE_END );
+    contentPane.add( buttonPanel, BorderLayout.PAGE_END );
     
     unlockButton.addActionListener( this );
     unlockButton.setEnabled( false );
@@ -393,10 +399,19 @@ public class LearnedSignalDialog extends JDialog implements ActionListener, Docu
       boundDevice.setSelectedItem( remote.getDeviceButton( learnedSignal.getDeviceButtonIndex() ) );
       setButton( learnedSignal.getKeyCode(), boundKey, shift, xShift );
       model.set( learnedSignal );
-      signalTextLock = true;
-      signalTextArea.setText( learnedSignal.getSignalHexText() );
+      prontoButton.setSelected( true );
+      signalTextLock = true; 
+      if ( learnButton.isSelected() )
+      {
+        signalTextArea.setText( learnedSignal.getSignalHexText() );
+      }
+      else if ( prontoButton.isSelected() && learnedSignal != null && learnedSignal.getData().length() > 0 )
+      {
+        ProntoSignal ps = new ProntoSignal( learnedSignal );
+        ps.makePronto();
+        signalTextArea.setText( ps.toString() );
+      }
       signalTextLock = false;
-      learnButton.setSelected( true );
     }
 
     LearnedSignalTimingAnalyzer timingAnalyzer = this.learnedSignal.getTimingAnalyzer();
@@ -718,13 +733,15 @@ public class LearnedSignalDialog extends JDialog implements ActionListener, Docu
     }
     else if ( source == okButton && ok )
     {
+      cancelOnExit = false;
       setVisible( false );
     }
     else if ( source == cancelButton )
     {
       // back out any timing analysis changes
-      learnedSignal.getTimingAnalyzer().restoreState();
-      learnedSignal = null;
+//      learnedSignal.getTimingAnalyzer().restoreState();
+//      learnedSignal = null;
+      cancelOnExit = true;  // cancelling now happens on exit
       setVisible( false );
     }
     else if ( source == unlockButton )
@@ -874,6 +891,7 @@ public class LearnedSignalDialog extends JDialog implements ActionListener, Docu
 
   /** The learned signal. */
   private LearnedSignal learnedSignal = null;
+  private boolean cancelOnExit = true;
 
   /** The model. */
   private JP1Table table = null;

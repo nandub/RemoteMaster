@@ -185,31 +185,9 @@ public class LearnedSignalDecode
         
       nameList.clear();
       choiceList.clear();
-      if ( sequencer == null )
-      {
-        for ( String sn : selectorList.keySet() )
-          nameList.add( sn );
-
-        int[] sizes = new int[ nameList.size() ];
-        long count = 1;
-        for ( int i = 0; i < sizes.length; i++ )
-        {
-          sizes[ i ] = selectorList.get( nameList.get( i )).size();
-          count *= sizes[ i ];
-        }
-        for ( long n = 0; n < count; n++ )
-        {
-          long m = n;
-          int[] choices = new int[ sizes.length ];
-          for ( int i = 0; i < sizes.length; i++ )
-          {
-            choices[ i ] = ( int )( m % sizes[ i ] );
-            m = m / sizes[ i ];
-          }
-          choiceList.add( choices );
-        }
-      }
-      else
+      boolean andOthers = false;
+      List< String > givenChoices = new ArrayList< String >();
+      if ( sequencer != null )
       {
         int ndx = sequencer.indexOf( "=" );
         String nameStr = "";
@@ -233,14 +211,32 @@ public class LearnedSignalDecode
         {
           nameList.add( "" );
         }
+        
+        ndx = valStr.indexOf( ".." );
+        if ( ndx >= 0 )
+        {
+          // presence of ".." signifies that after adding the explicitly given choiceList
+          // entries, add all other valid entries.  This option enables certain entries to
+          // be given priority without needing to write out all the remaining ones whose
+          // order is irrelevant.  The ".." ends the given list, anything else is ignored,
+          // so more than two dots can be used if desired, or ",.." as StringTokenizer
+          // sees no token after the final comma.
+          andOthers = true;
+          valStr = valStr.substring( 0, ndx );
+        }
         st1 = new StringTokenizer( valStr, "," );
         while ( st1.hasMoreTokens() )
         {
-          StringTokenizer st2 = new StringTokenizer( st1.nextToken(), "." );
+          String st1Token = st1.nextToken();
+          StringTokenizer st2 = new StringTokenizer( st1Token, "." );
           if ( st2.countTokens() != nameList.size() )
           {
             System.err.println( "*** Error: sequencer has invalid syntax" );
             continue;
+          }
+          if ( andOthers )
+          {
+            givenChoices.add( st1Token );
           }
           int n = 0;
           int[] choices = new int[ nameList.size() ];
@@ -249,6 +245,48 @@ public class LearnedSignalDecode
             choices[ n++ ] = Integer.valueOf( st2.nextToken() );
           }
           choiceList.add( choices );
+        }
+      }
+      
+      if ( sequencer == null || andOthers )
+      {
+        if ( !andOthers )
+        {
+          for ( String sn : selectorList.keySet() )
+            nameList.add( sn );
+        }
+
+        int[] sizes = new int[ nameList.size() ];
+        long count = 1;
+        for ( int i = 0; i < sizes.length; i++ )
+        {
+          sizes[ i ] = selectorList.get( nameList.get( i )).size();
+          count *= sizes[ i ];
+        }
+        for ( long n = 0; n < count; n++ )
+        {
+          long m = n;
+          int[] choices = new int[ sizes.length ];
+          for ( int i = 0; i < sizes.length; i++ )
+          {
+            choices[ i ] = ( int )( m % sizes[ i ] );
+            m = m / sizes[ i ];
+          }
+          String choiceStr = null;
+          if ( andOthers )
+          {
+            StringBuilder sb = new StringBuilder();
+            for ( int i = 0; i < choices.length; i++ )
+            {
+              if ( i > 0 ) sb.append( "." );
+              sb.append( choices[ i ] );
+            }
+            choiceStr = sb.toString();
+          }
+          if ( !andOthers || !givenChoices.contains( choiceStr ) )
+          {
+            choiceList.add( choices );
+          }
         }
       }
     }
@@ -391,6 +429,32 @@ public class LearnedSignalDecode
     miscMessage = decodeIRCaller.getMiscMessage();
     errorMessage = decodeIRCaller.getErrorMessage();
   }
+  
+  
+  /**
+   * A decode is considered invalid only if it has an executor with a non-null
+   * qualifier and that qualifier evaluates to 0 (= false) for that decode.
+   */
+  public boolean isValidDecode()
+  {
+    if ( executor != null && executor.qualifier != null )
+    {
+      NameEngine engine = new NameEngine( decode.getMap() );
+      Expression exp = Expression.newExpression( executor.qualifier );
+      long value = 0;
+      try
+      {
+        value = exp.toLong( engine );
+      }
+      catch ( NameUnassignedException e )
+      {
+        System.err.println( "*** Error: Unassigned name in qualifier" );
+        return true;
+      }
+      return value != 0;    
+    }
+    return true;
+  }
 
   public LearnedSignalDecode( Decode decode )
   {
@@ -417,27 +481,6 @@ public class LearnedSignalDecode
     this.executor = executor;
     miscMessage = "";
 
-    if ( executor.qualifier != null )
-    {
-      NameEngine engine = new NameEngine( map );
-      Expression exp = Expression.newExpression( executor.qualifier );
-      long value = 0;
-      try
-      {
-        value = exp.toLong( engine );
-      }
-      catch ( NameUnassignedException e )
-      {
-        System.err.println( "*** Error: Unassigned name in qualifier" );
-        this.decode = null;
-        return;
-      }
-      if ( value == 0 )
-      {
-        this.decode = null;
-        return;
-      }
-    }
 
     for ( String key : map.keySet() )
     {
@@ -457,18 +500,18 @@ public class LearnedSignalDecode
 
     if ( matchDevParms == null )
     {
-      evaluate( map, 0 );
-      List< String > error = new ArrayList< String >();
-      if ( executor.protocol != null )
+      hex = new int[ 0 ];
+      if ( isValidDecode() )
       {
-        short[] data = getProtocolHex( error ).getData();
-        hex = new int[ data.length ];
-        for ( int i = 0; i < data.length; i++ )
-          hex[ i ] = data[ i ];
-      }
-      else
-      {
-        hex = new int[ 0 ];
+        evaluate( map, 0 );
+        List< String > error = new ArrayList< String >();
+        if ( executor.protocol != null )
+        {
+          short[] data = getProtocolHex( error ).getData();
+          hex = new int[ data.length ];
+          for ( int i = 0; i < data.length; i++ )
+            hex[ i ] = data[ i ];
+        }
       }
       errorMessage = "";
       return;
@@ -718,6 +761,7 @@ public class LearnedSignalDecode
     return pHex;
   }
   
+/*  
   public Hex getSignalHex()
   {
     if ( hex == null )
@@ -731,6 +775,7 @@ public class LearnedSignalDecode
     }
     return sHex;
   }
+*/
   
   /**
    * If there is a "(" in the name, it removes it and all that follows.  In the
@@ -820,7 +865,7 @@ public class LearnedSignalDecode
     if ( !qString.isEmpty() )
       executor.qualifier = qString;
     if ( !sString.isEmpty() )
-      executor.sequencer = sString.replace( " ", "" );
+      executor.sequencer = sString.replaceAll( "\\s", "" );
     
     if ( parmString != null )
     {

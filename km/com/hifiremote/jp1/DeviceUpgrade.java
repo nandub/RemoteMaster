@@ -257,12 +257,19 @@ public class DeviceUpgrade extends Highlight
         continue;
       }
       LearnedSignalDecode lsd = new LearnedSignalDecode( ls.getDecodes().get( 0 ).decode, parmValues, lsMap.get( ls ) );
-      if ( lsd.isMatch() )
+      if ( !lsd.isValidDecode() )
+      {
+        failedToConvert.add( Arrays.asList( name,
+            "Device parameters not consistent with executor" ) );
+      }
+      else if ( lsd.isMatch() )
+      {
         ls.setPreferredLSDecode( lsd );
+      }
       else
       {
         failedToConvert.add( Arrays.asList( name,
-            "Device parameters not consistent with those already set" )  );
+            "Device parameters not consistent with those already set" ) );
       }
     }
     protocol.setDeviceParms( parmValues );

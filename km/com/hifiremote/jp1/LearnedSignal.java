@@ -374,7 +374,8 @@ public class LearnedSignal extends Highlight
    */
   public ArrayList< LearnedSignalDecode > getDecodes()
   {
-    boolean nowUsingDecodeIR = Boolean.parseBoolean( RemoteMaster.getProperties().getProperty( "UseDecodeIR", "false" ) );
+    boolean nowUsingDecodeIR = LearnedSignal.hasDecodeIR()
+        && Boolean.parseBoolean( RemoteMaster.getProperties().getProperty( "UseDecodeIR", "false" ) );
     boolean decoderChanged = decodes == null ? false : usingDecodeIR != nowUsingDecodeIR;
     usingDecodeIR = nowUsingDecodeIR;
       
@@ -504,95 +505,17 @@ public class LearnedSignal extends Highlight
     return decodeIR;
   }
   
-  private static Decoder getTmDecoder()
+  public static Decoder getTmDecoder()
   {
     if ( tmDecoder == null )
     {
       try
-      {
-        ProtocolManager pm = ProtocolManager.getProtocolManager();
-        
-        for ( Hex hex : pm.getByPID().keySet() )
-        {
-          Hashtable< String, List< Protocol > > ht = new Hashtable< String, List<Protocol> >();
-          for  ( Protocol pr : pm.getByPID().get( hex ) )
-          {
-            String var = pr.getVariantName();
-            if ( !ht.containsKey( var ) )
-              ht.put( var, new ArrayList< Protocol >() );
-            ht.get( var ).add( pr );
-          }
-          for ( String var : ht.keySet() )
-          {
-            if ( ht.get( var ).size() > 1 )
-            {
-              System.err.println();
-              System.err.println( "PID: " + hex);
-              System.err.println( "  Variant: " + var );
-              System.err.print( "    " );
-              for ( Protocol pr : ht.get( var ) )
-                System.err.print( pr.getName() + ";" );
-              System.err.println();
-            }
-          }
-        }
-        System.err.println();
-        
-        
-        System.err.println( "Using IrpTransmogrifier to decode Learned Signals" );
+      {  
         //tmDatabase = new IrpDatabase( ( String )null ); 
         tmDatabase = new IrpDatabase( new File( RemoteMaster.getWorkDir(), "IrpProtocols.xml" ) );
-        System.err.println( "There are " + tmDatabase.size() + " protocols in the database" );
-        
-        /*
-        System.err.println();
-        List< String > pmNames = pm.getNames();
-        List< String > inProtIni = new ArrayList< String >();
-        System.err.println( "Protocols also in protocols.ini:");
-        for ( String name : tmDatabase.getNames() )
-        {
-          if ( pmNames.contains( name ))
-          {
-            System.err.println( "  " + name );
-            inProtIni.add( name );
-            for ( Protocol p : pm.getByName().get( name ) )
-            {
-              System.err.println( "    Variant: " 
-                  + ( p.getVariantName() == null ? "null" : p.getVariantName() ));
-              String pid = tmDatabase.getFirstProperty( name, "uei-executor" );
-              if ( pid != null )
-                System.err.println( "    TM PID: " + pid );
-              System.err.println( "    Ini PID: " + p.getID() );
-              System.err.print( "    Cmd params: " );
-              for ( Parameter param : p.getCommandParameters() )
-              {
-                System.err.print( param.getName() + ", ");
-              }
-              System.err.println();
-              System.err.println( "    Cmd translators: " + p.getCmdTranslatorText() );
-              System.err.println();
-            }
-          }
-        }
-        System.err.println();
-        System.err.println( "Protocols not in protocols.ini:");
-        for ( String name : tmDatabase.getNames() )
-        {
-          if ( !pmNames.contains( name ))
-            System.err.println( "  " + name );
-        }
-        System.err.println();
-        System.err.println( "Unmatched protocols.ini protocols" );
-        for ( String name : pmNames )
-        {
-          if ( !inProtIni.contains( name ) )
-            System.err.println( "  " + name );
-        }
-        */
-        
         tmDecoder = new Decoder( tmDatabase ); 
         tmDecoderParams = new Decoder.DecoderParameters(); 
-        tmDecoderParams.setRemoveDefaultedParameters( false ); 
+        tmDecoderParams.setRemoveDefaultedParameters( false );
       }
       catch ( IOException ioe )
       {

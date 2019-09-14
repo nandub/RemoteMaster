@@ -95,6 +95,8 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.HyperlinkListener;
 
+import org.harctoolbox.irp.Version;
+
 import com.hifiremote.LibraryLoader;
 import com.hifiremote.jp1.FixedData.Location;
 import com.hifiremote.jp1.JP2Analyzer;
@@ -137,7 +139,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
 
   /** Description of the Field. */
   public final static String version = "v2.09";
-  public final static int buildVer = 1;
+  public final static int buildVer = 2;
   
   public enum WavOp { NEW, MERGE, SAVE, PLAY };
   
@@ -2047,8 +2049,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
     activityPanel.addRMPropertyChangeListener( this );
 
     learnedPanel = new LearnedSignalPanel();
-    if ( LearnedSignal.hasDecodeIR() )
-      learnedPanel.addRMPropertyChangeListener( this );
+    learnedPanel.addRMPropertyChangeListener( this );
 
     rawDataPanel = new RawDataPanel();
     tabbedPane.addTab( "Raw Data", rawDataPanel );
@@ -2842,18 +2843,22 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
     subMenu.setMnemonic( KeyEvent.VK_L );
     menu.add( subMenu );
     
-    String temp = properties.getProperty( "UseDecodeIR" );
+    boolean useDecodeIR = LearnedSignal.hasDecodeIR()
+        && Boolean.parseBoolean( RemoteMaster.getProperties().getProperty( "UseDecodeIR", "false" ) );
+    System.err.println( "Using " + ( useDecodeIR ? "DecodeIR" : "IrpTransmogrifier" )
+        + " as decoder of learned signals");
     JMenu irSubMenu = new JMenu( "Set IR Decoder" );
     ButtonGroup group = new ButtonGroup();
     irpTransmogrifierItem = new JRadioButtonMenuItem( "IrpTransmogrifier" );
     irpTransmogrifierItem.addActionListener( this );
-    irpTransmogrifierItem.setSelected( temp == null );
+    irpTransmogrifierItem.setSelected( !useDecodeIR );
     irpTransmogrifierItem.setMnemonic( KeyEvent.VK_I );
     group.add( irpTransmogrifierItem );
     irSubMenu.add( irpTransmogrifierItem );
     decodeIRItem = new JRadioButtonMenuItem( "DecodeIR" );
     decodeIRItem.addActionListener( this );
-    decodeIRItem.setSelected( temp != null );
+    decodeIRItem.setEnabled( LearnedSignal.hasDecodeIR() );
+    decodeIRItem.setSelected( useDecodeIR );
     decodeIRItem.setMnemonic( KeyEvent.VK_D );
     group.add( decodeIRItem );
     irSubMenu.add( decodeIRItem );
@@ -2888,7 +2893,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
     menu.add( tooltipSubMenu );
     ToolTipManager tm = ToolTipManager.sharedInstance();
     tooltipDefaultDelay = tm.getInitialDelay();
-    temp = properties.getProperty( "TooltipDelay" );
+    String temp = properties.getProperty( "TooltipDelay" );
     tooltipDelay = temp != null ? Integer.parseInt( temp ) : tooltipDefaultDelay;
     tm.setInitialDelay( tooltipDelay );
     
@@ -5702,6 +5707,13 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
         {
           sb.append( "<p><b>DecodeIR is not available!</b></p>" );
         }
+        
+        sb.append( "<p>IrpTransmogrifier version " );
+        sb.append( Version.version );
+        sb.append( "<br/>" );
+        sb.append( "IrpDatabase version " );
+        sb.append( LearnedSignal.getTmDatabase().getConfigFileVersion() );
+        sb.append( "</p>" );
 
         if ( !interfaces.isEmpty() )
         {
@@ -5793,6 +5805,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
       }
       else if ( source == irpTransmogrifierItem )
       {
+        System.err.println( "Setting IrpTransmogrifier as decoder for Learned Signals" );
         if ( irpTransmogrifierItem.isSelected() )
           properties.remove( "UseDecodeIR" );
         if ( learnedPanel != null )
@@ -5803,6 +5816,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
       }
       else if ( source == decodeIRItem )
       {
+        System.err.println( "Setting DecodeIR as decoder for Learned Signals" );
         if ( decodeIRItem.isSelected() )
           properties.setProperty( "UseDecodeIR", "true" );
         if ( learnedPanel != null )
@@ -5862,11 +5876,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
     protocolPanel.set( remoteConfig );
     activityPanel.set( remoteConfig );
     segmentPanel.set( remoteConfig );
-
-    if ( LearnedSignal.hasDecodeIR() )
-    {
-      learnedPanel.set( remoteConfig );
-    }
+    learnedPanel.set( remoteConfig );
 
     Remote remote = remoteConfig.getRemote();
     codesAction.setEnabled( remote.getSetupCodes().size() > 0 );
@@ -5908,10 +5918,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
     index = checkTabbedPane( "Devices", devicePanel, true, index );
     index = checkTabbedPane( "Protocols", protocolPanel, remote.hasFreeProtocols(), index );
     index = checkTabbedPane( "Activities", activityPanel, remote.hasActivitySupport(), index );
-    if ( LearnedSignal.hasDecodeIR() )
-      index = checkTabbedPane( "Learned Signals", learnedPanel, remote.hasLearnedSupport() && learnedPanel != null, index );
-    else
-      index = checkTabbedPane( "Learned Signals", learnedPanel, remote.hasLearnedSupport() && learnedPanel != null, index, "Learned Signals tab disabled due to DecodeIR not being found.", false );
+    index = checkTabbedPane( "Learned Signals", learnedPanel, remote.hasLearnedSupport() && learnedPanel != null, index );
     index = checkTabbedPane( "Segments", segmentPanel, Boolean.parseBoolean( properties.getProperty( "ShowSegments", "false" ) ) &&  remote.getSegmentTypes() != null && !remote.isSSD(), index );
   }
   
@@ -6284,6 +6291,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
       rmirSys = new File( workDir, "RMIR.sys" );
       rmpbIcon = new File( workDir, "RMPB.ico" );
       summaryFile = new File( workDir, "summary.html" );
+      LearnedSignal.getTmDecoder();
       File propertiesFile = null;
       File errorsFile = null;
       File fileToOpen = null;

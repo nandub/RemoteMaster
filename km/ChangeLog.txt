@@ -6,6 +6,13 @@ Changes for v2.09
 - Fix bug affecting some macros on URC-7935 (Graham)
 -- Private build 2
 - Fix longstanding obscure bug in SonyComboTranslator (Graham)
+- Fix bugs in handling of qualifier string in uei-executor entries of IrpDatabase (Graham)
+- Fix bug allowing DecodeIR to be selected as IR decoder when it is not present (Graham)
+- Make pronto button, rather than learned button, be default on LearnedSignalDialog (Graham)
+- Fix bug preventing button panel of LearnedSignalDialog showing unless Advanced Details selected (Graham)
+- Add syntax for specifying priority entries in sequencer string of uei-executor entries without listing the others (Graham)
+- Display version numbers of IrpTransmogrifier and IrpDatabase on Help > About menu (Graham)
+- Correct the explanatory text in protocols.ini for Pioneer DVD and DVD2 protocols, which had set/clear for an OBC bit the wrong way round (Graham)
 
 Changes for v2.08
 -- Release build 1
