@@ -5,10 +5,85 @@
      notice and this notice are preserved.  This file is offered as-is,
      without any warranty.
 -->
+
+<!--
+Notes for those modifying this file:
+
+Syntax of the XML file is defined in the W3C Schema http://www.harctoolbox.org/schemas/irp-protocols.xsd
+(although possibly easier to digest for machines than for humans).
+This defines the XML name space irp=http://www.harctoolbox.org/irp-protocols,
+using the prefix irp.
+
+Semantics is/should be documented in the main IrpTransmogrifier documentation.
+
+These notes are therefore to be seen as informal help to people modifying, not
+as a defining document.
+
+
+This document is read by IrpTransmogrifier with XInclude processing enabled, so
+it is possible to use include documents according to the XInclude standard.
+
+Semantics of some of the elements:
+
+irp:parameter: The irp:parameter can be used to define all sort of information associated with
+a particular protocol. IrpTransmogrifier ignores the ones with names it does not
+use, except that it can be inquired about the values from the API. Of course, using
+another program to read the file and extract the value as an XPath expression is also possible.
+(For example: /irp:protocols/irp:protocol[@name="Denon"]/irp:parameter[@name="uei-executor"]/text()
+extracts the text of the uei-executor for the Denon protocol).
+Such a parameter contains of an arbitrary string content, or, by setting the attribute type to "xml",
+an arbitrary well-formed XML fragment. For a certain name (value of the name attribute), the
+element can occur multiple times.  It will be available to a reading program as a List
+in Java, one list element per occurrence on the parameter with the particular name.
+
+irp:documentation: Arbitrary documentation of the present protocol. Can contain (X)HTML markup.
+More formally: it is considered as an XML document fragment. A reading user or program
+can request it either as XHTML (an XML document fragment), or as text (which is
+nothing but a dumb rendering of the HTML content).
+
+irp:irp: A text string, possibly spanning several lines, containing the IRP representation
+of the present protocol. Use of CDATA sections is recommended, however not required.
+
+List of parameters recognized by IrpTransmogrifier:
+
+prefer-over
+    If a signal has multiple decodes, the present protocol is preferred over the one mentioned as prefer-over.
+May be given several times. (Normally, a specialized protocol should be preferred over a more general one.)
+
+alt_name
+    Alternative name, ("alias", "synonym") for the present protocol.
+
+reject-repeatless
+    When decoding, normally the repeat sequence may match 0 times, i.e. not at all.
+If this parameter is true at least one repeat must be present for a match to be recognized.
+(Strictly speaking, this would have been possible to achieve by using "+" instead of "*"
+for the repeat indicator, but this would have other disadvantages.)
+
+decodable
+    Setting this to false prohibits the program from trying to use this protocol for decoding.
+Normally, this is only used when the IRP form makes protocol decoding impossible or not feasible.
+
+decode-only
+    Setting this to true makes the program refuse to render the protocol.
+Should be used only for "protocols" that denote incomplete or otherwise flawed decodes,
+for example with missing parts or non-matching checksums.
+
+The following define protocol-private values of otherwise global parameters:
+
+absolutetolerance
+    See Numerical equality between durations. Current default: 100.0.
+relativetolerance
+    See Numerical equality between durations. Current default: 0.3.
+frequency-tolerance
+    Tolerance in Hz for frequency comparisons. Set to -1 to disable frequency check. Current default: 2000.0.
+minimum-leadout
+    Minimal duration in micro seconds that is accepted as final duration. Current default: 20000.0.
+
+-->
 <irp:protocols xmlns="http://www.w3.org/1999/xhtml"
                xmlns:xi="http://www.w3.org/2001/XInclude"
                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-               version="2019-07-22-rm1"
+               version="2019-09-11-rm1"
                xsi:schemaLocation="http://www.harctoolbox.org/irp-protocols http://www.harctoolbox.org/schemas/irp-protocols.xsd"
                xmlns:irp="http://www.harctoolbox.org/irp-protocols">
     <irp:protocol c-name="X48NEC" name="48-NEC">
@@ -246,9 +321,111 @@ This is a moderately robust protocol, but <A href="#spurious">spurious decodes</
             ]]></irp:irp>
             <irp:documentation>See <a href="#GuangZhou">GuangZhou</a>, which has identical framing but with different bit definitions.</irp:documentation>
     </irp:protocol>
-    <irp:protocol c-name="DirecTV" name="DirecTV">
+    <irp:protocol c-name="DirecTV_P0" name="DirecTV_P0">
         <irp:parameter name="uei-executor">0162[D;F]</irp:parameter>
+	<irp:parameter name="min-leadout">7000</irp:parameter>
+	<irp:parameter name="frequency-tolerance">1000</irp:parameter>
+        <irp:irp><![CDATA[{40k,600,msb}<1,-1|1,-2|2,-1|2,-2>([10][5],-2,D:4,F:8,C:4,1,-15){C=7*(F:2:6)+5*(F:2:4)+3*(F:2:2)+(F:2)}[D:0..15,F:0..255]]]></irp:irp>
+        <irp:documentation>There are six variants of the DirecTV protocol, distinguished in RemoteMaster by the parameter "Parm" on the Setup page.
+            The Parm value is shown in the Misc field of DecodeIR.  The IRP notation above corresponds to the default Parm=3.
+            The various Parm values correspond to three different frequencies (the 38k in the above) and two different lead-out times (the -50 in the above).
+            The corresponding values are:
+
+            <ul>
+                <li>Parm=0 : 40k, -15</li>
+                <li>Parm=1 : 40k, -50</li>
+                <li>Parm=2 : 38k, -15</li>
+                <li>Parm=3 : 38k, -50</li>
+                <li>Parm=4 : 57k, -15</li>
+                <li>Parm=5 : 57k, -50</li>
+            </ul>
+        </irp:documentation>
+    </irp:protocol>
+    <irp:protocol c-name="DirecTV_P1" name="DirecTV_P1">
+        <irp:parameter name="uei-executor">0162[D;F]</irp:parameter>
+	<irp:parameter name="frequency-tolerance">1000</irp:parameter>
+	<irp:parameter name="prefer-over">DirecTV_P0</irp:parameter>
+        <irp:irp><![CDATA[{40k,600,msb}<1,-1|1,-2|2,-1|2,-2>([10][5],-2,D:4,F:8,C:4,1,-50){C=7*(F:2:6)+5*(F:2:4)+3*(F:2:2)+(F:2)}[D:0..15,F:0..255]]]></irp:irp>
+        <irp:documentation>There are six variants of the DirecTV protocol, distinguished in RemoteMaster by the parameter "Parm" on the Setup page.
+            The Parm value is shown in the Misc field of DecodeIR.  The IRP notation above corresponds to the default Parm=3.
+            The various Parm values correspond to three different frequencies (the 38k in the above) and two different lead-out times (the -50 in the above).
+            The corresponding values are:
+
+            <ul>
+                <li>Parm=0 : 40k, -15</li>
+                <li>Parm=1 : 40k, -50</li>
+                <li>Parm=2 : 38k, -15</li>
+                <li>Parm=3 : 38k, -50</li>
+                <li>Parm=4 : 57k, -15</li>
+                <li>Parm=5 : 57k, -50</li>
+            </ul>
+        </irp:documentation>
+    </irp:protocol>
+    <irp:protocol c-name="DirecTV_P2" name="DirecTV_P2">
+        <irp:parameter name="uei-executor">0162[D;F]</irp:parameter>
+	<irp:parameter name="min-leadout">7000</irp:parameter>
+	<irp:parameter name="frequency-tolerance">1000</irp:parameter>
+        <irp:irp><![CDATA[{38k,600,msb}<1,-1|1,-2|2,-1|2,-2>([10][5],-2,D:4,F:8,C:4,1,-15){C=7*(F:2:6)+5*(F:2:4)+3*(F:2:2)+(F:2)}[D:0..15,F:0..255]]]></irp:irp>
+        <irp:documentation>There are six variants of the DirecTV protocol, distinguished in RemoteMaster by the parameter "Parm" on the Setup page.
+            The Parm value is shown in the Misc field of DecodeIR.  The IRP notation above corresponds to the default Parm=3.
+            The various Parm values correspond to three different frequencies (the 38k in the above) and two different lead-out times (the -50 in the above).
+            The corresponding values are:
+
+            <ul>
+                <li>Parm=0 : 40k, -15</li>
+                <li>Parm=1 : 40k, -50</li>
+                <li>Parm=2 : 38k, -15</li>
+                <li>Parm=3 : 38k, -50</li>
+                <li>Parm=4 : 57k, -15</li>
+                <li>Parm=5 : 57k, -50</li>
+            </ul>
+        </irp:documentation>
+    </irp:protocol>
+    <irp:protocol c-name="DirecTV_P3" name="DirecTV_P3">
+        <irp:parameter name="uei-executor">0162[D;F]</irp:parameter>
+	<irp:parameter name="frequency-tolerance">1000</irp:parameter>
+	<irp:parameter name="prefer-over">DirecTV_P2</irp:parameter>
         <irp:irp><![CDATA[{38k,600,msb}<1,-1|1,-2|2,-1|2,-2>([10][5],-2,D:4,F:8,C:4,1,-50){C=7*(F:2:6)+5*(F:2:4)+3*(F:2:2)+(F:2)}[D:0..15,F:0..255]]]></irp:irp>
+        <irp:documentation>There are six variants of the DirecTV protocol, distinguished in RemoteMaster by the parameter "Parm" on the Setup page.
+            The Parm value is shown in the Misc field of DecodeIR.  The IRP notation above corresponds to the default Parm=3.
+            The various Parm values correspond to three different frequencies (the 38k in the above) and two different lead-out times (the -50 in the above).
+            The corresponding values are:
+
+            <ul>
+                <li>Parm=0 : 40k, -15</li>
+                <li>Parm=1 : 40k, -50</li>
+                <li>Parm=2 : 38k, -15</li>
+                <li>Parm=3 : 38k, -50</li>
+                <li>Parm=4 : 57k, -15</li>
+                <li>Parm=5 : 57k, -50</li>
+            </ul>
+        </irp:documentation>
+    </irp:protocol>
+    <irp:protocol c-name="DirecTV_P4" name="DirecTV_P4">
+        <irp:parameter name="uei-executor">0162[D;F]</irp:parameter>
+	<irp:parameter name="min-leadout">7000</irp:parameter>
+	<irp:parameter name="frequency-tolerance">1000</irp:parameter>
+        <irp:irp><![CDATA[{57k,600,msb}<1,-1|1,-2|2,-1|2,-2>([10][5],-2,D:4,F:8,C:4,1,-15){C=7*(F:2:6)+5*(F:2:4)+3*(F:2:2)+(F:2)}[D:0..15,F:0..255]]]></irp:irp>
+        <irp:documentation>There are six variants of the DirecTV protocol, distinguished in RemoteMaster by the parameter "Parm" on the Setup page.
+            The Parm value is shown in the Misc field of DecodeIR.  The IRP notation above corresponds to the default Parm=3.
+            The various Parm values correspond to three different frequencies (the 38k in the above) and two different lead-out times (the -50 in the above).
+            The corresponding values are:
+
+            <ul>
+                <li>Parm=0 : 40k, -15</li>
+                <li>Parm=1 : 40k, -50</li>
+                <li>Parm=2 : 38k, -15</li>
+                <li>Parm=3 : 38k, -50</li>
+                <li>Parm=4 : 57k, -15</li>
+                <li>Parm=5 : 57k, -50</li>
+            </ul>
+        </irp:documentation>
+    </irp:protocol>
+    <irp:protocol c-name="DirecTV_P5" name="DirecTV_P5">
+        <irp:parameter name="uei-executor">0162[D;F]</irp:parameter>
+	<irp:parameter name="frequency-tolerance">1000</irp:parameter>
+	<irp:parameter name="prefer-over">DirecTV_P4</irp:parameter>
+        <irp:irp><![CDATA[{57k,600,msb}<1,-1|1,-2|2,-1|2,-2>([10][5],-2,D:4,F:8,C:4,1,-50){C=7*(F:2:6)+5*(F:2:4)+3*(F:2:2)+(F:2)}[D:0..15,F:0..255]]]></irp:irp>
         <irp:documentation>There are six variants of the DirecTV protocol, distinguished in RemoteMaster by the parameter "Parm" on the Setup page.
             The Parm value is shown in the Misc field of DecodeIR.  The IRP notation above corresponds to the default Parm=3.
             The various Parm values correspond to three different frequencies (the 38k in the above) and two different lead-out times (the -50 in the above).
@@ -333,8 +510,8 @@ This is a moderately robust protocol, but <A href="#spurious">spurious decodes</
     </irp:protocol>
     <irp:protocol c-name="F12" name="F12">
         <irp:parameter name="uei-executor">001A[D;F]</irp:parameter>
-        <irp:irp><![CDATA[{37.9k,422}<1,-3|3,-1>((D:3,S:1,F:8,-80)2,-128)*  [D:0..7,S:0..1,F:0..255]]]></irp:irp>
-        <irp:documentation>Old version of the F12 specification. See <a href="http://www.hifi-remote.com/wiki/index.php?title=DecodeIR#F12">DecodeIR</a>.
+        <irp:irp><![CDATA[{37.9k,422}<1,-3|3,-1>((D:3,S:1,F:8,-80)2)*  [D:0..7,S:0..1,F:0..255]]]></irp:irp>
+        <irp:documentation>Old version of the F12 specification.
         </irp:documentation>
     </irp:protocol>
     <irp:protocol c-name="F120" name="F12-0">
@@ -397,22 +574,66 @@ This version is a re-parametrization of 3FG&apos;s version, allowing for decodin
            [A:0..15, wOn:0..1, B:0..15, C:0..15, D:0..15, E:0..15, tOff:0..1024, tOn:0..1024, fOff:0..1, fOn:0..1]]]></irp:irp>
         <irp:documentation>Protocol for Fujitsu inverter air conditioning. <a href="http://www.remotecentral.com/cgi-bin/mboard/rc-discrete/thread.cgi?4894">Reference</a>.</irp:documentation>
     </irp:protocol>
-    <irp:protocol c-name="GI4DTV" name="G.I.4DTV">
-        <irp:parameter name="uei-executor">00A4[D;F]</irp:parameter>
-	<irp:parameter name="prefer-over">G.I.4DTVnoCheck</irp:parameter>
-        <irp:irp><![CDATA[{37.3k,992}<1,-1|1,-3>(5,-2,F:6,D:2,C:4,1,-60)*{C=((#(F&25) + #(D&5))&1) + 2*((#(F&43) + #(D&7))&1) + 4*((#(F&22) + #(D&7))&1) + 8*((#(F&44) + #(D&6))&1)}[D:0..7, F:0..63]]]></irp:irp>
-        <irp:documentation>This is a moderately robust protocol, but <A href="#spurious">spurious decodes</A> are still possible. Unit (device) numbers from 0 to 7 are supported.  The check sum C is a Hamming Code, which can correct single bit errors. D:1:2 is encoded in the check sum. See <a href="http://www.hifi-remote.com/forums/viewtopic.php?p=103934#103934">forum thread</a>.</irp:documentation>
-    </irp:protocol>
-    <irp:protocol c-name="GI4DTVhi" name="G.I.4DTVhi">
-        <irp:parameter name="uei-executor">00A4[D+4;F]</irp:parameter>
+    
+        <irp:protocol c-name="GI4DTV" name="G.I.4DTV">
+        <irp:parameter name="decodable">false</irp:parameter>
+        <irp:parameter name="prefer-over">G.I.4DTV</irp:parameter>
         <irp:parameter name="prefer-over">G.I.4DTVnoCheck</irp:parameter>
-        <irp:irp><![CDATA[{37.3k,992}<1,-1|1,-3>(5,-2,F:6,D:2,C:4,1,-60)*{C=~(((#(F&25) + #(D&5))&1) + 2*((#(F&43) + #(D&7))&1) + 4*((#(F&22) + #(D&7))&1) + 8*((#(F&44) + #(D&6))&1))}[D:0..3, F:0..63]]]></irp:irp>
-        <irp:documentation>This is a moderately robust protocol, but <A href="#spurious">spurious decodes</A> are still possible. This corresponds to the G.I.4DTV protocol for Unit (device) numbers from 4 to 7, with the value of D being four less, so in the range 0..3.  The check sum C is a Hamming Code, which can correct single bit errors. The top bit of the 3-bit device number is encoded in the check sum. See <a href="http://www.hifi-remote.com/forums/viewtopic.php?p=103934#103934">forum thread</a>.</irp:documentation>
+        <!--irp:irp><![CDATA[{37.3k,992}<1,-1|1,-3>(5,-2,F:6,D:2,C:4,1,-60)*{C= ((#(F&25) + #(D&5))&1) + 2*((#(F&43) + #(D&7))&1) + 4*((#(F&22) + #(D&7))&1) + 8*((#(F&44) + #(D&6))&1)}[D:0..3, F:0..63]]]></irp:irp-->
+        <irp:irp><![CDATA[
+{37.3k,992}<1,-1|1,-3>(5,-2,F:6,D:2,C0:1,C1:1,C2:1,C3:1,1,-60)*
+{
+C0=D:1:2 + #(F&25) + #(D&1),
+C1=D:1:2 + #(F&43) + #(D&3),
+C2=D:1:2 + #(F&22) + #(D&3),
+C3=D:1:2 + #(F&44) + #(D&2)
+}[D:0..7, F:0..63]
+       ]]></irp:irp>
+    </irp:protocol>
+    <irp:protocol c-name="GI4DTV0123" name="G.I.4DTV0123">
+        <irp:parameter name="decodable">true</irp:parameter>
+        <irp:parameter name="prefer-over">G.I.4DTVold</irp:parameter>
+        <irp:parameter name="prefer-over">G.I.4DTVnoCheck</irp:parameter>
+	<irp:parameter name="uei-executor">00A4[D;F]</irp:parameter>
+        <!--irp:irp><![CDATA[{37.3k,992}<1,-1|1,-3>(5,-2,F:6,D:2,C:4,1,-60)*{C= ((#(F&25) + #(D&5))&1) + 2*((#(F&43) + #(D&7))&1) + 4*((#(F&22) + #(D&7))&1) + 8*((#(F&44) + #(D&6))&1)}[D:0..3, F:0..63]]]></irp:irp-->
+        <irp:irp><![CDATA[
+{37.3k,992}<1,-1|1,-3>(5,-2,F:6,D:2,C0:1,C1:1,C2:1,C3:1,1,-60)*
+{
+C0=D:1:2 + #(F&25) + #(D&1),
+C1=D:1:2 + #(F&43) + #(D&3),
+C2=D:1:2 + #(F&22) + #(D&3),
+C3=D:1:2 + #(F&44) + #(D&2)
+}[D:0..3, F:0..63]
+       ]]></irp:irp>
+    </irp:protocol>
+    <irp:protocol c-name="GI4DTV4567" name="G.I.4DTV4567">
+        <irp:parameter name="decodable">true</irp:parameter>
+        <irp:parameter name="prefer-over">G.I.4DTVold</irp:parameter>
+        <irp:parameter name="prefer-over">G.I.4DTVnoCheck</irp:parameter>
+	<irp:parameter name="uei-executor">00A4[D+4;F]</irp:parameter>
+        <!--irp:irp><![CDATA[{37.3k,992}<1,-1|1,-3>(5,-2,F:6,D:2,C:4,1,-60)*{C= ((#(F&25) + #(D&5))&1) + 2*((#(F&43) + #(D&7))&1) + 4*((#(F&22) + #(D&7))&1) + 8*((#(F&44) + #(D&6))&1)}[D:0..3, F:0..63]]]></irp:irp-->
+        <irp:irp><![CDATA[
+{37.3k,992}<1,-1|1,-3>(5,-2,F:6,D:2,C0:1,C1:1,C2:1,C3:1,1,-60)*
+{
+C0=1 + #(F&25) + #(D&1),
+C1=1 + #(F&43) + #(D&3),
+C2=1 + #(F&22) + #(D&3),
+C3=1 + #(F&44) + #(D&2)
+}[D:0..3, F:0..63]
+       ]]></irp:irp>
     </irp:protocol>
     <irp:protocol c-name="GI4DTVnoCheck" name="G.I.4DTVnoCheck">
+        <!--irp:parameter name="uei-executor">00A4</irp:parameter-->
         <irp:irp><![CDATA[{37.3k,992}<1,-1|1,-3>(5,-2,F:6,D:2,C:4,1,-60)*[D:0..3, F:0..63, C:0..15]]]></irp:irp>
         <irp:documentation>This is a moderately robust protocol, but <A href="#spurious">spurious decodes</A> are still possible. Unit (device) numbers from 0 to 7 are supported. See <a href="http://www.hifi-remote.com/forums/viewtopic.php?p=103934#103934">forum thread</a>.</irp:documentation>
     </irp:protocol>
+    <irp:protocol c-name="GI4DTVold" name="G.I.4DTVold">
+        <!--irp:parameter name="uei-executor">00A4</irp:parameter-->
+        <irp:parameter name="prefer-over">G.I.4DTVnoCheck</irp:parameter>
+        <irp:irp><![CDATA[{37.3k,992}<1,-1|1,-3>(5,-2,F:6,D:2,C:4,1,-60)*{C= ((#(F&25) + #(D&5))&1) + 2*((#(F&43) + #(D&7))&1) + 4*((#(F&22) + #(D&7))&1) + 8*((#(F&44) + #(D&6))&1)}[D:0..3, F:0..63]]]></irp:irp>
+        <irp:documentation>This is a moderately robust protocol, but <A href="#spurious">spurious decodes</A> are still possible. Unit (device) numbers from 0 to 7 are supported.  The check sum C is a Hamming Code, which can correct single bit errors. D:1:2 is encoded in the check sum. See <a href="http://www.hifi-remote.com/forums/viewtopic.php?p=103934#103934">forum thread</a>.</irp:documentation>
+    </irp:protocol>
+     
     <irp:protocol c-name="GICable" name="G.I.Cable">
         <irp:parameter name="alt_name">GI Cable</irp:parameter>
         <irp:parameter name="uei-executor">00C4</irp:parameter>
@@ -702,7 +923,6 @@ Note (BM): These two entries was one in the original document; I split it into t
         <irp:parameter name="prefer-over">NEC-Shirriff-32</irp:parameter>
         <!--irp:parameter name="prefer-over">NEC1</irp:parameter-->
         <irp:parameter name="prefer-over">NEC-f16</irp:parameter>
-        <irp:parameter name="prefer-over">NEC2</irp:parameter>
         <irp:parameter name="prefer-over">NEC1-f16</irp:parameter>
         <irp:parameter name="prefer-over">NEC2-f16</irp:parameter>
         <irp:parameter name="prefer-over">NEC1-rnc</irp:parameter>
@@ -725,6 +945,7 @@ Note (BM): These two entries was one in the original document; I split it into t
     </irp:protocol>
     <irp:protocol c-name="NEC1" name="NEC1">
         <irp:parameter name="prefer-over">NEC1-f16</irp:parameter>
+	<irp:parameter name="prefer-over">NEC1-rnc</irp:parameter>
         <!--irp:parameter name="prefer-over">Pioneer</irp:parameter-->
         <irp:parameter name="reject-repeatless">true</irp:parameter>
         <!--irp:parameter name="frequencyTolerance">100</irp:parameter>
@@ -755,6 +976,7 @@ Note (BM): These two entries was one in the original document; I split it into t
         <irp:documentation/>
     </irp:protocol>
     <irp:protocol c-name="NEC2" name="NEC2">
+        <irp:parameter name="prefer-over">NEC</irp:parameter>
         <irp:parameter name="prefer-over">NEC-Shirriff-32</irp:parameter>
         <irp:parameter name="prefer-over">NEC2-f16</irp:parameter>
         <!--irp:parameter name="prefer-over">Pioneer</irp:parameter-->
@@ -777,7 +999,7 @@ Note (BM): These two entries was one in the original document; I split it into t
         <irp:documentation/>
     </irp:protocol>
     <irp:protocol c-name="NECx1" name="NECx1">
-        <irp:parameter name="reject-repeatless">true</irp:parameter>
+        <!--irp:parameter name="reject-repeatless">true</irp:parameter-->
 	<irp:parameter name="uei-executor">005A</irp:parameter>
 	<irp:parameter name="uei-executor">011A[D?0,S?0,D?1,S?1;F,??,2]</irp:parameter>
 	<irp:parameter name="uei-executor">011A:2[D?0,S?0,D?1,S?1,D?2,S?2,D?3,S?3;F,??,2]</irp:parameter>
@@ -785,7 +1007,7 @@ Note (BM): These two entries was one in the original document; I split it into t
         <irp:documentation/>
     </irp:protocol>
     <irp:protocol c-name="NECx2" name="NECx2">
-        <irp:parameter name="reject-repeatless">true</irp:parameter>
+        <!--irp:parameter name="reject-repeatless">true</irp:parameter-->
 	<irp:parameter name="uei-executor">005A</irp:parameter>
 	<irp:parameter name="uei-executor">011A[D?0,S?0,D?1,S?1;F,??,3]</irp:parameter>
 	<irp:parameter name="uei-executor">011A:2[D?0,S?0,D?1,S?1,D?2,S?2,D?3,S?3;F,??,3]</irp:parameter>
@@ -844,6 +1066,11 @@ Note (BM): These two entries was one in the original document; I split it into t
     <irp:protocol c-name="OrtekMCE" name="OrtekMCE">
         <irp:parameter name="uei-executor">021B:JP1</irp:parameter>
         <irp:irp><![CDATA[{38.6k,480}<1,-1|-1,1>([P=0][P=1][P=2],4,-1,D:5,P:2,F:6,C:4,-48m)+{C=3+#D+#P+#F}[D:0..31,F:0..63]]]></irp:irp>
+        <irp:documentation>The <A href="#repeat">repeat frames</A> are not all identical. P is a position code: 0 for the start frame of a repeat sequence, 2 for the end frame and 1 for all frames in between. C is a checksum, 3 more than the number of 1 bits in D, P, F together.  DecodeIR v2.37 and later check P and will report in the Misc field if either the start or end frame, or both, is/are missing.</irp:documentation>
+    </irp:protocol>
+    <irp:protocol c-name="OrtekMCE2" name="OrtekMCE{2)">
+        <irp:parameter name="uei-executor">021B:JP1</irp:parameter>
+        <irp:irp><![CDATA[{38.6k,480}<1,-1|-1,1>([][P=1][P=2],4,-1,D:5,P:2,F:6,C:4,-48m)+{C=3+#D+#P+#F}[D:0..31,F:0..63]]]></irp:irp>
         <irp:documentation>The <A href="#repeat">repeat frames</A> are not all identical. P is a position code: 0 for the start frame of a repeat sequence, 2 for the end frame and 1 for all frames in between. C is a checksum, 3 more than the number of 1 bits in D, P, F together.  DecodeIR v2.37 and later check P and will report in the Misc field if either the start or end frame, or both, is/are missing.</irp:documentation>
     </irp:protocol>
     <irp:protocol c-name="PaceMSS" name="PaceMSS">

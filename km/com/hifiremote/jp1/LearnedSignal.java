@@ -516,6 +516,7 @@ public class LearnedSignal extends Highlight
         tmDecoder = new Decoder( tmDatabase ); 
         tmDecoderParams = new Decoder.DecoderParameters(); 
         tmDecoderParams.setRemoveDefaultedParameters( false );
+        tmDecoderParams.setIgnoreLeadingGarbage( true );
       }
       catch ( IOException ioe )
       {

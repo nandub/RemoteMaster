@@ -61,7 +61,7 @@
                         </zipfileset>
                 		<zipfileset src="${lib.dir}/org.thingml.bglib-protocol-1.0.3-43.jar" includes="**/*.class"/>
                         <zipfileset src="${lib.dir}/commons-lang3-3.4.jar" includes="**/*.class"/>
-                	    <zipfileset src="${lib.dir}/IrpTransmogrifier-1.1.0-jar-with-dependencies.jar"/>
+                	    <zipfileset src="${lib.dir}/IrpTransmogrifier-1.1.1-jar-with-dependencies.jar"/>
                 </jar>
                 <java classpath="RemoteMaster.jar" classname="com.hifiremote.jp1.RemoteMaster" outputproperty="rmversion">
                         <arg value="-version" />
@@ -79,6 +79,7 @@
           	<zipfileset dir="${src}" includes="buildRef.txt,RMIR.sys,Readme.html,RMPB_Readme.html,*.css" />
             <zipfileset dir="${src}" includes="protocols.ini,ChangeLog.txt,digitmaps.bin,Setup.vbs,*.ico, Docs/*.pdf" />
           	<zipfileset dir="${src}" includes="IrpProtocols.xml" filemode="755" />
+          	<zipfileset dir="${src}" includes="irptransmogrifier.bat,irptransmogrifier.sh" filemode="755" />
             <zipfileset src="${src}/jp1parallel_012.zip" includes="**/*.dll"/>
 			<zipfileset src="${src}/jp1parallel_012.zip" includes="libjp1parallel.so" prefix="Linux-i386" filemode="755"/>
 			<zipfileset src="${src}/par64.zip" includes="libjp1parallel.so" prefix="Linux-amd64" filemode="755"/>

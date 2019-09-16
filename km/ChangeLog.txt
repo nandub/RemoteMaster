@@ -13,6 +13,7 @@ Changes for v2.09
 - Add syntax for specifying priority entries in sequencer string of uei-executor entries without listing the others (Graham)
 - Display version numbers of IrpTransmogrifier and IrpDatabase on Help > About menu (Graham)
 - Correct the explanatory text in protocols.ini for Pioneer DVD and DVD2 protocols, which had set/clear for an OBC bit the wrong way round (Graham)
+- Update to IrpTransmogrifier v1.1.1 with corresponding update to IrpDatabase.xml (Barf)
 
 Changes for v2.08
 -- Release build 1
