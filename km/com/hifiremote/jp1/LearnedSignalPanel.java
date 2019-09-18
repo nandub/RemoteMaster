@@ -34,7 +34,8 @@ import javax.swing.table.DefaultTableCellRenderer;
 import org.harctoolbox.irp.IrpDatabase;
 import org.harctoolbox.irp.NamedProtocol;
 
-import com.hifiremote.jp1.LearnedSignalDecode.Executor;
+import com.hifiremote.jp1.Executor;
+import com.hifiremote.jp1.Executor.ExecutorWrapper;
 
 /**
  * The Class LearnedSignalPanel.
@@ -277,7 +278,7 @@ public class LearnedSignalPanel extends RMTablePanel< LearnedSignal >
   private LinkedHashMap< Protocol, Executor > getProtocolMap( LearnedSignal ls )
   {
     IrpDatabase tmDatabase = LearnedSignal.getTmDatabase();
-    LinkedHashMap< Protocol, Executor > pMap = new LinkedHashMap< Protocol, LearnedSignalDecode.Executor >();
+    LinkedHashMap< Protocol, Executor > pMap = new LinkedHashMap< Protocol, Executor >();
     if ( tmDatabase == null )
       return pMap;
     Remote remote = remoteConfig.getRemote();
@@ -285,11 +286,10 @@ public class LearnedSignalPanel extends RMTablePanel< LearnedSignal >
     for ( LearnedSignalDecode lsd : ls.getDecodes() )
     {
       NamedProtocol np = lsd.decode.getNamedProtocol();
-      String npName = np.getName();
-      List< String > execs = tmDatabase.getProperties( npName, "uei-executor" );
-      for ( String exec : execs )
+      List< ExecutorWrapper > wrappers = LearnedSignal.getExecutorWrappers( np );
+      for ( ExecutorWrapper wrapper : wrappers )
       {
-        Executor e = LearnedSignalDecode.getExecutor( np, exec );
+        Executor e = LearnedSignalDecode.getExecutor( np, wrapper );
         if ( e == null ) continue;
         Protocol p = e.protocol;
         if ( p != null && protocols.contains( p ) )

@@ -83,7 +83,8 @@ minimum-leadout
 <irp:protocols xmlns="http://www.w3.org/1999/xhtml"
                xmlns:xi="http://www.w3.org/2001/XInclude"
                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-               version="2019-09-11-rm1"
+	       xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster"
+               version="2019-09-11-rm2"
                xsi:schemaLocation="http://www.harctoolbox.org/irp-protocols http://www.harctoolbox.org/schemas/irp-protocols.xsd"
                xmlns:irp="http://www.harctoolbox.org/irp-protocols">
     <irp:protocol c-name="X48NEC" name="48-NEC">
@@ -124,7 +125,11 @@ minimum-leadout
         <irp:documentation/>
     </irp:protocol>
     <irp:protocol c-name="Amino" name="Amino">
-        <irp:parameter name="uei-executor">019C[D,S,0]</irp:parameter>
+	<irp:parameter name="uei-executor" type="xml"> 
+            <rm:deployment executor="019C[D,0,0]"> 
+                <rm:commentItem>Freq=37kHz</rm:commentItem> 
+            </rm:deployment> 
+        </irp:parameter> 
         <irp:parameter name="prefer-over">Amino-56</irp:parameter>
         <irp:parameter name="absolute-tolerance">100</irp:parameter>
         <irp:parameter name="relative-tolerance">0.2</irp:parameter>
@@ -132,7 +137,12 @@ minimum-leadout
         <irp:documentation>DecodeIR v2.43 checks T and will report in the Misc field if the start or end frame is missing. Amino equipment use both 37 and 56KHz, but the duration of the half-bit is always 268.  <a href="#Zaptor-36">Zaptor</a> is a closely related protocol which for which the half-bit duration is 330. IRDecode v2.43 distinguishes between Amino and Zaptor in order of priority by 1) the position of the toggle bit, 2) the value of the next to last nibble, and 3)the measured duration of a half-bit.</irp:documentation>
     </irp:protocol>
     <irp:protocol c-name="Amino56" name="Amino-56">
-        <irp:parameter name="uei-executor">019C[D,S,1]</irp:parameter>
+	<irp:parameter name="uei-executor" type="xml"> 
+            <rm:deployment executor="019C[D,0,1]"> 
+		<rm:protocolName>Amino</rm:protocolName> 
+                <rm:commentItem>Freq=56kHz</rm:commentItem> 
+            </rm:deployment> 
+        </irp:parameter> 
         <irp:parameter name="absolute-tolerance">100</irp:parameter>
         <irp:parameter name="relative-tolerance">0.2</irp:parameter>
         <irp:irp><![CDATA[{56.0k,268,msb}<-1,1|1,-1>(T=1,(7,-6,3,D:4,1:1,T:1,1:2,0:8,F:8,15:4,C:4,-79m,T=0)+){C =(D:4+4*T+9+F:4+F:4:4+15)&15} [D:0..15,F:0..255]]]></irp:irp>
@@ -322,7 +332,13 @@ This is a moderately robust protocol, but <A href="#spurious">spurious decodes</
             <irp:documentation>See <a href="#GuangZhou">GuangZhou</a>, which has identical framing but with different bit definitions.</irp:documentation>
     </irp:protocol>
     <irp:protocol c-name="DirecTV_P0" name="DirecTV_P0">
-        <irp:parameter name="uei-executor">0162[D;F]</irp:parameter>
+        <irp:parameter name="uei-executor" type="xml"> 
+            <rm:deployment executor="0162[D,Parm;F]"> 
+                <rm:protocolName>DirecTV</rm:protocolName> 
+                <rm:assignment target="Parm">0</rm:assignment>
+		<!--rm:assignment target="D">10*D+Parm</rm:assignment--> 
+            </rm:deployment> 
+        </irp:parameter> 
 	<irp:parameter name="min-leadout">7000</irp:parameter>
 	<irp:parameter name="frequency-tolerance">1000</irp:parameter>
         <irp:irp><![CDATA[{40k,600,msb}<1,-1|1,-2|2,-1|2,-2>([10][5],-2,D:4,F:8,C:4,1,-15){C=7*(F:2:6)+5*(F:2:4)+3*(F:2:2)+(F:2)}[D:0..15,F:0..255]]]></irp:irp>
@@ -342,7 +358,13 @@ This is a moderately robust protocol, but <A href="#spurious">spurious decodes</
         </irp:documentation>
     </irp:protocol>
     <irp:protocol c-name="DirecTV_P1" name="DirecTV_P1">
-        <irp:parameter name="uei-executor">0162[D;F]</irp:parameter>
+        <irp:parameter name="uei-executor" type="xml"> 
+            <rm:deployment executor="0162[D,Parm;F]"> 
+                <rm:protocolName>DirecTV</rm:protocolName> 
+                <rm:assignment target="Parm">1</rm:assignment>
+		<!--rm:assignment target="D">10*D+Parm</rm:assignment--> 
+            </rm:deployment> 
+        </irp:parameter> 
 	<irp:parameter name="frequency-tolerance">1000</irp:parameter>
 	<irp:parameter name="prefer-over">DirecTV_P0</irp:parameter>
         <irp:irp><![CDATA[{40k,600,msb}<1,-1|1,-2|2,-1|2,-2>([10][5],-2,D:4,F:8,C:4,1,-50){C=7*(F:2:6)+5*(F:2:4)+3*(F:2:2)+(F:2)}[D:0..15,F:0..255]]]></irp:irp>
@@ -362,7 +384,13 @@ This is a moderately robust protocol, but <A href="#spurious">spurious decodes</
         </irp:documentation>
     </irp:protocol>
     <irp:protocol c-name="DirecTV_P2" name="DirecTV_P2">
-        <irp:parameter name="uei-executor">0162[D;F]</irp:parameter>
+        <irp:parameter name="uei-executor" type="xml"> 
+            <rm:deployment executor="0162[D,Parm;F]"> 
+                <rm:protocolName>DirecTV</rm:protocolName> 
+                <rm:assignment target="Parm">2</rm:assignment>
+		<!--rm:assignment target="D">10*D+Parm</rm:assignment--> 
+            </rm:deployment> 
+        </irp:parameter> 
 	<irp:parameter name="min-leadout">7000</irp:parameter>
 	<irp:parameter name="frequency-tolerance">1000</irp:parameter>
         <irp:irp><![CDATA[{38k,600,msb}<1,-1|1,-2|2,-1|2,-2>([10][5],-2,D:4,F:8,C:4,1,-15){C=7*(F:2:6)+5*(F:2:4)+3*(F:2:2)+(F:2)}[D:0..15,F:0..255]]]></irp:irp>
@@ -382,9 +410,16 @@ This is a moderately robust protocol, but <A href="#spurious">spurious decodes</
         </irp:documentation>
     </irp:protocol>
     <irp:protocol c-name="DirecTV_P3" name="DirecTV_P3">
-        <irp:parameter name="uei-executor">0162[D;F]</irp:parameter>
+        <!--irp:parameter name="uei-executor">0162[D;F]</irp:parameter-->
 	<irp:parameter name="frequency-tolerance">1000</irp:parameter>
 	<irp:parameter name="prefer-over">DirecTV_P2</irp:parameter>
+	<irp:parameter name="uei-executor" type="xml"> 
+            <rm:deployment executor="0162[D,Parm;F]"> 
+                <rm:protocolName>DirecTV</rm:protocolName> 
+                <rm:assignment target="Parm">3</rm:assignment>
+		<!--rm:assignment target="D">10*D+Parm</rm:assignment--> 
+            </rm:deployment> 
+        </irp:parameter> 
         <irp:irp><![CDATA[{38k,600,msb}<1,-1|1,-2|2,-1|2,-2>([10][5],-2,D:4,F:8,C:4,1,-50){C=7*(F:2:6)+5*(F:2:4)+3*(F:2:2)+(F:2)}[D:0..15,F:0..255]]]></irp:irp>
         <irp:documentation>There are six variants of the DirecTV protocol, distinguished in RemoteMaster by the parameter "Parm" on the Setup page.
             The Parm value is shown in the Misc field of DecodeIR.  The IRP notation above corresponds to the default Parm=3.
@@ -402,7 +437,13 @@ This is a moderately robust protocol, but <A href="#spurious">spurious decodes</
         </irp:documentation>
     </irp:protocol>
     <irp:protocol c-name="DirecTV_P4" name="DirecTV_P4">
-        <irp:parameter name="uei-executor">0162[D;F]</irp:parameter>
+        <irp:parameter name="uei-executor" type="xml"> 
+            <rm:deployment executor="0162[D,Parm;F]"> 
+                <rm:protocolName>DirecTV</rm:protocolName> 
+                <rm:assignment target="Parm">4</rm:assignment>
+		<!--rm:assignment target="D">10*D+Parm</rm:assignment--> 
+            </rm:deployment> 
+        </irp:parameter> 
 	<irp:parameter name="min-leadout">7000</irp:parameter>
 	<irp:parameter name="frequency-tolerance">1000</irp:parameter>
         <irp:irp><![CDATA[{57k,600,msb}<1,-1|1,-2|2,-1|2,-2>([10][5],-2,D:4,F:8,C:4,1,-15){C=7*(F:2:6)+5*(F:2:4)+3*(F:2:2)+(F:2)}[D:0..15,F:0..255]]]></irp:irp>
@@ -422,7 +463,13 @@ This is a moderately robust protocol, but <A href="#spurious">spurious decodes</
         </irp:documentation>
     </irp:protocol>
     <irp:protocol c-name="DirecTV_P5" name="DirecTV_P5">
-        <irp:parameter name="uei-executor">0162[D;F]</irp:parameter>
+        <irp:parameter name="uei-executor" type="xml"> 
+            <rm:deployment executor="0162[D,Parm;F]"> 
+                <rm:protocolName>DirecTV</rm:protocolName> 
+                <rm:assignment target="Parm">5</rm:assignment>
+		<!--rm:assignment target="D">10*D+Parm</rm:assignment--> 
+            </rm:deployment> 
+        </irp:parameter> 
 	<irp:parameter name="frequency-tolerance">1000</irp:parameter>
 	<irp:parameter name="prefer-over">DirecTV_P4</irp:parameter>
         <irp:irp><![CDATA[{57k,600,msb}<1,-1|1,-2|2,-1|2,-2>([10][5],-2,D:4,F:8,C:4,1,-50){C=7*(F:2:6)+5*(F:2:4)+3*(F:2:2)+(F:2)}[D:0..15,F:0..255]]]></irp:irp>
@@ -574,66 +621,28 @@ This version is a re-parametrization of 3FG&apos;s version, allowing for decodin
            [A:0..15, wOn:0..1, B:0..15, C:0..15, D:0..15, E:0..15, tOff:0..1024, tOn:0..1024, fOff:0..1, fOn:0..1]]]></irp:irp>
         <irp:documentation>Protocol for Fujitsu inverter air conditioning. <a href="http://www.remotecentral.com/cgi-bin/mboard/rc-discrete/thread.cgi?4894">Reference</a>.</irp:documentation>
     </irp:protocol>
-    
-        <irp:protocol c-name="GI4DTV" name="G.I.4DTV">
-        <irp:parameter name="decodable">false</irp:parameter>
-        <irp:parameter name="prefer-over">G.I.4DTV</irp:parameter>
-        <irp:parameter name="prefer-over">G.I.4DTVnoCheck</irp:parameter>
-        <!--irp:irp><![CDATA[{37.3k,992}<1,-1|1,-3>(5,-2,F:6,D:2,C:4,1,-60)*{C= ((#(F&25) + #(D&5))&1) + 2*((#(F&43) + #(D&7))&1) + 4*((#(F&22) + #(D&7))&1) + 8*((#(F&44) + #(D&6))&1)}[D:0..3, F:0..63]]]></irp:irp-->
-        <irp:irp><![CDATA[
-{37.3k,992}<1,-1|1,-3>(5,-2,F:6,D:2,C0:1,C1:1,C2:1,C3:1,1,-60)*
-{
-C0=D:1:2 + #(F&25) + #(D&1),
-C1=D:1:2 + #(F&43) + #(D&3),
-C2=D:1:2 + #(F&22) + #(D&3),
-C3=D:1:2 + #(F&44) + #(D&2)
-}[D:0..7, F:0..63]
-       ]]></irp:irp>
-    </irp:protocol>
-    <irp:protocol c-name="GI4DTV0123" name="G.I.4DTV0123">
-        <irp:parameter name="decodable">true</irp:parameter>
-        <irp:parameter name="prefer-over">G.I.4DTVold</irp:parameter>
-        <irp:parameter name="prefer-over">G.I.4DTVnoCheck</irp:parameter>
-	<irp:parameter name="uei-executor">00A4[D;F]</irp:parameter>
-        <!--irp:irp><![CDATA[{37.3k,992}<1,-1|1,-3>(5,-2,F:6,D:2,C:4,1,-60)*{C= ((#(F&25) + #(D&5))&1) + 2*((#(F&43) + #(D&7))&1) + 4*((#(F&22) + #(D&7))&1) + 8*((#(F&44) + #(D&6))&1)}[D:0..3, F:0..63]]]></irp:irp-->
-        <irp:irp><![CDATA[
-{37.3k,992}<1,-1|1,-3>(5,-2,F:6,D:2,C0:1,C1:1,C2:1,C3:1,1,-60)*
-{
-C0=D:1:2 + #(F&25) + #(D&1),
-C1=D:1:2 + #(F&43) + #(D&3),
-C2=D:1:2 + #(F&22) + #(D&3),
-C3=D:1:2 + #(F&44) + #(D&2)
-}[D:0..3, F:0..63]
-       ]]></irp:irp>
-    </irp:protocol>
-    <irp:protocol c-name="GI4DTV4567" name="G.I.4DTV4567">
-        <irp:parameter name="decodable">true</irp:parameter>
-        <irp:parameter name="prefer-over">G.I.4DTVold</irp:parameter>
-        <irp:parameter name="prefer-over">G.I.4DTVnoCheck</irp:parameter>
-	<irp:parameter name="uei-executor">00A4[D+4;F]</irp:parameter>
-        <!--irp:irp><![CDATA[{37.3k,992}<1,-1|1,-3>(5,-2,F:6,D:2,C:4,1,-60)*{C= ((#(F&25) + #(D&5))&1) + 2*((#(F&43) + #(D&7))&1) + 4*((#(F&22) + #(D&7))&1) + 8*((#(F&44) + #(D&6))&1)}[D:0..3, F:0..63]]]></irp:irp-->
-        <irp:irp><![CDATA[
-{37.3k,992}<1,-1|1,-3>(5,-2,F:6,D:2,C0:1,C1:1,C2:1,C3:1,1,-60)*
-{
-C0=1 + #(F&25) + #(D&1),
-C1=1 + #(F&43) + #(D&3),
-C2=1 + #(F&22) + #(D&3),
-C3=1 + #(F&44) + #(D&2)
-}[D:0..3, F:0..63]
-       ]]></irp:irp>
-    </irp:protocol>
-    <irp:protocol c-name="GI4DTVnoCheck" name="G.I.4DTVnoCheck">
-        <!--irp:parameter name="uei-executor">00A4</irp:parameter-->
-        <irp:irp><![CDATA[{37.3k,992}<1,-1|1,-3>(5,-2,F:6,D:2,C:4,1,-60)*[D:0..3, F:0..63, C:0..15]]]></irp:irp>
-        <irp:documentation>This is a moderately robust protocol, but <A href="#spurious">spurious decodes</A> are still possible. Unit (device) numbers from 0 to 7 are supported. See <a href="http://www.hifi-remote.com/forums/viewtopic.php?p=103934#103934">forum thread</a>.</irp:documentation>
-    </irp:protocol>
-    <irp:protocol c-name="GI4DTVold" name="G.I.4DTVold">
-        <!--irp:parameter name="uei-executor">00A4</irp:parameter-->
-        <irp:parameter name="prefer-over">G.I.4DTVnoCheck</irp:parameter>
-        <irp:irp><![CDATA[{37.3k,992}<1,-1|1,-3>(5,-2,F:6,D:2,C:4,1,-60)*{C= ((#(F&25) + #(D&5))&1) + 2*((#(F&43) + #(D&7))&1) + 4*((#(F&22) + #(D&7))&1) + 8*((#(F&44) + #(D&6))&1)}[D:0..3, F:0..63]]]></irp:irp>
+   <irp:protocol c-name="GI4DTV" name="G.I.4DTV">
+        <irp:parameter name="uei-executor">00A4[D;F]</irp:parameter>
+	<irp:parameter name="prefer-over">G.I.4DTVnoCheck</irp:parameter>
+        <irp:irp><![CDATA[{37.3k,992}<1,-1|1,-3>(5,-2,F:6,D:2,C:4,1,-60)*{C=((#(F&25) + #(D&5))&1) + 2*((#(F&43) + #(D&7))&1) + 4*((#(F&22) + #(D&7))&1) + 8*((#(F&44) + #(D&6))&1)}[D:0..7, F:0..63]]]></irp:irp>
         <irp:documentation>This is a moderately robust protocol, but <A href="#spurious">spurious decodes</A> are still possible. Unit (device) numbers from 0 to 7 are supported.  The check sum C is a Hamming Code, which can correct single bit errors. D:1:2 is encoded in the check sum. See <a href="http://www.hifi-remote.com/forums/viewtopic.php?p=103934#103934">forum thread</a>.</irp:documentation>
     </irp:protocol>
-     
+    <irp:protocol c-name="GI4DTVhi" name="G.I.4DTVhi">
+	<irp:parameter name="uei-executor" type="xml"> 
+            <rm:deployment executor="00A4[D;F]"> 
+                <rm:protocolName>G.I.4DTV</rm:protocolName> 
+                <rm:assignment target="D">D+4</rm:assignment>
+            </rm:deployment> 
+        </irp:parameter> 
+	
+        <irp:parameter name="prefer-over">G.I.4DTVnoCheck</irp:parameter>
+        <irp:irp><![CDATA[{37.3k,992}<1,-1|1,-3>(5,-2,F:6,D:2,C:4,1,-60)*{C=~(((#(F&25) + #(D&5))&1) + 2*((#(F&43) + #(D&7))&1) + 4*((#(F&22) + #(D&7))&1) + 8*((#(F&44) + #(D&6))&1))}[D:0..3, F:0..63]]]></irp:irp>
+        <irp:documentation>This is a moderately robust protocol, but <A href="#spurious">spurious decodes</A> are still possible. This corresponds to the G.I.4DTV protocol for Unit (device) numbers from 4 to 7, with the value of D being four less, so in the range 0..3.  The check sum C is a Hamming Code, which can correct single bit errors. The top bit of the 3-bit device number is encoded in the check sum. See <a href="http://www.hifi-remote.com/forums/viewtopic.php?p=103934#103934">forum thread</a>.</irp:documentation>
+    </irp:protocol>
+    <irp:protocol c-name="GI4DTVnoCheck" name="G.I.4DTVnoCheck">
+        <irp:irp><![CDATA[{37.3k,992}<1,-1|1,-3>(5,-2,F:6,D:2,C:4,1,-60)*[D:0..3, F:0..63, C:0..15]]]></irp:irp>
+        <irp:documentation>This is a moderately robust protocol, but <A href="#spurious">spurious decodes</A> are still possible. Unit (device) numbers from 0 to 7 are supported. See <a href="http://www.hifi-remote.com/forums/viewtopic.php?p=103934#103934">forum thread</a>.</irp:documentation>
+    </irp:protocol>    
     <irp:protocol c-name="GICable" name="G.I.Cable">
         <irp:parameter name="alt_name">GI Cable</irp:parameter>
         <irp:parameter name="uei-executor">00C4</irp:parameter>

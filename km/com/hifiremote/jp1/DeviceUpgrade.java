@@ -39,7 +39,7 @@ import javax.swing.WindowConstants;
 import javax.swing.event.SwingPropertyChangeSupport;
 
 import com.hifiremote.jp1.Activity.Assister;
-import com.hifiremote.jp1.LearnedSignalDecode.Executor;
+import com.hifiremote.jp1.Executor;
 import com.hifiremote.jp1.ProtocolManager.QualifiedID;
 import com.hifiremote.jp1.RemoteConfiguration.KeySpec;
 import com.hifiremote.jp1.SetupPanel.AltPIDStatus;

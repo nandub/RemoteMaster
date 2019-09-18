@@ -4,38 +4,27 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import org.harctoolbox.analyze.Analyzer;
-import org.harctoolbox.analyze.Cleaner;
-import org.harctoolbox.analyze.NoDecoderMatchException;
 import org.harctoolbox.ircore.InvalidArgumentException;
-import org.harctoolbox.ircore.IrCoreUtils;
-import org.harctoolbox.ircore.IrSequence;
 import org.harctoolbox.ircore.IrSignal;
 import org.harctoolbox.ircore.ModulatedIrSequence;
-import org.harctoolbox.ircore.Pronto;
 import org.harctoolbox.irp.Decoder;
 import org.harctoolbox.irp.Decoder.Decode;
-import org.harctoolbox.irp.Decoder.DecodeTree;
 import org.harctoolbox.irp.Decoder.DecoderParameters;
 import org.harctoolbox.irp.Decoder.TrunkDecodeTree;
-import org.harctoolbox.irp.Expression;
 import org.harctoolbox.irp.InvalidNameException;
 import org.harctoolbox.irp.IrpDatabase;
 import org.harctoolbox.irp.IrpParseException;
-import org.harctoolbox.irp.NameEngine;
-import org.harctoolbox.irp.NameUnassignedException;
+import org.harctoolbox.irp.NamedProtocol;
 
 import com.hifiremote.decodeir.DecodeIRCaller;
-import com.hifiremote.jp1.LearnedSignalDecode.Executor;
-import com.hifiremote.jp1.LearnedSignalDecode.Executor.Selector;
-import com.sun.xml.internal.bind.v2.runtime.unmarshaller.XsiNilLoader.Array;
+import com.hifiremote.jp1.Executor.ExecutorWrapper;
+import com.hifiremote.jp1.Executor.ExecutorWrapperDatabase;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -513,6 +502,7 @@ public class LearnedSignal extends Highlight
       {  
         //tmDatabase = new IrpDatabase( ( String )null ); 
         tmDatabase = new IrpDatabase( new File( RemoteMaster.getWorkDir(), "IrpProtocols.xml" ) );
+        ewDatabase = new ExecutorWrapperDatabase( tmDatabase );
         tmDecoder = new Decoder( tmDatabase ); 
         tmDecoderParams = new Decoder.DecoderParameters(); 
         tmDecoderParams.setRemoveDefaultedParameters( false );
@@ -537,11 +527,35 @@ public class LearnedSignal extends Highlight
     return tmDatabase;
   }
 
+  public static ExecutorWrapperDatabase getEwDatabase()
+  {
+    return ewDatabase;
+  }
+  
+  public static List< ExecutorWrapper > getExecutorWrappers( NamedProtocol np )
+  {
+    String npName = np.getName();
+    List< ExecutorWrapper > list = new ArrayList< ExecutorWrapper >();
+    List< String > nonXmlList = tmDatabase.getProperties( npName, "uei-executor" );
+    if ( nonXmlList != null )
+    {
+      for ( String executorDescriptor : nonXmlList )
+        list.add( new ExecutorWrapper( executorDescriptor ) );
+    }
+    List<ExecutorWrapper> wrapperList = LearnedSignal.getEwDatabase().get(npName);
+    if ( wrapperList != null )
+    {
+      list.addAll( wrapperList );
+    }
+    return list;
+  }
+
   /** The decode ir. */
   private static DecodeIRCaller decodeIR = null;
   private static int hasDecodeIR = 0;
   private static Decoder tmDecoder = null;
   private static IrpDatabase tmDatabase = null;
+  private static ExecutorWrapperDatabase ewDatabase = null;
   private static DecoderParameters tmDecoderParams = null;
   //private IrSignal irSignal = null;
 }

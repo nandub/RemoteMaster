@@ -14,6 +14,8 @@ Changes for v2.09
 - Display version numbers of IrpTransmogrifier and IrpDatabase on Help > About menu (Graham)
 - Correct the explanatory text in protocols.ini for Pioneer DVD and DVD2 protocols, which had set/clear for an OBC bit the wrong way round (Graham)
 - Update to IrpTransmogrifier v1.1.1 with corresponding update to IrpDatabase.xml (Barf)
+-- Private build 3
+- Support XML in uei-executor parameters in IrpProtocols.xml (Barf, Graham)
 
 Changes for v2.08
 -- Release build 1
