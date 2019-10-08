@@ -1,5 +1,5 @@
 [General] 
-Name=URC-1280 Contour 8
+Name=URC-1280 Contour 8 - v3
 EepromSize=$1000 
 Processor=S3F80 
 BaseAddr=$EC00
@@ -20,7 +20,9 @@ Notes=To perform a MFR Reset:\n\
     Type 9 8 1, wait for 4 flashes.\n\
 	\n\
 	Dev8 and Dev10 are fully functional.\n\
-	They can be used via a macro which selects them.
+	They can be used via a macro which selects them.\n\
+	\n\
+    v2 - corrected Numeric, Volume and Channel button codes in [ButtonMaps]
 
 [Checksums]
 *$0000:$0002..$0FFF/2
@@ -50,29 +52,72 @@ DVB-T = $0B
 Dev10 = $0C
 
 [Buttons]
-Setup=$01,TV,Power,VCR,DVD,SAT,AMP,Hi-Fi,
-MP3=$09,Dev8,DVB-T ,Dev10,Rewind,Play,"fast fwd":FastFwd,
-Stop=$10,Pause,Record,Guide,Menu,display:Info,"up arrow":Up,"left arrow":Left,select:OK,
-"right arrow":Right=$19,"down arrow":Down,input:AV,Exit,"vol up":Vol+,"prev ch":Back,"channel up":Ch+,
-"vol down":Vol-=$20,Mute,"channel down":Ch-,Red,Green,Yellow,Blue,
-1=$27,2,3,4,5,6,7,8,9,
-Text=$30,0,TextOff
+Setup=$01
+TV=$02
+Power=$03
+VCR=$04
+DVD=$05
+SAT=$06
+AMP=$07
+Hi-Fi=$08
+MP3=$09
+Dev8=$0A
+DVB-T=$0B
+Dev10=$0C
+Rewind=$0D
+Play=$0E
+"fast fwd":FastFwd=$0F
+Stop=$10
+Pause=$11
+Record=$12
+Guide=$13
+Menu=$14
+display:Info=$15
+"up arrow":Up=$16
+"left arrow":Left=$17
+select:OK=$18
+"right arrow":Right=$19
+"down arrow":Down=$1A
+input:AV=$1B
+Exit=$1C
+"vol up":Vol+=$1D
+"prev ch":Back=$1E
+"channel up":Ch+=$1F
+"vol down":Vol-=$20
+Mute=$21
+"channel down":Ch-=$22
+Red=$23
+Green=$24
+Yellow=$25
+Blue=$26
+1=$27
+2=$28
+3=$29
+4=$2A
+5=$2B
+6=$2C
+7=$2D
+8=$2E
+9=$2F
+Text=$30
+0=$31
+TextOff=$32
 
 [ButtonMaps]
-0 = ($31, $27, $28, $2A, $29, $2B, $2C, $2E, $2D, $2F), ($20, $1D, $21), ($22, $1F),
-    $03, $0D, $94, $0E, $0F, $95, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, 
+0 = ($31, $27, $28, $29, $2A, $2B, $2C, $2D, $2E, $2F), ($1D, $20, $21), ($1F, $22),
+    $03, $0D, $14, $0E, $0F, $15, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, 
     $1A, $1B, $1C, $1E, $23, $24, $25, $26, $30, $32, $02, $04, $05, $06, $07, $08, 
     $09, $0A, $0B, $0C, $01
-1 = ($31, $27, $28, $2A, $29, $2B, $2C, $2E, $2D, $2F), ($20, $1D, $21), ($22, $1F),
-    $03, $0D, $94, $0E, $0F, $95, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, 
+1 = ($31, $27, $28, $29, $2A, $2B, $2C, $2D, $2E, $2F), ($1D, $20, $21), ($1F, $22),
+    $03, $0D, $14, $0E, $0F, $15, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, 
     $1A, $1B, $1C, $1E, $23, $24, $25, $26, $30, $32, $02, $04, $05, $06, $07, $08, 
     $09, $0A, $0B, $0C, $01
-2 = ($31, $27, $28, $2A, $29, $2B, $2C, $2E, $2D, $2F), ($20, $1D, $21), ($22, $1F),
-    $03, $0D, $94, $0E, $0F, $95, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, 
+2 = ($31, $27, $28, $29, $2A, $2B, $2C, $2D, $2E, $2F), ($1D, $20, $21), ($1F, $22),
+    $03, $0D, $14, $0E, $0F, $15, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, 
     $1A, $1B, $1C, $1E, $23, $24, $25, $26, $30, $32, $02, $04, $05, $06, $07, $08, 
     $09, $0A, $0B, $0C, $01
-3 = ($31, $27, $28, $2A, $29, $2B, $2C, $2E, $2D, $2F), ($20, $1D, $21), ($22, $1F),
-    $03, $0D, $94, $0E, $0F, $95, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, 
+3 = ($31, $27, $28, $29, $2A, $2B, $2C, $2D, $2E, $2F), ($1D, $20, $21), ($1F, $22),
+    $03, $0D, $14, $0E, $0F, $15, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, 
     $1A, $1B, $1C, $1E, $23, $24, $25, $26, $30, $32, $02, $04, $05, $06, $07, $08, 
     $09, $0A, $0B, $0C, $01
 
