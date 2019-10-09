@@ -30,6 +30,7 @@ public class Executor
   public Protocol protocol = null;
   public ExecutorWrapper wrapper = null;
   public Parameters parms = new Parameters();
+  public String name = null;
   
   /**
    * selectorList has keys that are the names of the selectors in parms.devParms, with an
@@ -58,7 +59,7 @@ public class Executor
   
   /**
    * nameList is an ordered list of the key values in selectorList.  By default the
-   * order is unspecified, but it can be specifed by giving a sequencer string.
+   * order is unspecified, but it can be specified by giving a sequencer string.
    */
   public List< String > nameList = new ArrayList< String >();
   
@@ -130,20 +131,65 @@ public class Executor
   {
     private static final String RM_NAMESPACE = "https://sourceforge.net/projects/controlremote/files/RemoteMaster"; 
 
-    public static List<ExecutorWrapper> parseList(List<DocumentFragment> exec) 
-    { 
-      List<ExecutorWrapper> result = new ArrayList<>(16);
-      for ( DocumentFragment fragment : exec )
-      { 
-        result.add(new ExecutorWrapper(fragment)); 
-      }; 
-      return result; 
-    } 
-
+    public static class BracketData
+    {
+      public int type = 0;
+      public int start = 0;
+      public int end = 0;
+      public String text = null;
+    }
+    
     public String protocolName = null;
     public String executorDescriptor = null;
     public String commentItem = null;
     public final Map<String, Expression> assignments;
+    
+    public BracketData getBrackettedData( int start )
+    {
+      String brackets = "()[]{}";
+      BracketData bracketID = null;
+      if ( executorDescriptor == null || start >= executorDescriptor.length() )
+        return null;
+      while ( true )
+      {
+        char ch = executorDescriptor.charAt( start );
+        int ndx = brackets.indexOf( ch );
+        if ( ndx >= 0 && ( ndx & 1 ) == 0 )
+        {
+          bracketID = new BracketData();
+          bracketID.type = ndx >> 1;
+          bracketID.start = start;
+          break;
+        }
+        if ( ++start == executorDescriptor.length() )
+        {
+          // No opening bracket found
+          return null;
+        }
+      }
+      int count = 0;
+      while ( true )
+      {
+        char ch = executorDescriptor.charAt( start );
+        int ndx = brackets.indexOf( ch );
+        if ( ndx >= 0 && ( ndx >> 1 ) == bracketID.type )
+        {
+          // Add +1/-1 to count for opening/closing bracket
+          count += 1 - 2*( ndx & 1 );
+        }
+        if ( count == 0 )
+        {
+          bracketID.end = start;
+          bracketID.text = executorDescriptor.substring( bracketID.start + 1, bracketID.end );
+          return bracketID;
+        }
+        if ( ++start == executorDescriptor.length() )
+        {
+          // No matching closing bracket found
+          return null;
+        }
+      }
+    }
     
     public ExecutorWrapper( String executorDescriptor )
     {
@@ -213,11 +259,6 @@ public class Executor
       }; 
     }
 
-    public String getExecutorDescriptor()
-    {
-      return executorDescriptor;
-    }
-
     public Decode fixDecode(String protocolName, NamedProtocol namedProtocol, NameEngine nameEngine) 
         throws InvalidNameException, UnsupportedRepeatException, NameUnassignedException, 
         IrpInvalidArgumentException 
@@ -233,7 +274,17 @@ public class Executor
 
   public static class ExecutorWrapperDatabase 
   { 
-    private final Map<String, List<ExecutorWrapper>> map; 
+    private final Map<String, List<ExecutorWrapper>> map;
+    
+    private static List<ExecutorWrapper> parseList(List<DocumentFragment> exec) 
+    { 
+      List<ExecutorWrapper> result = new ArrayList<>(16);
+      for ( DocumentFragment fragment : exec )
+      { 
+        result.add(new ExecutorWrapper(fragment)); 
+      }; 
+      return result; 
+    } 
 
     ExecutorWrapperDatabase(IrpDatabase irpDatabase) 
     { 
@@ -243,7 +294,7 @@ public class Executor
         List<DocumentFragment> exec = irpDatabase.getXmlProperties(protName, "uei-executor"); 
         if (exec != null) 
         {           
-          List<ExecutorWrapper> lies = ExecutorWrapper.parseList(exec); 
+          List<ExecutorWrapper> lies = parseList(exec); 
           map.put(protName, lies); 
         } 
       }; 

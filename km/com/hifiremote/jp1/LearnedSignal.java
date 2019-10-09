@@ -26,7 +26,6 @@ import com.hifiremote.decodeir.DecodeIRCaller;
 import com.hifiremote.jp1.Executor.ExecutorWrapper;
 import com.hifiremote.jp1.Executor.ExecutorWrapperDatabase;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class LearnedSignal.
  */
@@ -36,7 +35,7 @@ public class LearnedSignal extends Highlight
   public static void main(String[] args) { 
     try 
     { 
-        String s = "  Cat_Dog  Mouse-123*%$_Rat( Sausage)dog";
+        String s = "  Cat_Dog  Mouse-123*%$_Ratty {mouse( Sausage)dog}";
         System.out.println( LearnedSignalDecode.getMatchName( s ));
       
         s = "DXT:U? 1 2 AB Cd_>";
@@ -70,7 +69,7 @@ public class LearnedSignal extends Highlight
             System.out.println(decode); 
     } catch (Exception ex) { 
         ex.printStackTrace(); 
-    } 
+    }
 } 
 */
   /**

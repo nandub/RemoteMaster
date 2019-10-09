@@ -20,6 +20,7 @@ import org.harctoolbox.irp.NamedProtocol;
 
 import com.hifiremote.decodeir.DecodeIRCaller;
 import com.hifiremote.jp1.Executor.ExecutorWrapper;
+import com.hifiremote.jp1.Executor.ExecutorWrapper.BracketData;
 import com.hifiremote.jp1.ProtocolManager.QualifiedID;
 
 public class LearnedSignalDecode
@@ -162,6 +163,11 @@ public class LearnedSignalDecode
       return;
     }
 
+    // The entire choiceList is run through, with the preferred choice being the one,
+    // or the first if more than one, in which fewest empty device parameter values
+    // would be set.
+    int preferredChoice = 0;
+    int countOfNewValues = matchDevParms.length + 1;
     for ( int i = 0; i <  Math.max( executor.choiceList.size(), 1 ); i++ )
     {
       evaluate( map, i );
@@ -169,31 +175,48 @@ public class LearnedSignalDecode
       if ( testParms == null )
         continue;   // values were not self-consistent
       boolean ok = true;
+      int count = 0;
       for ( int j = 0; j < matchDevParms.length; j++ )
       {
         if ( j >= testParms.length )
         {
-          ok = false;
+          // this case should not occur, as both lists should be same length
+          ok = false;  
           break;
         }
         Integer tInt = ( Integer )testParms[ j ].getUserValue();
         Integer mInt = ( Integer )matchDevParms[ j ].getUserValue();
-        if ( tInt != null && mInt != null && tInt.intValue() != mInt.intValue() )
+        if ( tInt != null && mInt != null && tInt.intValue() != mInt.intValue())
         {
           ok = false;
           break;
+        }
+        if ( tInt != null && mInt == null )
+        {
+          count++;
         }
       }
       if ( !ok ) 
         continue;
       match = true;
-      for ( int j = 0; j < matchDevParms.length; j++ )
+      if ( count < countOfNewValues )
       {
-        Integer tInt = ( Integer )testParms[ j ].getUserValue();
-        if ( tInt != null )
-          matchDevParms[ j ].setValue( tInt );
+        countOfNewValues = count;
+        preferredChoice = i;
       }
-      break;
+      if ( countOfNewValues == 0 )
+      {
+        // No point in looking further, as no choice can give less than this
+        break;
+      }
+    }
+    evaluate( map, preferredChoice );
+    Value[] testParms = getDevParmValues( decode );
+    for ( int j = 0; j < matchDevParms.length; j++ )
+    {
+      Integer tInt = ( Integer )testParms[ j ].getUserValue();
+      if ( tInt != null )
+        matchDevParms[ j ].setValue( tInt );
     }
   }
 
@@ -377,9 +400,11 @@ public class LearnedSignalDecode
     }
     else
     {
+      String obcMatch = LearnedSignalDecode.getMatchName( "OBC" );
       for ( int i = 0; i < parms.length; i++ )
       {
-        if ( parms[ i ].getName().toUpperCase().startsWith( "OBC" ) )
+        String parmMatch = LearnedSignalDecode.getMatchName( parms[i].getName() );
+        if ( parmMatch.equals( obcMatch ) )
         {
           values[ i ] = new Value( obc );
           break;
@@ -423,15 +448,24 @@ public class LearnedSignalDecode
 */
   
   /**
-   * If there is a "(" in the name, it removes it and all that follows.  In the
-   * result it removes all characters, including spaces, other than alphanumeric 
+   * If there is an opening bracket in the name, this removes it and all that follows.
+   * In the result it removes all characters, including spaces, other than alphanumeric 
    * and returns the result in lower case, to create a simplified name for matching.
    */
   public static String getMatchName( String name )
   {
-    int ndx = name.indexOf( "(" );
-    if ( ndx >= 0 )
-      name = name.substring( 0, ndx );            // remove parenthesis and all that follows
+    String brackets = "([{";
+    for ( int pos = 0; pos < name.length(); pos++ )
+    {
+      char ch = name.charAt( pos );
+      int ndx = brackets.indexOf( ch );
+      if ( ndx >= 0 )
+      {
+        // remove bracket and all that follows
+        name = name.substring( 0, pos );
+        break;
+      }
+    }           
     name = name.replaceAll( "\\W|_|\\s", "" );  // remove all except alphanumeric chars
     return name.toLowerCase();
   }
@@ -463,86 +497,86 @@ public class LearnedSignalDecode
     
     Executor executor = new Executor();
     executor.wrapper = wrapper;
-    
-    String parmString = null;
-    String eString = executor.wrapper.executorDescriptor;
-    int ndx1 = eString.indexOf( "[" );
-    int ndx2 = eString.lastIndexOf( "]" );
-    if ( ndx1 >= 0 && ndx2 > ndx1 )
+    int start = 0;
+    int qidEnd = -1;
+    int ndx = 0;
+    BracketData bd = null;
+    while ( ( bd  = wrapper.getBrackettedData( start ) ) != null )
     {
-      parmString = eString.substring( ndx1 + 1, ndx2 ).trim();
-      eString = eString.substring( 0, ndx1 ).trim();
-    }
-    
-    ndx1 = eString.indexOf( "{" );
-    ndx2 = eString.lastIndexOf( "}" );
-    if ( ndx1 >= 0 && ndx2 > ndx1 )
-    {
-      // Include the braces in the string
-      executor.parms.newParms = eString.substring( ndx1, ndx2 + 1 ).trim();
-      eString = eString.substring( 0, ndx1 ).trim();
-    }
-
-    ndx1 = eString.indexOf( "(" );
-    ndx2 = eString.lastIndexOf( ")" );
-    String nString = "";
-    if ( ndx1 >= 0 && ndx2 > ndx1 )
-    {
-      nString = eString.substring( ndx1 + 1, ndx2 ).trim();
-      eString = eString.substring( 0, ndx1 ).trim();
-    }
-    
-    ndx1 = nString.indexOf( ";" );
-    String qString = "";
-    if ( ndx1 >= 0 )
-    {
-      qString = nString.substring( ndx1 + 1 ).trim();
-      nString = nString.substring( 0, ndx1 ).trim();     
-    }
-    
-    if ( !nString.isEmpty() )
-      npName = nString;
-    
-    ndx1 = qString.indexOf( ";" );
-    String sString = "";
-    if ( ndx1 >= 0 )
-    {
-      sString = qString.substring( ndx1 + 1 ).trim();
-      qString = qString.substring( 0, ndx1 ).trim(); 
-    }
-    
-    if ( !qString.isEmpty() )
-      executor.qualifier = qString;
-    if ( !sString.isEmpty() )
-      executor.sequencer = sString.replaceAll( "\\s", "" );
-    
-    if ( parmString != null )
-    {
-      String devParmString = parmString;
-      String cmdParmString = null;
-      int ndx = parmString.indexOf( ";" );
-      if ( ndx >= 0 )
+      if ( qidEnd < 0 )
+        qidEnd = bd.start;
+      switch ( bd.type )
       {
-        devParmString = parmString.substring( 0, ndx ).replaceAll( "\\s", "" );
-        cmdParmString = parmString.substring( ndx + 1 ).replaceAll( "\\s", "" );
+        case 0:  // Parentheses ()      
+          ndx = bd.text.indexOf( ";" );
+          if ( ndx >= 0 )
+          {
+            executor.name = bd.text.substring( 0, ndx ).trim();  
+            bd.text = bd.text.substring( ndx + 1 ).trim();
+            ndx = bd.text.indexOf( ";" );
+            if ( ndx >= 0 )
+            {
+              executor.qualifier = bd.text.substring( 0, ndx ).replaceAll( "\\s", "" );
+              executor.sequencer = bd.text.substring( ndx + 1 ).replaceAll( "\\s", "" );
+            }
+            else
+            {
+              executor.qualifier = bd.text.replaceAll( "\\s", "" );
+            }
+          }
+          else
+          {
+            executor.name = bd.text.trim();
+          }
+          if ( executor.name != null && executor.name.isEmpty() )
+            executor.name = null;
+          if ( executor.qualifier != null && executor.qualifier.isEmpty() )
+            executor.qualifier = null;
+          if ( executor.sequencer != null && executor.sequencer.isEmpty() )
+            executor.sequencer = null;
+          break;
+        case 1:  // Brackets []
+          String devParmString = null;
+          String cmdParmString = null;
+          ndx = bd.text.indexOf( ";" );
+          if ( ndx >= 0 )
+          {
+            devParmString = bd.text.substring( 0, ndx ).replaceAll( "\\s", "" );
+            cmdParmString = bd.text.substring( ndx + 1 ).replaceAll( "\\s", "" );
+          }
+          else
+          {
+            devParmString = bd.text.replaceAll( "\\s", "" );
+          }
+          
+          if ( devParmString != null && !devParmString.isEmpty() )
+          {
+            executor.parms.devParms = new ArrayList< String >();
+            executor.parms.devIndices = new ArrayList< Integer >();
+            parseParameterString( devParmString, executor.parms.devParms, executor.parms.devIndices );
+          }
+          if ( cmdParmString != null && !cmdParmString.isEmpty() )
+          {
+            executor.parms.cmdParms = new ArrayList< String >();
+            parseParameterString( cmdParmString, executor.parms.cmdParms, null );
+          }
+          break;
+        case 2:  // Braces {}
+          executor.parms.newParms = "{" + bd.text.replaceAll( "\\s", "" ) + "}";
+          break;
       }
-      if ( devParmString != null && !devParmString.isEmpty() )
-      {
-        executor.parms.devParms = new ArrayList< String >();
-        executor.parms.devIndices = new ArrayList< Integer >();
-        parseParameterString( devParmString, executor.parms.devParms, executor.parms.devIndices );
-      }
-      if ( cmdParmString != null && !cmdParmString.isEmpty() )
-      {
-        executor.parms.cmdParms = new ArrayList< String >();
-        parseParameterString( cmdParmString, executor.parms.cmdParms, null );
-      }
+      start = bd.end;
     }
     
-    QualifiedID qid = new QualifiedID( eString );
+    String qidString = null;
+    if ( qidEnd >= 0 )
+      qidString = wrapper.executorDescriptor.substring( 0, qidEnd ).replaceAll( "\\s", "" );
+    else
+      qidString = wrapper.executorDescriptor.replaceAll( "\\s", "" );
+    
+    QualifiedID qid = new QualifiedID( qidString );
     Hashtable< Hex, List< Protocol >> byPid = ProtocolManager.getProtocolManager().getByPID();
     List< Protocol > protList = new ArrayList< Protocol >();
-    String matchName = getMatchName( npName );
     Protocol protocol = null;
     for ( Protocol test : byPid.get( qid.pid ) )
     {
@@ -555,7 +589,8 @@ public class LearnedSignalDecode
     {
       for ( Protocol test : protList )
       {
-        if ( getMatchName( test.getName() ).equals( matchName ) )
+        if ( executor.name != null && test.getName().equals( executor.name )
+            || executor.name == null && getMatchName( test.getName() ).equals( getMatchName( npName  ) ) )
         {
           protocol = test;
           break;

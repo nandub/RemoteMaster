@@ -559,6 +559,7 @@ public class LearnedSignalPanel extends RMTablePanel< LearnedSignal >
         msg += " have been converted\ninto a new Device Upgrade of type CBL\nwith the Setup Code " 
             + upgrade.getSetupCode() + ".\n\nSwitch to the Devices tab to view/edit/etc this new Upgrade.";
       }
+      remoteConfig.getOwner().setChanged( true );
       JOptionPane.showMessageDialog( RemoteMaster.getFrame(), msg, "Learned Signals converted to New Device Upgrade", JOptionPane.PLAIN_MESSAGE );
     }
     else
@@ -689,6 +690,7 @@ public class LearnedSignalPanel extends RMTablePanel< LearnedSignal >
             }
         }
       }
+      remoteConfig.getOwner().setChanged( true );
       JOptionPane.showMessageDialog( RemoteMaster.getFrame(), msg, "Learned Signals appended to Existing Device Upgrade", JOptionPane.PLAIN_MESSAGE );
     }
   }
