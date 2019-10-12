@@ -252,6 +252,10 @@ public class LearnedSignalTableModel extends JP1TableModel< LearnedSignal >
         }
         return decode.protocolName;
       case 8: // device
+        if ( decode.device == -1 )
+        {
+          return null;
+        }
         return new Integer( decode.device );
       case 9: // subDevice
         if ( decode.subDevice == -1 )

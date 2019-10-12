@@ -676,7 +676,7 @@ public class LearnedSignalDecode
   public String protocolName = null;
 
   /** The device. */
-  public int device = 0;
+  public int device = -1;     // denotes null
 
   /** The sub device. */
   public int subDevice = -1;  // denotes null

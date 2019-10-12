@@ -18,6 +18,9 @@ Changes for v2.09
 - Support XML in uei-executor parameters in IrpProtocols.xml (Barf, Graham)
 -- Private build 4
 - Minor tweaks to give full compliance with the draft Appendix 1 to IRP Specification (Graham)
+-- Private build 5
+- Update to IrpTransmogrifier v1.2.0 with corresponding update to IrpDatabase.xml (Barf)
+- Further minor tweaks to learned signal conversion (Graham)
 
 Changes for v2.08
 -- Release build 1

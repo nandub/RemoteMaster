@@ -16,6 +16,7 @@ import org.harctoolbox.ircore.ModulatedIrSequence;
 import org.harctoolbox.irp.Decoder;
 import org.harctoolbox.irp.Decoder.Decode;
 import org.harctoolbox.irp.Decoder.DecoderParameters;
+import org.harctoolbox.irp.Decoder.SimpleDecodesSet;
 import org.harctoolbox.irp.Decoder.TrunkDecodeTree;
 import org.harctoolbox.irp.InvalidNameException;
 import org.harctoolbox.irp.IrpDatabase;
@@ -399,7 +400,7 @@ public class LearnedSignal extends Highlight
           }
 
           IrSignal irSignal = new IrSignal( ul.durations, ul.oneTime, ul.repeat, ul.frequency );
-          Map<String, Decode> sigDecodes = tmDecoder.decodeIrSignal( irSignal, tmDecoderParams );
+          SimpleDecodesSet sigDecodes = tmDecoder.decodeIrSignal( irSignal, tmDecoderParams );
           
           if ( sigDecodes == null || sigDecodes.size() == 0 )
           {
@@ -416,16 +417,19 @@ public class LearnedSignal extends Highlight
             
             //DecodeTree sDecodes =  tmDecoder.decode( sequence, tmDecoderParams );
             Iterator<  TrunkDecodeTree > it = tmDecoder.decode( sequence, tmDecoderParams ).iterator();
-            sigDecodes = new Hashtable< String, Decode >();
+            List< Decode > decodeList = new ArrayList< Decode >();
+            //sigDecodes = new Hashtable< String, Decode >();
             while ( it.hasNext() )
             {
               TrunkDecodeTree tree = it.next();
-              sigDecodes.put( tree.getName(), tree.getTrunk() );
+              decodeList.add( tree.getTrunk() );
+              //sigDecodes.put( tree.getName(), tree.getTrunk() );
 //              System.err.println( tree.toString() );
-            }            
+            }
+            sigDecodes = new SimpleDecodesSet( decodeList );
           }
 
-          for ( Decode dc : sigDecodes.values() )
+          for ( Decode dc : sigDecodes )
           {
             //System.out.println( dc );
             LearnedSignalDecode lsd = new LearnedSignalDecode( dc );

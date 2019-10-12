@@ -61,7 +61,7 @@
                         </zipfileset>
                 		<zipfileset src="${lib.dir}/org.thingml.bglib-protocol-1.0.3-43.jar" includes="**/*.class"/>
                         <zipfileset src="${lib.dir}/commons-lang3-3.4.jar" includes="**/*.class"/>
-                	    <zipfileset src="${lib.dir}/IrpTransmogrifier-1.1.1-jar-with-dependencies.jar"/>
+                	    <zipfileset src="${lib.dir}/IrpTransmogrifier-1.2.0-jar-with-dependencies.jar"/>
                 </jar>
                 <java classpath="RemoteMaster.jar" classname="com.hifiremote.jp1.RemoteMaster" outputproperty="rmversion">
                         <arg value="-version" />
