@@ -21,6 +21,10 @@ Changes for v2.09
 -- Private build 5
 - Update to IrpTransmogrifier v1.2.0 with corresponding update to IrpDatabase.xml (Barf)
 - Further minor tweaks to learned signal conversion (Graham)
+-- Release build 6
+- Add credit for IrpTransmogrifier to Bengt Martensson in Help > About and reduce height of About pane (Graham)
+- Fix bug introduced in v2.07 build 9 in General Panel display for XSight remotes (Graham)
+- Update to IrpTransmogrifier v1.2.2, remove separate RMIR version of IrpProtocols.xml (Barf, Graham)
 
 Changes for v2.08
 -- Release build 1

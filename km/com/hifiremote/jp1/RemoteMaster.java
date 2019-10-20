@@ -139,7 +139,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
 
   /** Description of the Field. */
   public final static String version = "v2.09";
-  public final static int buildVer = 5;
+  public final static int buildVer = 6;
   
   public enum WavOp { NEW, MERGE, SAVE, PLAY };
   
@@ -413,6 +413,8 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
   private JMenuItem homePageItem = null;
 
   private JMenuItem learnedSignalItem = null;
+  
+  private JMenuItem irpProtocolsItem = null;
 
   private JMenuItem wikiItem = null;
 
@@ -490,6 +492,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
   private boolean exitPrompt = false;
 
   private JPanel statusBar = null;
+  private JScrollPane scroll = null;
 
   private boolean hasInvalidCodes = false;
 
@@ -3166,6 +3169,10 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
       rmpbReadmeItem.addActionListener( this );
       menu.add( rmpbReadmeItem );
 
+      irpProtocolsItem = new JMenuItem( "IrpTransmogrifier Protoocols", KeyEvent.VK_P );
+      irpProtocolsItem.addActionListener( this );
+      menu.add( irpProtocolsItem );
+      
       learnedSignalItem = new JMenuItem( "Interpreting Decoded IR Signals", KeyEvent.VK_I );
       learnedSignalItem.addActionListener( this );
       menu.add( learnedSignalItem );
@@ -5689,6 +5696,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
         sb.append( "<p>Additional help was provided by:<blockquote>" );
         sb.append( "John&nbsp;S&nbsp;Fine, Nils&nbsp;Ekberg, Jon&nbsp;Armstrong, Robert&nbsp;Crowe, " );
         sb.append( "Mark&nbsp;Pauker, Mark&nbsp;Pierson, Mike&nbsp;England</blockquote></p>" );
+        sb.append( "<p>Incorporates IrpTransmogrifier by Bengt&nbsp;Martensson</p>" );
 
         sb.append( "<p>RDFs loaded from <b>" );
         sb.append( properties.getProperty( "RDFPath" ) );
@@ -5697,6 +5705,14 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
         sb.append( "</p><p>Images and Maps loaded from <b>" );
         sb.append( properties.getProperty( "ImagePath" ) );
         sb.append( "</b></p>" );
+        
+        sb.append( "<p>IrpTransmogrifier version " );
+        sb.append( Version.version );
+        sb.append( "<br/>" );
+        sb.append( "IrpProtocols version " );
+        sb.append( LearnedSignal.getTmDatabase().getConfigFileVersion() );
+        sb.append( "</p>" );
+        
         if ( LearnedSignal.hasDecodeIR() )
         {
           sb.append( "<p>DecodeIR version " );
@@ -5707,13 +5723,6 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
         {
           sb.append( "<p><b>DecodeIR is not available!</b></p>" );
         }
-        
-        sb.append( "<p>IrpTransmogrifier version " );
-        sb.append( Version.version );
-        sb.append( "<br/>" );
-        sb.append( "IrpDatabase version " );
-        sb.append( LearnedSignal.getTmDatabase().getConfigFileVersion() );
-        sb.append( "</p>" );
 
         if ( !interfaces.isEmpty() )
         {
@@ -5754,11 +5763,18 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
         pane.setEditable( false );
         pane.setBackground( getContentPane().getBackground() );
         new TextPopupMenu( pane );
-        JScrollPane scroll = new JScrollPane( pane );
+        scroll = new JScrollPane( pane );
         Dimension d = pane.getPreferredSize();
-        d.height = d.height * 5 / 4;
+        d.height = d.height * 4 / 5; // * 5 / 4;
         d.width = d.width * 2 / 3;
         scroll.setPreferredSize( d );
+        javax.swing.SwingUtilities.invokeLater( new Runnable()
+        {
+          public void run()
+          {
+            scroll.getVerticalScrollBar().setValue( 0 );
+          }
+        } );
 
         JOptionPane.showMessageDialog( this, scroll, "About RM/RMIR", JOptionPane.INFORMATION_MESSAGE, null );
       }
@@ -5781,6 +5797,11 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
       else if ( source == learnedSignalItem )
       {
         File file = new File( workDir, "DecodeIR.html" );
+        desktop.browse( file.toURI() );
+      }
+      else if ( source == irpProtocolsItem )
+      {
+        File file = new File( workDir, "IrpProtocols.html" );
         desktop.browse( file.toURI() );
       }
       else if ( source == homePageItem )
@@ -6291,7 +6312,6 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
       rmirSys = new File( workDir, "RMIR.sys" );
       rmpbIcon = new File( workDir, "RMPB.ico" );
       summaryFile = new File( workDir, "summary.html" );
-      LearnedSignal.getTmDecoder();
       File propertiesFile = null;
       File errorsFile = null;
       File fileToOpen = null;
@@ -6358,7 +6378,9 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
         e.printStackTrace( System.err );
       }
 
+      LearnedSignal.getTmDecoder();
       System.err.println( "RemoteMaster " + RemoteMaster.version + " build " + getBuild() );
+      System.err.println( "Incorporates IrpTransmogrifier v" + Version.version );
       System.err.println( "Legacy merge set = " + legacyMergeOK );
       String[] propertyNames =
       {

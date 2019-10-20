@@ -485,7 +485,7 @@ public class DeviceButtonTableModel extends JP1TableModel< DeviceButton >
       case 12:
       {
         DeviceLabels labels = remote.getDeviceLabels();
-        return labels.getText2( data, column - 8 );
+        return labels.getText2( data, column - 9 );
       }
       case 13:
       {
@@ -769,7 +769,7 @@ public class DeviceButtonTableModel extends JP1TableModel< DeviceButton >
         for ( int i = 0; i < 3; i++ )
         {
           String s = lbls.getText2( data, i + 1 );
-          texts[ i ] = i == col - 9 ? text : s == null ? "" : s;
+          texts[ i ] = i == col - 10 ? text : s == null ? "" : s;
           hexLen += texts[ i ].length();
         }
         int lenMod = hexLen & ( remote.getForceModulus() - 1 );

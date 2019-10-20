@@ -413,25 +413,18 @@ public class LearnedSignal extends Highlight
               && ( irSignal.introOnly() || irSignal.repeatOnly() ) )
           { 
             ModulatedIrSequence sequence = irSignal.toModulatedIrSequence();
-            //sequence = Cleaner.clean(sequence, IrCoreUtils.DEFAULT_ABSOLUTE_TOLERANCE, IrCoreUtils.DEFAULT_RELATIVE_TOLERANCE);
-            
-            //DecodeTree sDecodes =  tmDecoder.decode( sequence, tmDecoderParams );
             Iterator<  TrunkDecodeTree > it = tmDecoder.decode( sequence, tmDecoderParams ).iterator();
             List< Decode > decodeList = new ArrayList< Decode >();
-            //sigDecodes = new Hashtable< String, Decode >();
             while ( it.hasNext() )
             {
               TrunkDecodeTree tree = it.next();
               decodeList.add( tree.getTrunk() );
-              //sigDecodes.put( tree.getName(), tree.getTrunk() );
-//              System.err.println( tree.toString() );
             }
             sigDecodes = new SimpleDecodesSet( decodeList );
           }
 
           for ( Decode dc : sigDecodes )
           {
-            //System.out.println( dc );
             LearnedSignalDecode lsd = new LearnedSignalDecode( dc );
             if ( lsd.decode != null )
               decodes.add( lsd );
@@ -503,8 +496,12 @@ public class LearnedSignal extends Highlight
     {
       try
       {  
-        //tmDatabase = new IrpDatabase( ( String )null ); 
-        tmDatabase = new IrpDatabase( new File( RemoteMaster.getWorkDir(), "IrpProtocols.xml" ) );
+        tmDatabase = new IrpDatabase( ( String )null );
+        File patchFile = new File( RemoteMaster.getWorkDir(), "rmProtocols.xml" );
+        if ( patchFile.exists() )
+        {
+          tmDatabase.patch( patchFile );
+        }
         ewDatabase = new ExecutorWrapperDatabase( tmDatabase );
         tmDecoder = new Decoder( tmDatabase ); 
         tmDecoderParams = new Decoder.DecoderParameters(); 

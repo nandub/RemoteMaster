@@ -118,7 +118,7 @@ public class LearnedSignalPanel extends RMTablePanel< LearnedSignal >
     
     convertToUpgradeButton = new JButton( "Convert to Device Upgrade" );
     convertToUpgradeButton.addActionListener( this );
-    convertToUpgradeButton.setToolTipText( "Convert the selected item to a Device Upgrade." );
+    convertToUpgradeButton.setToolTipText( "Convert the selected set of consecutive items to a Device Upgrade." );
     buttonPanel.add( convertToUpgradeButton );
 
     timingSummaryButton = new JButton( "Timing Summary" );
