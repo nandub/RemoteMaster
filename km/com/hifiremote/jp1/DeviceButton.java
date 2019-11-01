@@ -117,6 +117,9 @@ public class DeviceButton extends Highlight
         volumePT = noButton;
         transportPT = noButton;
         channelPT = noButton;
+        xPT = noButton;
+        inputPT = noButton;
+        zPT = noButton;
       }
     }
   }
@@ -157,6 +160,11 @@ public class DeviceButton extends Highlight
     setupCode += deviceCodeOffset;
     return setupCode;
   }
+  
+  public boolean getSetupLock( short[] data )
+  {
+    return ( data[ 5 ] & 0x80 ) == 0;
+  }
 
   /**
    * Sets the setup code.
@@ -188,6 +196,12 @@ public class DeviceButton extends Highlight
     {
       Hex.put( ( int )setupCode, data, 3 );
     }
+  }
+  
+  public void setSetupLock( boolean lock, short[] data )
+  {
+    data[ 5 ] = ( short )( lock ? data[ 5 ] & 0x7F : data[ 5 ] | 0x80 );
+    
   }
   
   public int getDeviceSlot( short[] data )
@@ -270,6 +284,36 @@ public class DeviceButton extends Highlight
     this.channelPT = channelPT;
   }
   
+  public DeviceButton getxPT()
+  {
+    return xPT;
+  }
+
+  public void setxPT( DeviceButton xPT )
+  {
+    this.xPT = xPT;
+  }
+
+  public DeviceButton getInputPT()
+  {
+    return inputPT;
+  }
+
+  public void setInputPT( DeviceButton inputPT )
+  {
+    this.inputPT = inputPT;
+  }
+
+  public DeviceButton getzPT()
+  {
+    return zPT;
+  }
+
+  public void setzPT( DeviceButton zPT )
+  {
+    this.zPT = zPT;
+  }
+
   private String defaultName = null;
 
   /** The high address. */
@@ -291,6 +335,9 @@ public class DeviceButton extends Highlight
   private DeviceButton volumePT = noButton;
   private DeviceButton transportPT = noButton;
   private DeviceButton channelPT = noButton;
+  private DeviceButton xPT = noButton;
+  private DeviceButton inputPT = noButton;
+  private DeviceButton zPT = noButton;
   private int favoriteWidth = 0;
   private int vpt = 0;
   private boolean constructed = false;
@@ -433,27 +480,41 @@ public class DeviceButton extends Highlight
       return;
     }
     
-    String pt = remote.getPunchThru();
     int ptDefLen = ptDefaults == null ? 0 : ptDefaults.length;
     
-    // Set punchthrough defaults, if any
-    for ( int i = 0; i < ptDefLen; i++ )
+    // Set punchthrough defaults.  When there are no explicit defaults, use 0 for VTC and
+    // 0xFF for XYZ for compatibility with previous behaviour for remotes that do not use XYZ.
+    for ( int i = 0; i < 6; i++ )
     {
-      hex.set( ptDefaults[ i ], i + 6 );
+      hex.set( ( short )( i < ptDefLen ? ptDefaults[ i ] : i < 3 ? 0 : 0xFF ), i + 6 );
     }
-    
-    // Set device buttons for those PTs specified in RDF, and for others with no explicit default 
-    if ( pt.indexOf( 'V' ) >= 0 || ptDefLen < 1 )
+
+    String pt = remote.getPunchThru();
+    // Set device buttons for those PTs specified in RDF, when these are explicitly set.
+    // When set to <none>, i.e. no button, the defaults set above apply.
+    if ( pt.indexOf( 'V' ) >= 0 && volumePT != DeviceButton.noButton )
     {  
-      hex.set( ( short )( hex.getData()[ 2 ] == 0xFF ? 0xFF : Math.max( volumePT.getButtonIndex(), 0 ) ), 6 );
+      hex.set( ( short )( hex.getData()[ 2 ] == 0xFF ? 0xFF : volumePT.getButtonIndex() ), 6 );         
     }
-    if ( pt.indexOf( 'T' ) >= 0 || ptDefLen < 2 )
-    {
-      hex.set( ( short )( hex.getData()[ 2 ] == 0xFF ? 0xFF : Math.max( transportPT.getButtonIndex(), 0 ) ), 7 );
+    if ( pt.indexOf( 'T' ) >= 0 && transportPT != DeviceButton.noButton )
+    {  
+      hex.set( ( short )( hex.getData()[ 2 ] == 0xFF ? 0xFF : transportPT.getButtonIndex() ), 7 );         
     }
-    if ( pt.indexOf( 'C' ) >= 0 || ptDefLen < 3 )
-    {
-      hex.set( ( short )( hex.getData()[ 2 ] == 0xFF ? 0xFF : Math.max( channelPT.getButtonIndex(), 0 ) ), 8 );
+    if ( pt.indexOf( 'C' ) >= 0 && channelPT != DeviceButton.noButton )
+    {  
+      hex.set( ( short )( hex.getData()[ 2 ] == 0xFF ? 0xFF : channelPT.getButtonIndex() ), 8 );         
+    }
+    if ( pt.indexOf( 'X' ) >= 0 && xPT != DeviceButton.noButton )
+    {  
+      hex.set( ( short )( hex.getData()[ 2 ] == 0xFF ? 0xFF : xPT.getButtonIndex() ), 9 );         
+    }
+    if ( pt.indexOf( 'Y' ) >= 0 && inputPT != DeviceButton.noButton )
+    {  
+      hex.set( ( short )( hex.getData()[ 2 ] == 0xFF ? 0xFF : inputPT.getButtonIndex() ), 10 );         
+    }
+    if ( pt.indexOf( 'Z' ) >= 0 && zPT != DeviceButton.noButton )
+    {  
+      hex.set( ( short )( hex.getData()[ 2 ] == 0xFF ? 0xFF : zPT.getButtonIndex() ), 11 );         
     }
   }
 }

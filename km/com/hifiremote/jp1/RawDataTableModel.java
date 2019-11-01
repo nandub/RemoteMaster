@@ -138,7 +138,7 @@ public class RawDataTableModel extends JP1TableModel< short[] >
   public String getColumnPrototypeName( int col )
   {
     if ( col == 0 )
-      return "0000: ";
+      return "00000: ";
     return " CC ";
   }
 

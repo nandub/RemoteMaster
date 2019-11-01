@@ -46,6 +46,10 @@ public class SetupCodeRenderer extends DefaultTableCellRenderer
   
   public boolean isValid( int setupCodeValue )
   {
+    if ( setupCodeValue > SetupCode.getMax() )
+    {
+      return false;
+    }
     Remote remote = remoteConfig.getRemote();
     if ( remote.getSetupValidation() == Remote.SetupValidation.OFF 
         || deviceButton.isConstructed() )

@@ -114,14 +114,14 @@ public class SegmentTableModel extends JP1TableModel< Segment >
       case 0x1F:
         return "Activity Assist Definition segment";
       case 0x20:
-        return "Function Names segment";
+        return remote.usesEZRC() && !remote.isSSD() ? "Function Names segment" : null;
       case 0x2E:
         return remote.usesLedColor() ? "Streamer LED Color segment" : null;
       case 0x2F:
         return remote.getSettings() != null && remote.getSettings().length > 0
           ? "Settings Assignment segment" : null;
       case 0xCD:
-        return "WatchTV Assignment segment";
+        return remote.hasMasterPowerSupport() ? "Master Power macro segment" : "WatchTV Assignment segment";
       case 0xCE:
         return "WatchMovie Assignment segment";
       case 0xDB:

@@ -117,6 +117,12 @@ public class RawDataDialog extends JDialog implements ActionListener
           pw.println( "[Buffer]" );
         }
         Hex.print( pw, buffer, baseAddress );
+        if ( eepromSize > 0 )
+        {
+          pw.println();
+          pw.println( "[Notes]");
+          pw.print( "0=Size of EEPROM area is $"  + Integer.toHexString( eepromSize ).toUpperCase() );
+        }
         pw.close();
       }
       catch ( IOException ioe )
@@ -167,7 +173,8 @@ public class RawDataDialog extends JDialog implements ActionListener
         System.err.println( "Remote signature = " + signature );
       }
       
-      int buffSize = io.getRemoteEepromSize();
+      eepromSize = io.getRemoteEepromSize();
+      int buffSize = eepromSize;
       System.err.println( "Initial buffer size  = $" + Integer.toHexString( buffSize ).toUpperCase() );
       if ( buffSize <= 0 )
       {
@@ -195,8 +202,22 @@ public class RawDataDialog extends JDialog implements ActionListener
       // Round buffSize to multiple of 16 bytes so that all data shows in displayed table
       if ( buffSize % 16 != 0 )
         buffSize = ( buffSize / 16 + 1 ) * 16;
+      if ( signature.length() == 6 && signature.startsWith( "6" ) )
+      {
+        // This is a TI CC2530 or CC2541 processor, both of which have a page size
+        // of 0x800 bytes.  The URC2125BC0 has a CC2530 processor but an E2 size of
+        // only 0x700.  All other known remotes with these processors will already
+        // have a buffSize that is a multiple of the page size, but to handle the
+        // URC2125BC0 and any later similar remotes, round buffSize to multiple of
+        // page size.
+        int pageSize =0x800;
+        if ( buffSize % pageSize != 0 )
+          buffSize = ( buffSize / pageSize + 1 ) * pageSize;
+      }
+      
       System.err.println( "Final buffer size  = $" + Integer.toHexString( buffSize ).toUpperCase() );
       buffer = new short[ buffSize ];
+      byteRenderer.setEepromSize( eepromSize );
       int count = io.readRemote( baseAddress, buffer );
       System.err.println( "Number of bytes read  = $" + Integer.toHexString( count ).toUpperCase() );
       io.closeRemote();
@@ -300,6 +321,7 @@ public class RawDataDialog extends JDialog implements ActionListener
   private short[] buffer = null;
   private int baseAddress = 0;
   private int interfaceType = 0;
+  private int eepromSize = 0;
 
   private JButton downloadButton = new JButton( "Download" );
 //  private JButton setBaselineButton = new JButton( "Set Baseline" );

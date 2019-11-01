@@ -139,7 +139,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
 
   /** Description of the Field. */
   public final static String version = "v2.09";
-  public final static int buildVer = 6;
+  public final static int buildVer = 7;
   
   public enum WavOp { NEW, MERGE, SAVE, PLAY };
   

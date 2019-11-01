@@ -124,7 +124,8 @@ public class ActivityFunctionTableModel extends JP1TableModel< Activity > implem
       {
         ++col;       // skip Name
       }
-      if ( ( remote.usesEZRC() || remote.usesSimpleset() || !remote.hasActivityControl() && !remote.hasMasterPowerSupport() ) && col > 1 )
+      if ( ( remote.usesEZRC() || remote.usesSimpleset() || !remote.hasActivityControl() 
+          && ( !remote.hasMasterPowerSupport() || remote.getSegmentTypes().contains( 0xCD ) ) ) && col > 1 )
       {
         col++;       // skip key
       }
@@ -242,7 +243,8 @@ public class ActivityFunctionTableModel extends JP1TableModel< Activity > implem
       {
         count++;   // add Name
       }
-      if ( !remote.usesEZRC() && !remote.usesSimpleset() && ( remote.hasActivityControl() || remote.hasMasterPowerSupport() ) )
+      if ( !remote.usesEZRC() && !remote.usesSimpleset() && ( remote.hasActivityControl() 
+          || ( remote.hasMasterPowerSupport() && !remote.getSegmentTypes().contains( 0xCD ) ) ) )
       {
         count++;   // add Key
       }

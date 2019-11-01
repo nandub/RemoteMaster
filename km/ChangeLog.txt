@@ -25,6 +25,16 @@ Changes for v2.09
 - Add credit for IrpTransmogrifier to Bengt Martensson in Help > About and reduce height of About pane (Graham)
 - Fix bug introduced in v2.07 build 9 in General Panel display for XSight remotes (Graham)
 - Update to IrpTransmogrifier v1.2.2, remove separate RMIR version of IrpProtocols.xml (Barf, Graham)
+-- Release build 7
+- Add setup code lock column to Device Buttons table for segmented remotes (Graham)
+- Round the size of raw download buffer to multiple of 0x800-byte page size for TI processors (Graham)
+- Fix bug in raw download display, which was showing all data grayed out; now only data beyond E2 is grayed out (Graham)
+- Amend Raw Download saved file to include note giving precise size of E2 area (Graham)
+- Add support for TI2530 processor (Graham)
+- Add new field "extraData" to DeviceUpgrade, to hold final 24 bytes of data that is added to standard format if PID has bit 11 set (Graham)
+- Add support for the three previously unused punchthru bytes, seen used for first time in URC-2125BC0 (Graham)
+- Update handling of punchthru defaults specified in RDF [DeviceButtons] section, to support behaviour in URC-2125BC0 (Graham)
+- Support new use of type 0xCD segment, as an activity power macro as in URC-2125BC0 (Graham)
 
 Changes for v2.08
 -- Release build 1

@@ -3611,7 +3611,7 @@ public class Remote implements Comparable< Remote >
     {
       return usesSimpleset() ? "JPS" : "JPUSB";
     }
-    else if ( name.equals( "TI2541" ) )
+    else if ( name.equals( "TI2541" ) || name.equals( "TI2530" ) )
     {
       return "JP3.1";
     }
@@ -3677,6 +3677,14 @@ public class Remote implements Comparable< Remote >
     else if ( name.equals( "TI2541" ) )
     {
       return "Texas Instruments CC2541 F256";
+    }
+    else if ( name.equals( "TI2530" ) )
+    {
+      return "Texas Instruments CC2530 F128";
+    }
+    else if ( name.equals( "GP565" ) )
+    {
+      return "Qorvo GP565 NJC6";
     }
     else
     {

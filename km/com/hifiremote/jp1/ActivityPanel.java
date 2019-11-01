@@ -95,19 +95,19 @@ public class ActivityPanel extends RMPanel implements ChangeListener, ActionList
     inner.add( grid, BorderLayout.PAGE_START );
     grid.setVisible( false );
     
-    JPanel panel = new JPanel( new BorderLayout() );
-    panel.setBorder( BorderFactory.createTitledBorder( "Activity Group Assignments" ) );
+    activityGroupPanel = new JPanel( new BorderLayout() );
+    activityGroupPanel.setBorder( BorderFactory.createTitledBorder( "Activity Group Assignments" ) );
     activityGroupTable = new JP1Table( activityGroupModel );
     activityGroupTable.setCellEditorModel( activityGroupModel );
     activityGroupTable.setSelectionMode( ListSelectionModel.SINGLE_INTERVAL_SELECTION );
     activityFunctionModel.setActivityGroupModel( activityGroupModel );
     JScrollPane scrollPane = new JScrollPane( activityGroupTable );
-    panel.add( scrollPane, BorderLayout.CENTER );
+    activityGroupPanel.add( scrollPane, BorderLayout.CENTER );
     
-    inner.add( panel, BorderLayout.CENTER);
+    inner.add( activityGroupPanel, BorderLayout.CENTER);
     
     tabPanel.add( inner, BorderLayout.CENTER );
-    panel = new JPanel( new FlowLayout( FlowLayout.CENTER, 5, 0 ) );
+    JPanel panel = new JPanel( new FlowLayout( FlowLayout.CENTER, 5, 0 ) );
     clearActivity = new JButton( "Clear Activity" );
     clearActivity.addActionListener( this );
     panel.add( clearActivity );
@@ -205,6 +205,7 @@ public class ActivityPanel extends RMPanel implements ChangeListener, ActionList
       // Hide the Activity Function Panel for remotes such as URC7935 which have a single activity
       // that represents an algorithmic assignment of devices to buttons.
       activityFunctionScrollPane.setVisible( !remote.hasActivityAlgorithm() );
+      activityGroupPanel.setVisible( remote.getActivityButtonGroups() != null && remote.getActivityButtonGroups().length > 0 );
       newActivity.setVisible( remote.usesEZRC() );
       deleteActivity.setVisible( remote.usesEZRC() );
       moveRight.setVisible( remote.usesEZRC() );
@@ -222,9 +223,18 @@ public class ActivityPanel extends RMPanel implements ChangeListener, ActionList
       }
       else if ( remote.hasMasterPowerSupport() && !remote.usesSimpleset() )
       {
-        messageArea.setText( startMessage + "The \"Key\" value has no "
-        + "significance when the activity is set with RMIR, but some value has to be set "
-        + "for it before a Power Macro can be entered." );
+        if ( remote.getSegmentTypes().contains( 0xCD ) )
+        {
+          messageArea.setText( "Note:  The Power Macro consists only of the device buttons of "
+              + "the devices which should turn on when the activity button is pressed. "
+              + "It does not contain the Power button explicitly.");
+        }
+        else
+        {
+          messageArea.setText( startMessage + "The \"Key\" value has no "
+              + "significance when the activity is set with RMIR, but some value has to be set "
+              + "for it before a Power Macro can be entered." );
+        }
       }
       else if ( remote.hasActivityControl() )
       {
@@ -249,7 +259,19 @@ public class ActivityPanel extends RMPanel implements ChangeListener, ActionList
         + "the device for that group is normally XX but this changes temporarily to TV after the Input "
         + "button is pressed, remaining so until 10 seconds without a button of this group being pressed." );
       }
-      messageArea.setVisible( remote.hasMasterPowerSupport() || remote.hasActivityControl() || remote.hasActivityAlgorithm() );
+      
+      if ( remote.hasMasterPowerSupport() || remote.hasActivityControl() || remote.hasActivityAlgorithm() )
+      {
+        if ( remote.hasActivitySupport() && ( remote.getActivityButtonGroups() == null 
+            || remote.getActivityButtonGroups().length == 0 ) )
+        {
+          String msg = messageArea.getText();
+          msg += "\n\nThis remote has no Activity Button Groups.  The assignment of buttons to groups "
+              + "is through device punchthrough settings only.";
+          messageArea.setText( msg );
+        }
+        messageArea.setVisible( true );
+      }
       tabbedPane.removeAll();
       activityList.clear();
       lastIndex = 0;
@@ -293,6 +315,7 @@ public class ActivityPanel extends RMPanel implements ChangeListener, ActionList
   private ActivityGroupTableModel activityGroupModel = new ActivityGroupTableModel();
   private JPanel activityFunctionPanel = null;
   private JP1Table activityFunctionTable = null;
+  private JPanel activityGroupPanel = null;
   private JScrollPane activityFunctionScrollPane = null;
   private ActivityFunctionTableModel activityFunctionModel = new ActivityFunctionTableModel();
   private JP1Table[] activityAssistTables = { null, null, null };

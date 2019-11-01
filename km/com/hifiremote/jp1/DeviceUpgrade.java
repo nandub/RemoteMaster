@@ -478,6 +478,11 @@ public class DeviceUpgrade extends Highlight
     this.sizeCmdBytes = sizeCmdBytes;
   }
 
+  public Hex getExtraData()
+  {
+    return extraData;
+  }
+
   /**
    * Checks for defined functions.
    * 
@@ -1286,6 +1291,17 @@ public class DeviceUpgrade extends Highlight
     {
       fixedDataLength = sizeDevBytes;
       cmdLength = sizeCmdBytes;
+      if ( ( pid.get( 0 ) & 0x800 ) != 0 )
+      {
+        // Device upgrades with PIDs with bit 11 set have been seen in URC-2125BC0
+        // and have an extra section following the variable data.  This consists of
+        // a 2-byte hex value followed by 22 characters of ASCII.  This can only be
+        // successfully parsed if there is no protocol code; if there is, then
+        // hexCode extends only up to the start of that code.
+        int upgDataSize = fixedDataLength + cmdLength * buttons.size();
+        int extraIndex = index + upgDataSize;
+        extraData = hexCode.subHex( extraIndex, Math.min( hexCode.length() - extraIndex, 24 ) );
+      }
     }
     if ( cmdLength == 0 && pCode != null && pCode.length() > 2 )
     {
@@ -2273,6 +2289,10 @@ public class DeviceUpgrade extends Highlight
     {
       e.printStackTrace();
     }
+    if ( extraData != null )
+    {
+      out.print( "ExtraData", extraData );
+    }
     if ( notes != null )
     {
       out.print( "Notes", notes );
@@ -2712,6 +2732,12 @@ public class DeviceUpgrade extends Highlight
         sizeDevBytes = protocol.getFixedDataLength();
       }
     }
+    
+    String temp = props.getProperty( "ExtraData" );
+    if ( temp != null && temp.length() > 0 )
+    {
+      extraData = new Hex( temp );
+    }
 
     notes = props.getProperty( "Notes" );
 
@@ -2737,7 +2763,7 @@ public class DeviceUpgrade extends Highlight
       {
         f.setGid( Function.defaultGID );
       }
-      String temp = null;
+      temp = null;
       if ( iconrefMap != null && ( temp = props.getProperty( "Function." + i + ".iconref" ) ) != null )
       {
         iconrefMap.put( f, Integer.parseInt( temp ) );
@@ -4104,6 +4130,8 @@ public class DeviceUpgrade extends Highlight
   private int sizeDevBytes = 0; // only used for JP1.4/JP2 remotes
   
   private int sizeCmdBytes = 0; // only used for JP1.4/JP2 remotes
+  
+  private Hex extraData = null;
 
   /** The parm values. */
   private Value[] parmValues = new Value[ 0 ];

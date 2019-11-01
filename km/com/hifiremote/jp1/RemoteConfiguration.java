@@ -317,6 +317,10 @@ public class RemoteConfiguration
               macro.setData( null );
               button = remote.getButton( macro.getKeyCode() );
             }
+            else if ( remote.getSegmentTypes() != null && remote.getSegmentTypes().contains( 0xCD ) && remote.hasMasterPowerSupport() )
+            {
+              button = remote.getButton( macro.getKeyCode() );
+            }
             else
             {
               button = remote.getButton( macro.getDeviceButtonIndex() );
@@ -2057,8 +2061,16 @@ public class RemoteConfiguration
     if ( !decode )
       return;
 
-    for ( segType = 1; segType < 4; segType += 2 )
+    List< Integer >macroTypes = new ArrayList< Integer >();
+    macroTypes.add( 1 );
+    macroTypes.add( 3 );
+    if ( remote.getSegmentTypes().contains( 0xCD ) && !remote.hasActivityControl() )
+      macroTypes.add( 0xCD );
+    
+    //for ( segType = 1; segType < 4; segType += 2 )
+    for ( int macroType : macroTypes )
     {
+      segType = macroType;
       List< Segment > macroList = segments.get( segType );
       if ( macroList != null )
       {
@@ -2066,16 +2078,24 @@ public class RemoteConfiguration
         {
           Hex hex = segment.getHex();
           int deviceIndex = hex.getData()[ 0 ]; // Known values are 0 (not device specific) or an activity button number
-          Button btn = remote.getButton( deviceIndex );
+          Button devBtn = remote.getButton( deviceIndex );
           int keyCode = hex.getData()[ 1 ];
+          Button btn = remote.getButton( keyCode );
           int count = Math.min( hex.getData()[ 2 ], hex.length() - 3 );
           Hex data = hex.subHex( 3, count );
-          Macro macro = new Macro( keyCode, segType == 1 ? data : null, deviceIndex, 0, null );
+          Macro macro = new Macro( keyCode, segType == 1 || segType == 0xCD ? data : null, deviceIndex, 0, null );
           macro.setSegmentFlags( segment.getFlags() );
           segment.setObject( macro );
-          if ( segType == 1 && btn != null && activities != null && activities.get( btn ) != null )
+          if ( segType == 1 && devBtn != null && activities != null && activities.get( devBtn ) != null )
           {
-            activities.get( btn ).setMacro( macro );
+            activities.get( devBtn ).setMacro( macro );
+          }
+          else if ( segType == 0xCD && btn != null && activities != null && activities.get( btn ) != null )
+          {
+            Activity a = activities.get(  btn );
+            a.setMacro( macro );
+            macro.setActivity( a );
+            a.setActive( true );
           }
           else setMacro( macro );
           if ( segType == 3 )
@@ -2203,7 +2223,14 @@ public class RemoteConfiguration
       }
     }
     
-    softNamesList = segments.get( 0x20 );
+    softNamesList = null;
+    if ( remote.usesEZRC() && !remote.isSSD() )
+    {
+      // URC-2125BC0, which has a TI2530 processor, has a segment type 20 used for a 
+      // different purpose.  That is the only known use of type 20 other than the
+      // EZ-RC remotes with segments that this condition selects. 
+      softNamesList = segments.get( 0x20 );
+    }
     if ( softNamesList != null )
     {
       for ( Segment segment : softNamesList )
@@ -3746,9 +3773,15 @@ public class RemoteConfiguration
           if ( db != null )
           {
             db.setDefaultName();
-            db.setVolumePT( getPTButton( hex.getData()[ 6 ] ) );
-            db.setTransportPT( getPTButton( hex.getData()[ 7 ] ) );
-            db.setChannelPT( getPTButton( hex.getData()[ 8 ] ) );
+            db.setVolumePT( getPTButton( db, hex, 6 ) );
+            db.setTransportPT( getPTButton( db, hex, 7 ) );
+            db.setChannelPT( getPTButton( db, hex, 8 ) );
+            if ( remote.getPunchThru().contains( "X" ) )
+              db.setxPT( getPTButton( db, hex, 9 ) );
+            if ( remote.getPunchThru().contains( "Y" ) )
+              db.setInputPT( getPTButton( db, hex, 10 ) );
+            if ( remote.getPunchThru().contains( "Z" ) )
+              db.setzPT( getPTButton( db, hex, 11 ) );
             segment.setObject( db );
             int setupCode = db.getSetupCode( hex.getData() );
             int devType = db.getDeviceTypeIndex( hex.getData() );
@@ -3778,10 +3811,12 @@ public class RemoteConfiguration
     }
   }
   
-  private DeviceButton getPTButton( int deviceIndex )
+  private DeviceButton getPTButton( DeviceButton db, Hex hex, int index )
   {
-    DeviceButton devBtn = remote.getDeviceButton( deviceIndex );
-    return devBtn == null ? DeviceButton.noButton : devBtn; 
+    // The DeviceButton argument is not used.  It is retained in case it is
+    // needed in future development.
+    DeviceButton devBtn = remote.getDeviceButton( hex.getData()[ index ] );
+    return devBtn == null ? DeviceButton.noButton : devBtn;
   }
   
   public static Remote filterRemotes( List< Remote > remotes, String signature, int dataSize, 
@@ -6114,7 +6149,7 @@ public class RemoteConfiguration
       }
       segments.get( 0xE9 ).add( segment );
     }
-    else if ( types.contains( 0xCD ) )
+    else if ( types.contains( 0xCD ) && remote.hasActivityControl() )
     {
       List< Button > activityBtns = remote.getButtonGroups().get( "Activity" );
       for ( int i = 0; i < activityBtns.size(); i++ )
@@ -6537,6 +6572,7 @@ public class RemoteConfiguration
       if ( types.contains( 4 ) ) segments.remove( 4 );
       if ( types.contains( 7 ) ) segments.remove( 7 );
       if ( types.contains( 8 ) ) segments.remove( 8 );
+      if ( types.contains( 0xCD ) && !remote.hasActivityControl() ) segments.remove( 0xCD );
       setUpgradeKeyMoves();
       updateKeyMoves( keymoves, 0 );
       updateKeyMoves( upgradeKeyMoves, 0 );
@@ -6741,6 +6777,7 @@ public class RemoteConfiguration
       {
         type = 3;
       }
+      
       if ( ( type == 1 || type == 3 ) && list.size() > 1 )
       {
         Macro macro = list.get( 0 );
@@ -6756,6 +6793,11 @@ public class RemoteConfiguration
       {
         type = 4;
       }
+      if ( type == 1 && segmentTypes.contains( 0xCD ) && !remote.hasActivityControl()
+          && list.get( 0 ).getActivity() != null )
+      {
+        type = 0xCD;
+      }
       int size = 0;
       for ( Macro macro : list )
       {
@@ -6763,7 +6805,7 @@ public class RemoteConfiguration
         {
           remote.correctType04Macro( macro );
         }
-        size += macro.dataLength() + type - ( type == 4 ? 2 : 1 );
+        size += macro.dataLength() + type - ( type == 4 ? 2 : type == 0xCD ? 0xCD : 1 );
         if ( type == 3 )
         {
           size += macro.dataLength();
@@ -7731,7 +7773,8 @@ public class RemoteConfiguration
 //          }
           
           // Now round entire segment size to required modulus
-          int size = hex.length() + ( ( code != null ) ? codeOffset + code.length() : 0 );
+          int size = hex.length() + ( ( code != null ) ? codeOffset + code.length() : 0 )
+              + ( dev.getExtraData() != null ? dev.getExtraData().length() : 0 );
           size += ( remote.doForceEvenStarts() && ( size & 1 ) == 0 ) ? 10 : 9;
           int lenMod = size & ( remote.getForceModulus() - 1 );
           size += remote.doForceEvenStarts() && lenMod > 0 ? remote.getForceModulus() - lenMod : 0;           
@@ -7756,6 +7799,12 @@ public class RemoteConfiguration
           {
             segData.put( code, hex.length() + 9 + codeOffset );
           }
+          if ( dev.getExtraData() != null )
+          {
+            segData.put( dev.getExtraData(), hex.length() + 9 
+                + ( code != null ? codeOffset + code.length() : 0 ) );
+          }
+          
           if ( upgType == 0x0E )
           {
             Hex newHex = new Hex( segData.subHex( 0, 2 ), 0, segData.length() - 2 );

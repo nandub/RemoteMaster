@@ -51,6 +51,11 @@ public class UnsignedByteRenderer extends DefaultTableCellRenderer
     eepromSize = remote.getEepromSize();
   }
 
+  public void setEepromSize( int eepromSize )
+  {
+    this.eepromSize = eepromSize;
+  }
+
   /*
    * (non-Javadoc)
    * 

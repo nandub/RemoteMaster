@@ -32,7 +32,7 @@ public class RMColorRenderer extends DefaultTableCellRenderer
       int mem = 0;
       
       if ( model instanceof DeviceButtonTableModel
-          && ( ( DeviceButtonTableModel )model ).getEffectiveColumn( col ) == 8 )
+          && ( ( DeviceButtonTableModel )model ).getEffectiveColumn( col ) == 12 )
       {
         DeviceButton db = ( DeviceButton )item;
         int ndx = db.getColorIndex();

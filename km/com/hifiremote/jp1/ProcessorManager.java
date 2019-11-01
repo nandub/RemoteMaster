@@ -174,6 +174,28 @@ public class ProcessorManager
     p.setDcBufStart( 0x02 );
     p.setProtocolHeaderSize( 5 );
     add( p );
+    
+    /**
+     * TI2530 is used in URC-2125BC0, see: 
+     * https://fccid.io/MG3-2125/Internal-Photos/Internal-Photos-2319421
+     */
+    p = new TI2541Processor( "TI2530" );
+    add( p );
+    
+    /**
+     * GP565 is used in URC-2125BC1, see:
+     * https://fccid.io/MG3-2125BC1/Internal-Photos/Internal-Photos-2963289
+     * For info on this controller, see:
+     * https://www.qorvo.com/products/p/GP565#overview
+     * It incorporates an XAP5 processor:
+     * https://www.cambridgeconsultants.com/sites/default/files/documents/resources/asics-sb-012_v2.32.pdf
+     * This controller is not yet supported, as no commercial URC-2125BC1 has been seen.
+     */
+    /*
+    p = new LittleEndianProcessor( "GP565" );
+    p.setPageSize( 0x100 );
+    add( p );
+    */
   }
 
 

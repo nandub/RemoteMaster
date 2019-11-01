@@ -303,9 +303,12 @@ public class Activity extends Highlight
     
     ActivityGroup.parse( props, this );
     groupMap = new LinkedHashMap< Integer, ActivityGroup >();
-    for ( ActivityGroup group : activityGroups )
+    if ( activityGroups != null )
     {
-      groupMap.put( group.getIndex(), group );
+      for ( ActivityGroup group : activityGroups )
+      {
+        groupMap.put( group.getIndex(), group );
+      }
     }
   }
   

@@ -6,7 +6,7 @@ public class ActivityGroup extends Highlight
 {
   public static void store( PropertyWriter pw, ActivityGroup[] groups )
   {
-    if ( groups == null )
+    if ( groups == null || groups.length == 0 )
     {
       return;
     }
