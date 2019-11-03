@@ -1943,7 +1943,7 @@ public class DeviceUpgrade extends Highlight
         break;
       }
     }
-    if ( hasKeyMoves )
+    if ( hasKeyMoves && remote.hasKeyMoveSupport() )
     {
       deviceCode[ 0 ] = ( short )( deviceCode[ 0 ] & 0xF7 );
       buff.append( "\nKeyMoves" );

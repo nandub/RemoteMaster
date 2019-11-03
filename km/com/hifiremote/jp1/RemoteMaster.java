@@ -94,6 +94,8 @@ import javax.swing.colorchooser.ColorSelectionModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.HyperlinkListener;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.plaf.basic.BasicFileChooserUI;
 
 import org.harctoolbox.irp.Version;
 
@@ -4132,10 +4134,11 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
     EndingFileFilter filter = wavOp != null ? new EndingFileFilter( "Sound files (*.wav)", wavEndings )
       : sourceFile != null ?  new EndingFileFilter( "Summary files (*.html)", summaryEndings ) : null;    
     RMFileChooser chooser = filter == null ? getFileSaveChooser( validConfiguration ) : getFileSaveChooser( filter );
+    chooser.addPropertyChangeListener( this );
     File oldFile = file;
     if ( sourceFile == null && wavOp == null && oldFile != null )
     {
-      String name = oldFile.getName();
+      String name = oldFile.getAbsolutePath();
       if ( name.toLowerCase().endsWith( ".ir" ) || name.toLowerCase().endsWith( ".txt" ) )
       {
         int dot = name.lastIndexOf( '.' );
@@ -4157,11 +4160,6 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
       String name = chooser.getSelectedFile().getAbsolutePath();
       if ( !name.toLowerCase().endsWith( ending ) )
       {
-        if ( name.toLowerCase().endsWith( ".rmir" ) || name.toLowerCase().endsWith( ".bin" ) )
-        {
-          int dot = name.lastIndexOf( '.' );
-          name = name.substring( 0, dot );
-        }
         name = name + ending;
       }
       File newFile = new File( name );
@@ -6146,6 +6144,45 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
    */
   public void propertyChange( PropertyChangeEvent event )
   {
+    Object source = event.getSource();
+    if ( source instanceof RMFileChooser ) 
+    {
+      RMFileChooser chooser = ( RMFileChooser )source;
+      String prop = event.getPropertyName();
+      if ( prop != RMFileChooser.FILE_FILTER_CHANGED_PROPERTY )
+      {
+        return;
+      }
+      
+      BasicFileChooserUI bui = ( BasicFileChooserUI )chooser.getUI();
+      String name = bui.getFileName();
+      String currentDir = bui.getDirectoryName();
+      FileFilter[] filters = chooser.getChoosableFileFilters();
+      String ending = ( ( EndingFileFilter )chooser.getFileFilter() ).getEndings()[ 0 ];
+      boolean hasExtension = false;
+      if ( !name.toLowerCase().endsWith( ending ) )
+      {
+        for ( FileFilter filter : filters )
+        {
+          String end = ( ( EndingFileFilter )filter ).getEndings()[ 0 ];
+          if ( name.toLowerCase().endsWith( end ) )
+          {
+            hasExtension = true;
+            break;
+          }
+        }
+        if ( hasExtension )
+        {
+          int dot = name.lastIndexOf( '.' );
+          name = name.substring( 0, dot ); 
+        }
+        name = name + ending;
+      }
+      File newFile = new File( currentDir, name);
+      chooser.setSelectedFile( newFile );
+      return;
+    } 
+    
     // No need to check unassigned upgrades as keymoves are saved in .rmir file
     // remoteConfig.checkUnassignedUpgrades();
     if ( currentPanel == keyMovePanel )

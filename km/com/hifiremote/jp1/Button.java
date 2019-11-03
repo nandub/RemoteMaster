@@ -740,6 +740,11 @@ public class Button
   public KeyMove getKeyMove( Function f, int mask, int setupCode, DeviceType devType, Remote remote,
       boolean keyMovesOnly )
   {
+    if ( !remote.hasKeyMoveSupport() )
+    {
+      return null;
+    }
+    
     KeyMove rc = null;
     if ( ( f != null ) && ( f.getHex() != null ) )
     {
@@ -790,6 +795,11 @@ public class Button
   public short[] getKeyMove( Function f, int mask, short[] deviceCode, DeviceType devType, Remote remote,
       boolean keyMovesOnly )
   {
+    if ( !remote.hasKeyMoveSupport() )
+    {
+      return null;
+    }
+
     short[] rc = new short[ 0 ];
     if ( ( f != null ) && ( f.getHex() != null ) )
     {

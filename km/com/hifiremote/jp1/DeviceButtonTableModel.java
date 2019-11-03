@@ -1047,7 +1047,7 @@ public class DeviceButtonTableModel extends JP1TableModel< DeviceButton >
       return null;
     }
     lastCell = thisCell;
-    if ( col == 13 )
+    if ( col == 17 )
     {
       return "<html>Double click this column to open Icon Editor to set or<br>"
           + "remove a system icon from this device.</html>";

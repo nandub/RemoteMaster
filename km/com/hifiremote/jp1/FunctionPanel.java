@@ -102,7 +102,7 @@ public class FunctionPanel extends TablePanel< Function >
   @Override
   protected boolean canDelete( Function f )
   {
-    return !f.assigned();
+    return Boolean.parseBoolean( JP1Frame.properties.getProperty( "SuppressConfirmPrompts", "false" ) )|| !f.assigned();
   }
   
   @Override

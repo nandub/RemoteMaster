@@ -149,6 +149,8 @@ public class KeyMapMaster extends JP1Frame implements ActionListener, PropertyCh
 
   /** The upgrade extension. */
   private static String upgradeExtension = ".rmdu";
+  
+  public static JCheckBoxMenuItem suppressConfirmPrompts = null;
 
   private List< AssemblerItem > clipBoardItems = new ArrayList< AssemblerItem >();
 
@@ -648,6 +650,49 @@ public class KeyMapMaster extends JP1Frame implements ActionListener, PropertyCh
     showSlingboxProtocols.setToolTipText( "<html>Include the no-repeat protocols that are specific to Slingbox usage.<br>"
         + "Note that a change to this option only takes effect when RM or RMIR<br>is next opened.</html>" );
     menu.add( showSlingboxProtocols );
+
+    ActionListener listener = new ActionListener()
+    {
+      public void actionPerformed( ActionEvent e )
+      {
+        try
+        {
+          JCheckBoxMenuItem item = (JCheckBoxMenuItem)e.getSource();
+          properties.setProperty( item.getActionCommand(), Boolean.toString( item.isSelected() ) );
+          if ( item.getActionCommand().equals( "SuppressDeletePrompts") )
+          {
+            TablePanel.suppressDeletePrompts = item.isSelected();
+            RMTablePanel.suppressDeletePrompts = item.isSelected();
+          }
+        }
+        catch ( Exception x )
+        {
+          x.printStackTrace( System.err );
+        }
+      }
+    };
+    
+    menu.addSeparator();
+    
+    JMenu suppressSubMenu = new JMenu( "Suppress Messages" );
+    suppressSubMenu.setMnemonic( KeyEvent.VK_S );
+    menu.add( suppressSubMenu );
+
+    item = new JCheckBoxMenuItem( "All table deletes" );
+    item.setActionCommand( "SuppressDeletePrompts" );
+    Boolean bval = Boolean.parseBoolean( properties.getProperty( item.getActionCommand(), "false" ) );
+    item.setSelected( bval );
+    TablePanel.suppressDeletePrompts = bval;
+    RMTablePanel.suppressDeletePrompts = bval;
+    item.addActionListener( listener );
+    suppressSubMenu.add( item );
+    
+    item = new JCheckBoxMenuItem( "Confirmation prompts" );
+    item.setActionCommand( "SuppressConfirmPrompts" );
+    item.setSelected( Boolean.parseBoolean( properties.getProperty( item.getActionCommand(), "false" ) ) );
+    item.addActionListener( listener );
+    suppressSubMenu.add( item );
+    suppressConfirmPrompts = ( JCheckBoxMenuItem )item;
 
     menu = new JMenu( "Advanced" );
     menu.setMnemonic( KeyEvent.VK_A );
@@ -1271,7 +1316,7 @@ public class KeyMapMaster extends JP1Frame implements ActionListener, PropertyCh
    */
   public boolean promptToSaveUpgrade( int action ) throws IOException
   {
-    if ( !deviceUpgrade.hasChanged() )
+    if ( suppressConfirmPrompts.isSelected() || !deviceUpgrade.hasChanged() )
     {
       return true;
     }
