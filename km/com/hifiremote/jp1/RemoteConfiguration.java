@@ -2094,6 +2094,7 @@ public class RemoteConfiguration
           {
             Activity a = activities.get(  btn );
             a.setMacro( macro );
+            a.setSegment( segment );
             macro.setActivity( a );
             a.setActive( true );
           }
@@ -5651,10 +5652,17 @@ public class RemoteConfiguration
         updateHighlight( activity, address + 8 + tabIndex, 1 );
         continue;
       }
-      else if ( type >= 0xCD && type < 0xCD + activities.size() )
+      else if ( type >= 0xCD && type < 0xCD + activities.size() && remote.hasActivityControl() )
       {
         activity.clearMemoryUsage();
         updateHighlight( activity, address + 4, 4 );
+        continue;
+      }
+      else if ( type == 0xCD && !remote.hasActivityControl() )
+      {
+        activity.clearMemoryUsage();
+        short[] segData = segment.getHex().getData();
+        updateHighlight( activity, address + 4, segData[ 2 ] + 3  );
         continue;
       }
 
@@ -6149,35 +6157,46 @@ public class RemoteConfiguration
       }
       segments.get( 0xE9 ).add( segment );
     }
-    else if ( types.contains( 0xCD ) && remote.hasActivityControl() )
+    else if ( types.contains( 0xCD ) )
     {
       List< Button > activityBtns = remote.getButtonGroups().get( "Activity" );
-      for ( int i = 0; i < activityBtns.size(); i++ )
+      if ( !remote.hasActivityControl() )
       {
-        segments.remove( 0xCD + i );
-        Activity activity = activities.get( activityBtns.get( i ) );
-        activity.setActive( false );
-        Button selector = activity.getSelector();
-        int val = 0;
-        if ( selector == null )
+        Activity activity = activities.get( activityBtns.get( 0 ) );
+        if ( activity.getMacro() != null )
         {
-          val = getDefaultActivitySetting( i );
+          activity.setSegment( activity.getMacro().getSegment() );
         }
-        else
+      }
+      else
+      {
+        for ( int i = 0; i < activityBtns.size(); i++ )
         {
-          val = Integer.valueOf( selector.getName() );
-        }
-        if ( val != 0 )
-        {
-          if ( segments.get( 0xCD + i ) == null )
+          segments.remove( 0xCD + i );
+          Activity activity = activities.get( activityBtns.get( i ) );
+          activity.setActive( false );
+          Button selector = activity.getSelector();
+          int val = 0;
+          if ( selector == null )
           {
-            segments.put(  0xCD + i, new ArrayList< Segment >() );
+            val = getDefaultActivitySetting( i );
           }
-          activity.setActive( true );
-          Hex segData = new Hex( new short[]{ 0,0,( short )val,1 } );
-          Segment segment = new Segment( 0xCD + i, 0xFF, segData );
-          segments.get( 0xCD + i ).add( segment );
-          activity.setSegment( segment );
+          else
+          {
+            val = Integer.valueOf( selector.getName() );
+          }
+          if ( val != 0 )
+          {
+            if ( segments.get( 0xCD + i ) == null )
+            {
+              segments.put(  0xCD + i, new ArrayList< Segment >() );
+            }
+            activity.setActive( true );
+            Hex segData = new Hex( new short[]{ 0,0,( short )val,1 } );
+            Segment segment = new Segment( 0xCD + i, 0xFF, segData );
+            segments.get( 0xCD + i ).add( segment );
+            activity.setSegment( segment );
+          }
         }
       }
     }
