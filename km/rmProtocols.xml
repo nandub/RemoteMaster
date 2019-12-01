@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?xml-stylesheet type="text/xsl" href="IrpProtocols2html.xsl"?>
+<!--
+This is a patch file for IrpProtocols.xml included in IrpTransmogrifier.  When displayed, its version number
+is appended to that of the main file, with '+' as separator.
+-->
+<irp:protocols xmlns="http://www.w3.org/1999/xhtml"
+               xmlns:xi="http://www.w3.org/2001/XInclude"
+               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+               xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster"
+               version="rm2019-10-19"
+               xsi:schemaLocation="http://www.harctoolbox.org/irp-protocols http://www.harctoolbox.org/schemas/irp-protocols.xsd"
+               xmlns:irp="http://www.harctoolbox.org/irp-protocols">	       
+   <irp:protocol name="NEC">
+        <irp:parameter name="prefer-over">NEC-Shirriff-32</irp:parameter>
+        <!--irp:parameter name="prefer-over">NEC1</irp:parameter-->
+        <irp:parameter name="prefer-over">NEC-f16</irp:parameter>
+        <irp:parameter name="prefer-over">NEC1-f16</irp:parameter>
+        <irp:parameter name="prefer-over">NEC2-f16</irp:parameter>
+        <irp:parameter name="prefer-over">NEC1-rnc</irp:parameter>
+        <!--irp:parameter name="prefer-over">Pioneer</irp:parameter-->
+        <irp:parameter name="prefer-over">Roku</irp:parameter>
+        <irp:parameter name="decode-only">true</irp:parameter>
+	<irp:parameter name="uei-executor">005A(NEC1)</irp:parameter>
+	<irp:parameter name="uei-executor">005A(NEC2)</irp:parameter>
+	<irp:parameter name="uei-executor">01AD[;D,S,F:8,~F:8]</irp:parameter>
+        <irp:irp><![CDATA[{38.4k,564}<1,-1|1,-3>(16,-8,D:8,S:8,F:8,~F:8,1,^108m) [D:0..255,S:0..255=255-D,F:0..255]]]></irp:irp>
+        <irp:documentation>
+            Inspired by <a href="#DecodeIR">DecodeIR</a>, we call a NEC signal without <a href="#repeat">repeat</a> "NEC".
+            This decode normally indicates an incomplete learn.
+        </irp:documentation>
+    </irp:protocol>
+    <irp:protocol name="NEC1">
+        <!--irp:parameter name="prefer-over">NEC1-f16</irp:parameter-->
+        <irp:parameter name="prefer-over">NEC1-rnc</irp:parameter>
+        <irp:parameter name="prefer-over">Pioneer</irp:parameter>
+        <irp:parameter name="reject-repeatless">true</irp:parameter>
+        <!--irp:parameter name="frequencyTolerance">100</irp:parameter>
+        <irp:parameter name="relative-tolerance">0.04</irp:parameter>
+        <irp:parameter name="absolute-tolerance">20</irp:parameter-->
+	<irp:parameter name="uei-executor">005A</irp:parameter>
+	<irp:parameter name="uei-executor">011A[D?0,S?0,D?1,S?1;F,??,0]</irp:parameter>
+	<irp:parameter name="uei-executor">011A:2[D?0,S?0,D?1,S?1,D?2,S?2,D?3,S?3;F,??,0]</irp:parameter>
+	<irp:parameter name="uei-executor">017E[D,S?0,S?1,S?2,S?3;??,,F,0]</irp:parameter>
+	<irp:parameter name="uei-executor">0246[D,S?0,S?1,S?2,S?3,S?4,S?5;??,,F,0]</irp:parameter>
+	<irp:parameter name="uei-executor">00B6[D;S,F]</irp:parameter>
+	<irp:parameter name="uei-executor">00B6:JP1[D,0;S,F]</irp:parameter>
+	<irp:parameter name="uei-executor">01AD[;D,S,F:8,~F:8]</irp:parameter>
+        <irp:irp><![CDATA[{38.4k,564}<1,-1|1,-3>(16,-8,D:8,S:8,F:8,~F:8,1,^108m,(16,-4,1,^108m)*) [D:0..255,S:0..255=255-D,F:0..255]]]></irp:irp>
+        <irp:documentation>
+            The most commonly used version of the NEC protocol, repeating with <a href="#dittos">dittos</a>.
+            <a href="https://www.sbprojects.net/knowledge/ir/nec.php">Tutorial</a>.
+        </irp:documentation>
+    </irp:protocol>
+    
+    
+    <irp:protocol name="NEC-f16">
+        <irp:parameter name="prefer-over">NEC-Shirriff-32</irp:parameter>
+	<irp:parameter name="uei-executor">01AD[;D,S,F:8,F:8:8]</irp:parameter>
+        <irp:irp><![CDATA[{38.4k,564}<1,-1|1,-3>(16,-8,D:8,S:8,F:16,1,^108m) [D:0..255,S:0..255=255-D,F:0..65535]]]></irp:irp>
+        <irp:documentation>
+            A relaxed form (but used in some real devices) of the <a href="#NEC">NEC</a> protocol. Byte 3 and byte 4 are independent, and instead form a 16-bit F parameter.
+        </irp:documentation>
+    </irp:protocol>
+</irp:protocols>

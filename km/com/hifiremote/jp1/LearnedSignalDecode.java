@@ -97,14 +97,12 @@ public class LearnedSignalDecode
         executor = getExecutor( np, null );
         if ( executor != null )
           defaultExecutorMap.put( np, executor );
-        else
-          return;
       }
     }
     this.executor = executor;
     
     String commentItem = null;
-    if ( executor.wrapper.assignments != null )
+    if ( executor != null && executor.wrapper.assignments != null )
     {
       try
       {
@@ -147,7 +145,7 @@ public class LearnedSignalDecode
     if ( matchDevParms == null )
     {
       hex = new int[ 0 ];
-      if ( isValidDecode() )
+      if ( executor != null && isValidDecode() )
       {
         evaluate( map, 0 );
         List< String > error = new ArrayList< String >();

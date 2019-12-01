@@ -39,6 +39,12 @@ Changes for v2.09
 - Make the file extension in Save As dialog change on the displayed filename when the file filter is changed (Graham)
 - Add Options > Suppress Messages submenu to RM, corresponding to that in RMIR (Graham)
 - Allow, as an option, deletion of functions that have button assignments, deleting the assignments on the fly (Graham)
+-- Private build 8
+- Fix bug causing RMIR, for certain remotes, to save redundant data in .ir and .rmir files (Graham)
+-- Private build 9
+- Include rmProtocols.xml, a patch file to add learned signal support for NEC1-f16 protocol (Graham)
+- Improve handling of learned signals recognised by IrpTransmogrifier but with no executor (Graham)
+- Improve the layout of a saved Learned Signal Timing Summary (Barf)
 
 Changes for v2.08
 -- Release build 1

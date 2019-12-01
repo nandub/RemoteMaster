@@ -590,9 +590,12 @@ public class LearnedSignalTimingSummaryDialog extends JDialog implements ActionL
   {
     PrintWriter out;
     try
-    {
+    {  
       out = new PrintWriter( new BufferedWriter( new FileWriter( file ) ) );
       String temp = summaryText.substring( summaryText.indexOf( '#' ) );
+      temp = temp.replaceAll("Once:\t", ""); 
+      temp = temp.replaceAll("\n\t\t\t\t\t\tRepeat:\t", "\t"); 
+      
       temp = temp.replaceAll( "\"", "\"\"" );
       temp = temp.replaceAll( "\t", "\",\"" );
       temp = temp.replaceAll( "\n", "\"\n\"" );

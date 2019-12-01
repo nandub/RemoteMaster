@@ -1998,6 +1998,7 @@ public class RemoteConfiguration
     int segLength = 0;
     int segType = 0;
     segmentLoadOrder.addAll( remote.getSegmentTypes() );
+    segmentBackups = null;
     while ( pos < remote.getEepromSize() && ( segLength = Hex.get( data, pos ) ) <= remote.getEepromSize() - pos
         && segLength >= 4 )
     {
@@ -2009,6 +2010,7 @@ public class RemoteConfiguration
       {
         segmentLoadOrder.add( segType );
       }
+      
       if ( ( segFlags & 0x80 ) == 0 || segType == 0xDD && !remote.getSegmentTypes().contains( 0xDD ) )
       {
         // Of segments with flag bit 7 clear, only type 0x5F has a known use.  These are backup segments, so save these
@@ -2024,6 +2026,7 @@ public class RemoteConfiguration
         }
         list.add( new Segment( segType, segFlags, segData ) );
         segmentBackups.put( segType, list );
+        continue;
       }
      
       List< Segment > list = segments.get( segType );
