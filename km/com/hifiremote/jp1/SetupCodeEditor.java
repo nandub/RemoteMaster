@@ -6,6 +6,7 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.table.TableModel;
 
 public class SetupCodeEditor extends SelectAllCellEditor implements DocumentListener
 {
@@ -15,12 +16,22 @@ public class SetupCodeEditor extends SelectAllCellEditor implements DocumentList
   }
   
   @Override
-  public Component getTableCellEditorComponent( JTable table, Object value, boolean isSelected, int row, int column )
+  public Component getTableCellEditorComponent( JTable table, Object value, boolean isSelected, int row, int col )
   {
-    DeviceButtonTableModel dbTableModel = ( DeviceButtonTableModel )table.getModel();
-    setupCodeRenderer.setDeviceType( ( DeviceType )dbTableModel.getValueAt( row, 2 ) );
-    setupCodeRenderer.setDeviceButton( dbTableModel.getRow( row ) );
-    textField = ( JTextField )super.getTableCellEditorComponent( table, value, isSelected, row, column );
+    TableModel model = table.getModel();
+    if ( model instanceof DeviceButtonTableModel )
+    {
+      DeviceButtonTableModel dbTableModel = ( DeviceButtonTableModel )model;
+      setupCodeRenderer.setDeviceType( ( DeviceType )dbTableModel.getValueAt( row, 2 ) );
+      setupCodeRenderer.setDeviceButton( dbTableModel.getRow( row ) );
+    }
+    else if ( model instanceof RFSelectorTableModel )
+    {
+      RFSelectorTableModel rfTableModel = ( RFSelectorTableModel )model;
+      setupCodeRenderer.setDeviceType( ( DeviceType )rfTableModel.getValueAt( row, col - 1 ) );
+      setupCodeRenderer.setDeviceButton( rfTableModel.getDevBtn() );
+    }
+    textField = ( JTextField )super.getTableCellEditorComponent( table, value, isSelected, row, col );
     textField.getDocument().addDocumentListener( this );
     return textField;
   }

@@ -117,6 +117,9 @@ import com.hifiremote.jp1.io.IO;
 import com.hifiremote.jp1.io.JP12Serial;
 import com.hifiremote.jp1.io.JP1Parallel;
 import com.hifiremote.jp1.io.JP1USB;
+import com.hifiremote.jp1.rf.RfRemote;
+import com.hifiremote.jp1.rf.RfRemote.Pairing;
+import com.hifiremote.jp1.rf.RfTools;
 
 /**
  * Description of the Class.
@@ -140,8 +143,8 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
   private static JP1Frame frame = null;
 
   /** Description of the Field. */
-  public final static String version = "v2.09";
-  public final static int buildVer = 9;
+  public final static String version = "v2.10";
+  public final static int buildVer = 1;
   
   public enum WavOp { NEW, MERGE, SAVE, PLAY };
   
@@ -244,6 +247,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
   private File dir = null;
 
   private File mergeDir = null;
+  private RfTools rfTools = null;
 
   /** Description of the Field. */
   public File file = null;
@@ -306,6 +310,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
 
   private RMAction bluetoothAction = null;
   private JToggleButton bluetoothButton = null;
+  private RMAction rfAction = null;
   private JCheckBoxMenuItem bluetoothItem = null;
   private Box box = null;
   private ButtonGroup btGroup = null;
@@ -336,6 +341,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
 
   /** The raw download item */
   private JMenuItem downloadRawItem = null;
+  private JMenuItem registerRfRemoteItem = null;
 
   /** The verify upload item */
   private JCheckBoxMenuItem verifyUploadItem = null;
@@ -675,7 +681,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
       // String sig = io.getRemoteSignature();
       this.io = io;
       int baseAddress = io.getRemoteEepromAddress();
-      System.err.println( "Base address = $" + Integer.toHexString( baseAddress ).toUpperCase() );
+      System.err.println( "Base address read from remote = $" + Integer.toHexString( baseAddress ).toUpperCase() );
       String sigString = getIOsignature( io, baseAddress );
       String sig = null;
       String sig2 = null;
@@ -848,8 +854,15 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
       RemoteManager.getRemoteManager().replaceRemote( remote, newRemote );
       remote = newRemote;
       remote.load();
+      int rdfBaseAddress = remote.getBaseAddress();
       RemoteConfiguration rc = new RemoteConfiguration( remote, RemoteMaster.this );
       recreateToolbar();
+      if ( baseAddress != rdfBaseAddress )
+      {
+        System.err.println( "Base address read from RDF = $" + Integer.toHexString( rdfBaseAddress ).toUpperCase() );
+        System.err.println( "Download aborting as base address in RDF differs from that read from remote" );
+        return null;
+      }
       int count = io.readRemote( remote.getBaseAddress(), rc.getData() );
       System.err.println( "Number of bytes read  = $" + Integer.toHexString( count ).toUpperCase() );
       io.closeRemote();
@@ -1749,6 +1762,11 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
             finderButton.setBorder( BorderFactory.createRaisedBevelBorder() );
           }
         }
+        else if ( command == "RFTOOLS" )
+        {
+          if ( rfTools == null || !rfTools.isValid() )
+            rfTools  = new RfTools( properties );
+        }
       }
       catch ( Exception ex )
       {
@@ -1935,6 +1953,10 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
             System.err.println( "RemoteMaster.windowClosing() exited" );
             doDispose = false;
             return;
+          }
+          if ( rfTools != null )
+          {
+            rfTools.dispatchEvent( new WindowEvent( RemoteMaster.this, WindowEvent.WINDOW_CLOSING ) );
           }
           downloadAction = null;
           uploadAction = null;
@@ -2789,6 +2811,10 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
     finderButton.setAction( finderAction );
     finderButton.setHideActionText( true );
     finderButton.setBorder( BorderFactory.createRaisedBevelBorder() );
+    
+    rfAction = new RMAction( "Open RF Tools", "RFTOOLS", createIcon( "RMRF4" ),
+        "Open RF Display", KeyEvent.VK_R );
+    rfAction.putValue( Action.SELECTED_KEY, true );
 
     downloadAction = new RMAction( "Download from Remote", "DOWNLOAD", createIcon( "Import24" ),
         "Download from the attached remote", KeyEvent.VK_D );
@@ -2800,6 +2826,12 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
     uploadable = false;
     uploadAction.setEnabled( false );
     menu.add( uploadAction ).setIcon( null );
+    
+    registerRfRemoteItem = new JMenuItem( "Register as RF Remote", KeyEvent.VK_R );
+    registerRfRemoteItem.setEnabled( false );
+    registerRfRemoteItem.addActionListener( this );
+    registerRfRemoteItem.setToolTipText( "Register current remote as a RF Remote for use with RF Tools" );
+    menu.add( registerRfRemoteItem );
 
     openRdfAction = new RMAction( "Open RDF...", "OPENRDF", createIcon( "RMOpenRDF24" ), "Open RDF to view or edit",
         null );
@@ -3351,6 +3383,10 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
       toolBar.add( highlightAction );
 //      highlightAction.setEnabled( true );
     }
+
+    toolBar.addSeparator();
+    toolBar.add( rfAction );
+
     if ( selectedInterface != null && selectedInterface.equals( "JP2BT" ) )
     {
       downloadAction.setEnabled( bluetoothButton.isSelected() );
@@ -3408,6 +3444,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
     chooser.addChoosableFileFilter( new EndingFileFilter( "Protocol files (*.rmpb)", rmpbEndings ) );
     chooser.addChoosableFileFilter( new EndingFileFilter( "Simpleset files (*.bin)", binEndings ) );
     chooser.addChoosableFileFilter( new EndingFileFilter( "Sling Learned Signals (*.xml)", slingEndings ) );
+    chooser.addChoosableFileFilter( new EndingFileFilter( "RF Packet Sniffer files (*.psd)", snifferEndings ) );
     chooser.setFileFilter( irFilter );
 
     return chooser;
@@ -3716,6 +3753,16 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
       }
       else
         ( new LoadTask( file, wavOp ) ).execute();     
+      return;
+    }
+    
+    if ( ext.equals( ".psd" ) )
+    {
+      if ( rfTools == null )
+      {
+        rfTools  = new RfTools( properties );
+      }
+      rfTools.openPSDfile( file );
       return;
     }
     
@@ -5677,6 +5724,85 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
           JOptionPane.showMessageDialog( this, message, title, JOptionPane.INFORMATION_MESSAGE );
         }
       }
+      else if ( source == registerRfRemoteItem )
+      {
+        String title = "Registration of RF Remote";
+        String message = null;
+        LinkedHashMap< String, Integer > map = RfTools.getIndexMap();
+        for ( int index : map.values() )
+        {
+          if ( properties.getProperty( "RfRemote." + index + ".extAddr" )  == null )
+          {
+            String name = properties.getProperty( "RfRemote." + index + ".name" );
+            message =
+                "Registration is a two-step process.  The first step creates a provisional\n"
+              + "registration that needs to be completed by loading into RF Tools a .psd\n" 
+              + "Packet Sniffer file that captures a pairing request from the remote.\n\n"
+              + "There can be at most one registration in a provisional state and currently\n"
+              + "there is one, named " + name + ".  That one needs to be completed, or deleted\n"
+              + "with RF Tools, before you can register another.";
+            JOptionPane.showMessageDialog( this, message, title, JOptionPane.WARNING_MESSAGE );
+            return;
+          }
+        }
+        
+        message = 
+              "This remote has RF support and is currently paired with an RF device.\n"
+            + "To use this remote with RF Tools, the remote and its pairing needs to be\n"
+            + "registered in RMIR as an RF Remote.  This is a two-step process.\n\n"
+            + "The first step is to enter a name for it in the box below and press OK.\n"
+            + "This creates a provisional registration.  The second step is to load into\n"
+            + "RF Tools a .psd Packet Sniffer file that captures a pairing request from\n"
+            + "the remote.  The two steps need not be performed in the same RMIR session.";
+        String reply = "";
+        while ( reply != null && reply.trim().isEmpty() )
+        {
+          reply = ( String )JOptionPane.showInputDialog( this, message, title, JOptionPane.PLAIN_MESSAGE );
+        }
+        if ( reply == null )
+        {
+          message = "Registration aborted.";
+          JOptionPane.showMessageDialog( this, message, title, JOptionPane.WARNING_MESSAGE );
+          return;
+        }
+        Remote remote = remoteConfig.getRemote();
+        RfRemote rfRemote = new RfRemote();
+        rfRemote.name = reply.trim();
+        List< Pairing > pairings = rfRemote.pairings;
+        int rfCodeCount = remote.getRfSetupCodes().size();
+        for ( Segment seg : remoteConfig.getSegments().get( 0x20 ) )
+        {
+          int nvid = seg.getHex().getData()[ 1 ];
+          int pairRef = seg.getHex().getData()[ 2 ];
+          if ( nvid >= 0x24 && nvid < 0x24 + rfCodeCount && pairRef != 0xFF )
+          {
+            pairings.add( new Pairing( seg.getHex().subHex( 2 ) ) );
+          }
+        }
+        if ( remoteConfig.getSegments().get( 0x2B ) != null )
+        {
+          // Note that the vendor id is msb in the segment data but lsb in RF remote data.
+          // Note also that this does not handle remotes that can be paired with more
+          // than one device at the same time, as no such remote is yet known and so
+          // it is unclear how that should be handled.
+          Hex segData = remoteConfig.getSegments().get( 0x2B ).get( 0 ).getHex();
+          rfRemote.vendorID = new Hex( 2 );
+          rfRemote.vendorID.getData()[ 0 ] = segData.subHex( 2, 2 ).getData()[ 1 ];
+          rfRemote.vendorID.getData()[ 1 ] = segData.subHex( 2, 2 ).getData()[ 0 ];
+          rfRemote.vendorString = segData.subHex( 4, 7 );
+          rfRemote.userString = segData.subHex( 11, 15 );
+        }
+        rfRemote.changed = true;
+        RfTools rfTools = new RfTools( properties );
+        rfTools.setRfRemotesList();
+        rfTools.updateRegistration( rfRemote );
+        message = 
+              "RF Remote named " + rfRemote.name + " has been provisionally registered.\n\n"
+            + "To complete the registration, load into RF Tools a .psd Packet Sniffer file\n"
+            + "that captures a pairing request from the remote.  RMIR preserves the provisional\n"
+            + "registration, so you can exit and do this in a later session if you wish.";
+        JOptionPane.showMessageDialog( this, message, title, JOptionPane.INFORMATION_MESSAGE );
+      } 
       else if ( source == updateItem )
       {
         UpdateChecker.checkUpdateAvailable( this );
@@ -6635,15 +6761,20 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
   {
     ".xml"
   };
+  
+  public final static String[] snifferEndings =
+    {
+      ".psd"
+    };
 
   private final static String[] allEndings =
   {
-      ".rmir", ".ir", ".rmdu", ".rmpb", ".txt", ".xml", ".bin"
+      ".rmir", ".ir", ".rmdu", ".rmpb", ".txt", ".xml", ".bin", ".psd"
   };
   
   private final static String[] allAdminEndings =
     {
-        ".rmir", ".ir", ".rmdu", ".rmpb", ".txt", ".xml", ".bin", "ctl"
+        ".rmir", ".ir", ".rmdu", ".rmpb", ".txt", ".xml", ".bin", ".psd", ".ctl"
     };
 
   private final static String[] allMergeEndings =
@@ -7239,6 +7370,11 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
         JOptionPane.showMessageDialog( this, message, "Disconnection", JOptionPane.INFORMATION_MESSAGE );
       }
     }
+  }
+  
+  public void setRfRegistrationEnabled( boolean enable )
+  {
+    registerRfRemoteItem.setEnabled( enable );
   }
   
   private static int[] parseVersion( String version )

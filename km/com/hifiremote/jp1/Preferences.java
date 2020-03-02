@@ -211,6 +211,16 @@ public class Preferences
     return path;
   }
   
+  public File getRFPath()
+  {
+    File path = file.getFileProperty( "RFPath" );
+    if ( path != null )
+      return path;
+    path = new File( file.getFile().getParentFile(), rfDirectory );
+    setRFPath( path );
+    return path;
+  }
+  
   public File getUpgradeSavePath()
   {
     if ( getSeparateSaveFolder() )
@@ -238,6 +248,11 @@ public class Preferences
   public void setProtocolPath( File path )
   {
     file.setProperty( "RMPBPath", path );
+  }
+  
+  public void setRFPath( File path )
+  {
+    file.setProperty( "RFPath", path );
   }
   
   public boolean getSeparateSaveFolder()
@@ -326,6 +341,20 @@ public class Preferences
     bounds.height = Integer.parseInt( st.nextToken() );
     return bounds;
   }
+  
+  public Rectangle getRFBounds()
+  {
+    String temp = file.getProperty( "RFBounds" );
+    if ( temp == null )
+      return null;
+    Rectangle bounds = new Rectangle();
+    StringTokenizer st = new StringTokenizer( temp, "," );
+    bounds.x = Integer.parseInt( st.nextToken() );
+    bounds.y = Integer.parseInt( st.nextToken() );
+    bounds.width = Integer.parseInt( st.nextToken() );
+    bounds.height = Integer.parseInt( st.nextToken() );
+    return bounds;
+  }
 
   /**
    * Sets the bounds.
@@ -341,6 +370,11 @@ public class Preferences
   public void setPBBounds( Rectangle bounds )
   {
     file.setProperty( "PBBounds", "" + bounds.x + ',' + bounds.y + ',' + bounds.width + ',' + bounds.height );
+  }
+  
+  public void setRFBounds( Rectangle bounds )
+  {
+    file.setProperty( "RFBounds", "" + bounds.x + ',' + bounds.y + ',' + bounds.width + ',' + bounds.height );
   }
 
   /**
@@ -515,4 +549,5 @@ public class Preferences
 
   private final static String upgradeDirectory = "Upgrades";
   private final static String protocolDirectory = "Protocols";
+  private final static String rfDirectory = "RFFiles";
 }

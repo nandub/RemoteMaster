@@ -38,6 +38,7 @@ import com.hifiremote.jp1.FixedData.Location;
 import com.hifiremote.jp1.GeneralFunction.RMIcon;
 import com.hifiremote.jp1.GeneralFunction.User;
 import com.hifiremote.jp1.Remote.KeyButtonGroup;
+import com.hifiremote.jp1.Remote.RFSelector;
 import com.hifiremote.jp1.io.CommHID;
 import com.hifiremote.jp1.io.IO;
 import com.hifiremote.jp1.io.JPS;
@@ -288,6 +289,51 @@ public class RemoteConfiguration
           {
             favFinalKey = null;
           }
+        }
+      }
+      else if ( sectionName.equals( "DeviceButton" ) )
+      {
+        String temp = section.getProperty( "DeviceIndex" );
+        if ( temp != null )
+        {
+          int deviceIndex = Integer.parseInt( temp );
+          DeviceButton db = remote.getDeviceButton( deviceIndex );
+          List< RFSelector > list = new ArrayList< RFSelector >();
+          int i = 0;
+          while ( true )
+          {
+            String s = section.getProperty( "Selector." + i++ );
+            if ( s == null )
+              break;
+            RFSelector rfSel = new RFSelector();
+            StringTokenizer st = new StringTokenizer( s, "|" );
+            int j = 0;
+            while ( st.hasMoreTokens() )
+            {
+              String t = st.nextToken();
+              switch ( j++ )
+              {
+                case 0:
+                  int keyCode = Integer.parseInt( t );
+                  rfSel.btn = remote.getButton( keyCode );
+                  break;
+                case 1:
+                  rfSel.irDevType = remote.getDeviceType( t );
+                  break;
+                case 2:
+                  rfSel.irCode = new SetupCode( Integer.parseInt( t ) );
+                  break;
+                case 3:
+                  rfSel.rfDevType = remote.getDeviceType( t );
+                  break;
+                case 4:
+                  rfSel.rfCode = new SetupCode( Integer.parseInt( t ) );
+                  break;                  
+              }
+            }
+            list.add( rfSel );
+          }
+          db.setRfSelectors( list.toArray( new RFSelector[ 0 ] ) );
         }
       }
       else
@@ -2060,6 +2106,35 @@ public class RemoteConfiguration
         db.setColorParams( params );
       }
     }
+    
+    if ( remote.hasRf4ceSupport() && remote.getRfSetupCodes() != null )
+    {
+      nib = new LinkedHashMap< Integer, Hex >();
+      setNibSizes();
+      if ( segments.get( 0x20 ) != null )
+      {
+        for ( Segment seg : segments.get( 0x20 ) )
+        {
+          int nvid = seg.getHex().getData()[ 1 ];
+          nib.put( nvid, seg.getHex().subHex( 2, nibSizes.get( nvid ) ) );
+        }
+      }
+      if ( segments.get( 0x27 ) != null )
+      {
+        for ( Segment seg : segments.get( 0x27 ) )
+        {
+          int nvid = seg.getHex().getData()[ 1 ];
+          nib.put( nvid, seg.getHex().subHex( 2, nibSizes.get( nvid ) ) );
+        }
+      }
+      /*  Keep this for debugging
+      System.err.println( "Non-volatile NIB data:" );
+      for ( int n : nib.keySet() )
+      {
+        System.err.println( String.format( "%02X: ", n ) + nib.get( n ) );
+      }
+      */
+    }
 
     if ( !decode )
       return;
@@ -2500,6 +2575,29 @@ public class RemoteConfiguration
         activity.getMacro().setSegmentFlags( activityDefinitions.getFlags() );
         activity.getMacro().setSegment( activityDefinitions );
         activity.getMacro().setName( activity.getName() );
+      }
+    }
+    
+    List< Segment > rfSelectorList = segments.get( 0x2D );
+    if ( rfSelectorList != null )
+    {
+      for ( Segment segment : rfSelectorList )
+      {
+        Hex hex = segment.getHex();
+        DeviceButton db = remote.getDeviceButton( hex.getData()[ 0 ] );        
+        int count = hex.getData()[ 2 ];
+        RFSelector[] rfSelectors = new RFSelector[ count ];
+        for ( int i = 0; i < count; i++ )
+        {
+          RFSelector rfSel = new RFSelector();
+          rfSel.btn = remote.getButton( hex.getData()[ 3 + i ] );
+          rfSel.irDevType = remote.getDeviceTypeByIndex( hex.getData()[ 3 + count + 3*i ] );
+          rfSel.irCode = new SetupCode( hex.get( 4 + count + 3*i ) );
+          rfSel.rfDevType = remote.getDeviceTypeByIndex( hex.getData()[ 3 + 4*count + 3*i ] );
+          rfSel.rfCode = new SetupCode( hex.get( 4 + 4*count + 3*i ) );
+          rfSelectors[ i ] = rfSel;
+        }
+        db.setRfSelectors( rfSelectors );
       }
     }
     
@@ -5466,6 +5564,24 @@ public class RemoteConfiguration
           updateActivityHighlights();
         }
       }
+      
+      owner.setRfRegistrationEnabled( false );
+      if ( remote.hasRf4ceSupport() && segments.get( 0x20 ) != null )
+      {
+        int rfCodeCount = remote.getRfSetupCodes().size();
+        for ( Segment seg : segments.get( 0x20 ) )
+        {
+          int nvid = seg.getHex().getData()[ 1 ];
+          int pairRef = seg.getHex().getData()[ 2 ];
+          if ( nvid >= 0x24 && nvid < 0x24 + rfCodeCount && pairRef != 0xFF )
+          {
+            // remote is paired with this pairing table
+            owner.setRfRegistrationEnabled( true );
+            break;
+          }
+        }
+      }
+      
       AddressRange range = remote.getCheckSums()[ 0 ].getAddressRange();
       int oldEnd = range.getEnd();
       range.setEnd( pos - 1 );
@@ -7054,6 +7170,38 @@ public class RemoteConfiguration
         
       }
     }
+    if ( remote.getSegmentTypes().contains( 0x2D ) )
+    {
+      segments.remove( 0x2D );
+      for ( DeviceButton db : remote.getDeviceButtons() )
+      {
+        int size = 0;
+        if ( db.getRfSelectors() == null || ( size = db.getRfSelectors().length ) == 0 )
+          continue;
+        int rawSize = 7*size + 1;
+        int lenMod = rawSize & ( remote.getForceModulus() - 1 );
+        int segSize = rawSize + ( remote.doForceEvenStarts() && lenMod > 0 ? remote.getForceModulus() - lenMod : 0 );  
+        Hex segData = new Hex( segSize );
+        Arrays.fill( segData.getData(), rawSize, segSize, ( short )0xFF );
+        segData.getData()[ 0 ] = ( short )db.getButtonIndex();
+        segData.getData()[ 1 ] = 0;
+        segData.getData()[ 2 ] = ( short )size;
+        for ( int i = 0; i < size; i++ )
+        {
+          RFSelector rfSel = db.getRfSelectors()[ i ];
+          segData.getData()[ 3 + i ] = rfSel.btn.getKeyCode();
+          segData.getData()[ 3 + size + 3*i ] = ( short )rfSel.irDevType.getNumber();
+          segData.put( rfSel.irCode.getValue(), 4 + size + 3*i );
+          segData.getData()[ 3 + 4*size + 3*i ] = ( short )rfSel.rfDevType.getNumber();
+          segData.put( rfSel.rfCode.getValue(), 4 + 4*size + 3*i );
+        }
+        if ( segments.get( 0x2D ) == null )
+        {
+          segments.put( 0x2D, new ArrayList< Segment >() );
+        }
+        segments.get( 0x2D ).add( new Segment( 0x2D, 0xFF, segData ) );
+      }
+    }
   }
   
   /**
@@ -7868,8 +8016,11 @@ public class RemoteConfiguration
         }
       }
 
-      if ( remote.getSegmentTypes().contains( 0x0A ) || remote.getSegmentTypes().contains( 0x20 ) )
+      if ( !remote.hasRf4ceSupport() && ( remote.getSegmentTypes().contains( 0x0A ) 
+          || remote.getSegmentTypes().contains( 0x20 ) ) )
       {
+        // RF4CE support uses segment type 0x20 for non-volatile storage of Network
+        // Information Base attributes.
         if ( remote.getSegmentTypes().contains( 0x0A ) )
         {
           segments.remove( 0x0A );
@@ -7914,8 +8065,10 @@ public class RemoteConfiguration
           }
 
           map.clear();
-          if ( remote.getSegmentTypes().contains( 0x20 ) && du != null && !du.getHardButtons().isEmpty())
+          if ( !remote.hasRf4ceSupport() && remote.getSegmentTypes().contains( 0x20 ) && du != null && !du.getHardButtons().isEmpty())
           {
+            // RF4CE support uses segment type 0x20 for non-volatile storage of Network
+            // Information Base attributes.
             if ( segments.get( 0x20 ) == null )
             {
               segments.put( 0x20, new ArrayList< Segment >() );
@@ -8392,6 +8545,18 @@ public class RemoteConfiguration
         }
       }
     }
+    
+    if ( remote.hasRf4ceSupport() )
+    {
+      for ( DeviceButton devBtn : remote.getDeviceButtons() )
+      {
+        if ( devBtn.getRfSelectors() != null && devBtn.getRfSelectors().length > 0 )
+        {
+          pw.printHeader( "DeviceButton" );
+          devBtn.store( pw );
+        }
+      }
+    }
 
     pw.printHeader( "Settings" );
     for ( Setting setting : remote.getSettings() )
@@ -8851,6 +9016,12 @@ public class RemoteConfiguration
   private LinkedHashMap< Integer, String > deviceCategories = null;
   private LinkedHashMap< Integer, List< String > > categoryBrands = null;
   private LinkedHashMap< Integer, Integer > codeLocations = null;
+  
+  /**  RF4CE Network Information Base.
+   *   Key is the Non-Volatile IDentifier (NVID),  Value is given as Hex.
+   */
+  private LinkedHashMap< Integer, Hex > nib = null;
+  private LinkedHashMap< Integer, Integer > nibSizes = null;
 
   private LinkedHashMap< Button, Activity > activities = null;
   
@@ -9210,6 +9381,11 @@ public class RemoteConfiguration
   public void setFavFinalKey( Button favFinalKey )
   {
     this.favFinalKey = favFinalKey;
+  }
+
+  public LinkedHashMap< Integer, Hex > getNIB()
+  {
+    return nib;
   }
 
   /** The notes. */
@@ -10465,6 +10641,35 @@ public class RemoteConfiguration
   {
     return segmentLoadOrder;
   }
+  
+  private void setNibSizes()
+  {
+    if ( !remote.hasRf4ceSupport() || remote.getRfSetupCodes() == null )
+      return;
+    nibSizes = new LinkedHashMap< Integer, Integer >();
+    int rfCodeCount = remote.getRfSetupCodes().size();
+    for ( String[] ns : nibSizeData )
+    {
+      int nvid = Integer.parseInt( ns[ 0 ], 16 );
+      int size = Integer.parseInt( ns[ 1 ], 10 );
+      switch ( nvid )
+      {
+        case 0x24:
+          for ( int i = 0; i < rfCodeCount; i++ )
+            nibSizes.put( 0x24 + i, size );
+          break;
+        case 0x25:
+          for ( int i = 0; i < rfCodeCount; i++ )
+            nibSizes.put( 0x24 + rfCodeCount + i, size );
+          break;
+        case 0x26:
+          nibSizes.put( 0x24 + 2*rfCodeCount, rfCodeCount );
+          break;
+        default:
+          nibSizes.put( nvid, size );
+      }
+    }
+  }
 
   public static Comparator< Macro > MacroSorter = new Comparator< Macro >()
   {
@@ -10480,5 +10685,14 @@ public class RemoteConfiguration
     0x37, 0x39, 0x38, 0x09, 0x34, 0x20, 0x2E, 0x22, 0x7E, 0x6C, 0x66, 0x0A, 0x6A, 
     0x68, 0x66, 0x6B, 0x68, 0x67, 0x38, 0x37, 0x34, 0x39, 0x38, 0x68, 0x74, 0x51, 
     0x51, 0x34, 0x32, 0x32, 0x39, 0x33, 0x01, 0x37, 0x39 };
+  
+  public static final String[][] nibSizeData = {
+    // { NVID in hex, size in decimal }
+    { "6", "4" },
+    { "21", "1" },
+    { "24", "39" },
+    { "25", "4" },
+    { "26", "1" } 
+  };
  
 }

@@ -1,3 +1,7 @@
+Changes for v2.10
+-- Private build 1
+- Add RF Tools to provide RF4CE support for the TI CC2531EMK Packet Sniffer (Graham)
+
 Changes for v2.09
 -- Private build 1
 - Set IrpTransmogrifier 1.1.0 as default IR decoder, with DecodeIR as selectable option (Graham)
@@ -45,6 +49,7 @@ Changes for v2.09
 - Include rmProtocols.xml, a patch file to add learned signal support for NEC1-f16 protocol (Graham)
 - Improve handling of learned signals recognised by IrpTransmogrifier but with no executor (Graham)
 - Improve the layout of a saved Learned Signal Timing Summary (Barf)
+- Give error message on download if base address read from remote and from RDF differ (Graham)
 
 Changes for v2.08
 -- Release build 1

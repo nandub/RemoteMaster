@@ -31,6 +31,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import com.hifiremote.jp1.GeneralFunction.RMIcon;
+import com.hifiremote.jp1.ProtocolDataPanel.DisplayArea;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -57,15 +58,21 @@ public class GeneralPanel extends RMPanel implements ListSelectionListener, Acti
       @Override
       public void mouseClicked( MouseEvent e )
       {
-        if ( e.getClickCount() != 2 )
-        {
-          return;
-        }
         int row = deviceButtonTable.getSelectedRow();
         if ( row == -1 )
         {
           return;
         }
+        if ( rfSelectorPanel.isVisible() && e.getClickCount() != 2 )
+        {
+          DeviceButton db = deviceModel.getRow( row );
+          rfSelectorModel.set( remoteConfig, db );
+          rfSelectorTable.initColumns();
+          selectedDeviceLabel.setText( "Selector buttons for device: " + db );
+          adjustPreferredViewportSizes( db );
+          return;
+        }
+        
         if ( !deviceButtonTable.isCellEditable( row, deviceButtonTable.columnAtPoint( e.getPoint() ) ) )
         {
           editUpgradeInRow( row );
@@ -80,6 +87,9 @@ public class GeneralPanel extends RMPanel implements ListSelectionListener, Acti
       {
         activeTable = deviceButtonTable;
         setHighlightAction( deviceButtonTable );
+        int row = deviceButtonTable.getSelectedRow();
+        if ( row < 0 )
+          selectedDeviceLabel.setText( "No device selected" );
       }
       public void focusLost( FocusEvent e )
       {
@@ -90,6 +100,36 @@ public class GeneralPanel extends RMPanel implements ListSelectionListener, Acti
     activeTable = deviceButtonTable;
     deviceScrollPane = new JScrollPane( deviceButtonTable );
     deviceButtonPanel.add( deviceScrollPane, BorderLayout.CENTER );
+    
+    rfSelectorPanel = new JPanel( new BorderLayout() );
+    rfSelectorPanel.setBorder( BorderFactory.createTitledBorder( "RF Selectors" ) );
+    rfSelectorTable = new JP1Table( rfSelectorModel );
+    rfSelectorTable.initColumns( rfSelectorModel );
+    rfSelectorTable.addFocusListener( new FocusAdapter()
+    {
+      @Override
+      public void focusGained( FocusEvent e )
+      {
+        activeTable = rfSelectorTable;
+      }
+    } );
+    
+    rfSelectorPanel.add( new JScrollPane( rfSelectorTable ), BorderLayout.CENTER );
+    rfSelectorPanel.setVisible( false );
+    Box rfBox = new Box( BoxLayout.PAGE_AXIS );
+    rfBox.setBorder( BorderFactory.createEmptyBorder( 5, 5, 5, 5 ) );
+    selectedDeviceLabel = new JLabel( "No device selected");
+    JPanel devPanel = new JPanel( new FlowLayout( FlowLayout.LEFT ) );
+    devPanel.add( selectedDeviceLabel );
+    rfBox.add( devPanel );
+    String text = "Use this panel to set permitted IR and RF setup code pairs for an RF-enabled "
+        + "device.  After uploading, press and hold Setup and the appropriate selector button "
+        + "together for 3 seconds to set the new values in the remote. RF setup codes cannot be "
+        + "set directly in the Device Buttons panel above, as this would omit necessary side "
+        + "effects in the remote.  The Code Selector on the toolbar can be used to set both codes "
+        + "and to ensure the set values are valid.";
+    rfBox.add( new DisplayArea( text, null ) );
+    rfSelectorPanel.add( rfBox, BorderLayout.PAGE_START );
     
     messageArea = new JTextArea();
     JLabel label = new JLabel();
@@ -164,7 +204,10 @@ public class GeneralPanel extends RMPanel implements ListSelectionListener, Acti
     settingsScrollPane.setBorder( BorderFactory.createCompoundBorder(
         BorderFactory.createTitledBorder( "Other Settings" ), settingsScrollPane.getBorder() ) );
     // settingsScrollPane.setPreferredSize( settingTable.getPreferredSize() );
-    upperPane = new JSplitPane( JSplitPane.HORIZONTAL_SPLIT, deviceButtonPanel, settingsScrollPane );
+    JPanel deviceDataPanel = new JPanel( new BorderLayout() );
+    deviceDataPanel.add( deviceButtonPanel, BorderLayout.CENTER );
+    deviceDataPanel.add( rfSelectorPanel, BorderLayout.PAGE_END);
+    upperPane = new JSplitPane( JSplitPane.HORIZONTAL_SPLIT, deviceDataPanel, settingsScrollPane );
     upperPane.setResizeWeight( 0.5 );
 
     notes = new JTextArea( 6, 20 );
@@ -208,10 +251,10 @@ public class GeneralPanel extends RMPanel implements ListSelectionListener, Acti
 
     add( mainPane, BorderLayout.CENTER );
 
-    adjustPreferredViewportSizes();
+    adjustPreferredViewportSizes( null );
   }
 
-  private void adjustPreferredViewportSizes()
+  private void adjustPreferredViewportSizes( DeviceButton devBtn )
   {
     int rows = 8;
     if ( remoteConfig != null )
@@ -230,6 +273,22 @@ public class GeneralPanel extends RMPanel implements ListSelectionListener, Acti
     Dimension ds = settingTable.getPreferredSize();
     ds.height = rows * settingTable.getRowHeight();
     settingTable.setPreferredScrollableViewportSize( ds );
+    
+    if ( rfSelectorPanel.isVisible() )
+    {
+      rows = 2;
+      if ( devBtn != null && devBtn.getRfSelectors() != null )
+      {
+        rows = Math.max( 2, Math.min( 5, devBtn.getRfSelectors().length ) );
+      }
+      else
+      {
+        rfSelectorModel.set( remoteConfig, null );
+      }
+      Dimension dr = rfSelectorTable.getPreferredSize();
+      dr.height = rows * rfSelectorTable.getRowHeight();
+      rfSelectorTable.setPreferredScrollableViewportSize( dr );
+    }
 
     upperPane.resetToPreferredSizes();
     upperPane.setDividerLocation( ( (double)dd.width )/(dd.width + ds.width) );
@@ -289,6 +348,7 @@ public class GeneralPanel extends RMPanel implements ListSelectionListener, Acti
       settingsScrollPane.setVisible( false ); 
     }
     
+    rfSelectorPanel.setVisible( remote.hasRf4ceSupport() );
     editButton.setEnabled( false );
     iconLabel.setVisible( remote.isSSD() );
     iconLabel.setIcon( null );
@@ -312,7 +372,7 @@ public class GeneralPanel extends RMPanel implements ListSelectionListener, Acti
 
     setWarning();
     validate();
-    adjustPreferredViewportSizes();
+    adjustPreferredViewportSizes( null );
     setInProgress = false;
   }
 
@@ -464,6 +524,11 @@ public class GeneralPanel extends RMPanel implements ListSelectionListener, Acti
     return deviceButtonTable;
   }
 
+  public JP1Table getRfSelectorTable()
+  {
+    return rfSelectorTable;
+  }
+
   public JP1Table getSettingTable()
   {
     return settingTable;
@@ -495,6 +560,7 @@ public class GeneralPanel extends RMPanel implements ListSelectionListener, Acti
   private JSplitPane mainPane = null;
 
   private JPanel deviceButtonPanel = null;
+  private JPanel rfSelectorPanel = null;
   private JPanel warningPanel = null;
   private JLabel warningLabel = null;
   private JTextArea messageArea = null;
@@ -509,6 +575,9 @@ public class GeneralPanel extends RMPanel implements ListSelectionListener, Acti
   /** The device model. */
   private JP1Table deviceButtonTable = null;
   private DeviceButtonTableModel deviceModel = new DeviceButtonTableModel();
+  
+  private JP1Table rfSelectorTable;
+  private RFSelectorTableModel rfSelectorModel = new RFSelectorTableModel();
 
   /** The setting model. */
   private JP1Table settingTable = null;
@@ -529,6 +598,7 @@ public class GeneralPanel extends RMPanel implements ListSelectionListener, Acti
   private boolean setInProgress = false;
   private JLabel iconLabel = null;
   private DeviceUpgradeEditor editor;
+  private JLabel selectedDeviceLabel = null;
 
   /*
    * (non-Javadoc)

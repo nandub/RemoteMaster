@@ -19,6 +19,7 @@ import java.util.HashMap;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -26,6 +27,7 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
@@ -85,7 +87,18 @@ public class CodeSelectorDialog extends JDialog implements ActionListener
     d.width = 100;
     deviceComboBox.setPreferredSize( d );
     devicePanel.add( deviceComboBox );
-
+    
+    ButtonGroup bg = new ButtonGroup();
+    bg.add( irButton );
+    bg.add( rfButton );
+    irButton.setSelected( true );
+    irButton.addActionListener( this );
+    rfButton.addActionListener( this );
+    irButton.setVisible( remote.hasRf4ceSupport() );
+    rfButton.setVisible( remote.hasRf4ceSupport() );
+    devicePanel.add( irButton );
+    devicePanel.add( rfButton );
+    
     Box buttonBox = Box.createHorizontalBox();
     assignButton.addActionListener( this );
     buttonBox.add( assignButton );
@@ -108,7 +121,7 @@ public class CodeSelectorDialog extends JDialog implements ActionListener
     actionPanel.add( new JLabel(), BorderLayout.CENTER );
     actionPanel.add( actionBox, BorderLayout.LINE_END);
 
-    internalArea = new JTextArea( 10, 40 );
+    internalArea = new JTextArea( 10, 50 );
     internalArea.setLineWrap( true );
     internalArea.setWrapStyleWord( true );
     internalArea.setEditable( false );
@@ -127,7 +140,7 @@ public class CodeSelectorDialog extends JDialog implements ActionListener
     internalBox.add( Box.createVerticalStrut( 5 ) );
     internalBox.add( internalPane );
 
-    upgradeArea = new JTextArea( 3, 40 );
+    upgradeArea = new JTextArea( 3, 50 );
     upgradeArea.setLineWrap( true );
     upgradeArea.setWrapStyleWord( true );
     upgradeArea.setEditable( false );
@@ -254,7 +267,9 @@ public class CodeSelectorDialog extends JDialog implements ActionListener
 
     setSelectedCode( "" );
     setupCodes = remote.getSetupCodes();
+    rfSetupCodes = remote.getRfSetupCodes();
     deviceButtonTable = rm.getGeneralPanel().getDeviceButtonTable();
+    rfSelectorTable = rm.getGeneralPanel().getRfSelectorTable();
   }
   
   public static CodeSelectorDialog showDialog( RemoteMaster rm )
@@ -335,23 +350,34 @@ public class CodeSelectorDialog extends JDialog implements ActionListener
   @Override
   public void actionPerformed( ActionEvent event )
   {
+    JP1Table activeTable = owner.getGeneralPanel().getActiveTable();
+    if ( activeTable != deviceButtonTable && activeTable != rfSelectorTable )
+      return;
     Object source = event.getSource();
     DeviceType deviceType = ( DeviceType )deviceComboBox.getSelectedItem();
-    int row = deviceButtonTable.getSelectedRow();
+    int row = activeTable.getSelectedRow();
 
-    if ( source == deviceComboBox )
+    if ( source == deviceComboBox || source == irButton || source == rfButton )
     {
-      HashMap< Integer, Integer> typeCodes = setupCodes.get( deviceType.getNumber() );
+      if ( source == irButton && !irButton.isSelected()
+          || source == rfButton && !rfButton.isSelected() )
+      {
+        return;
+      }
+      
+      HashMap< Integer, Integer> typeCodes = irButton.isSelected()
+          ? setupCodes.get( deviceType.getNumber() ) : rfSetupCodes.get( deviceType.getNumber() );
       ArrayList< Integer > codes = new ArrayList< Integer >();
       if ( typeCodes != null )
       {
-        codes.addAll( setupCodes.get( deviceType.getNumber() ).values() );
+        codes.addAll( typeCodes.values() );
       }
       internalArea.setText( getCodeText( codes ) );
       codes = new ArrayList< Integer >();
       for ( DeviceUpgrade devUpgrade : remoteConfig.getDeviceUpgrades() )
       {
         if ( deviceType.getNumber() == devUpgrade.getDeviceType().getNumber()
+            && irButton.isSelected() == !devUpgrade.isRfUpgrade()
             && ( devUpgrade.getButtonIndependent() 
                 || ( row >= 0 && remote.getDeviceButtons()[ row ].getButtonIndex() == 
                 devUpgrade.getButtonRestriction().getButtonIndex() ) ) )
@@ -378,11 +404,22 @@ public class CodeSelectorDialog extends JDialog implements ActionListener
         JOptionPane.showMessageDialog( this, message, title, JOptionPane.ERROR_MESSAGE );
         return;
       }
-      
-      deviceButtonTable.setValueAt( deviceType, row, 2 );
-      deviceButtonTable.setValueAt( selectedCode, row, 3 );
-      DeviceButtonTableModel model = ( DeviceButtonTableModel )deviceButtonTable.getModel();
-      model.fireTableRowsUpdated( row, row );
+
+      if ( activeTable == deviceButtonTable )
+      {
+        deviceButtonTable.setValueAt( deviceType, row, 2 );
+        deviceButtonTable.setValueAt( selectedCode, row, 3 );
+        DeviceButtonTableModel model = ( DeviceButtonTableModel )deviceButtonTable.getModel();
+        model.fireTableRowsUpdated( row, row );
+      }
+      else if ( activeTable == rfSelectorTable )
+      {
+        int devCol = rfButton.isSelected() ? 4 : 2;
+        rfSelectorTable.setValueAt( deviceType, row, devCol );
+        rfSelectorTable.setValueAt( selectedCode, row, devCol + 1 );
+        RFSelectorTableModel model = ( RFSelectorTableModel )rfSelectorTable.getModel();
+        model.fireTableRowsUpdated( row, row );
+      }
     }
     else if ( source == refreshButton )
     {
@@ -469,6 +506,7 @@ public class CodeSelectorDialog extends JDialog implements ActionListener
   }
   
   private HashMap< Integer, HashMap< Integer, Integer >> setupCodes = null;
+  private HashMap< Integer, HashMap< Integer, Integer >> rfSetupCodes = null;
   private JComboBox deviceComboBox = null;
   private JTextArea internalArea = null;
   private JTextArea upgradeArea = null;
@@ -478,6 +516,8 @@ public class CodeSelectorDialog extends JDialog implements ActionListener
   private RemoteConfiguration remoteConfig = null;
   private Remote remote = null;
   private boolean canAssign = true;
+  private JRadioButton irButton = new JRadioButton( "IR" );
+  private JRadioButton rfButton = new JRadioButton( "RF" );
   
   private JLabel selectedLabel = new JLabel();
   private JButton assignButton = new JButton( "Assign" );
@@ -485,6 +525,7 @@ public class CodeSelectorDialog extends JDialog implements ActionListener
   private JButton connectButton = null;
   
   private static JP1Table  deviceButtonTable = null;
+  private static JP1Table rfSelectorTable = null;
   private static CodeSelectorDialog selector = null;
   
   private JTextField category = null;

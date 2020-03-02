@@ -960,6 +960,11 @@ public class DeviceUpgrade extends Highlight
     return protocol.getCustomCode( remote.getProcessor() ) != null;
   }
   
+  public boolean isRfUpgrade()
+  {
+    return remote.hasRf4ceSupport() && isRfPid( protocol.getID() );
+  }
+  
   /**
    * Sets the protocol.
    * 
@@ -1291,17 +1296,6 @@ public class DeviceUpgrade extends Highlight
     {
       fixedDataLength = sizeDevBytes;
       cmdLength = sizeCmdBytes;
-      if ( ( pid.get( 0 ) & 0x800 ) != 0 )
-      {
-        // Device upgrades with PIDs with bit 11 set have been seen in URC-2125BC0
-        // and have an extra section following the variable data.  This consists of
-        // a 2-byte hex value followed by 22 characters of ASCII.  This can only be
-        // successfully parsed if there is no protocol code; if there is, then
-        // hexCode extends only up to the start of that code.
-        int upgDataSize = fixedDataLength + cmdLength * buttons.size();
-        int extraIndex = index + upgDataSize;
-        extraData = hexCode.subHex( extraIndex, Math.min( hexCode.length() - extraIndex, 24 ) );
-      }
     }
     if ( cmdLength == 0 && pCode != null && pCode.length() > 2 )
     {
@@ -1323,6 +1317,18 @@ public class DeviceUpgrade extends Highlight
       System.arraycopy( code, fixedDataOffset, fixedData, 0, fixedDataLength );
       fixedDataHex = new Hex( fixedData );
     }
+    
+    if ( remote.hasRf4ceSupport() && isRfPid( pid ) && fixedDataLength >= 2 )
+    {
+      // This range of PIDs is reserved for device upgrades for RF, according to
+      // disassembly of URC2125BC0.  For upgrades with such a PID, the fixed data 
+      // length is 6 and the first 2 bytes are the offset from upgrade start to a 
+      // new section of 24 bytes at upgrade end.
+      int extraIndex = fixedDataHex.get( 0 );
+      if ( extraIndex > 0 && hexCode.length() >= extraIndex + 24 )
+        extraData = hexCode.subHex( extraIndex, 24 );
+    }
+
     Value[] vals = parmValues;
     java.util.List< Protocol > protocols = null;
     boolean isBuiltIn = true;
@@ -3014,6 +3020,12 @@ public class DeviceUpgrade extends Highlight
       str = str.substring( 0, str.length() - 1 );
     }
     return Integer.parseInt( str, base );
+  }
+  
+  private static boolean isRfPid( Hex pid )
+  {
+    int val = pid.get( 0 );
+    return val >= 0xbb8 && val <= 0xbe9;
   }
 
   /**

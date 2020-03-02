@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.util.Arrays;
 import java.util.HashMap;
 
+import com.hifiremote.jp1.Remote.RFSelector;
+
 // TODO: Auto-generated Javadoc
 /**
  * The Class DeviceButton.
@@ -58,6 +60,16 @@ public class DeviceButton extends Highlight
   public int getDefaultSetupCode()
   {
     return defaultSetupCode;
+  }
+
+  public boolean isRf()
+  {
+    return rf;
+  }
+
+  public void setRf( boolean rf )
+  {
+    this.rf = rf;
   }
 
   /*
@@ -342,9 +354,11 @@ public class DeviceButton extends Highlight
   private int vpt = 0;
   private boolean constructed = false;
   private short[] ptDefaults = null;
+  private boolean rf = false;
   
   private HashMap< Button, String > softButtonNames = null;
   private HashMap< Button, String > softFunctionNames = null;
+  private RFSelector[] rfSelectors = null;
   
   public boolean isConstructed()
   {
@@ -434,6 +448,16 @@ public class DeviceButton extends Highlight
     this.colorParams = colorParams;
   }
 
+  public RFSelector[] getRfSelectors()
+  {
+    return rfSelectors;
+  }
+
+  public void setRfSelectors( RFSelector[] rfSelectors )
+  {
+    this.rfSelectors = rfSelectors;
+  }
+
   public void doHighlight( Color[] highlight )
   {
     if ( highAddress > 0 )
@@ -515,6 +539,20 @@ public class DeviceButton extends Highlight
     if ( pt.indexOf( 'Z' ) >= 0 && zPT != DeviceButton.noButton )
     {  
       hex.set( ( short )( hex.getData()[ 2 ] == 0xFF ? 0xFF : zPT.getButtonIndex() ), 11 );         
+    }
+  }
+  
+  public void store( PropertyWriter pw )
+  {
+    if ( rfSelectors == null || rfSelectors.length == 0 )
+      return;    
+    pw.print( "DeviceIndex", buttonIndex );
+    for ( int i = 0; i < rfSelectors.length; i++ )
+    {
+      RFSelector rfSel = rfSelectors[ i ];
+      String value = rfSel.btn.getKeyCode() + "|" + rfSel.irDevType.getName() + "|" 
+          + rfSel.irCode + "|" + rfSel.rfDevType.getName() + "|" + rfSel.rfCode;
+      pw.print( "Selector." + i, value );
     }
   }
 }

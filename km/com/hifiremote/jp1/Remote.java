@@ -63,6 +63,15 @@ public class Remote implements Comparable< Remote >
       }
     }
   }
+  
+  public static class RFSelector
+  {
+    public Button btn = null;
+    public DeviceType irDevType = null;
+    public SetupCode irCode = null;
+    public DeviceType rfDevType = null;
+    public SetupCode rfCode = null;
+  }
 
   public enum SetupValidation
   {
@@ -2337,6 +2346,7 @@ public class Remote implements Comparable< Remote >
       int hiAddr = 0;
       int lowAddr = 0;
       int typeAddr = 0;
+      boolean rf = false;
       List< Integer > ptDefList = new ArrayList< Integer >();
       if ( segmentTypes == null )
       {
@@ -2349,13 +2359,20 @@ public class Remote implements Comparable< Remote >
       }
       else
       {
-        index = RDFReader.parseNumber( st.nextToken() );
+        String token = st.nextToken();
+        int starNdx = token.indexOf( '*' );
+        if ( starNdx >= 0 )
+        {
+          rf = true;
+          token = token.substring( 0, starNdx );
+        }
+        index = RDFReader.parseNumber( token );
         // Punch-through bytes with a non-standard use can be set in the RDF
         while ( st.hasMoreTokens() )
         {
           try
           {
-            String token = st.nextToken();
+            token = st.nextToken();
             if ( !token.startsWith( "$" ) )
             {
               // Values are interpreted as punchthrough bytes only if they have hex form with $ prefix
@@ -2371,6 +2388,7 @@ public class Remote implements Comparable< Remote >
         }
       }
       DeviceButton db = new DeviceButton( name, hiAddr, lowAddr, typeAddr, defaultSetupCode, index, deviceCodeOffset );
+      db.setRf( rf );
       if ( ptDefList.size() > 0 )
       { 
         short[] ptDefaults = new short[ ptDefList.size() ];
@@ -3381,6 +3399,7 @@ public class Remote implements Comparable< Remote >
   }
 
   private HashMap< Integer, HashMap< Integer, Integer >> setupCodes = new HashMap< Integer, HashMap< Integer, Integer >>();
+  private HashMap< Integer, HashMap< Integer, Integer >> rfSetupCodes = null;
 
   private String parseSetupCodes( RDFReader rdr ) throws IOException
   {
@@ -3396,11 +3415,11 @@ public class Remote implements Comparable< Remote >
       }
 
       int pos = line.indexOf( '=' );
+      int devTypeIndex = 0;
       if ( pos != -1 )
       {
         StringTokenizer st = new StringTokenizer( line, "=" );
         String token = st.nextToken().trim();
-        int devTypeIndex = 0;
         try
         {
           devTypeIndex = Integer.parseInt( token );
@@ -3420,10 +3439,29 @@ public class Remote implements Comparable< Remote >
       StringTokenizer st = new StringTokenizer( line, " ," );
       while ( st.hasMoreTokens() )
       {
-        Integer code = new Integer( st.nextToken() );
+        String token = st.nextToken();
+        int rf = token.indexOf( '*' );
+        if ( rf >= 0 )
+          token = token.substring( 0, rf );
+        Integer code = new Integer( token );
         code += deviceCodeOffset;
         maxBuiltInCode = Math.max( code, maxBuiltInCode );
-        map.put( code, code );
+        if ( rf < 0 )
+        {
+          map.put( code, code );
+        }
+        else
+        {
+          if ( rfSetupCodes == null )
+          {
+            rfSetupCodes = new HashMap< Integer, HashMap<Integer,Integer> >();
+          }
+          if ( rfSetupCodes.get( devTypeIndex ) == null )
+          {
+            rfSetupCodes.put( devTypeIndex, new HashMap<Integer,Integer>() );
+          }
+          rfSetupCodes.get( devTypeIndex ).put( code, code );
+        }
       }
     }
 
@@ -3433,6 +3471,11 @@ public class Remote implements Comparable< Remote >
   public HashMap< Integer, HashMap< Integer, Integer >> getSetupCodes()
   {
     return setupCodes;
+  }
+
+  public HashMap< Integer, HashMap< Integer, Integer >> getRfSetupCodes()
+  {
+    return rfSetupCodes;
   }
 
   public boolean hasSetupCode( int deviceTypeIndex, int setupCode )
@@ -3452,6 +3495,25 @@ public class Remote implements Comparable< Remote >
   public boolean hasSetupCode( DeviceType deviceType, int setupCode )
   {
     return hasSetupCode( deviceType.getNumber(), setupCode );
+  }
+  
+  public boolean hasRfSetupCode( int deviceTypeIndex, int setupCode )
+  {
+    if ( rfSetupCodes == null )
+    {
+      return false; 
+    }
+    HashMap< Integer, Integer > map = rfSetupCodes.get( deviceTypeIndex );
+    if ( map == null )
+    {
+      return false;
+    }
+    return map.containsKey( setupCode );
+  }
+
+  public boolean hasRfSetupCode( DeviceType deviceType, int setupCode )
+  {
+    return hasRfSetupCode( deviceType.getNumber(), setupCode );
   }
 
   /**
@@ -3951,6 +4013,11 @@ public class Remote implements Comparable< Remote >
   public boolean hasActivityInitialMacro()
   {
     return segmentTypes != null && ( segmentTypes.contains( 0x1E ) || isSSD() );
+  }
+  
+  public boolean hasRf4ceSupport()
+  {
+    return segmentTypes != null && segmentTypes.contains( 0x2D );
   }
   
   public boolean hasSettings()

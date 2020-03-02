@@ -179,6 +179,8 @@ public class DeviceButtonTableModel extends JP1TableModel< DeviceButton >
               count++;
             }
           }
+          if ( remote.hasRf4ceSupport() )
+            count += 2;
         }
       }
       if ( remote.usesIcons() )
@@ -212,45 +214,49 @@ public class DeviceButtonTableModel extends JP1TableModel< DeviceButton >
       {
         if ( remote.isSSD() || !remoteConfig.hasSegments() )
         {
-          // Skip the setup lock and punchthrough columns
-          col += 7;
+          // Skip the setup lock, RF and and punchthrough columns
+          col += 9;
         }
         else if ( col > 4 )
         {
+          if ( !remote.hasRf4ceSupport() )
+          {
+            col += 2;
+          }
           // Check which punchthrough columns are required
           String pt = remote.getPunchThru();
           if ( pt.indexOf( 'V' ) < 0 )
           {
             col++;
           }
-          if ( col > 5 && pt.indexOf( 'T' ) < 0 )
+          if ( col > 7 && pt.indexOf( 'T' ) < 0 )
           {
             col++;
           }
-          if ( col > 6 && pt.indexOf( 'C' ) < 0 )
+          if ( col > 8 && pt.indexOf( 'C' ) < 0 )
           {
             col++;
           }
-          if ( col > 7 && pt.indexOf( 'X' ) < 0 )
+          if ( col > 9 && pt.indexOf( 'X' ) < 0 )
           {
             col++;
           }
-          if ( col > 8 && pt.indexOf( 'Y' ) < 0 )
+          if ( col > 10 && pt.indexOf( 'Y' ) < 0 )
           {
             col++;
           }
-          if ( col > 9 && pt.indexOf( 'Z' ) < 0 )
+          if ( col > 11 && pt.indexOf( 'Z' ) < 0 )
           {
             col++;
           }
         }
       }
-      if ( !remote.isSSD() && col > 10 )
+      if ( !remote.isSSD() && col > 12 )
       {
         // Skip the Volume Lock column
         col++;
       }
-      if ( col > 11 && !remote.usesLedColor() )
+      if ( col > 13 && !remote.usesLedColor() )
       {
         // Skip the Ring Color column
         col++;
@@ -258,15 +264,15 @@ public class DeviceButtonTableModel extends JP1TableModel< DeviceButton >
       for ( int i = 0; i < 3; i++ )
       {
         // Skip unused labels columns
-        col += col >= i + 14 && ( labels == null || labels.columnNames[ i ] == null ) ? 1 : 0;
+        col += col >= i + 16 && ( labels == null || labels.columnNames[ i ] == null ) ? 1 : 0;
       }
-      if ( !remote.usesIcons() && col >= 17 )
+      if ( !remote.usesIcons() && col >= 19 )
       {
         // Skip IconRef column
         col++;
       }
       SoftDevices softDevices = remote.getSoftDevices();
-      if ( ( softDevices == null || !softDevices.usesSequence() ) && col >= 18 )
+      if ( ( softDevices == null || !softDevices.usesSequence() ) && col >= 20 )
       {
         // Skip the Sequence Number column
         col++;
@@ -274,7 +280,7 @@ public class DeviceButtonTableModel extends JP1TableModel< DeviceButton >
     }
     else if ( col > 3 )
     {
-      col += 9;
+      col += 11;
     }
     return col;
   }
@@ -307,7 +313,7 @@ public class DeviceButtonTableModel extends JP1TableModel< DeviceButton >
   private static final String[] colNames =
   {
       "#", "Device Button", "Type", "<html>Setup<br>Code</html>", "<html>Setup<br>Lock</html>", 
-      "<html>Volume<br>PunchThrough</html>", 
+      "<html>RF<br>Paired</html>","<html>RF<br>Profile</html>","<html>Volume<br>PunchThrough</html>", 
       "<html>Transport<br>PunchThrough</html>", "<html>Channel<br>PunchThrough</html>",
       "<html>X<br>PunchThrough</html>", "<html>Input<br>PunchThrough</html>",
       "<html>Z<br>PunchThrough</html>","<html>Volume<br>Lock</html>", 
@@ -324,9 +330,9 @@ public class DeviceButtonTableModel extends JP1TableModel< DeviceButton >
   {
     DeviceLabels labels = remoteConfig != null ? remoteConfig.getRemote().getDeviceLabels() : null;
     col = getEffectiveColumn( col );
-    if ( col >= 14 && col <= 16 )
+    if ( col >= 16 && col <= 18 )
     {
-      return labels.columnNames[ col - 14 ];
+      return labels.columnNames[ col - 16 ];
     }
     return colNames[ col ];
   }
@@ -334,8 +340,8 @@ public class DeviceButtonTableModel extends JP1TableModel< DeviceButton >
   /** The col prototype names. */
   private static String[] colPrototypeNames =
   {
-      " 00 ", "Device Button", "__VCR/DVD__", "Setup", "Setup", "PunchThrough_", "PunchThrough_", 
-      "PunchThrough_", "PunchThrough_", "PunchThrough_", "PunchThrough_", "Master_", 
+      " 00 ", "Device Button", "__VCR/DVD__", "Setup", "Setup", "Paired", "Profile", "PunchThrough_", 
+      "PunchThrough_", "PunchThrough_", "PunchThrough_", "PunchThrough_", "PunchThrough_", "Master_", 
       "Color_", "A Meaningful, Reasonable Note", "Label", "Model", "Remote", 
       "Icon?_", "Seq", "Color_"
   };
@@ -349,7 +355,7 @@ public class DeviceButtonTableModel extends JP1TableModel< DeviceButton >
   public String getColumnPrototypeName( int col )
   {
     col = getEffectiveColumn( col );
-    if ( ( col == 14 || col == 15 || col == 16 ) && remoteConfig.getRemote().usesEZRC() )
+    if ( ( col == 16 || col == 17 || col == 18 ) && remoteConfig.getRemote().usesEZRC() )
     {
       return "Long Label___";
     }
@@ -359,8 +365,8 @@ public class DeviceButtonTableModel extends JP1TableModel< DeviceButton >
   /** The Constant colClasses. */
   private static final Class< ? >[] colClasses =
   {
-      Integer.class, String.class, DeviceType.class, SetupCode.class, Boolean.class, 
-      DeviceButton.class, DeviceButton.class, DeviceButton.class, DeviceButton.class, 
+      Integer.class, String.class, DeviceType.class, SetupCode.class, Boolean.class, Boolean.class,
+      String.class, DeviceButton.class, DeviceButton.class, DeviceButton.class, DeviceButton.class, 
       DeviceButton.class, DeviceButton.class, String.class, Integer.class, String.class, String.class, String.class, 
       String.class, Integer.class, RMIcon.class, Color.class
   };
@@ -385,15 +391,18 @@ public class DeviceButtonTableModel extends JP1TableModel< DeviceButton >
   public boolean isCellEditable( int row, int col )
   {
     // If remote uses soft devices, device type must be set before other columns can be edited.
-    // If remote uses soft home theater, the setup code is left blank and is not editable.
+    // If remote uses soft home theater, the setup code is left blank and is not editable.  In
+    // remotes with RF4CE support, device type and setup code for RF devices cannot be edited
+    // through this table.
     SoftDevices softDevices = remoteConfig.getRemote().getSoftDevices();
     Remote remote = remoteConfig.getRemote();
+    DeviceButton db = getRow( row );
     boolean ezrc = remote.usesEZRC();
     col = getEffectiveColumn( col );
-    return editable && col > 0 && ( col > 1 || ezrc ) && ( col < 2 || col > 3 || !ezrc )
-        && ( col == 2 || col == 11 || getExtendedTypeIndex( row ) != 0xFF )
+    return editable && col > 0 && ( col > 1 || ezrc ) && ( col < 2 || col > 3 || ( !ezrc && !db.isRf() ) )
+        && ( col == 2 || col == 13 || getExtendedTypeIndex( row ) != 0xFF )
         && ( col != 3 || ( softDevices != null && softDevices.isSetupCodesOnly() ) || getValueAt( row, col ) != null )
-        && ( col != 12 || getRow( row ).getColorIndex() > 0 );
+        && ( col != 14 || getRow( row ).getColorIndex() > 0 );
   }
   
   private short[] getData( int row )
@@ -454,40 +463,40 @@ public class DeviceButtonTableModel extends JP1TableModel< DeviceButton >
       {
         return db.getSetupLock( data );
       }
-      case 5:
+      case 7:
       {
         return db.getVolumePT();
       }
-      case 6:
+      case 8:
       {
         return db.getTransportPT();
       }
-      case 7:
+      case 9:
       {
         return db.getChannelPT();
       }
-      case 8:
+      case 10:
       {
         return db.getxPT();
       }
-      case 9:
+      case 11:
       {
         return db.getInputPT();
       }
-      case 10:
+      case 12:
       {
         return db.getzPT();
       }
       
-      case 11:
+      case 13:
       {
         return lockStates[ db.getVpt() ];
       }
-      case 12:
+      case 14:
       {
         return Math.abs( db.getColorIndex() );
       }
-      case 13:
+      case 15:
       {
         String[] notes = remoteConfig.getDeviceButtonNotes();
         String note = null;
@@ -512,22 +521,22 @@ public class DeviceButtonTableModel extends JP1TableModel< DeviceButton >
           return note;
         }
       }
-      case 14:
+      case 16:
       {
         DeviceLabels labels = remote.getDeviceLabels();
         return labels.getText( data, row );
       }
-      case 15:
-      case 16:
+      case 17:
+      case 18:
       {
         DeviceLabels labels = remote.getDeviceLabels();
-        return labels.getText2( data, column - 13 );
+        return labels.getText2( data, column - 15 );
       }
-      case 17:
+      case 19:
       {
         return db.icon;
       }
-      case 18:
+      case 20:
       {
         SoftDevices softDevices = remote.getSoftDevices();
         int seq = softDevices.getSequencePosition( row, getRowCount(), data );
@@ -540,7 +549,7 @@ public class DeviceButtonTableModel extends JP1TableModel< DeviceButton >
           return seq + 1;
         }
       }
-      case 19:
+      case 21:
       {
         return db.getHighlight();
       }
@@ -739,31 +748,31 @@ public class DeviceButtonTableModel extends JP1TableModel< DeviceButton >
     {
       db.setSetupLock( ( Boolean )value, data );
     }
-    else if ( col == 5 )
+    else if ( col == 7 )
     {
       db.setVolumePT( ( DeviceButton )value );
     }
-    else if ( col == 6 )
+    else if ( col == 8 )
     {
       db.setTransportPT( ( DeviceButton )value );
     }
-    else if ( col == 7 )
+    else if ( col == 9 )
     {
       db.setChannelPT( ( DeviceButton )value );
     }
-    else if ( col == 8 )
+    else if ( col == 10 )
     {
       db.setxPT( ( DeviceButton )value );
     }
-    else if ( col == 9 )
+    else if ( col == 11 )
     {
       db.setInputPT( ( DeviceButton )value );
     }
-    else if ( col == 10 )
+    else if ( col == 12 )
     {
       db.setzPT( ( DeviceButton )value );
     }
-    else if ( col == 11 )
+    else if ( col == 13 )
     {
       int vpt = Arrays.asList( lockStates ).indexOf( ( String )value );
       db.setVpt( vpt );
@@ -779,7 +788,7 @@ public class DeviceButtonTableModel extends JP1TableModel< DeviceButton >
         }
       }
     }
-    else if ( col == 12 )
+    else if ( col == 14 )
     {
       int ndx = db.getColorIndex();
       int val = ( Integer )value;
@@ -799,7 +808,7 @@ public class DeviceButtonTableModel extends JP1TableModel< DeviceButton >
         db.setColorIndex( - ndx );
       }
     }
-    else if ( col == 13 )
+    else if ( col == 15 )
     {
       String strValue = ( ( String )value ).trim();
       if ( "".equals( strValue ) )
@@ -809,7 +818,7 @@ public class DeviceButtonTableModel extends JP1TableModel< DeviceButton >
 
       remoteConfig.getDeviceButtonNotes()[ row ] = strValue;
     }
-    else if ( col == 14 || col == 15 || col == 16 )
+    else if ( col == 16 || col == 17 || col == 18 )
     {
       String text = ( String )value;
       if ( remoteConfig.hasSegments() )
@@ -821,7 +830,7 @@ public class DeviceButtonTableModel extends JP1TableModel< DeviceButton >
         for ( int i = 0; i < 3; i++ )
         {
           String s = lbls.getText2( data, i + 1 );
-          texts[ i ] = i == col - 14 ? text : s == null ? "" : s;
+          texts[ i ] = i == col - 16 ? text : s == null ? "" : s;
           hexLen += texts[ i ].length();
         }
         int lenMod = hexLen & ( remote.getForceModulus() - 1 );
@@ -840,11 +849,11 @@ public class DeviceButtonTableModel extends JP1TableModel< DeviceButton >
         remote.getDeviceLabels().setText( text, row, data );
       }
     }
-    else if ( col == 17 )
+    else if ( col == 19 )
     {
       db.icon = ( RMIcon )value;
     }
-    else if ( col == 18 )
+    else if ( col == 20 )
     {
       int rows = getRowCount();
       int newSeq = ( ( Integer )value ).intValue() - 1;
@@ -858,7 +867,7 @@ public class DeviceButtonTableModel extends JP1TableModel< DeviceButton >
       softDevices.insertSequenceIndex( row, newSeq, rows, data );
       fireTableDataChanged();
     }
-    else if ( col == 19 )
+    else if ( col == 21 )
     {
       db.setHighlight( ( Color )value );
     }
@@ -949,11 +958,11 @@ public class DeviceButtonTableModel extends JP1TableModel< DeviceButton >
     {
       return setupCodeRenderer;
     }
-    else if ( col == 17 )
+    else if ( col == 19 )
     {
       return iconRenderer;
     }
-    else if ( col == 19 || col == 12 )
+    else if ( col == 21 || col == 14 )
     {
       return colorRenderer;
     }
@@ -979,27 +988,27 @@ public class DeviceButtonTableModel extends JP1TableModel< DeviceButton >
         return deviceTypeEditor;
       case 3:
         return setupCodeEditor;
-      case 5:
-      case 6:
       case 7:
       case 8:
       case 9:
       case 10:
-        return punchThroughEditor;
       case 11:
-        return deviceLockEditor;
       case 12:
-        return spinnerEditor;
+        return punchThroughEditor;
       case 13:
+        return deviceLockEditor;
       case 14:
+        return spinnerEditor;
       case 15:
       case 16:
-        return selectAllEditor;
       case 17:
-        return iconEditor;
       case 18:
-        return sequenceEditor;
+        return selectAllEditor;
       case 19:
+        return iconEditor;
+      case 20:
+        return sequenceEditor;
+      case 21:
         return colorEditor;
       default:
         return null;
