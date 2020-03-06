@@ -36,7 +36,9 @@ public class Npdu extends Hex
     public NSDUDirection direction = null;
     public boolean valid = true;
     public boolean secured = false;
+    public int channelDesignator = 0;
     public Hex nsdu = null;
+    public Hex rawNsdu = null;  // encrypted value when NPDU is secured
     public Hex authData = null; // message integrity field for authentication
     public int rptCount = 0;
     public RfRemote rfRemote = null;
@@ -106,6 +108,7 @@ public class Npdu extends Hex
   {
     NSPrimitive nsPrim = new NSPrimitive();
     nsPrim.frameCtl = getData()[ 0 ];
+    nsPrim.channelDesignator = nsPrim.frameCtl >> 6;
     int frameType = nsPrim.frameCtl & 3;
     if ( frameType == 0 )
     {

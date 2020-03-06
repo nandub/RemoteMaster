@@ -3758,7 +3758,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
     
     if ( ext.equals( ".psd" ) )
     {
-      if ( rfTools == null )
+      if ( rfTools == null || !rfTools.isValid() )
       {
         rfTools  = new RfTools( properties );
       }
@@ -5794,8 +5794,8 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
         }
         rfRemote.changed = true;
         RfTools rfTools = new RfTools( properties );
-        rfTools.setRfRemotesList();
         rfTools.updateRegistration( rfRemote );
+        rfTools.setRfRemotesList();
         message = 
               "RF Remote named " + rfRemote.name + " has been provisionally registered.\n\n"
             + "To complete the registration, load into RF Tools a .psd Packet Sniffer file\n"

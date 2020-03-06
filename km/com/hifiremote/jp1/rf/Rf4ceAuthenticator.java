@@ -66,6 +66,7 @@ public class Rf4ceAuthenticator
     }
     
     System.err.println( "Decrypting and authenticating the NSDU" );
+    nsPrim.rawNsdu = nsPrim.nsdu;  // save encrypted value for display
     Hex inData = nsPrim.nsdu;
     Hex inFtr = nsPrim.authData;
     Hex securityKey = rfRemote.pairings.get( pairNdx ).getSecurityKey();
@@ -235,6 +236,7 @@ public class Rf4ceAuthenticator
         {
           rfRemote = new RfRemote( extAddr );
         }
+        rfRemote.changed = false;
         
         int pos = 12;
         if ( rfRemote.extAddr == null )
@@ -266,7 +268,7 @@ public class Rf4ceAuthenticator
         pos += devTypeSize;
         profileSize = ( appCaps >> 4 ) & 7;
         rfRemote.profiles = nsPrim.nsdu.subHex( pos, profileSize );
-        return;
+        break;
       case DISCOVERY_RSP:
         nodeCaps = nsPrim.nsdu.getData()[ 2 ];
         if ( ( nodeCaps & 1 ) == 1 )
@@ -278,7 +280,7 @@ public class Rf4ceAuthenticator
           nsPrim.direction = NSDUDirection.OUT;
           System.err.println( "Discovery Response sent by remote, RMIR does not yet handle this correctly" );
         }
-        return;
+        break;
       case PAIR_REQ:
         // Here the remote has selected which respondent it wishes to pair with.  In the 
         // DISCOVERY_RSP the respondent has provided its extended (IEEE) address and its
@@ -307,7 +309,8 @@ public class Rf4ceAuthenticator
           pair = rfRemote.pairings.get( pairNdx );
         }
         pair.setPairRef( 0xFF );  // mark as unpaired, as the pairing may fail
-        pair = rfRemote.pairings.get( pairNdx );
+//        pair = rfRemote.pairings.get( pairNdx );
+        nwkAddrChanged = pair.getPanID() == null || !pair.getPanID().equals( addrData.destPAN );
         pair.setPanID( addrData.destPAN );
         pair.setPeerExtAddr( addrData.destAddr );
         appCaps = nsPrim.nsdu.getData()[ 13 ];
@@ -317,7 +320,7 @@ public class Rf4ceAuthenticator
         pos += ( appCaps >> 4 ) & 7;
         keyExCount = nsPrim.nsdu.getData()[ pos ];
         keySeeds = new Hex[ keyExCount + 1 ];
-        return;
+        break;
       case PAIR_RSP:
         // The target now issues the remote with a short (network) address and provides its
         // own network address.  It also provides its vendor id and vendor string and optionally
@@ -331,6 +334,11 @@ public class Rf4ceAuthenticator
         {
           nsPrim.direction = NSDUDirection.OUT;
           System.err.println( "Pair Response sent by remote, RMIR does not yet handle this correctly" );
+        }
+        if ( pair.getNwkAddr() == null 
+            || !pair.getNwkAddr().equals( nsPrim.nsdu.subHex( 2, 2 ) )  )
+        {
+          nwkAddrChanged = true;
         }
         pair.setNwkAddr( nsPrim.nsdu.subHex( 2, 2 ) );
         pair.setPeerNwkAddr( nsPrim.nsdu.subHex( 4, 2 ) );
@@ -353,7 +361,7 @@ public class Rf4ceAuthenticator
         pos += devTypeSize;
         profileSize = ( appCaps >> 4 ) & 7;
         pair.peerProfiles = nsPrim.nsdu.subHex( pos, profileSize );
-        return;
+        break;
       case KEYSEED:
       {
         if ( keySeeds == null )
@@ -367,7 +375,7 @@ public class Rf4ceAuthenticator
           if ( keySeeds[ i ] == null ) return;
         Hex key = keyGeneration( keySeeds );
         pair.setSecurityKey( key );
-        return;
+        break;
       }
       case PING_REQ:
       {
@@ -380,9 +388,10 @@ public class Rf4ceAuthenticator
         pingData = nsPrim.nsdu.subHex( 1 ); // include options byte
         if ( pingData.length() != 5 )
           pingData = null;
-        return;  
+        break;  
       }
       case PING_RSP:
+      {
         int pingOptions = nsPrim.nsdu.getData()[ 1 ];
         if ( pingOptions != 0 )
           return;
@@ -392,11 +401,17 @@ public class Rf4ceAuthenticator
         {
           // Pairing succeeded, so set pair reference
           pair.setPairRef( pairNdx );
+          rfRemote.changed = nwkAddrChanged;
         }
+        break;
+      }
     }
-    rfRemote.changed = true;
+    if ( pair != null && nsPrim.direction == NSDUDirection.IN && nsPrim.channelDesignator > 0 )
+    {
+      pair.setChannel( 10 + 5*nsPrim.channelDesignator );
+    }
   }
-  
+
   private Source getSource( RfRemote rfRem, Hex srcPAN, Hex srcAddr, Hex destPAN, Hex destAddr )
   {
     if ( srcAddr.length() == 8 && destAddr.equals( new Hex( "FF FF" ) ) && srcAddr.equals( rfRem.extAddr ) )
@@ -510,6 +525,7 @@ public class Rf4ceAuthenticator
   private int pairNdx = -1;  // Unset
   private int keyExCount = 0;
   private Hex[] keySeeds = null;
+  private boolean nwkAddrChanged = false;
   private Hex pingData = null;
   private List< RfRemote > rfRemotesList = null;
   private RfTools owner = null;

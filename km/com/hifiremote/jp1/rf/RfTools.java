@@ -26,20 +26,17 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
 
 import com.hifiremote.jp1.EndingFileFilter;
 import com.hifiremote.jp1.Hex;
 import com.hifiremote.jp1.JP1Frame;
-import com.hifiremote.jp1.JP1Table;
 import com.hifiremote.jp1.PropertyFile;
 import com.hifiremote.jp1.RMFileChooser;
-import com.hifiremote.jp1.RMProtocolBuilder;
 import com.hifiremote.jp1.RemoteMaster;
-import com.hifiremote.jp1.RMProtocolBuilder.PBAction;
 import com.hifiremote.jp1.rf.Mpdu.MSPrimitive;
 import com.hifiremote.jp1.rf.Npdu.NSPrimitive;
+import com.hifiremote.jp1.rf.Rf4ceAuthenticator.Source;
 import com.hifiremote.jp1.rf.RfRemote.Pairing;
 
 public class RfTools extends JP1Frame implements ActionListener
@@ -128,12 +125,12 @@ public class RfTools extends JP1Frame implements ActionListener
     add( toolBar, BorderLayout.PAGE_START );
     createMenus();
     createToolbar();
-    NSPrimitiveTableModel nsTableModel = new NSPrimitiveTableModel();
-    nsTableModel.setData( data );
-    nsTable = new JP1Table( nsTableModel );
-    nsTable.initColumns();
-    JScrollPane scrollPane = new JScrollPane( nsTable );
-    add( scrollPane, BorderLayout.CENTER );
+    setRfRemotesList();
+    RfEditorPanel editorPanel = new RfEditorPanel( this );
+    capturePanel = editorPanel.getCapturePanel();
+    remotePanel = editorPanel.getRemotePanel();
+    add( editorPanel, BorderLayout.CENTER );
+    
     pack();
     Rectangle bounds = preferences.getRFBounds();
     if ( bounds != null )
@@ -143,7 +140,12 @@ public class RfTools extends JP1Frame implements ActionListener
     setVisible( true );
   }
   
-  public void setRfRemotesList()
+  public List< RfRemote > getRfRemotesList()
+  {
+    return rfRemotesList;
+  }
+
+  public List< RfRemote > setRfRemotesList()
   {
     rfRemotesList = new ArrayList< RfRemote >();
     String temp = null;
@@ -159,27 +161,23 @@ public class RfTools extends JP1Frame implements ActionListener
       temp = properties.getProperty( "RfRemote." + ndx + ".data" );
       if ( temp != null )
       {
-        rfRemote.importRfData( new Hex( temp ) );
+        rfRemote.importRfData( new Hex( temp ), Source.CONTROLLER, 0 );
       }
       int n = 0;
-      while ( ( temp = properties.getProperty( "RfRemote." + ndx + ".pair." + n++ ) ) != null )
+      while ( ( temp = properties.getProperty( "RfRemote." + ndx + ".pair." + n ) ) != null )
       {
         rfRemote.pairings.add( new Pairing( new Hex( temp ) ) );
+        String extra = properties.getProperty( "RfRemote." + ndx + ".extra." + n );
+        if ( extra != null )
+        {
+          rfRemote.importRfData( new Hex( extra ), Source.TARGET, n );
+        }
+        n++;
       }
       rfRemotesList.add( rfRemote );
       ndx++;
     }
-  }
-  
-  public List< NSPrimitive > getData()
-  {
-    return data;
-  }
-  
-  public void update()
-  {
-    NSPrimitiveTableModel model = ( NSPrimitiveTableModel )nsTable.getModel();
-    model.fireTableDataChanged();
+    return rfRemotesList;
   }
   
   private void createMenus()
@@ -237,7 +235,7 @@ public class RfTools extends JP1Frame implements ActionListener
       {
         String title = "Delete registration";
         String message = "Please select an RF Remote to delete";
-        setRfRemotesList();
+//        setRfRemotesList();
         RfRemote rfRemote = ( RfRemote ) JOptionPane.showInputDialog( this, message, title, JOptionPane.QUESTION_MESSAGE, null, 
             rfRemotesList.toArray( new RfRemote[ 0 ] ), rfRemotesList.get( 0 ) );
         if ( rfRemote == null )
@@ -250,8 +248,12 @@ public class RfTools extends JP1Frame implements ActionListener
         properties.remove( "RfRemote." + index + ".data" );
         properties.remove( "RfRemote." + index + ".name" );
         int n = 0;
-        while ( properties.remove( "RfRemote." + index + ".pair." + n++ ) != null ){};
+        while ( properties.remove( "RfRemote." + index + ".pair." + n ) != null )
+        {
+          properties.remove( "RfRemote." + index + ".extra." + n++ );
+        };
         setRfRemotesList();
+        remotePanel.update( false );
         message = "RF Remote " + rfRemote.name + " has been deleted.";
         JOptionPane.showMessageDialog( this, message, title, JOptionPane.INFORMATION_MESSAGE );
       }
@@ -259,7 +261,6 @@ public class RfTools extends JP1Frame implements ActionListener
       {
         String title = "Rename RF Remote";
         String message = "Please select an RF Remote to rename";
-        setRfRemotesList();
         RfRemote rfRemote = ( RfRemote ) JOptionPane.showInputDialog( this, message, title, JOptionPane.QUESTION_MESSAGE, null, 
             rfRemotesList.toArray( new RfRemote[ 0 ] ), rfRemotesList.get( 0 ) );
         if ( rfRemote == null )
@@ -274,7 +275,7 @@ public class RfTools extends JP1Frame implements ActionListener
           return;
         }
         properties.put( "RfRemote." + index + ".name", name );
-        setRfRemotesList();
+        rfRemote.name = name;
       }
     }
     catch ( Exception ex )
@@ -285,12 +286,15 @@ public class RfTools extends JP1Frame implements ActionListener
   
   public void openPSDfile( File file )
   {
+    if ( file == null )
+    {
+      return;
+    }
     System.err.println( "Reading PSD file");
     int len = ( int )file.length();
     System.err.println( "File size: " + len );
     byte[] psdPacket = new byte[ PSDENTRYSIZE ];
     int packetCount = len / PSDENTRYSIZE;
-    setRfRemotesList();
     LinkedHashMap< String, NSPrimitive > map = new LinkedHashMap< String, NSPrimitive >();    
     Rf4ceAuthenticator authenticator = new Rf4ceAuthenticator( rfRemotesList, this );
     try 
@@ -344,35 +348,35 @@ public class RfTools extends JP1Frame implements ActionListener
           map.put( frameCtr, nsPrim );
           nsPrim.addrData = msPrim.addrData;
           nsPrim.process( authenticator );
-          getData().add( nsPrim );
-        }  
-        
-        update();
-        RfRemote rfRemote = authenticator.getRfRemote();
-        if ( rfRemote.changed )
-        {
-          // When updating a provisional registration from a DISCOVERY_REQ, no pairing
-          // is involved and so the authenticator pairNdx is -1.
-          if ( authenticator.getPairNdx() < 0 
-              || rfRemote.pairings.get( authenticator.getPairNdx() ).getPairRef()
-                == authenticator.getPairNdx() )
+          capturePanel.getData().add( nsPrim );
+          RfRemote rfRemote = authenticator.getRfRemote();
+          if ( rfRemote.changed )
           {
-            updateRegistration( rfRemote );
+            // When updating a provisional registration from a DISCOVERY_REQ, no pairing
+            // is involved and so the authenticator pairNdx is -1.
+            if ( authenticator.getPairNdx() < 0 
+                || rfRemote.pairings.get( authenticator.getPairNdx() ).getPairRef()
+                  == authenticator.getPairNdx() )
+            {
+              updateRegistration( rfRemote );
+            }
+            else
+            {
+              String title = "RF Remote registration error";
+              String addrStr = RfTools.getAddrString( rfRemote.extAddr );
+              String msg = rfRemote.name == null ? 
+                  "Registration of RF Remote with IEEE address " + addrStr + " failed." :
+                  "Change of registration for RF Remote named\n  " + rfRemote.name
+                  + "\nfailed.  The registration is retained unchanged.";
+              JOptionPane.showMessageDialog( this, msg, title, JOptionPane.ERROR_MESSAGE );
+              System.err.println( "Pairing change failed" );
+              return;
+            }
+//            System.err.println( "Remote data: " + rfRemote.getRfData( Source.CONTROLLER, 0) );
           }
-          else
-          {
-            String title = "RF Remote registration error";
-            String addrStr = RfRemote.getAddrString( rfRemote.extAddr );
-            String msg = rfRemote.name == null ? 
-                "Registration of RF Remote with IEEE address " + addrStr + " failed." :
-                "Change of registration for RF Remote named\n  " + rfRemote.name
-                + "\nfailed.  The registration is retained unchanged.";
-            JOptionPane.showMessageDialog( this, msg, title, JOptionPane.ERROR_MESSAGE );
-            System.err.println( "Pairing change failed" );
-            return;
-          }
-          System.err.println( "Remote data: " + rfRemote.getRfData() );
-        }
+        }          
+        capturePanel.update();
+        remotePanel.update( false );
       }
       finally 
       {
@@ -398,7 +402,7 @@ public class RfTools extends JP1Frame implements ActionListener
     }
 
     rfRemote.changed = false;
-    String addrStr = rfRemote.extAddr != null ? RfRemote.getAddrString( rfRemote.extAddr ) : null;
+    String addrStr = rfRemote.extAddr != null ? RfTools.getAddrString( rfRemote.extAddr ) : null;
     int ndx = 0;
     LinkedHashMap< String, Integer > indexMap = getIndexMap();
     String name = rfRemote.name;
@@ -459,14 +463,20 @@ public class RfTools extends JP1Frame implements ActionListener
     {
       properties.put( "RfRemote." + ndx + ".extAddr", rfRemote.extAddr.toString() );
     }
-    properties.put( "RfRemote." + ndx + ".data", rfRemote.getRfData().toString() );
+    properties.put( "RfRemote." + ndx + ".data", rfRemote.getRfData( Source.CONTROLLER, 0 ).toString() );
     for ( int i = 0; i < rfRemote.pairings.size(); i++ )
     {
       properties.put( "RfRemote." + ndx + ".pair." + i, rfRemote.pairings.get( i ).getTable().toString() );
+      Hex extra = rfRemote.getRfData( Source.TARGET, i );
+      if ( extra != null )
+      {
+        properties.put( "RfRemote." + ndx + ".extra." + i, rfRemote.getRfData( Source.TARGET, i ).toString() );
+      }
     }
     System.err.println( "Pairing change succeeded" );
-    System.err.println( "Remote data: " + rfRemote.getRfData() );
-    update();
+    System.err.println( "Remote data: " + rfRemote.getRfData( Source.CONTROLLER, 0 ) );
+    capturePanel.update();
+    remotePanel.update( false );
   }
 
   public static LinkedHashMap< String, Integer > getIndexMap()
@@ -491,9 +501,18 @@ public class RfTools extends JP1Frame implements ActionListener
     }
     return map;
   }
+  
+  public static String getASCIIString( Hex hex )
+  {
+    return new String( hex.toByteArray() );
+  }
 
   public static String getAddrString( Hex addr )
   {
+    if ( addr == null )
+    {
+      return null;
+    }
     StringBuilder sb = new StringBuilder();
     int len = addr.length();
     for ( int i = 0; i < len; i++ )
@@ -558,13 +577,13 @@ public class RfTools extends JP1Frame implements ActionListener
 
   private final static int PSDENTRYSIZE = 151; // from packet sniffer documentation
 
-  private List< NSPrimitive > data = new ArrayList< NSPrimitive >();
   private List< RfRemote > rfRemotesList = null;
-  private JP1Table nsTable = null;
   private JToolBar toolBar = null;
   private RFAction openAction= null;
   private JMenuItem exitItem = null;
   private JMenuItem deleteRegItem = null;
   private JMenuItem renameRegItem = null;
+  private RfCapturePanel capturePanel = null;
+  private RfRemotePanel remotePanel = null;
   
 }

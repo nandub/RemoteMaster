@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.hifiremote.jp1.Hex;
+import com.hifiremote.jp1.rf.Rf4ceAuthenticator.Source;
 
 public class RfRemote
 {
@@ -63,9 +64,19 @@ public class RfRemote
       return table.subHex( 1, 2 );
     }
     
-    public void setNwkAddr( Hex nwkAddr)
+    public void setNwkAddr( Hex nwkAddr )
     {
       table.put( nwkAddr, 1 );
+    }
+    
+    public int getChannel()
+    {
+      return table.getData()[ 3 ];
+    }
+    
+    public void setChannel( int channel )
+    {
+      table.getData()[ 3 ] = ( short )channel;
     }
     
     public Hex getPeerExtAddr()
@@ -162,79 +173,118 @@ public class RfRemote
     pairings = new ArrayList< Pairing >();
   }
 
-  public Hex getRfData()
+  public Hex getRfData( Source source, int pairIndex )
   {
     int appCaps = 0;
     int rfDataSize = 11;
     int len = 0;
-    if ( userString != null )
+    Hex[] data = null;
+    Hex nodeHex = null;
+    if ( source == Source.CONTROLLER )
+    {
+      nodeHex = new Hex( new short[]{ ( short )nodeCaps } );
+      data = new Hex[]{ nodeHex, vendorID, vendorString, userString, devTypes, profiles };
+    }
+    else if ( source == Source.TARGET )
+    {
+      Pairing pair = pairings.get( pairIndex );
+      nodeHex = new Hex( new short[]{ ( short )pair.getPeerNodeCaps() } );
+      data = new Hex[]{ nodeHex, pair.getPeerVendorID(), pair.peerVendorString, pair.peerUserString,
+          pair.getPeerDevTypes(), pair.peerProfiles };
+    }
+    if ( data[ 3 ] != null )
     {
       appCaps = 1;
       rfDataSize += 15;
     }
-    if ( devTypes != null )
+    if ( data[ 4 ] != null )
     {
-      len = devTypes.length();
+      len = data[ 4 ].length();
       if ( len > 3 ) return null;  // illegal size
       appCaps |= len << 1;
       rfDataSize += len;
     }
-    if ( profiles != null )
+    if ( data[ 5 ] != null )
     {
-      len = profiles.length();
+      len = data[ 5 ].length();
       if ( len > 7 ) return null;  // illegal size
       appCaps |= len << 4;
       rfDataSize += len;
     }
     Hex rfData = new Hex( rfDataSize );
-    rfData.getData()[ 0 ] = ( short )nodeCaps;
-    if ( vendorID != null ) rfData.put( vendorID, 1 );
-    if ( vendorString != null ) rfData.put( vendorString, 3 );
+    if ( data[ 0 ] != null ) rfData.put( data[ 0 ], 0 );
+    if ( data[ 1 ] != null ) rfData.put( data[ 1 ], 1 );
+    if ( data[ 2 ] != null ) rfData.put( data[ 2 ], 3 );
     rfData.getData()[ 10 ] = ( short )appCaps;
     int pos = 11;
-    if ( userString != null )
+    if ( data[ 3 ] != null )
     {
-      rfData.put( userString, pos );
+      rfData.put( data[ 3 ], pos );
       pos += 15;
     }
-    if ( devTypes != null )
+    if ( data[ 4 ] != null )
     {
-      rfData.put( devTypes, pos );
-      pos += devTypes.length();
+      rfData.put( data[ 4 ], pos );
+      pos += data[ 4 ].length();
     }
-    if ( profiles != null )
+    if ( data[ 5 ] != null )
     {
-      rfData.put( profiles, pos );
-      pos += profiles.length();
+      rfData.put( data[ 5 ], pos );
+      pos += data[ 5 ].length();
+    }
+    if ( data[ 0 ] == null && data[ 1 ] == null && data[ 2 ] == null && 
+        data[ 3 ] == null && data[ 4 ] == null && data[ 5 ] == null )
+    {
+      return null;
     }
     return rfData;
   }
 
-  public void importRfData( Hex rfData )
+  public void importRfData( Hex rfData, Source source, int pairIndex )
   {
     if ( rfData == null )
-      return;      
-    nodeCaps = rfData.getData()[ 0 ];
-    vendorID = rfData.subHex( 1, 2 );
-    vendorString = rfData.subHex( 3, 7 );
+      return;
+    Hex[] data = new Hex[ 6 ];
+    data[ 0 ] = rfData.subHex( 0, 1 );
+    data[ 1 ] = rfData.subHex( 1, 2 );
+    data[ 2 ] = rfData.subHex( 3, 7 );
     int appCaps = rfData.getData()[ 10 ];
     int pos = 11;
     if ( ( appCaps & 1 ) == 1 )
     {
-      userString = rfData.subHex( pos, 15 );
+      data[ 3 ] = rfData.subHex( pos, 15 );
       pos += 15;
     }
     int len = ( appCaps >> 1 ) & 3;
     if ( len > 0 )
     {
-      devTypes = rfData.subHex( pos, len );
+      data[ 4 ] = rfData.subHex( pos, len );
       pos += len;
     }
     len = ( appCaps >> 4 ) & 7;
     if ( len > 0 )
     {
-      profiles = rfData.subHex( pos, len );
+      data[ 5 ] = rfData.subHex( pos, len );
       pos += len;
+    }
+    if ( source == Source.CONTROLLER )
+    {
+      nodeCaps = data[ 0 ].getData()[ 0 ];
+      vendorID = data[ 1 ];
+      vendorString = data[ 2 ];
+      userString = data[ 3 ];
+      devTypes = data[ 4 ];
+      profiles = data[ 5 ];
+    }
+    else if ( source == Source.TARGET )
+    {
+      Pairing pair = pairings.get( pairIndex );
+      pair.setPeerNodeCaps( data[ 0 ].getData()[ 0 ] );
+      pair.setPeerVendorID( data[ 1 ] );
+      pair.peerVendorString = data[ 2 ];
+      pair.peerUserString = data[ 3 ];
+      pair.setPeerDevTypes( data[ 4 ] );
+      pair.peerProfiles = data[ 5 ];
     }
   }
   
@@ -244,12 +294,12 @@ public class RfRemote
     return name;
   }
 
-  public static String getAddrString( Hex extAddr )
-  {
-    short[] a = extAddr.getData();
-    return String.format( "%02X%02X%02X%02X%02X%02X%02X%02X", 
-        a[7], a[6], a[5], a[4], a[3], a[2], a[1], a[0]);
-  }
+//  public static String getAddrString( Hex extAddr )
+//  {
+//    short[] a = extAddr.getData();
+//    return String.format( "%02X%02X%02X%02X%02X%02X%02X%02X", 
+//        a[7], a[6], a[5], a[4], a[3], a[2], a[1], a[0]);
+//  }
 }
 
 
