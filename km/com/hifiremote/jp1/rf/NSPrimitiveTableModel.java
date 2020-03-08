@@ -79,7 +79,7 @@ public class NSPrimitiveTableModel extends JP1TableModel< NSPrimitive >
       case 3:
         return prim.rptCount > 0 ? prim.rptCount : null ;
       case 4:
-        return Integer.parseInt( RfTools.getAddrString( prim.frameCtrHex ), 16 );
+        return Long.parseLong( RfTools.getAddrString( prim.frameCtrHex ), 16 );
       case 5:
         return prim.secured;
       case 6:

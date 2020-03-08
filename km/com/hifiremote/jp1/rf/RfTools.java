@@ -31,7 +31,6 @@ import javax.swing.JToolBar;
 import com.hifiremote.jp1.EndingFileFilter;
 import com.hifiremote.jp1.Hex;
 import com.hifiremote.jp1.JP1Frame;
-import com.hifiremote.jp1.PropertyFile;
 import com.hifiremote.jp1.RMFileChooser;
 import com.hifiremote.jp1.RemoteMaster;
 import com.hifiremote.jp1.rf.Mpdu.MSPrimitive;
@@ -88,9 +87,10 @@ public class RfTools extends JP1Frame implements ActionListener
 
   }
   
-  public RfTools( PropertyFile properties )
+  public RfTools( RemoteMaster owner )
   {
     super( "RF Tools", properties );
+    this.owner = owner;
     System.err.println( "RfTools opening" );
     setDefaultCloseOperation( JFrame.DO_NOTHING_ON_CLOSE );
     
@@ -114,6 +114,7 @@ public class RfTools extends JP1Frame implements ActionListener
         {
           if ( doDispose )
           {
+            nullify();
             dispose();
           }
         }
@@ -235,7 +236,6 @@ public class RfTools extends JP1Frame implements ActionListener
       {
         String title = "Delete registration";
         String message = "Please select an RF Remote to delete";
-//        setRfRemotesList();
         RfRemote rfRemote = ( RfRemote ) JOptionPane.showInputDialog( this, message, title, JOptionPane.QUESTION_MESSAGE, null, 
             rfRemotesList.toArray( new RfRemote[ 0 ] ), rfRemotesList.get( 0 ) );
         if ( rfRemote == null )
@@ -246,14 +246,27 @@ public class RfTools extends JP1Frame implements ActionListener
         properties.remove( "RfRemote." + index + ".name" );
         properties.remove( "RfRemote." + index + ".extAddr" );
         properties.remove( "RfRemote." + index + ".data" );
-        properties.remove( "RfRemote." + index + ".name" );
         int n = 0;
         while ( properties.remove( "RfRemote." + index + ".pair." + n ) != null )
         {
           properties.remove( "RfRemote." + index + ".extra." + n++ );
         };
-        setRfRemotesList();
+        List< RfRemote > list = getRfRemotesList();
+        list.remove( rfRemote );
+        for ( NSPrimitive prim : capturePanel.getData() )
+        {
+          if ( prim.rfRemote.name.equals( rfRemote.name ) )
+          {
+            prim.rfRemote = null;
+          }
+        }
+        Rf4ceAuthenticator authenticator = new Rf4ceAuthenticator( list, this );
+        for ( NSPrimitive prim : capturePanel.getData() )
+        {
+          prim.process( authenticator );
+        }
         remotePanel.update( false );
+        capturePanel.update();
         message = "RF Remote " + rfRemote.name + " has been deleted.";
         JOptionPane.showMessageDialog( this, message, title, JOptionPane.INFORMATION_MESSAGE );
       }
@@ -345,12 +358,17 @@ public class RfTools extends JP1Frame implements ActionListener
             continue;
           }
           NSPrimitive nsPrim = npdu.parse();
+          if ( !nsPrim.valid )
+          {
+            System.err.println( "Skipping malformed NPDU: " + ( ( Hex )npdu ) );
+            continue;
+          }
           map.put( frameCtr, nsPrim );
           nsPrim.addrData = msPrim.addrData;
           nsPrim.process( authenticator );
           capturePanel.getData().add( nsPrim );
           RfRemote rfRemote = authenticator.getRfRemote();
-          if ( rfRemote.changed )
+          if ( rfRemote != null && rfRemote.changed )
           {
             // When updating a provisional registration from a DISCOVERY_REQ, no pairing
             // is involved and so the authenticator pairNdx is -1.
@@ -574,9 +592,15 @@ public class RfTools extends JP1Frame implements ActionListener
     }
     return file;
   }
+  
+  private void nullify()
+  {
+    owner.setRfTools( null );
+  }
 
   private final static int PSDENTRYSIZE = 151; // from packet sniffer documentation
 
+  private RemoteMaster owner;
   private List< RfRemote > rfRemotesList = null;
   private JToolBar toolBar = null;
   private RFAction openAction= null;

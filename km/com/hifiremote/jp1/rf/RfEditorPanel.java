@@ -1,15 +1,13 @@
 package com.hifiremote.jp1.rf;
 
 import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-public class RfEditorPanel extends JPanel implements ActionListener, ChangeListener
+public class RfEditorPanel extends JPanel implements ChangeListener
 {
   public RfEditorPanel( RfTools owner )
   {
@@ -21,7 +19,7 @@ public class RfEditorPanel extends JPanel implements ActionListener, ChangeListe
     tabbedPane = new JTabbedPane();
     add( tabbedPane, BorderLayout.CENTER );
     tabbedPane.addTab( "Pairings", remotePanel );
-    tabbedPane.addTab( "Capture", capturePanel );
+    tabbedPane.addTab( "Packets", capturePanel );
     tabbedPane.addTab( "NSDU Details", detailsPanel );
     tabbedPane.addTab( "NSDU Addressing", addressPanel );
     tabbedPane.addChangeListener( this );
@@ -47,13 +45,6 @@ public class RfEditorPanel extends JPanel implements ActionListener, ChangeListe
     return addressPanel;
   }
 
-  @Override
-  public void actionPerformed( ActionEvent arg0 )
-  {
-    // TODO Auto-generated method stub
-
-  }
-  
   @Override
   public void stateChanged( ChangeEvent arg0 )
   {

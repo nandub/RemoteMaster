@@ -7,7 +7,6 @@ import javax.swing.JOptionPane;
 
 import com.hifiremote.jp1.Hex;
 import com.hifiremote.jp1.rf.Mpdu.MACAddrData;
-import com.hifiremote.jp1.rf.Mpdu.MSPrimitive;
 import com.hifiremote.jp1.rf.Npdu.NSDUDirection;
 import com.hifiremote.jp1.rf.Npdu.NSDUType;
 import com.hifiremote.jp1.rf.Npdu.NSPrimitive;
@@ -16,7 +15,6 @@ import com.hifiremote.jp1.rf.RfRemote.Pairing;
 import com.hifiremote.jp1.rf.RfTools;
 
 import java.util.Arrays;
-import java.util.LinkedHashMap;
 import java.util.List;
 
 public class Rf4ceAuthenticator
@@ -34,19 +32,16 @@ public class Rf4ceAuthenticator
   {     
     Source source = Source.NONE;
     MACAddrData addrData = nsPrim.addrData;
-    if ( rfRemote == null )
+    for ( RfRemote rfr : rfRemotesList )
     {
-      for ( RfRemote rfr : rfRemotesList )
+      source = getSource( rfr, addrData.srcPAN, addrData.srcAddr, addrData.destPAN, addrData.destAddr );
+      if ( source != Source.NONE )
       {
-        source = getSource( rfr, addrData.srcPAN, addrData.srcAddr, addrData.destPAN, addrData.destAddr );
-        if ( source != Source.NONE )
-        {
-          rfRemote = rfr;
-          break;
-        }
+        rfRemote = rfr;
+        break;
       }
     }
-    else
+    if ( source == Source.NONE && rfRemote != null )
     {
       source = getSource( rfRemote, addrData.srcPAN, addrData.srcAddr, addrData.destPAN, addrData.destAddr );
     } 
@@ -65,9 +60,11 @@ public class Rf4ceAuthenticator
       return;
     }
     
-    System.err.println( "Decrypting and authenticating the NSDU" );
-    nsPrim.rawNsdu = nsPrim.nsdu;  // save encrypted value for display
-    Hex inData = nsPrim.nsdu;
+//    System.err.println( "Decrypting and authenticating the NSDU" );
+//    System.err.println( "RfRemote is " + rfRemote.name );
+//    System.err.print( "NS Primitive is " + nsPrim.type );
+//    System.err.println( nsPrim.type == NSDUType.COMMAND ? " " + nsPrim.cmd : "" );
+    Hex inData = nsPrim.rawNsdu;
     Hex inFtr = nsPrim.authData;
     Hex securityKey = rfRemote.pairings.get( pairNdx ).getSecurityKey();
     Hex remoteIEEEaddr = rfRemote.extAddr;
@@ -101,21 +98,19 @@ public class Rf4ceAuthenticator
       Cipher cipher = Cipher.getInstance("AES/OFB/NoPadding");
       cipher.init(Cipher.DECRYPT_MODE, skeySpec, iv);
 
-      System.err.println( "Footer in : " + inFtr );
+//      System.err.println( "Footer in : " + inFtr );
       Hex outFtr = new Hex( cipher.doFinal( inFtr.toByteArray() ) );
-      System.err.println( "Footer out : " + outFtr );
+//      System.err.println( "Footer out : " + outFtr );
 
       initBytes[ 15 ] = 1;
       iv = new IvParameterSpec( initBytes );
-      //ivHex = new Hex( iv.getIV() );
-      //      System.err.println( "IV: " + ivHex );
       skeySpec = new SecretKeySpec( securityKey.toByteArray(), "AES");
 
       cipher = Cipher.getInstance("AES/OFB/NoPadding");
       cipher.init(Cipher.DECRYPT_MODE, skeySpec, iv);
-      System.err.println( "Data in: " + inData );
+//      System.err.println( "Data in: " + inData );
       Hex outData = new Hex( cipher.doFinal( inData.toByteArray() ) );
-      System.err.println( "Data out: " + outData );
+//      System.err.println( "Data out: " + outData );
 
       // Recalculate authentication field
       byte[] blockB0 = new byte[ 16 ];
@@ -131,9 +126,9 @@ public class Rf4ceAuthenticator
       byte[] blockB2 = new byte[ 16 ];
       Arrays.fill( blockB2, ( byte )0 );       
       System.arraycopy( outData.toByteArray(), 0, blockB2, 0, inData.length() );      
-      //      System.err.println( "BlockB0: " + ( new Hex( blockB0 ) ) );
-      //      System.err.println( "BlockB1: " + ( new Hex( blockB1 ) ) );
-      //      System.err.println( "BlockB2: " + ( new Hex( blockB2 ) ) );
+//      System.err.println( "BlockB0: " + ( new Hex( blockB0 ) ) );
+//      System.err.println( "BlockB1: " + ( new Hex( blockB1 ) ) );
+//      System.err.println( "BlockB2: " + ( new Hex( blockB2 ) ) );
 
       Arrays.fill( initBytes, ( byte )0 );
       iv = new IvParameterSpec( initBytes );
@@ -142,9 +137,9 @@ public class Rf4ceAuthenticator
       cipher.update( blockB0 );
       cipher.update( blockB1 );
       Hex authCode = ( new Hex( cipher.doFinal( blockB2 ) ) ).subHex( 0, 4 );
-      //      System.err.println( "Auth code: " + authCode );
+//      System.err.println( "Auth code: " + authCode );
       boolean valid = outFtr.equals( authCode );
-      //      System.err.println( "Authentication status: " + valid );
+//      System.err.println( "Authentication status: " + valid );
       if ( valid )
       {
         nsPrim.nsdu = outData;
@@ -309,7 +304,6 @@ public class Rf4ceAuthenticator
           pair = rfRemote.pairings.get( pairNdx );
         }
         pair.setPairRef( 0xFF );  // mark as unpaired, as the pairing may fail
-//        pair = rfRemote.pairings.get( pairNdx );
         nwkAddrChanged = pair.getPanID() == null || !pair.getPanID().equals( addrData.destPAN );
         pair.setPanID( addrData.destPAN );
         pair.setPeerExtAddr( addrData.destAddr );
@@ -509,11 +503,6 @@ public class Rf4ceAuthenticator
   {
     return rfRemote;
   }
-
-//  public void setRfRemote( RfRemote rfRemote )
-//  {
-//    this.rfRemote = rfRemote;
-//  }
 
   public int getPairNdx()
   {

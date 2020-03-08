@@ -65,10 +65,8 @@ import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JColorChooser;
 import javax.swing.JDialog;
 import javax.swing.JEditorPane;
-import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -81,10 +79,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
-import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
-import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
@@ -105,9 +101,7 @@ import com.hifiremote.jp1.JP2Analyzer;
 import com.hifiremote.jp1.extinstall.BTExtInstall;
 import com.hifiremote.jp1.extinstall.ExtInstall;
 import com.hifiremote.jp1.extinstall.RMWavConverter;
-import com.hifiremote.jp1.extinstall.IrHex;
 import com.hifiremote.jp1.extinstall.RMExtInstall;
-import com.hifiremote.jp1.extinstall.IrHexArray;
 import com.hifiremote.jp1.extinstall.RMWavPlayer;
 import com.hifiremote.jp1.io.BLERemote;
 import com.hifiremote.jp1.io.CommHID;
@@ -1764,8 +1758,10 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
         }
         else if ( command == "RFTOOLS" )
         {
-          if ( rfTools == null || !rfTools.isValid() )
-            rfTools  = new RfTools( properties );
+          if ( rfTools == null )
+          {
+            rfTools  = new RfTools( RemoteMaster.this );
+          }
         }
       }
       catch ( Exception ex )
@@ -2812,7 +2808,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
     finderButton.setHideActionText( true );
     finderButton.setBorder( BorderFactory.createRaisedBevelBorder() );
     
-    rfAction = new RMAction( "Open RF Tools", "RFTOOLS", createIcon( "RMRF4" ),
+    rfAction = new RMAction( "Open RF Tools", "RFTOOLS", createIcon( "RMRF24" ),
         "Open RF Display", KeyEvent.VK_R );
     rfAction.putValue( Action.SELECTED_KEY, true );
 
@@ -3758,9 +3754,9 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
     
     if ( ext.equals( ".psd" ) )
     {
-      if ( rfTools == null || !rfTools.isValid() )
+      if ( rfTools == null )
       {
-        rfTools  = new RfTools( properties );
+        rfTools  = new RfTools( this );
       }
       rfTools.openPSDfile( file );
       return;
@@ -5793,9 +5789,11 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
           rfRemote.userString = segData.subHex( 11, 15 );
         }
         rfRemote.changed = true;
-        RfTools rfTools = new RfTools( properties );
+        if ( rfTools == null )
+        {
+          rfTools = new RfTools( this );
+        }
         rfTools.updateRegistration( rfRemote );
-        rfTools.setRfRemotesList();
         message = 
               "RF Remote named " + rfRemote.name + " has been provisionally registered.\n\n"
             + "To complete the registration, load into RF Tools a .psd Packet Sniffer file\n"
@@ -7372,6 +7370,11 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
     }
   }
   
+  public void setRfTools( RfTools rfTools )
+  {
+    this.rfTools = rfTools;
+  }
+
   public void setRfRegistrationEnabled( boolean enable )
   {
     registerRfRemoteItem.setEnabled( enable );

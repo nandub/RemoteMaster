@@ -1,11 +1,13 @@
 package com.hifiremote.jp1.rf;
 
 import java.awt.BorderLayout;
+import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
@@ -24,6 +26,12 @@ public class RfCapturePanel extends JPanel implements ActionListener
     nsTable.initColumns();
     JScrollPane scrollPane = new JScrollPane( nsTable );
     add( scrollPane, BorderLayout.CENTER );
+    JPanel panel = new JPanel( new FlowLayout( FlowLayout.CENTER ) );
+    clearBtn = new JButton( "Clear Display" );
+    clearBtn.addActionListener( this );
+    clearBtn.setToolTipText( "Clear the display" );
+    panel.add( clearBtn );
+    add( panel, BorderLayout.PAGE_END );
   }
 
   public List< NSPrimitive > getData()
@@ -38,10 +46,15 @@ public class RfCapturePanel extends JPanel implements ActionListener
   }
   
   @Override
-  public void actionPerformed( ActionEvent arg0 )
+  public void actionPerformed( ActionEvent e )
   {
-    // TODO Auto-generated method stub
-
+    Object source = e.getSource();
+    if ( source == clearBtn )
+    {
+      NSPrimitiveTableModel model = ( NSPrimitiveTableModel )nsTable.getModel();
+      model.getData().clear();
+      model.fireTableDataChanged();
+    }
   }
   
   public NSPrimitive getSelectedRow()
@@ -54,5 +67,6 @@ public class RfCapturePanel extends JPanel implements ActionListener
   
   private JP1Table nsTable = null;
   private List< NSPrimitive > data = null;
+  private JButton clearBtn = null;
 
 }

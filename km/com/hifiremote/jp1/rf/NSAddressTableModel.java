@@ -3,10 +3,6 @@ package com.hifiremote.jp1.rf;
 import com.hifiremote.jp1.Hex;
 import com.hifiremote.jp1.JP1TableModel;
 import com.hifiremote.jp1.rf.Mpdu.MACAddrData;
-import com.hifiremote.jp1.rf.Mpdu.MSPrimitive;
-import com.hifiremote.jp1.rf.Npdu.NSDUCommand;
-import com.hifiremote.jp1.rf.Npdu.NSDUDirection;
-import com.hifiremote.jp1.rf.Npdu.NSDUType;
 import com.hifiremote.jp1.rf.Npdu.NSPrimitive;
 
 public class NSAddressTableModel extends JP1TableModel< NSPrimitive >
@@ -108,6 +104,10 @@ public class NSAddressTableModel extends JP1TableModel< NSPrimitive >
       case 1:
         return getRowName( row );
       case 2:
+        if ( prim == null )
+        {
+          return null;
+        }
         if ( row == 0 )
         {
           int channelDesignator = prim.channelDesignator;
@@ -116,7 +116,6 @@ public class NSAddressTableModel extends JP1TableModel< NSPrimitive >
           else
             return "" + ( 10 + 5*channelDesignator );
         }
-        
         Hex hex = getRowHex( row );
         return hex == null ? null : RfTools.getAddrString( hex );
     }

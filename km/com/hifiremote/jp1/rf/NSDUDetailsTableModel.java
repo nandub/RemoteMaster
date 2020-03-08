@@ -1,5 +1,8 @@
 package com.hifiremote.jp1.rf;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 import com.hifiremote.jp1.Hex;
 import com.hifiremote.jp1.JP1TableModel;
 import com.hifiremote.jp1.rf.Npdu.NSDUCommand;
@@ -102,7 +105,7 @@ public class NSDUDetailsTableModel extends JP1TableModel< NSPrimitive >
   {
     String descr = null;
     Hex hex = getRowHex( row );
-    if ( hex == null )
+    if ( hex == null || !prim.valid )
     {
       return null;
     }
@@ -181,7 +184,7 @@ public class NSDUDetailsTableModel extends JP1TableModel< NSPrimitive >
     }
     else
     {
-      return row < 6 ? row + 18 : 17; 
+      return row < 6 && prim.secured ? row + 18 : 17; 
     }
   }
   
@@ -212,6 +215,10 @@ public class NSDUDetailsTableModel extends JP1TableModel< NSPrimitive >
     NSDUCommand cmd = prim.cmd;
     if ( type == NSDUType.COMMAND )
     {
+      if ( !prim.valid )
+      {
+        return 1;
+      }
       switch ( cmd )
       {
         case DISCOVERY_REQ:
@@ -221,6 +228,8 @@ public class NSDUDetailsTableModel extends JP1TableModel< NSPrimitive >
           return 9;
         case PAIR_RSP:
           return 10;
+        case UNPAIR_REQ:
+          return 0;
         case KEYSEED:
           return 3;
         case PING_REQ:
@@ -232,7 +241,7 @@ public class NSDUDetailsTableModel extends JP1TableModel< NSPrimitive >
     }
     else
     {
-      return 7;
+      return prim.secured ? 7 : 1;
     }
   }
    
@@ -355,9 +364,13 @@ public class NSDUDetailsTableModel extends JP1TableModel< NSPrimitive >
     }
     else
     {
-      val = row == 0 ? null : row == 1 ? prim.rawNsdu : row == 2 ? prim.authData
-          : row == 3 ? nsdu : row < 6 ? null : nsdu;
-      return val;
+      if ( prim.secured )
+      {
+        val = row == 0 ? null : row == 1 ? prim.rawNsdu : row == 2 ? prim.authData
+            : row == 3 ? nsdu : row < 6 ? null : nsdu;
+        return val;
+      }
+      return nsdu;
     }
   }
 
@@ -371,8 +384,15 @@ public class NSDUDetailsTableModel extends JP1TableModel< NSPrimitive >
       case 1:
         return getRowName( row );
       case 2:
-        Hex hex = getRowHex( row );
-        return hex == null ? null : hex.toString();
+        if ( prim.valid || Arrays.asList( 18, 19, 20, 22, 23 ).contains( getEffectiveRow( row ) ) )
+        {
+          Hex hex = getRowHex( row );
+          return hex == null ? null : hex.toString();
+        }
+        else
+        {
+          return prim.getErrorMessage();
+        }
       case 3:
         return getInterpretation( row );
     }

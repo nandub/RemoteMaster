@@ -133,6 +133,7 @@ public class Npdu extends Hex
     }
     // Now extract the nsdu, but possibly encrypted and with a 4-byte message integrity field
     nsPrim.nsdu = subHex( rf4ceHdrSize, nsduSize );
+    nsPrim.rawNsdu = new Hex( nsPrim.nsdu );
     nsPrim.authData = nsPrim.secured ? subHex( rf4ceHdrSize + nsduSize, 4 ) : null;
     return nsPrim;
   }
