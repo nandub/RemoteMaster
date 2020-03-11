@@ -40,8 +40,10 @@ public class DeviceButtonTableModel extends JP1TableModel< DeviceButton >
     sequenceEditor.setClickCountToStart( RMConstants.ClickCountToStart );
     deviceLockEditor = new DefaultCellEditor( deviceLockBox );
     deviceLockEditor.setClickCountToStart( RMConstants.ClickCountToStart );
+    rfProfileEditor = new DefaultCellEditor( rfProfileBox );
+    rfProfileEditor.setClickCountToStart( RMConstants.ClickCountToStart );
   }
-
+  
   /**
    * Sets the.
    * 
@@ -402,7 +404,9 @@ public class DeviceButtonTableModel extends JP1TableModel< DeviceButton >
     return editable && col > 0 && ( col > 1 || ezrc ) && ( col < 2 || col > 3 || ( !ezrc && !db.isRf() ) )
         && ( col == 2 || col == 13 || getExtendedTypeIndex( row ) != 0xFF )
         && ( col != 3 || ( softDevices != null && softDevices.isSetupCodesOnly() ) || getValueAt( row, col ) != null )
-        && ( col != 14 || getRow( row ).getColorIndex() > 0 );
+        && ( col != 14 || getRow( row ).getColorIndex() > 0 )
+        && ( col != 5 || db.getRfSelectors() != null )
+        && ( col != 6 || ( Boolean )getValueAt( row, 5 ) );
   }
   
   private short[] getData( int row )
@@ -462,6 +466,14 @@ public class DeviceButtonTableModel extends JP1TableModel< DeviceButton >
       case 4:
       {
         return db.getSetupLock( data );
+      }
+      case 5:
+      {
+        return db.getRfPaired( data );
+      }
+      case 6:
+      {
+        return db.getRfPaired( data ) ? rfProfiles[ db.getRFVendorProfile( data ) ? 1 : 0 ] : null;
       }
       case 7:
       {
@@ -748,6 +760,15 @@ public class DeviceButtonTableModel extends JP1TableModel< DeviceButton >
     {
       db.setSetupLock( ( Boolean )value, data );
     }
+    else if ( col == 5 )
+    {
+      db.setRfPaired( ( Boolean )value, data );
+    }
+    else if ( col == 6 )
+    {
+      int index = Arrays.asList( rfProfiles ).indexOf( ( String )value );
+      db.setRfVendorProfile( index == 1, data );
+    }
     else if ( col == 7 )
     {
       db.setVolumePT( ( DeviceButton )value );
@@ -988,6 +1009,8 @@ public class DeviceButtonTableModel extends JP1TableModel< DeviceButton >
         return deviceTypeEditor;
       case 3:
         return setupCodeEditor;
+      case 6:
+        return rfProfileEditor;
       case 7:
       case 8:
       case 9:
@@ -1077,8 +1100,11 @@ public class DeviceButtonTableModel extends JP1TableModel< DeviceButton >
   private JComboBox deviceButtonBox = new JComboBox();
 
   private DefaultCellEditor deviceLockEditor = null;
+  private DefaultCellEditor rfProfileEditor = null;
   private String[] lockStates = new String[]{ "Off", "On", "Master" };
-  private JComboBox deviceLockBox = new JComboBox( lockStates );
+  private String[] rfProfiles = new String[]{ "ZRC", "Vendor" };
+  private JComboBox< String > deviceLockBox = new JComboBox< String >( lockStates );
+  private JComboBox< String > rfProfileBox = new JComboBox< String >( rfProfiles );
   
   private SpinnerCellEditor spinnerEditor = null;
   

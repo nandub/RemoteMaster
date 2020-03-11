@@ -78,7 +78,7 @@
           	<zipfileset dir="${src}" includes="RemoteMaster.jar" filemode="755" />
           	<zipfileset dir="${src}" includes="buildRef.txt,RMIR.sys,Readme.html,RMPB_Readme.html,IrpProtocols.html,*.css" />
             <zipfileset dir="${src}" includes="protocols.ini,ChangeLog.txt,digitmaps.bin,Setup.vbs,*.ico, Docs/*.pdf" />
-          	<!--zipfileset dir="${src}" includes="rmProtocols.xml" filemode="755" /-->
+          	<zipfileset dir="${src}" includes="rmProtocols.xml" filemode="755" />
           	<zipfileset dir="${src}" includes="irptransmogrifier.bat,irptransmogrifier.sh" filemode="755" />
             <zipfileset src="${src}/jp1parallel_012.zip" includes="**/*.dll"/>
 			<zipfileset src="${src}/jp1parallel_012.zip" includes="libjp1parallel.so" prefix="Linux-i386" filemode="755"/>
@@ -91,6 +91,7 @@
           	<zipfileset src="${src}/RdfAndImages.zip" includes="**/*" defaultexcludes="no"/>
           	<zipfileset dir="${src}" includes="rmirwin10ble/**/*.dll"/>
             <zipfileset dir="${src}" includes="Setup.sh,linux_xsight.rules,AddOns/ReadMe.txt" filemode="755" />
+          	<zipfileset dir="${src}" includes="RFToolsTest/*.*" filemode="755" />		
 			<!-- Tutorial is now on the wiki
           	<zipfileset dir="${src}" includes="tutorial.htm" />
             <zipfileset dir="tutorial_files" includes="**/*" prefix="tutorial_files" />

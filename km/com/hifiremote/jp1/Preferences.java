@@ -216,7 +216,7 @@ public class Preferences
     File path = file.getFileProperty( "RFPath" );
     if ( path != null )
       return path;
-    path = new File( file.getFile().getParentFile(), rfDirectory );
+    path = file.getFile().getParentFile();
     setRFPath( path );
     return path;
   }

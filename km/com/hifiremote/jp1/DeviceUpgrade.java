@@ -89,6 +89,7 @@ public class DeviceUpgrade extends Highlight
     remoteConfig = base.remoteConfig;
     notes = base.notes;
     protocol = base.protocol;
+    extraData = base.extraData;
     if ( newRestriction == null || newRestriction == DeviceButton.noButton )
     {
       buttonIndependent = base.buttonIndependent;
@@ -3022,7 +3023,7 @@ public class DeviceUpgrade extends Highlight
     return Integer.parseInt( str, base );
   }
   
-  private static boolean isRfPid( Hex pid )
+  public static boolean isRfPid( Hex pid )
   {
     int val = pid.get( 0 );
     return val >= 0xbb8 && val <= 0xbe9;
@@ -4143,7 +4144,7 @@ public class DeviceUpgrade extends Highlight
   
   private int sizeCmdBytes = 0; // only used for JP1.4/JP2 remotes
   
-  private Hex extraData = null;
+  private Hex extraData = new Hex( 24 );
 
   /** The parm values. */
   private Value[] parmValues = new Value[ 0 ];

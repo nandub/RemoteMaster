@@ -70,6 +70,8 @@ public class DeviceEditorPanel extends JPanel implements ActionListener, ChangeL
 
   /** The key map panel. */
   private KeyMapPanel keyMapPanel = null;
+  
+  private RFVendorPanel vendorPanel = null;
 
   /** The device upgrade. */
   private DeviceUpgrade deviceUpgrade = null;
@@ -159,11 +161,17 @@ public class DeviceEditorPanel extends JPanel implements ActionListener, ChangeL
 
     functionPanel = new FunctionPanel( deviceUpgrade );
     functionPanel.setToolTipText( "Define function names and parameters." );
+    vendorPanel = new RFVendorPanel( deviceUpgrade );
+    vendorPanel.setToolTipText( "Show/edit RF Vendor data" );
     if ( deviceUpgrade.getProtocol() != null )
     {
       addPanel( functionPanel );
+      if ( deviceUpgrade.isRfUpgrade() )
+      {
+        addPanel( vendorPanel );
+      }
     }
-
+    
     externalFunctionPanel = new ExternalFunctionPanel( deviceUpgrade );
     externalFunctionPanel.setToolTipText( "Define functions from other device codes." );
     addPanel( externalFunctionPanel );
@@ -272,7 +280,8 @@ public class DeviceEditorPanel extends JPanel implements ActionListener, ChangeL
   public void removePanel( KMPanel panel )
   {
     System.err.println( "KeyMapMaster.removePanel()" + panel );
-    tabbedPane.removeTabAt( 1 );
+    tabbedPane.remove( panel );
+//    tabbedPane.removeTabAt( 1 );
     tabbedPane.validate();
   }
 
@@ -442,13 +451,37 @@ public class DeviceEditorPanel extends JPanel implements ActionListener, ChangeL
       removePanel( tabPanel );
     }
     tabPanel = ( KMPanel )tabbedPane.getComponentAt( 1 );
-    if ( p == null && ( tabPanel == functionPanel ) )
+    if ( tabPanel == functionPanel )
     {
-      removePanel( tabPanel );
+      if ( p == null )
+      {
+        removePanel( tabPanel );
+        tabPanel = ( KMPanel )tabbedPane.getComponentAt( 1 );
+        if ( tabPanel == vendorPanel )
+        {
+          removePanel( tabPanel );
+        }
+      }
+      else
+      {
+        tabPanel = ( KMPanel )tabbedPane.getComponentAt( 2 );
+        if ( tabPanel == vendorPanel && !DeviceUpgrade.isRfPid( p.getID() ) )
+        {
+          removePanel( tabPanel );
+        }
+        if ( tabPanel == externalFunctionPanel && DeviceUpgrade.isRfPid( p.getID() ) )
+        {
+          addPanel( vendorPanel, 2 );
+        }
+      }
     }
     if ( p != null && ( tabPanel == externalFunctionPanel ) )
     {
       addPanel( functionPanel, 1 );
+      if ( deviceUpgrade.getRemote().hasRf4ceSupport() && DeviceUpgrade.isRfPid( p.getID() ) )
+      {
+        addPanel( vendorPanel, 2 );
+      }
     }
     tabPanel = ( KMPanel )tabbedPane.getComponentAt( 1 );
     KMPanel protocolPanel = deviceUpgrade.getProtocol() == null ? null : deviceUpgrade.getProtocol().getPanel( deviceUpgrade );
@@ -598,14 +631,38 @@ public class DeviceEditorPanel extends JPanel implements ActionListener, ChangeL
     System.err.println( name );
 
     KMPanel tabPanel = ( KMPanel )tabbedPane.getComponentAt( 1 );
-
-    if ( protocol == null && ( tabPanel == functionPanel ) )
+    if ( tabPanel == functionPanel )
     {
-      removePanel( tabPanel );
+      if ( protocol == null )
+      {
+        removePanel( tabPanel );
+        tabPanel = ( KMPanel )tabbedPane.getComponentAt( 1 );
+        if ( tabPanel == vendorPanel )
+        {
+          removePanel( tabPanel );
+        }
+      }
+      else
+      {
+        tabPanel = ( KMPanel )tabbedPane.getComponentAt( 2 );
+        if ( tabPanel == vendorPanel && !DeviceUpgrade.isRfPid( protocol.getID() ) )
+        {
+          removePanel( tabPanel );
+        }
+        if ( tabPanel == externalFunctionPanel && DeviceUpgrade.isRfPid( protocol.getID() ) )
+        {
+          addPanel( vendorPanel, 2 );
+        }
+      }
     }
+
     if ( protocol != null && ( tabPanel == externalFunctionPanel ) )
     {
       addPanel( functionPanel, 1 );
+      if ( deviceUpgrade.getRemote().hasRf4ceSupport() && DeviceUpgrade.isRfPid( protocol.getID() ) )
+      {
+        addPanel( vendorPanel, 2 );
+      }
     }
     panel = protocol == null ? null : protocol.getPanel( deviceUpgrade );
     if ( panel != null )

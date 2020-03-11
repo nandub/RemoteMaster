@@ -114,7 +114,14 @@ public class SegmentTableModel extends JP1TableModel< Segment >
       case 0x1F:
         return "Activity Assist Definition segment";
       case 0x20:
-        return remote.usesEZRC() && !remote.isSSD() ? "Function Names segment" : null;
+        return remote.usesEZRC() && !remote.isSSD() ? "Function Names segment" 
+            : remote.hasRf4ceSupport() ? "RF Network Information Base attribute" : null;
+      case 0x27:
+        return "RF Network Information Base attribute";
+      case 0x2B:
+        return "RF Vendor Data segment";
+      case 0x2D:
+        return "RF Selectors segment";
       case 0x2E:
         return remote.usesLedColor() ? "Streamer LED Color segment" : null;
       case 0x2F:

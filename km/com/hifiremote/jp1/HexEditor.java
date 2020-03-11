@@ -81,6 +81,11 @@ public class HexEditor
     return rc;
   }
 
+  public void setDefaultHex( Hex defaultHex )
+  {
+    this.defaultHex = defaultHex;
+  }
+
   /** The default hex. */
   Hex defaultHex = null;
 }

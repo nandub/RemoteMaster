@@ -177,6 +177,16 @@ public class DeviceButton extends Highlight
   {
     return ( data[ 5 ] & 0x80 ) == 0;
   }
+  
+  public boolean getRfPaired( short[] data )
+  {
+    return ( data[ 5 ] & 0x01 ) == 0;
+  }
+  
+  public boolean getRFVendorProfile( short[] data )
+  {
+    return ( data[ 5 ] & 0x02 ) == 0;
+  }
 
   /**
    * Sets the setup code.
@@ -213,7 +223,17 @@ public class DeviceButton extends Highlight
   public void setSetupLock( boolean lock, short[] data )
   {
     data[ 5 ] = ( short )( lock ? data[ 5 ] & 0x7F : data[ 5 ] | 0x80 );
-    
+  }
+  
+  public void setRfPaired( boolean paired, short[] data )
+  {
+    // When not paired, set also the RF profile flag in bit 1
+    data[ 5 ] = ( short )( paired ? data[ 5 ] & 0xFE : data[ 5 ] | 0x03 );
+  }
+  
+  public void setRfVendorProfile( boolean vendor, short[] data )
+  {
+    data[ 5 ] = ( short )( vendor ? data[ 5 ] & 0xFD : data[ 5 ] | 0x02 );
   }
   
   public int getDeviceSlot( short[] data )

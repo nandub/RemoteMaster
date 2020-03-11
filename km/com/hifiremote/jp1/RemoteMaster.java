@@ -2807,10 +2807,6 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
     finderButton.setAction( finderAction );
     finderButton.setHideActionText( true );
     finderButton.setBorder( BorderFactory.createRaisedBevelBorder() );
-    
-    rfAction = new RMAction( "Open RF Tools", "RFTOOLS", createIcon( "RMRF24" ),
-        "Open RF Display", KeyEvent.VK_R );
-    rfAction.putValue( Action.SELECTED_KEY, true );
 
     downloadAction = new RMAction( "Download from Remote", "DOWNLOAD", createIcon( "Import24" ),
         "Download from the attached remote", KeyEvent.VK_D );
@@ -2822,6 +2818,11 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
     uploadable = false;
     uploadAction.setEnabled( false );
     menu.add( uploadAction ).setIcon( null );
+    
+    rfAction = new RMAction( "Open RF Tools", "RFTOOLS", createIcon( "RMRF24" ),
+        "Open RF Tools", KeyEvent.VK_R );
+    rfAction.putValue( Action.SELECTED_KEY, true );
+    menu.add( rfAction ).setIcon( null );
     
     registerRfRemoteItem = new JMenuItem( "Register as RF Remote", KeyEvent.VK_R );
     registerRfRemoteItem.setEnabled( false );
@@ -5759,6 +5760,16 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
         {
           message = "Registration aborted.";
           JOptionPane.showMessageDialog( this, message, title, JOptionPane.WARNING_MESSAGE );
+          return;
+        }
+        String name = reply.trim();
+        if ( map.get( name ) != null )
+        {
+          message = 
+              "There is already a registration with name " + name + ".  Please try again,\n"
+            + "either with a different name or after deleting the existing registration\n"
+            + "with RF Tools.";
+          JOptionPane.showMessageDialog( this, message, title, JOptionPane.ERROR_MESSAGE );
           return;
         }
         Remote remote = remoteConfig.getRemote();
