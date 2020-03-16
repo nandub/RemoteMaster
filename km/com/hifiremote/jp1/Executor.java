@@ -143,6 +143,7 @@ public class Executor
     public String executorDescriptor = null;
     public String commentItem = null;
     public final Map<String, Expression> assignments;
+    public final Map<String, List< String > > translators;
     
     public BracketData getBrackettedData( int start )
     {
@@ -194,12 +195,14 @@ public class Executor
     public ExecutorWrapper( String executorDescriptor )
     {
       this.executorDescriptor = executorDescriptor;
+      translators = null;
       assignments = null;
     }
 
     private ExecutorWrapper(DocumentFragment fragment) 
     { 
       assignments = new LinkedHashMap<>(4); // Important: keeps the order things are put in. 
+      translators = new LinkedHashMap< String, List< String > >();
       protocolName = null; 
       NodeList children = fragment.getChildNodes(); 
 
@@ -230,7 +233,21 @@ public class Executor
         // and stuff it into the map 
         String paramName = e.getAttribute("target"); 
         assignments.put(paramName, exp); 
-      } 
+      }
+      
+      // Getting the translators 
+      NodeList translatorNodes = deployment.getElementsByTagNameNS(RM_NAMESPACE, "translator"); 
+      for (int i = 0; i < translatorNodes.getLength(); i++) { 
+        Element e = (Element) translatorNodes.item(i); 
+        StringTokenizer st = new StringTokenizer( e.getTextContent(), "=|" );
+        List< String > values = new ArrayList< String >();
+        while ( st.hasMoreTokens() )
+        {
+          values.add( st.nextToken() );
+        }
+        String paramName = e.getAttribute("target"); 
+        translators.put(paramName, values ); 
+      }
 
       executorDescriptor = deployment.getAttribute( "executor" );
       NodeList nl = deployment.getElementsByTagNameNS(RM_NAMESPACE, "protocolName"); 

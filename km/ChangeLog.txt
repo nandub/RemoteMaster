@@ -1,6 +1,10 @@
 Changes for v2.10
 -- Private build 1
 - Add RF Tools to provide RF4CE support for the TI CC2531EMK Packet Sniffer (Graham)
+-- Private build 2
+- Update the included IrpTransmogrifier to v1.2.4 (Barf, Graham)
+- Enhance IrpTransmogrifier support (Graham)
+- Support learned signal conversion to further NEC-style executors (Graham)
 
 Changes for v2.09
 -- Private build 1

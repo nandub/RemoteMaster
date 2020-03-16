@@ -289,7 +289,7 @@ public class LearnedSignalPanel extends RMTablePanel< LearnedSignal >
       List< ExecutorWrapper > wrappers = LearnedSignal.getExecutorWrappers( np );
       for ( ExecutorWrapper wrapper : wrappers )
       {
-        Executor e = LearnedSignalDecode.getExecutor( np, wrapper );
+        Executor e = LearnedSignalDecode.getExecutor( np, wrapper, null );
         if ( e == null ) continue;
         Protocol p = e.protocol;
         if ( p != null && protocols.contains( p ) )

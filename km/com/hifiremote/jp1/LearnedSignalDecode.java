@@ -58,7 +58,7 @@ public class LearnedSignalDecode
   {
     if ( executor != null && executor.qualifier != null )
     {
-      NameEngine engine = new NameEngine( decode.getMap() );
+      NameEngine engine = new NameEngine( evaluate( decode.getMap(), 0, true ) );
       Expression exp = Expression.newExpression( executor.qualifier );
       long value = 0;
       try
@@ -87,27 +87,31 @@ public class LearnedSignalDecode
     Map< String, Long > map = decode.getMap();
     NamedProtocol np = decode.getNamedProtocol();
     protocolName = np.getName();
-    NameEngine engine = new NameEngine( map );
     
     if ( executor == null )
     {
       executor = defaultExecutorMap.get( np );
       if ( executor == null )
       {
-        executor = getExecutor( np, null );
+        executor = getExecutor( np, null, decode );
         if ( executor != null )
           defaultExecutorMap.put( np, executor );
       }
     }
     this.executor = executor;
-    
+
+    // First create newMap that includes the definitionSpec assignments
+    Map< String, Long > newMap = evaluate( map, 0, true );
     String commentItem = null;
+    Map< String, List< String > >translators = null;
+    // Now incorporate those from rm:assignment elements
     if ( executor != null && executor.wrapper.assignments != null )
     {
       try
       {
+        NameEngine engine = new NameEngine( newMap );
         decode = executor.wrapper.fixDecode(protocolName, np, engine);
-        map = decode.getMap();
+        newMap = decode.getMap();
       }
       catch ( Exception e )
       {
@@ -117,22 +121,35 @@ public class LearnedSignalDecode
         protocolName = executor.wrapper.protocolName;
       if ( executor.wrapper.commentItem != null )
         commentItem = executor.wrapper.commentItem;
+      if ( executor.wrapper.translators != null )
+        translators = executor.wrapper.translators;
     }
 
     miscMessage = "";
-    for ( String key : map.keySet() )
+    for ( String key : newMap.keySet() )
     {
       if ( key.equals( "D" ) )
-        device = map.get( "D" ).intValue();
+        device = newMap.get( "D" ).intValue();
       else if ( key.equals( "S" ) )
-        subDevice = map.get( "S" ).intValue();
+        subDevice = newMap.get( "S" ).intValue();
       else if ( key.equals( "F" ) )
-        obc = map.get( "F" ).intValue();
+        obc = newMap.get( "F" ).intValue();
       else
       {
         if ( !miscMessage.isEmpty() )
           miscMessage += ", ";
-        miscMessage += key + "=" + map.get( key );
+        if ( newMap.get( key ) >= 0 )
+        {
+          if ( translators != null && translators.containsKey( key ) )
+          {
+            List< String > values = translators.get( key );
+            miscMessage += values.get( 0 ) + "=" + values.get( ( int )( newMap.get( key ) + 1 ) );
+          }
+          else
+          {
+            miscMessage += key + "=" + newMap.get( key );
+          }
+        }
       }
     }
     if ( commentItem != null )
@@ -141,13 +158,20 @@ public class LearnedSignalDecode
         miscMessage += ", ";
       miscMessage += commentItem;
     }
+    
+    // This ends the use of newMap, which includes rm:assignment additions.  Those are only
+    // applied to the decode displayed in the LearnedSignal panel.  Evaluation of protocol
+    // parameters uses assignments from the definitionSpec of an executor descriptor but not
+    // those of rm:assignment elements.  So we revert to use of map rather than newMap,
+    // which retains its entry value, and apply evaluate(...) again, this time with
+    // mapOnly = false, to perform parameter evaluations.
 
     if ( matchDevParms == null )
     {
       hex = new int[ 0 ];
       if ( executor != null && isValidDecode() )
       {
-        evaluate( map, 0 );
+        evaluate( map, 0, false );
         List< String > error = new ArrayList< String >();
         if ( executor.protocol != null )
         {
@@ -168,7 +192,7 @@ public class LearnedSignalDecode
     int countOfNewValues = matchDevParms.length + 1;
     for ( int i = 0; i <  Math.max( executor.choiceList.size(), 1 ); i++ )
     {
-      evaluate( map, i );
+      evaluate( map, i, false );
       Value[] testParms = getDevParmValues( decode );
       if ( testParms == null )
         continue;   // values were not self-consistent
@@ -208,7 +232,7 @@ public class LearnedSignalDecode
         break;
       }
     }
-    evaluate( map, preferredChoice );
+    evaluate( map, preferredChoice, false );
     Value[] testParms = getDevParmValues( decode );
     for ( int j = 0; j < matchDevParms.length; j++ )
     {
@@ -288,7 +312,7 @@ public class LearnedSignalDecode
    * cmdParmsList fields, with null values set both for empty expressions and for
    * expressions that evaluate to a negative numerical value.
    */
-  public void evaluate( Map< String, Long > map, int index )
+  public Map< String, Long > evaluate( Map< String, Long > map, int index, boolean mapOnly )
   { 
     // Clone map so that new parameters do not affect original
     Map< String, Long > newMap = new HashMap< String, Long >();
@@ -320,6 +344,9 @@ public class LearnedSignalDecode
         e.printStackTrace();
       }
     }
+    
+    if ( mapOnly )
+      return newMap;
 
     if ( eParms.devParms != null )
     {
@@ -331,6 +358,7 @@ public class LearnedSignalDecode
       cmdParmList = new ArrayList< Integer >();
       evaluateParms( eParms.cmdParms, cmdParmList, currentParameters );
     }
+    return newMap;
   }
   
   private void evaluateParms( List< String > parms, List< Integer > values, NameEngine engine )
@@ -472,7 +500,8 @@ public class LearnedSignalDecode
    * The NamedProtocol input is an IrpTransmogrifier protocol, wrapper is an
    * ExecutorWrapper for that protocol (needed as there may be more than one
    * ExecutorWrapper for a single protocol).  If wrapper is null then it is 
-   * set to the wrapper from the first uei-executor entry.
+   * set to the wrapper from the first uei-executor entry that is valid for
+   * the given decode, a null decode being considered valid for all wrappers.
    * 
    * The output is an Executor structure.  Initially the following fields are set:
    * protocol, qualifier, sequencer and all four fields of parms.  Note that protocol
@@ -480,98 +509,111 @@ public class LearnedSignalDecode
    * The setSelectors method is then used to set the remaining Executor fields,
    * which are selectorList, nameList and choiceList.
    */
-  public static Executor getExecutor( NamedProtocol np, ExecutorWrapper wrapper )
+  public static Executor getExecutor( NamedProtocol np, ExecutorWrapper wrapper, Decode decode )
   {
     IrpDatabase tmDatabase = LearnedSignal.getTmDatabase();
     if ( np == null || np.getName() == null || tmDatabase == null ) return null;
     String npName = np.getName();
+    List< ExecutorWrapper > wrappers = null;
+    Executor executor = null;
+    String qidString = null;
     if ( wrapper == null )
     {
-      List< ExecutorWrapper > wrappers = LearnedSignal.getExecutorWrappers( np );
-      if ( wrappers != null && wrappers.size() > 0 )
-        wrapper = wrappers.get( 0 );
+      wrappers = LearnedSignal.getExecutorWrappers( np );
     }
-    if ( wrapper == null ) return null;
-    
-    Executor executor = new Executor();
-    executor.wrapper = wrapper;
-    int start = 0;
-    int qidEnd = -1;
-    int ndx = 0;
-    BracketData bd = null;
-    while ( ( bd  = wrapper.getBrackettedData( start ) ) != null )
+    else
     {
-      if ( qidEnd < 0 )
-        qidEnd = bd.start;
-      switch ( bd.type )
+      wrappers = new ArrayList< ExecutorWrapper >();
+      wrappers.add( wrapper );
+    }
+    
+    for ( ExecutorWrapper ew : wrappers )
+    {
+      if ( ew == null ) return null;
+      executor = new Executor();
+      executor.wrapper = ew;
+      int start = 0;
+      int qidEnd = -1;
+      int ndx = 0;
+      BracketData bd = null;
+      while ( ( bd  = ew.getBrackettedData( start ) ) != null )
       {
-        case 0:  // Parentheses ()      
-          ndx = bd.text.indexOf( ";" );
-          if ( ndx >= 0 )
-          {
-            executor.name = bd.text.substring( 0, ndx ).trim();  
-            bd.text = bd.text.substring( ndx + 1 ).trim();
+        if ( qidEnd < 0 )
+          qidEnd = bd.start;
+        switch ( bd.type )
+        {
+          case 0:  // Parentheses ()      
             ndx = bd.text.indexOf( ";" );
             if ( ndx >= 0 )
             {
-              executor.qualifier = bd.text.substring( 0, ndx ).replaceAll( "\\s", "" );
-              executor.sequencer = bd.text.substring( ndx + 1 ).replaceAll( "\\s", "" );
+              executor.name = bd.text.substring( 0, ndx ).trim();  
+              bd.text = bd.text.substring( ndx + 1 ).trim();
+              ndx = bd.text.indexOf( ";" );
+              if ( ndx >= 0 )
+              {
+                executor.qualifier = bd.text.substring( 0, ndx ).replaceAll( "\\s", "" );
+                executor.sequencer = bd.text.substring( ndx + 1 ).replaceAll( "\\s", "" );
+              }
+              else
+              {
+                executor.qualifier = bd.text.replaceAll( "\\s", "" );
+              }
             }
             else
             {
-              executor.qualifier = bd.text.replaceAll( "\\s", "" );
+              executor.name = bd.text.trim();
             }
-          }
-          else
-          {
-            executor.name = bd.text.trim();
-          }
-          if ( executor.name != null && executor.name.isEmpty() )
-            executor.name = null;
-          if ( executor.qualifier != null && executor.qualifier.isEmpty() )
-            executor.qualifier = null;
-          if ( executor.sequencer != null && executor.sequencer.isEmpty() )
-            executor.sequencer = null;
-          break;
-        case 1:  // Brackets []
-          String devParmString = null;
-          String cmdParmString = null;
-          ndx = bd.text.indexOf( ";" );
-          if ( ndx >= 0 )
-          {
-            devParmString = bd.text.substring( 0, ndx ).replaceAll( "\\s", "" );
-            cmdParmString = bd.text.substring( ndx + 1 ).replaceAll( "\\s", "" );
-          }
-          else
-          {
-            devParmString = bd.text.replaceAll( "\\s", "" );
-          }
-          
-          if ( devParmString != null && !devParmString.isEmpty() )
-          {
-            executor.parms.devParms = new ArrayList< String >();
-            executor.parms.devIndices = new ArrayList< Integer >();
-            parseParameterString( devParmString, executor.parms.devParms, executor.parms.devIndices );
-          }
-          if ( cmdParmString != null && !cmdParmString.isEmpty() )
-          {
-            executor.parms.cmdParms = new ArrayList< String >();
-            parseParameterString( cmdParmString, executor.parms.cmdParms, null );
-          }
-          break;
-        case 2:  // Braces {}
-          executor.parms.newParms = "{" + bd.text.replaceAll( "\\s", "" ) + "}";
-          break;
+            if ( executor.name != null && executor.name.isEmpty() )
+              executor.name = null;
+            if ( executor.qualifier != null && executor.qualifier.isEmpty() )
+              executor.qualifier = null;
+            if ( executor.sequencer != null && executor.sequencer.isEmpty() )
+              executor.sequencer = null;
+            break;
+          case 1:  // Brackets []
+            String devParmString = null;
+            String cmdParmString = null;
+            ndx = bd.text.indexOf( ";" );
+            if ( ndx >= 0 )
+            {
+              devParmString = bd.text.substring( 0, ndx ).replaceAll( "\\s", "" );
+              cmdParmString = bd.text.substring( ndx + 1 ).replaceAll( "\\s", "" );
+            }
+            else
+            {
+              devParmString = bd.text.replaceAll( "\\s", "" );
+            }
+
+            if ( devParmString != null && !devParmString.isEmpty() )
+            {
+              executor.parms.devParms = new ArrayList< String >();
+              executor.parms.devIndices = new ArrayList< Integer >();
+              parseParameterString( devParmString, executor.parms.devParms, executor.parms.devIndices );
+            }
+            if ( cmdParmString != null && !cmdParmString.isEmpty() )
+            {
+              executor.parms.cmdParms = new ArrayList< String >();
+              parseParameterString( cmdParmString, executor.parms.cmdParms, null );
+            }
+            break;
+          case 2:  // Braces {}
+            executor.parms.newParms = "{" + bd.text.replaceAll( "\\s", "" ) + "}";
+            break;
+        }
+        start = bd.end;
       }
-      start = bd.end;
+
+      if ( qidEnd >= 0 )
+        qidString = ew.executorDescriptor.substring( 0, qidEnd ).replaceAll( "\\s", "" );
+      else
+        qidString = ew.executorDescriptor.replaceAll( "\\s", "" );
+
+      executor.setSelectors();
+      LearnedSignalDecode test = wrapper == null && decode != null ? new LearnedSignalDecode( decode, null, executor ) : null;
+      if ( test == null || test.isValidDecode() )
+        break;
     }
-    
-    String qidString = null;
-    if ( qidEnd >= 0 )
-      qidString = wrapper.executorDescriptor.substring( 0, qidEnd ).replaceAll( "\\s", "" );
-    else
-      qidString = wrapper.executorDescriptor.replaceAll( "\\s", "" );
-    
+
     QualifiedID qid = new QualifiedID( qidString );
     Hashtable< Hex, List< Protocol >> byPid = ProtocolManager.getProtocolManager().getByPID();
     List< Protocol > protList = new ArrayList< Protocol >();
@@ -601,7 +643,6 @@ public class LearnedSignalDecode
     }
     protocol.reset();
     executor.protocol = protocol;
-    executor.setSelectors();
     return executor;
   }
   

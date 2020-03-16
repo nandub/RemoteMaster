@@ -536,16 +536,16 @@ public class LearnedSignal extends Highlight
   {
     String npName = np.getName();
     List< ExecutorWrapper > list = new ArrayList< ExecutorWrapper >();
+    List< ExecutorWrapper > wrapperList = LearnedSignal.getEwDatabase().get(npName);
+    if ( wrapperList != null )
+    {
+      list.addAll( wrapperList );
+    }
     List< String > nonXmlList = tmDatabase.getProperties( npName, "uei-executor" );
     if ( nonXmlList != null )
     {
       for ( String executorDescriptor : nonXmlList )
         list.add( new ExecutorWrapper( executorDescriptor ) );
-    }
-    List<ExecutorWrapper> wrapperList = LearnedSignal.getEwDatabase().get(npName);
-    if ( wrapperList != null )
-    {
-      list.addAll( wrapperList );
     }
     return list;
   }
