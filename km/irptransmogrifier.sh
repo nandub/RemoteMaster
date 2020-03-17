@@ -20,12 +20,12 @@ JAVA=java
 # Where the files are located; change if desired
 RMHOME="$(dirname -- "$(readlink -f -- "${0}")" )"
 
-# Configfile to use
-CONFIGFILE=${RMHOME}/IrpProtocols.xml
+# Use configfile contained in the jar.
+#CONFIGFILE=${RMHOME}/IrpProtocols.xml
 
 # Normally no need to change anything after thins line
 
 JAR=${RMHOME}/RemoteMaster.jar
 MAINCLASS=org.harctoolbox.irp.IrpTransmogrifier
 
-exec "${JAVA}" -cp "${JAR}" "${MAINCLASS}" --configfile "${CONFIGFILE}" "$@"
+exec "${JAVA}" -cp "${JAR}" "${MAINCLASS}" "$@"

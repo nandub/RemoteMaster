@@ -80,6 +80,7 @@ chmod 775 $rmprog
 chmod 775 $desktopRMIR
 chmod 775 $desktopRM
 chmod 775 $desktopRMPB
+chmod 755 $here/irptransmogrifier.sh
 echo Desktop files created and executable permissions set.
 
 alldone()

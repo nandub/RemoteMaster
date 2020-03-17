@@ -17,12 +17,12 @@ set JAVA=java
 REM Where the files are located, change if desired
 set APPLICATIONHOME=%~dp0
 
-REM Configfile to use
-set CONFIGFILE=%APPLICATIONHOME%\IrpProtocols.xml
+REM Use configfile contained in jar.
+REM set CONFIGFILE=%APPLICATIONHOME%\IrpProtocols.xml
 
 REM Normally no need to change after this line
 
 set MAINCLASS=org.harctoolbox.irp.IrpTransmogrifier
 set JAR=%APPLICATIONHOME%\RemoteMaster.jar
 
-"%JAVA%" -cp "%JAR%" "%MAINCLASS%" --configfile "%CONFIGFILE%" %*
+"%JAVA%" -cp "%JAR%" "%MAINCLASS%" %*
