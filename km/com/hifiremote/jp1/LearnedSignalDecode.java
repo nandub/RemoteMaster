@@ -515,6 +515,7 @@ public class LearnedSignalDecode
     if ( np == null || np.getName() == null || tmDatabase == null ) return null;
     String npName = np.getName();
     List< ExecutorWrapper > wrappers = null;
+    List< Protocol > protList = new ArrayList< Protocol >();
     Executor executor = null;
     String qidString = null;
     if ( wrapper == null )
@@ -610,21 +611,24 @@ public class LearnedSignalDecode
 
       executor.setSelectors();
       LearnedSignalDecode test = wrapper == null && decode != null ? new LearnedSignalDecode( decode, null, executor ) : null;
-      if ( test == null || test.isValidDecode() )
+      if ( test != null && !test.isValidDecode() )
+        continue;
+      QualifiedID qid = new QualifiedID( qidString );
+      Hashtable< Hex, List< Protocol >> byPid = ProtocolManager.getProtocolManager().getByPID();
+      //List< Protocol > protList = new ArrayList< Protocol >();
+//      Protocol protocol = null;
+      for ( Protocol pTest : byPid.get( qid.pid ) )
+      {
+        if ( pTest.getVariantName().equals( qid.variantName ) )
+        {
+          protList.add( pTest );
+        }
+      }
+      if ( protList.size() > 0 )
         break;
     }
 
-    QualifiedID qid = new QualifiedID( qidString );
-    Hashtable< Hex, List< Protocol >> byPid = ProtocolManager.getProtocolManager().getByPID();
-    List< Protocol > protList = new ArrayList< Protocol >();
     Protocol protocol = null;
-    for ( Protocol test : byPid.get( qid.pid ) )
-    {
-      if ( test.getVariantName().equals( qid.variantName ) )
-      {
-        protList.add( test );
-      }
-    }
     if ( protList.size() > 1 )
     {
       for ( Protocol test : protList )
@@ -640,6 +644,10 @@ public class LearnedSignalDecode
     else if ( protList.size() == 1 )
     {
       protocol = protList.get( 0 );
+    }
+    else
+    {
+      return null;
     }
     protocol.reset();
     executor.protocol = protocol;
