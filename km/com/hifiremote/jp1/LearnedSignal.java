@@ -22,6 +22,7 @@ import org.harctoolbox.irp.InvalidNameException;
 import org.harctoolbox.irp.IrpDatabase;
 import org.harctoolbox.irp.IrpParseException;
 import org.harctoolbox.irp.NamedProtocol;
+import org.harctoolbox.irp.UnknownProtocolException;
 
 import com.hifiremote.decodeir.DecodeIRCaller;
 import com.hifiremote.jp1.Executor.ExecutorWrapper;
@@ -541,7 +542,15 @@ public class LearnedSignal extends Highlight
     {
       list.addAll( wrapperList );
     }
-    List< String > nonXmlList = tmDatabase.getProperties( npName, "uei-executor" );
+    List< String > nonXmlList = null;
+    try
+    {
+      nonXmlList = tmDatabase.getProperties( npName, "uei-executor" );
+    }
+    catch ( UnknownProtocolException e )
+    {
+      e.printStackTrace();
+    }
     if ( nonXmlList != null )
     {
       for ( String executorDescriptor : nonXmlList )

@@ -3894,8 +3894,7 @@ public class DeviceUpgrade extends Highlight
           Button b = buttons[ i ];
           if ( assignments.getAssignment( b ) == null )
           {
-            if ( b.getName().equalsIgnoreCase( func.getName() )
-                || b.getStandardName().equalsIgnoreCase( func.getName() ) )
+            if ( func.matchingName(b) ) 
             {
               assignments.assign( b, func );
               break;

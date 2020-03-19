@@ -94,8 +94,10 @@ public class LearnedSignalDecode
       if ( executor == null )
       {
         executor = getExecutor( np, null, decode );
-        if ( executor != null )
-          defaultExecutorMap.put( np, executor );
+      }
+      else
+      {
+        System.err.println( "Using default executor " );
       }
     }
     this.executor = executor;
@@ -136,10 +138,10 @@ public class LearnedSignalDecode
         obc = newMap.get( "F" ).intValue();
       else
       {
-        if ( !miscMessage.isEmpty() )
-          miscMessage += ", ";
         if ( newMap.get( key ) >= 0 )
         {
+          if ( !miscMessage.isEmpty() )
+            miscMessage += ", ";
           if ( translators != null && translators.containsKey( key ) )
           {
             List< String > values = translators.get( key );
@@ -318,33 +320,37 @@ public class LearnedSignalDecode
     Map< String, Long > newMap = new HashMap< String, Long >();
     for ( String s : map.keySet() )
       newMap.put( s, map.get( s ) );
+    
+    if ( mapOnly && executor == null )
+      return newMap;
+    
     NameEngine currentParameters = new NameEngine( newMap );
     Executor.Parameters eParms = executor.preprocessParms( index );
 
     if ( eParms.newParms != null )
     {
-      NameEngine executorParameters = null;
+      StringTokenizer st = new StringTokenizer( eParms.newParms, "{,}" );
       try
       {
-        executorParameters = new NameEngine( eParms.newParms );
-        if ( executorParameters != null ) 
-        { 
-          for ( Map.Entry< String, Expression > entry : executorParameters )
-          { 
-            String name = entry.getKey(); 
-            Expression exp = entry.getValue(); 
-            long value = exp.toLong( currentParameters );
-            newMap.put( name, value );
-            currentParameters = new NameEngine( newMap );
-          } 
-        }
+        while ( st.hasMoreTokens() )
+        {
+          String s = st.nextToken();
+          int ndx = s.indexOf( "=" );
+          if ( ndx < 0 )
+            continue;
+          String name = s.substring( 0, ndx ).trim();
+          Expression exp = Expression.newExpression( s.substring( ndx + 1 ) );
+          long value = exp.toLong( currentParameters );
+          newMap.put( name, value );
+          currentParameters = new NameEngine( newMap );
+        } 
       }
-      catch ( InvalidNameException | NameUnassignedException e )
+      catch ( NameUnassignedException e )
       {
         e.printStackTrace();
       }
     }
-    
+
     if ( mapOnly )
       return newMap;
 
@@ -615,8 +621,6 @@ public class LearnedSignalDecode
         continue;
       QualifiedID qid = new QualifiedID( qidString );
       Hashtable< Hex, List< Protocol >> byPid = ProtocolManager.getProtocolManager().getByPID();
-      //List< Protocol > protList = new ArrayList< Protocol >();
-//      Protocol protocol = null;
       for ( Protocol pTest : byPid.get( qid.pid ) )
       {
         if ( pTest.getVariantName().equals( qid.variantName ) )
@@ -649,6 +653,13 @@ public class LearnedSignalDecode
     {
       return null;
     }
+    
+    if ( wrapper == null && executor.qualifier == null && executor.wrapper == wrappers.get( 0 ) )
+    {
+      // The first wrapper has no qualifier, so will always be selected when wrapper==null
+      defaultExecutorMap.put( np, executor );
+    }
+    
     protocol.reset();
     executor.protocol = protocol;
     return executor;

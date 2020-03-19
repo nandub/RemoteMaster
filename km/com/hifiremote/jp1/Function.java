@@ -347,24 +347,46 @@ public class Function extends GeneralFunction
     return data != null;
   }
   
-//  public void assignSerial()
-//  {
-//    if ( serial < 0 )
-//    {
-//      serial = upgrade.getNewFunctionSerial();
-//      upgrade.getFunctionMap().put( serial, this );
-//    }
-//  }
-  
-//  public Function getIRfunction( DeviceUpgrade du )
-//  {
-//    if ( serial < 0 )
-//    {
-//      serial = du.getNewFunctionSerial();
-//      du.getFunctionMap().put( serial, this );
-//    }
-//    return this;
-//  }
+  boolean matchingName(Button b) { 
+    return matchingName(b.getName()) || matchingName(b.getStandardName()); 
+  } 
+ 
+  private boolean matchingName( String candidate ) 
+  { 
+    String nameLower = name.toLowerCase(); 
+    String candidateLower = candidate.toLowerCase(); 
+    return name.equals(candidateLower) || canonicalize(nameLower).equals(canonicalize(candidateLower)); 
+  } 
+ 
+  private static String[][] substitutes = { 
+    {"key_", ""}, // Lirc 
+    {"cursor", ""}, 
+    {"arrow", ""}, 
+    {"toggle", ""}, 
+    {"return", "exit"}, 
+    {"-", "down"}, 
+    {"\\+", "up"}, 
+    {">", "play"}, 
+    {"<", "reverse"}, 
+    {"\\|\\|", "pause"}, 
+    {"fwd", "forward"}, 
+    {"volume", "vol"}, 
+    {"channel", "ch"}, 
+    {"\\s+", ""} 
+  }; 
+ 
+  private String canonicalize( String str ) 
+  { 
+    String work = str; 
+    for ( String[] substitute : substitutes ) 
+    { 
+      String from = substitute[0]; 
+      String to = substitute[1]; 
+      work = work.replaceAll(from, to); 
+    } 
+ 
+    return work; 
+  } 
 
   public int getRmirIndex()
   {

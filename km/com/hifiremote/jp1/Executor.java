@@ -18,6 +18,7 @@ import org.harctoolbox.irp.IrpInvalidArgumentException;
 import org.harctoolbox.irp.NameEngine;
 import org.harctoolbox.irp.NameUnassignedException;
 import org.harctoolbox.irp.NamedProtocol;
+import org.harctoolbox.irp.UnknownProtocolException;
 import org.harctoolbox.irp.UnsupportedRepeatException;
 import org.harctoolbox.irp.Decoder.Decode;
 import org.w3c.dom.DocumentFragment;
@@ -308,7 +309,15 @@ public class Executor
       map = new HashMap<>(16);
       for ( String protName : irpDatabase.getKeys())
       {
-        List<DocumentFragment> exec = irpDatabase.getXmlProperties(protName, "uei-executor"); 
+        List< DocumentFragment > exec = null;
+        try
+        {
+          exec = irpDatabase.getXmlProperties(protName, "uei-executor");
+        }
+        catch ( UnknownProtocolException e )
+        {
+          e.printStackTrace();
+        } 
         if (exec != null) 
         {           
           List<ExecutorWrapper> lies = parseList(exec); 
