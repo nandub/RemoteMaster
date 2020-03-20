@@ -11,6 +11,12 @@ SoftDev=SetupCodesOnly
 RDFSync=5 
 SetupValidation=WARN
 
+[General+]
+Notes=When using RMIR, LEAVE THE BATTERIES OUT.  THIS IS IMPORTANT!\n\n\
+     With the remote face up, pin 1 of the 5-pin connector is on the right. \
+	 Pins 1,3,4,5 of the connector correspond to pins 2,3,4,6 of a standard \
+	 6-pin connector.  Pin 2 of the 5-pin connector should be left unused.
+       
 [Checksums]
 ^$0000:$0002..$03FF
 

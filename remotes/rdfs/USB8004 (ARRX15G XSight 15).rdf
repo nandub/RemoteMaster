@@ -35,7 +35,6 @@ DAT        = 0,J
 Tape       = 0,K
 Laserdisc  = 0,L
 
-
 [DeviceTypes] 
 TV         = 0 
 Cable      = 0
@@ -86,6 +85,9 @@ Dev12 = $5B 0
 Dev13 = $5C 0
 Dev14 = $5D 0
 Dev15 = $5E 0
+Dev16 = $5F 0
+Dev17 = $60 0
+Dev18 = $61 0
 
 [Buttons]
 Power=$01:group0, 
@@ -111,7 +113,7 @@ Soft1D, Soft1E,
 Phantom=$4F,
 Dev1=$50:AllBind, Dev2, Dev3, Dev4, Dev5, Dev6,
 Dev7, Dev8, Dev9, Dev10, Dev11, Dev12,
-Dev13, Dev14, Dev15,
+Dev13, Dev14, Dev15, Dev16, Dev17, Dev18,
 Activity0=$F0:groupActivity+AllBind, Activity1, Activity2, Activity3,
 Activity4, Activity5, Activity6, Activity7, Activity8, Activity9,
 Activity10, Activity11, Activity12, Activity13, Activity14,
