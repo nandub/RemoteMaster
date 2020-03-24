@@ -23,12 +23,12 @@ TV         = TV
 Cable/SAT  = Cable,SAT,Video Acc
 
 [DeviceButtons] 
-TV         = $01
-Cable/SAT  = $11
+TV         = $39
+Cable/SAT  = $3A
 
 [Buttons] 
-TV=$01,
-Cable/SAT=$11, 
+TV=$39,
+Cable/SAT=$3A, 
 1=$02, 
 2=$0A, 
 3=$12, 
