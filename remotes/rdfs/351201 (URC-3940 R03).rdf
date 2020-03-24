@@ -1,49 +1,53 @@
 [General]
-Name=URC 11-2981 R01
+Name=URC-3940 R03
 Processor=S3F80
-SegmentTypes=$00 $01 $07 $08 $09 $10 $13
+SegmentTypes=$13 $00 $01 $08 $07 $10
 #MasterPowerSupport=Y
 EepromSize=$1000
 BaseAddr=$EC00
 RDFSync=5
-ImageMap=URC_11-2981.map
+ImageMap=URC-3940_R03.map
 SetupValidation=WARN
 AdvCodeFormat=EFC
 
 [Settings]
 
+[SpecialProtocols]
+DSM=Internal:0
+
+
 [Checksums]
 ^$0000:$0002..$0FFF
 
+
 [DeviceTypes] 
-TV   = 0 
-DVD  = 1,1
-DVD  = 1,1 
-Cable  = 2,2 
-Audio  = 3,3 
-Audio  = 3,3
-DVD  = 1,1
-Cable  = 2,2 
-Cable  = 2,2 
+TV    = 0 
+DVD   = 1,1
+DVD   = 1,1
+Cable = 2,2 
+Audio = 3,3 
+Audio = 3,3 
+Cable = 2,2 
+Cable = 2,2 
 
 [DeviceTypeAliases]
-TV       = TV
-Cable    = Cable,SAT,Video Acc
-DVD      = DVD,Tape,Laserdisc,DAT,VCR
-Audio    = CD,Tuner,Home Auto,Misc Audio,Phono,Amp
+TV    = TV
+DVD   = DVD,Tape,Laserdisc,DAT,VCR
+Cable = Cable,SAT,Video Acc
+Audio = CD,Tuner,Home Auto,Misc Audio,Phono,Amp
 
 [DeviceButtons] 
-TV=$03, 
-VCR=$04, 
-DVD=$05, 
-SAT=$06, 
-AMP=$07, 
-HI-FI=$08, 
-DVB-T=$09, 
-AUX=$0A 
+TV    = $03, 
+VCR   = $04, 
+DVD   = $05, 
+SAT   = $06, 
+AMP   = $07, 
+HI-FI = $08, 
+DVB-T = $09, 
+AUX   = $0A 
 
-[Buttons] 
-Magic=$01,
+[Buttons]
+Magic=$01, 
 Power=$02, 
 TV=$03, 
 VCR=$04, 
@@ -75,36 +79,38 @@ Up=$1D,
 Down=$1E, 
 Left=$1F, 
 Right=$20, 
-OK=$21, 
-Rewind=$22, 
+Ok=$21, 
+Rew=$22, 
 Play=$23, 
 Pause=$24, 
-Ffwd=$25, 
+FFwd=$25, 
 Prev=$26, 
 Stop=$27, 
 Rec=$28, 
 Next=$29, 
-Red=$2A, 
-Green=$2B, 
-Yellow=$2C, 
-Blue=$2D, 
-Guide=$2E,
-phantom1=$2F,
-phantom2=$30
+RED=$2A, 
+GREEN=$2B, 
+YELLOW=$2C, 
+BLUE=$2D, 
+Guide=$2E, 
+Info=$2F, 
+Exit=$30
+
 
 [ButtonMaps] 
-0 = ($14, $0B, $0C, $0D, $0E, $0F, $10, $11, $12, $13), ($17, $18, $19), ($1A, $1B),
-    $02, $15, $16, $1C, $1D, $1E, $1F, $20, $21, $22, $23, $24, $25, $27, $28, $2A, 
-    $2B, $2C, $2D, $2E, $2F, $30
+0 = ($14, $0B, $0C, $0D, $0E, $0F, $10, $11, $12, $13), ($17, $18, $19), ($1A, $1B), 
+    $02, $15, $16, $1C, $1D, $1E, $1F, $20, $21, $22, $23, $24, $25,      $27, $28, 
+    $2A, $2B, $2C, $2D, $2E, $2F, $30
 1 = ($14, $0B, $0C, $0D, $0E, $0F, $10, $11, $12, $13), ($17, $18, $19), ($1A, $1B),
-    $02, $15, $16, $1C, $1D, $1E, $1F, $20, $21, $22, $23, $24, $25, $26, $27, $28, 
-    $29, $2A, $2B, $2C, $2D, $2E, $2F, $30
+    $02, $15, $16, $1C, $1D, $1E, $1F, $20, $21, $22, $23, $24, $25, $26, $27, $28, $29, 
+    $2A, $2B, $2C, $2D, $2E, $2F, $30
 2 = ($14, $0B, $0C, $0D, $0E, $0F, $10, $11, $12, $13), ($17, $18, $19), ($1A, $1B),
-    $02, $15, $16, $1C, $1D, $1E, $1F, $20, $21, $22, $23, $24, $25, $26, $27, $28, 
-    $29, $2A, $2B, $2C, $2D, $2E, $2F, $30
+    $02, $15, $16, $1C, $1D, $1E, $1F, $20, $21, $22, $23, $24, $25, $26, $27, $28, $29, 
+    $2A, $2B, $2C, $2D, $2E, $2F, $30
 3 = ($14, $0B, $0C, $0D, $0E, $0F, $10, $11, $12, $13), ($17, $18, $19), ($1A, $1B),
-    $02, $15, $16, $1C, $1D, $1E, $1F, $20, $21, $22, $23, $24, $25, $26, $27, $28, 
-    $29, $2A, $2B, $2C, $2D, $2E, $2F, $30
+    $02, $15, $16, $1C, $1D, $1E, $1F, $20, $21, $22, $23, $24, $25, $26, $27, $28, $29, 
+    $2A, $2B, $2C, $2D, $2E, $2F, $30
+
 
 [Protocols] 
 	0000, 0014, 001C, 001F:8, 0020:2, 0027:new, 0034, 0045, 004B:7, 0058:2, 

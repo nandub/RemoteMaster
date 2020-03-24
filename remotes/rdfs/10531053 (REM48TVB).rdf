@@ -1,0 +1,154 @@
+[General]
+Name=REM48TVB (Modified URC-48C20 Catalyst 48)
+EepromSize=$1400
+AdvCodeAddr=$002B..$03FF
+UpgradeAddr=$0800..$0AFF
+LearnedAddr=$0C00..$13FF
+#PowerButtons=$02,$03,$04,$05,$06,$07,$08,$09,$0A
+Processor=HCS08
+BaseAddr=$E800
+RAMAddr=$FF00
+RDFSync=3
+ImageMap=Rem48tvb.map
+DevComb=,$0846,$0D7B,,$19E5
+AdvCodeBindFormat=LONG
+SectionTerminator=$FF
+LearnedDevBtnSwapped=Yes
+EFCDigits=5
+
+[Checksums]
+^$008:$00A..$02A
+
+[Settings]
+VPT Device=$01D.7.8.0.0 DeviceButtons
+VPT Status=$01A.2.1.1.0 (Off;On)
+CBL uses VPT=$01E.0.1.1.0 (No;Yes)
+TV  uses VPT=$01E.1.1.1.0 (No;Yes)
+VCR uses VPT=$01E.2.1.1.0 (No;Yes)
+AMP uses VPT=$01E.3.1.1.0 (No;Yes)
+SAT uses VPT=$01E.4.1.1.0 (No;Yes)
+DVD  uses VPT=$01E.5.1.1.0 (No;Yes)
+CD uses VPT=$01E.6.1.1.0 (No;Yes)
+AUX uses VPT=$01E.7.1.1.0 (No;Yes)
+CBL Setup Code Lock=$01C.0.1.1.0 (Off;On)
+TV  Setup Code Lock=$01C.1.1.1.0 (Off;On)
+VCR Setup Code Lock=$01C.2.1.1.0 (Off;On)
+AMP Setup Code Lock=$01C.3.1.1.0 (Off;On)
+SAT Setup Code Lock=$01C.4.1.1.0 (Off;On)
+DVD Setup Code Lock=$01C.5.1.1.0 (Off;On)
+CD Setup Code Lock=$01C.6.1.1.0 (Off;On)
+AUX Setup Code Lock=$01C.7.1.1.0 (Off;On)
+KeyMap=$01B.5.1.0.0 (Standard;Alternate)
+
+# DeviceTypes
+# The order matches up with default type on DeviceButtons
+# The names match up with DeviceTypeAliases
+
+[DeviceTypes]
+Cable    = 0
+TV       = 1
+VCR/DVD  = 2
+CD/Audio = 3
+
+[DeviceTypeAliases]
+Cable    = Cable,SAT,Video Acc
+TV       = TV
+VCR/DVD  = VCR,DVD,Tape,Laserdisc,DAT
+CD/Audio = CD,Tuner,Home Auto,Misc Audio,Phono,Amp
+
+[DeviceButtons]
+CBL = $00A $00B
+TV  = $00C $00D
+VCR = $00E $00F
+AMP = $010 $011
+SAT = $012 $013
+DVD = $014 $015
+CD = $016 $017
+AUX = $018 $019
+
+[Buttons]
+SETUP=$01,
+POWER=$02,
+TV=$03,
+CBL=$04,
+AMP=$05,
+DVD=$06,
+CD=$07,
+SAT=$08,
+VCR=$09,
+AUX=$0A,
+"vol up":VOL+=$12,
+"vol down":VOL-=$13,
+"channel up":CH+=$14,
+"channel down":CH-=$15,
+"ACTION"=$18,
+"prev ch":ChRtn=$19,
+Record:REC=$1A,
+1=$26,2=$27,3=$28,4=$29,5=$2A,6=$2B,7=$2C,8=$2D,9=$2E,0=$2F,
+"up"=$0D,
+"down"=$0E,
+"left"=$0F,
+"right"=$10,
+MUTE=$31,
+exit=$17,
+guide=$0C,
+info=$16,
+input=$30,
+menu=$0B,
+#mute=$18,
+#"pvr-menu"=$24,
+select=$11,
+"Play"=$1C
+"Stop"=$1B
+"FastFwd"=$20,
+"rewind"=$1F,
+"Pause"=$1D,
+#"SETUP"=$39,
+"SLEEP"=$24,MULTI=$38,STILL=$21,PIPCH-=$25,SWAP=$23,LOCATE=$33,SOURCE=$32,PIPSIZE=$34,MTS=$35,WOW=$37,RESET=$36,PIPCh+=$1E,PIP=$22,
+Phantom1=$39,
+Phantom2=$3A,
+Phantom3=$3B,
+Phantom4=$3C,
+Phantom5=$3D,
+Phantom6=$3E,
+Phantom7=$3F
+
+[ButtonMaps]
+0 = ($2F, $26, $27, $28, $29, $2A, $2B, $2C, $2D, $2E), ($12, $13, $18), ($14, $15),
+    $02, $31, $19, $30, $0B, $24, $0C, $0D, $0E, $0F, $10, $11, $17, $16, $1C, $1D,
+    $1F, $20, $1B, $1A, $25, $22, $23, $33, $37, $35, $34, $32, $36, $21, $1E, $38,
+    $39, $3A, $3B, $3C, $3D, $3E, $3F, $03, $09, $04, $06, $05, $08, $07, $0A
+1 = ($2F, $26, $27, $28, $29, $2A, $2B, $2C, $2D, $2E), ($12, $13, $18), ($14, $15),
+    $02, $31, $19, $30, $0B, $24, $0C, $0D, $0E, $0F, $10, $11, $17, $16, $33, $37,
+    $35, $34, $32, $36, $1C, $1D, $1F, $20, $1B, $1A, $25, $22, $23, $21, $1E, $38,
+    $39, $3A, $3B, $3C, $3D, $3E, $3F, $03, $09, $04, $06, $05, $08, $07, $0A
+2 = ($2F, $26, $27, $28, $29, $2A, $2B, $2C, $2D, $2E), ($12, $13, $18), ($14, $15),
+    $02, $31, $19, $1C, $1D, $1F, $20, $1B, $1A, $21, $1E, $30, $0B, $24, $0D, $0E,
+    $0F, $10, $11, $17, $0C, $16, $33, $37, $35, $34, $32, $36, $25, $22, $23, $38,
+    $39, $3A, $3B, $3C, $3D, $3E, $3F, $03, $09, $04, $06, $05, $08, $07, $0A
+3 = ($2F, $26, $27, $28, $29, $2A, $2B, $2C, $2D, $2E), ($12, $13, $18), ($14, $15),
+    $02, $1C, $1D, $1F, $20, $1B, $1A, $21, $1E, $30, $0B, $24, $0D, $0E, $0F, $10,
+    $11, $17, $0C, $16, $31, $19, $33, $37, $35, $34, $32, $36, $25, $22, $23, $38,
+    $39, $3A, $3B, $3C, $3D, $3E, $3F, $03, $09, $04, $06, $05, $08, $07, $0A
+
+[DigitMaps]
+106 92 26 72 48 53 54 94 86 47 113 03 01 81 90 44 46 223 224 05 93 114 21 59 11 87
+64 69 75 58 91 29 50 10 187 188 85 24 34 32 118 27 206 207 234 393 125 219 220 280
+294 232 233 245 246 255 256 205 287 227 228 259 260 249 250 208 396 289 285 292 265
+266 296 272 293 263 264 288 274 221 222 199 200 141 278 279 257 258 268 269 290 237
+238 281 282 126 30 23 16 179 127 168 83 61 33 217 218 124 295 192 193 291 251 252
+247 248 244 195 196 270 271 235 236 80 275 276 283 284 261 262 225 226 253 254 129
+241 242 286 230 231 13 18 39 17 31 277 209 210 170 130 131 267 174 197 229
+
+[Protocols]
+0000, 0002:5, 0004, 0006, 0007, 0008, 000A, 000C, 000D, 000E,
+0010, 0011, 0013, 0014, 0015, 0018, 001A, 001B, 001C, 001D,
+001E, 001F:8, 0021, 0022, 0027:new, 0029, 002A, 002D, 002F, 0032,
+0034, 0037, 0039, 003A, 0045, 0046, 0056, 0058, 005A, 005C,
+005D, 005E:2, 005F, 0060, 0061, 0065:2, 0068, 006A, 006E, 0073,
+007E:3, 0083, 0087, 0092, 0093, 0098, 009C, 009E, 00A4, 00A7,
+00AF, 00B6, 00BE, 00C4, 00C9, 00CA, 00CD:2, 00D0, 00D7, 00D9,
+00DE, 00E2, 00E3, 00E8, 00F2, 00F8:3, 00FC, 0103, 0109, 010C,
+010F, 0111, 0114:2, 0115, 0117, 0118, 0119, 011A:2, 011B, 0125,
+012A, 0161, 016B, 0174, 017E, 0182, 0190, 0194, 01A4
+

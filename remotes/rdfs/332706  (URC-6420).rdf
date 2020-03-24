@@ -5,7 +5,7 @@ Processor=S3F80
 BaseAddr=$EC80
 SegmentTypes=$00 $01 $09 $07 $08 $10
 RDFSync=5 
-#ImageMap=
+ImageMap=URC-6420.map
 SetupValidation=WARN
 AdvCodeBindFormat=LONG
 AdvCodeFormat=EFC
@@ -15,16 +15,16 @@ EFCDigits=5
 ^$0000:$0002..$0F7F
 
 [DeviceTypes] 
-TV   = 0,0
+TV         = 0,0
 Cable/SAT  = 1,1 
 
 [DeviceTypeAliases]
-TV     = TV
-Cable/SAT    = Cable,SAT,Video Acc
+TV         = TV
+Cable/SAT  = Cable,SAT,Video Acc
 
 [DeviceButtons] 
-TV  = $01
-Cable/SAT = $11
+TV         = $01
+Cable/SAT  = $11
 
 [Buttons] 
 TV=$01,
@@ -39,27 +39,27 @@ Cable/SAT=$11,
 8=$0C, 
 9=$14, 
 0=$0D, 
-AV=$05, 
+"tv/vcr":AV=$05, 
 Menu=$15, 
-Left=$06, 
-Right=$16, 
-Up=$0E, 
-Down=$10, 
-OK=$0F, 
-Vol+=$07, 
-Vol-=$08, 
+"left arrow":Left=$06, 
+"right arrow":Right=$16, 
+"up arrow":Up=$0E, 
+"down arrow":Down=$10, 
+select:OK=$0F, 
+"vol up":Vol+=$07, 
+"vol down":Vol-=$08, 
 Mute=$20, 
-Ch+=$17, 
-Ch-=$18, 
+"channel up":Ch+=$17, 
+"channel down":Ch-=$18, 
 Guide=$1C, 
-Info=$24, 
-Back=$23, 
+display:Info=$24, 
+exit:Back=$23, 
 Red=$1D, 
 Green=$1E, 
 Yellow=$26, 
 Blue=$25, 
-Teletext=$1F, 
-ExitTT=$28
+"text":Teletext=$1F, 
+"text off":ExitTT=$28
 
 
 
