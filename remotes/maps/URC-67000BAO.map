@@ -1,0 +1,66 @@
+#$MTIMFH
+#$-:Image Map file created by Map THIS!
+#$-:Map THIS! free image map editor by Todd C. Wilson
+#$-:Please do not edit lines starting with "#$"
+#$VERSION:1.30
+#$TITLE:URC-67000BAO
+#$AUTHOR:Rob Crowe
+#$DATE:Sun Nov 03 16:39:01 2019
+#$PATH:C:\Users\Lisa\Documents\JP1\RM\Images\
+#$GIF:URC-67000BAO.jpg
+#$FORMAT:ncsa
+#$EOH
+circle Power  164,36 175,47
+circle Claro  34,72 51,84
+circle TV  80,67 95,77
+circle HT  123,66 142,75
+circle AUX  172,68 186,77
+circle Guia  37,109 52,123
+circle Info  171,105 186,119
+circle OK  103,154 122,174
+circle Menu  39,205 55,222
+circle Sair  171,204 185,219
+circle Red/i  36,246 51,256
+circle Green/Audio  81,244 98,254
+circle Yellow/Legenda  128,242 145,252
+circle Blue  172,242 188,252
+circle Stop  37,283 51,298
+circle Gravados  106,278 132,291
+circle Record  175,281 189,297
+circle Rewind  47,329 72,350
+circle Play  107,326 129,347
+circle FFwd  166,327 191,345
+circle Agenda  57,376 71,391
+circle Pause  109,391 124,406
+circle Skip  159,374 176,392
+circle Vol+  54,445 68,458
+circle Vol-  57,485 71,499
+circle Ch+  164,442 179,457
+circle Ch-  162,484 177,498
+circle Voltar  108,445 130,458
+circle Mudo  108,483 127,496
+circle 1  52,530 71,543
+circle 2  110,530 129,541
+circle 3  169,529 189,539
+circle 4  53,562 72,571
+circle 5  110,562 129,573
+circle 6  169,561 188,573
+circle 7  53,594 72,604
+circle 8  112,596 131,606
+circle 9  170,595 188,605
+circle TV_Input  51,629 69,642
+circle 0  111,629 131,640
+circle Enter  168,628 187,640
+circle Canal_Claro  47,673 61,688
+circle TV/Musica  89,674 103,686
+circle PPV  132,672 144,686
+circle Fav+  178,671 190,683
+circle Jogos  47,716 61,730
+circle Mail  93,718 106,733
+circle Width  133,716 147,728
+circle Fav-  178,714 190,728
+poly Up 76,112 85,125 100,118 110,118 123,123 134,111 117,103 97,102 86,106 76,112
+poly Right 146,125 157,141 157,160 154,171 147,179 135,171 142,159 141,149 136,135 146,125
+poly Down 124,185 135,193 118,204 105,206 90,204 77,195 85,186 100,191 112,190 125,186 124,185
+poly Left 63,182 73,174 69,161 69,148 74,138 63,125 54,142 54,159 56,171 63,182
+circle Setup  32,37 40,45

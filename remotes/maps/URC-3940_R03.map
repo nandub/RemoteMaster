@@ -1,0 +1,53 @@
+#$MTIMFH
+#$-:Image Map file created by Map THIS!
+#$-:Map THIS! free image map editor by Todd C. Wilson
+#$-:Please do not edit lines starting with "#$"
+#$VERSION:1.30
+#$TITLE:URC-3940 R03.map
+#$DATE:Mon Dec 05 01:57:13 2016
+#$PATH:I:\DEVELOP\JP1\MAP\
+#$GIF:URC-3940_R03.jpg
+#$FORMAT:ncsa
+#$EOH
+circle Menu  32,41 44,53
+circle Magic  71,41 87,50
+circle Power  110,41 122,53
+circle TV  41,72 57,82
+circle SAT  101,72 117,82
+circle DVD  41,102 57,112
+circle VCR  101,102 117,112
+circle 1  32,137 44,149
+circle 2  71,137 83,149
+circle 3  110,137 122,149
+circle 4  32,171 44,183
+circle 5  71,171 83,183
+circle 6  110,171 122,183
+circle 7  32,205 44,217
+circle 8  71,205 83,217
+circle 9  110,205 122,217
+circle -/--  32,239 44,251
+circle 0  71,239 83,251
+circle AV  110,239 122,251
+circle Vol+  32,280 44,292
+circle Mute  71,280 83,292
+circle Ch+  110,280 122,292
+circle Vol-  32,314 44,326
+circle Ok  71,322 85,336
+circle Ch-  110,314 122,326
+poly Up 71,346 81,368 61,368 71,346
+poly Down 71,446 81,424 61,424 71,446
+poly Left 23,396 45,386 45,406 23,396
+poly Right 120,396 98,406 98,386 120,396
+circle RED  30,463 39,472
+circle GREEN  58,463 67,472
+circle YELLOW  87,463 96,472
+circle BLUE  115,463 124,472
+circle Rew  33,496 47,505
+circle Guide  72,496 86,505
+circle FFwd  111,496 125,505
+circle Pause  33,524 47,533
+circle Info  72,524 86,533
+circle Play  111,524 125,533
+circle Rec  33,552 47,561
+circle Exit  72,552 86,561
+circle Stop  111,552 125,561

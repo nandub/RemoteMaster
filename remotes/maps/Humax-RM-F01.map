@@ -1,0 +1,70 @@
+#$MTIMFH
+#$-:Image Map file created by Map THIS!
+#$-:Map THIS! free image map editor by Todd C. Wilson
+#$-:Please do not edit lines starting with "#$"
+#$VERSION:1.30
+#$TITLE:Humax RM-F01
+#$AUTHOR:RichG
+#$DATE:Sat Nov 26 10:43:17 2011
+#$PATH:C:\Documents and Settings\Administrator\Desktop\Remote\Maps_and_Images_required_for_RM-IR_-_Version_1.32\
+#$GIF:Humax-RM-F01.jpg
+#$FORMAT:ncsa
+#$EOH
+default Humax
+circle 1  32,105 32,119
+circle 2  73,104 73,118
+circle 3  114,104 114,118
+circle Mute  26,43 26,57
+circle Power  119,46 119,60
+circle 4  32,141 32,155
+circle 5  73,141 73,155
+circle 6  114,142 114,156
+circle 7  31,177 31,191
+circle 8  73,177 73,191
+circle 9  114,177 114,191
+circle List  31,210 31,224
+circle 0  73,212 73,226
+circle Menu  114,212 114,226
+circle Red  22,285 22,296
+circle Green  55,285 55,296
+circle OK  74,362 74,378
+circle Blue  121,284 121,295
+circle Media  27,315 27,326
+circle Guide  119,317 119,328
+circle Exit  27,407 27,418
+circle Back  118,404 118,415
+circle info  74,444 74,455
+circle Yellow  88,284 88,295
+rect SAT 16,69 36,79
+rect TV 47,69 67,79
+rect DVD 79,69 99,79
+rect AUDIO 110,69 130,79
+rect Text 16,512 36,522
+rect Lang 47,512 67,522
+rect Sub 78,512 98,522
+rect TV/Radio 109,512 129,522
+rect Schedule 16,535 36,545
+rect Bookmark_Add 47,535 67,545
+rect Bookmark_List 78,535 98,545
+rect Slow 109,535 129,545
+rect Source 17,560 37,570
+rect Sleep 48,560 68,570
+rect V-Format 79,560 99,570
+rect Wide 110,560 130,570
+circle opt+  73,484 73,495
+circle Vol+  29,442 29,453
+circle Vol-  29,485 29,496
+circle Ch+  115,441 115,452
+circle Ch-  116,486 116,497
+poly Up 83,337 74,318 64,337 83,337 83,337
+poly Right 114,362 98,352 98,372 114,362 114,362
+poly Left 46,370 46,350 30,361 46,370 46,370
+poly Down 83,390 64,390 74,408 83,390 83,390
+rect Play 15,233 35,243
+rect Pause 47,233 67,243
+rect Stop 78,233 98,243
+rect Record 109,233 129,243
+rect Rew 15,255 35,265
+rect FF 47,255 67,265
+rect Prev 78,254 98,264
+rect Next 109,254 129,264

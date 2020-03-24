@@ -1,0 +1,66 @@
+#$MTIMFH
+#$-:Image Map file created by Map THIS!
+#$-:Map THIS! free image map editor by Todd C. Wilson
+#$-:Please do not edit lines starting with "#$"
+#$VERSION:1.30
+#$TITLE:NS-RMT415-v2
+#$AUTHOR:Rob Crowe
+#$DATE:Sat Jan 04 21:35:04 2020
+#$PATH:C:\Users\Rob Lenovo\OneDrive\Documents\JP1\RM\Images\
+#$GIF:NS-RMT415-v2.jpg
+#$FORMAT:ncsa
+#$EOH
+circle Setup  81,42 91,52
+circle Power  237,46 252,61
+circle Menu  85,114 104,133
+circle Info  240,115 258,133
+circle OK  161,165 185,189
+circle Guide  82,217 100,235
+circle Exit  239,221 257,239
+circle Stop  76,301 95,320
+circle Record  238,302 258,322
+circle Play  156,350 182,376
+circle Replay  92,402 112,422
+circle Pause  152,418 172,438
+circle Skip  215,402 233,420
+circle VOD  61,758 79,776
+circle Home  115,758 133,776
+circle PageUp  169,757 187,775
+circle Live  226,760 244,778
+circle Input  57,812 75,830
+circle Opt  114,811 132,829
+circle PageDown  169,813 187,831
+circle Apps  225,815 243,833
+circle TV  84,77 105,89
+circle DVD  139,73 159,85
+circle STB  189,76 208,88
+circle STREAM  241,79 264,91
+circle Red  77,258 96,270
+circle Green  132,257 151,270
+circle Yellow  186,257 205,269
+circle Blue  239,261 260,273
+circle List  156,295 188,309
+circle Rew  84,352 115,373
+circle FFwd  229,354 259,377
+circle Last  151,483 179,499
+circle Mute  149,527 176,544
+circle Vol+  83,479 104,496
+circle Vol-  85,534 107,552
+circle Ch+  219,479 240,497
+circle Ch-  215,535 236,552
+circle 1  75,582 101,598
+circle 2  148,583 172,598
+circle 3  222,583 246,598
+circle 4  74,622 100,636
+circle 5  146,621 172,636
+circle 6  220,623 244,637
+circle 7  74,662 99,676
+circle 8  145,661 171,675
+circle 9  218,663 243,677
+circle Dash  72,701 98,715
+circle 0  146,702 172,717
+circle Enter  216,703 242,718
+poly Up 139,134 153,127 170,127 187,135 199,122 184,113 170,109 154,109 139,112 126,119 139,134
+poly Right 197,145 211,133 221,149 225,166 222,181 211,200 195,185 202,169 202,160 197,145
+poly Down 182,192 197,207 172,219 144,219 132,213 121,207 136,192 154,198 164,198 182,192
+poly Left 110,195 126,185 119,172 120,158 127,145 113,131 102,145 99,160 99,176 110,195

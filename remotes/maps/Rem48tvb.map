@@ -1,0 +1,68 @@
+#$MTIMFH
+#$-:Image Map file created by Map THIS!
+#$-:Map THIS! free image map editor by Todd C. Wilson
+#$-:Please do not edit lines starting with "#$"
+#$VERSION:1.30
+#$TITLE:Ayre
+#$DATE:Thu Apr 12 17:09:43 2018
+#$PATH:Z:\home\test\3_31_18REM48TVB\try\
+#$GIF:Rem48tvb.jpg
+#$FORMAT:ncsa
+#$EOH
+default Rem48tvb
+circle CBL  38,53 44,58
+circle AUX  59,52 65,58
+circle VCR  81,53 86,58
+circle TV  104,52 108,57
+circle SAT  38,70 43,74
+circle CD  59,69 64,74
+circle AMP  80,68 85,73
+circle PIP  62,319 67,324
+circle MULTI  82,318 86,323
+circle STILL  99,318 105,323
+circle PIPCH-  44,336 50,342
+circle Input  70,172 78,177
+circle Menu  102,262 108,268
+circle Guide  40,206 46,212
+circle Exit  102,206 108,212
+circle Sleep  71,186 79,191
+circle Power  98,33 105,38
+circle Up  71,217 89,224
+circle Left  45,234 52,246
+circle Right  100,233 107,245
+circle Down  71,250 90,257
+circle Select  72,233 84,240
+circle ACTION  44,136 52,142
+circle Vol+  44,159 52,166
+circle Vol-  44,185 52,193
+circle Ch+  99,158 107,166
+circle Ch-  99,183 107,191
+circle 1  42,86 49,92
+circle 2  70,86 80,93
+circle 3  96,86 104,92
+circle 4  42,105 50,112
+circle 5  71,104 77,110
+circle 6  97,104 104,109
+circle 7  44,121 52,127
+circle 8  70,120 78,127
+circle 9  99,119 108,126
+circle 0  69,136 77,141
+circle ChRtn  70,157 78,162
+circle PIPCH+  43,318 48,322
+circle Rewind  42,281 51,287
+circle Play  72,281 79,287
+circle Fastfwd  99,280 108,285
+circle Pause  100,298 110,302
+circle Rec  43,299 52,305
+circle Setup  41,33 46,38
+circle Info  41,263 47,269
+circle DVD  104,70 110,76
+circle SWAP  62,336 68,342
+circle LOCATE  82,335 88,341
+circle SOURCE  101,335 107,341
+circle PIPSIZE  44,353 49,358
+circle MTS  62,353 67,358
+circle WOW  82,351 87,357
+circle RESET  100,352 106,357
+circle Mute  98,135 105,139
+circle Stop  72,299 81,305

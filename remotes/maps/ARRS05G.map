@@ -1,0 +1,61 @@
+#$MTIMFH
+#$-:Image Map file created by Map THIS!
+#$-:Map THIS! free image map editor by Todd C. Wilson
+#$-:Please do not edit lines starting with "#$"
+#$VERSION:1.30
+#$TITLE:ARRS05G
+#$DATE:Sat Nov 17 21:00:43 2012
+#$PATH:C:\Users\Dave\Documents\Remotes\RemoteMaster\Images\
+#$GIF:ARRS05G.jpg
+#$FORMAT:ncsa
+#$EOH
+rect AUD 44,66 69,82
+circle Power  101,27 101,36
+circle Setup  39,24 39,33
+poly Left 36,334 31,327 29,316 31,305 36,298 46,307 43,314 43,320 46,327 36,334 36,334
+poly Right 104,330 109,323 111,312 109,301 104,294 94,303 97,310 97,316 94,323 104,330 104,330
+poly Up 58,288 50,279 57,274 68,273 79,274 87,279 79,288 72,285 63,285 58,288 58,288
+poly Down 60,339 52,348 59,353 70,354 81,353 89,348 81,339 74,342 65,342 60,339 60,339
+circle Ok  69,313 69,327
+circle 1  38,104 38,115
+circle 2  71,105 71,116
+circle 3  103,106 103,117
+circle 4  38,129 38,140
+circle 5  71,128 71,139
+circle 6  103,131 103,142
+circle 7  38,154 38,165
+circle 8  71,154 71,165
+circle 9  103,155 103,166
+circle 0  71,178 71,189
+circle Dash  103,180 103,189
+circle Input  37,178 37,187
+circle Aspect  110,510 110,521
+rect TV 28,46 53,62
+rect DVD 59,47 84,63
+rect AUX 74,66 99,82
+rect CBL 89,48 114,64
+circle Vol+  34,227 34,239
+circle Vol-  34,259 34,271
+circle Ch+  105,227 105,239
+circle Ch-  106,258 106,270
+circle Mute  70,249 70,260
+circle Last  70,212 70,223
+circle Guide  30,395 30,406
+circle Rewind  30,420 30,431
+circle Pause  57,421 57,432
+circle Skip_Back  30,453 30,464
+circle Play  84,423 84,434
+circle Fast_Fwd  110,421 110,432
+circle Info  110,394 110,405
+circle Menu  84,394 84,405
+circle Exit  57,395 57,406
+circle Fav  30,512 30,523
+circle List  57,513 57,524
+circle OnDemand  84,513 84,524
+circle C[red]  30,485 30,496
+circle D[green]  57,486 57,497
+circle A[yellow]  84,485 84,496
+circle B[blue]  110,485 110,496
+circle Skip_Fwd  110,453 110,464
+circle Record  84,455 84,466
+circle Stop  57,454 57,465

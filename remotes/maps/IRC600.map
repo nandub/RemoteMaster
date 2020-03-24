@@ -1,0 +1,65 @@
+#$MTIMFH
+#$-:Image Map file created by Map THIS!
+#$-:Map THIS! free image map editor by Todd C. Wilson
+#$-:Please do not edit lines starting with "#$"
+#$VERSION:1.30
+#$TITLE:IRC600
+#$AUTHOR:Rob Crowe
+#$DATE:Tue Nov 19 11:50:52 2019
+#$PATH:C:\Users\RCrowe\Documents\JP1\RM\Images\
+#$GIF:IRC600.jpg
+#$FORMAT:ncsa
+#$EOH
+circle Power  146,41 146,53
+circle AUX  45,64 45,81
+circle TV  94,65 94,81
+circle SAT  142,66 142,81
+circle Source  38,92 38,101
+circle Aspect  149,93 149,101
+circle Stop  65,114 65,128
+circle Pause  94,102 94,116
+circle Record  123,116 123,128
+circle Rewind  48,144 48,158
+circle Play  93,146 93,165
+circle FFwd  140,143 140,159
+circle Skip-  63,174 63,186
+circle Skip+  123,175 123,187
+circle Menu  42,223 42,236
+circle Fav  73,202 73,218
+circle PVR  112,202 112,216
+circle Go  112,202 112,216
+circle Enter/OK  92,261 92,280
+circle Info  47,308 47,321
+circle Guide  94,327 94,347
+circle Exit  140,307 140,319
+circle Vol+  50,372 50,386
+circle Vol-  49,416 49,428
+circle Ch+  138,373 138,389
+circle Ch-  134,414 134,426
+circle A  94,373 94,383
+circle B  94,399 94,408
+circle C  94,425 94,435
+circle D  93,450 93,460
+circle Mute  51,452 51,464
+circle Last  135,450 135,464
+circle 1  54,482 54,499
+circle 2  95,482 95,498
+circle 3  135,482 135,496
+circle 4  55,508 55,524
+circle 5  95,507 95,521
+circle 6  135,508 135,522
+circle 7  56,535 56,550
+circle 8  95,536 95,551
+circle 9  134,534 134,548
+circle Help  52,560 52,574
+circle 0  93,559 93,574
+circle Options  134,562 134,577
+poly Up 68,225 78,238 89,234 100,234 110,240 122,227 108,220 96,217 86,218 76,220 68,225 68,225
+poly Left 61,233 71,243 66,253 66,266 67,273 71,279 59,291 50,272 49,254 53,243 61,233 61,233
+poly Right 118,245 128,233 136,244 140,256 140,269 137,278 129,291 118,278 123,268 124,258 118,245 118,245
+poly Down 112,285 124,297 109,306 95,307 83,306 71,301 67,297 78,285 90,290 98,290 111,286 112,285 112,285
+circle Go  134,562 134,577
+circle Go  134,562 134,577
+circle Go  134,562 134,577
+circle Go  134,562 134,577
+circle Go_Back  145,222 145,237

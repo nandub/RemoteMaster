@@ -1,0 +1,60 @@
+#$MTIMFH
+#$-:Image Map file created by Map THIS!
+#$-:Map THIS! free image map editor by Todd C. Wilson
+#$-:Please do not edit lines starting with "#$"
+#$VERSION:1.30
+#$TITLE:URC-1280 Contour 8 v2
+#$AUTHOR:Rob Crowe
+#$DATE:Mon Jan 27 14:07:16 2020
+#$PATH:C:\Users\RCrowe\Documents\JP1\RDF Development\URC-1280 Contour 8\
+#$GIF:URC-1280 v2.jpg
+#$FORMAT:ncsa
+#$EOH
+circle Setup  95,59 113,77
+circle Power  209,60 229,80
+circle Rewind  92,218 109,235
+circle Play  150,218 168,236
+circle FastFwd  210,219 228,237
+circle Stop  91,268 110,287
+circle Pause  150,266 169,285
+circle Record  211,267 230,286
+circle Menu  151,317 171,337
+circle Guide  91,337 109,355
+circle Info  209,337 227,355
+circle OK  151,428 179,456
+circle AV  89,518 107,536
+circle Exit  209,518 227,536
+circle Vol+  88,566 106,584
+circle Vol-  88,615 106,633
+circle Mute  149,615 166,632
+circle Back  149,565 167,583
+circle Ch+  209,567 226,584
+circle Ch-  208,614 225,631
+circle Red  86,661 100,675
+circle Green  128,660 143,675
+circle Yellow  171,661 185,675
+circle Blue  213,661 228,676
+circle 1  88,706 107,725
+circle 2  149,707 166,724
+circle 3  210,706 228,724
+circle 4  88,754 107,773
+circle 5  149,754 167,772
+circle 6  209,753 228,772
+circle 7  89,805 107,823
+circle 8  150,804 168,822
+circle 9  210,805 228,823
+circle 0  150,852 170,872
+circle Apps  90,853 105,868
+circle Live_TV  209,852 224,867
+circle TV  151,68 172,80
+circle VCR  93,103 114,115
+circle AMP  94,138 116,150
+circle DVD  152,103 172,117
+circle Hi-Fi  151,138 173,151
+circle DVB-T  151,174 173,187
+circle SAT  209,104 230,116
+circle MP3  208,139 229,151
+poly Up 102,370 118,388 128,382 141,378 152,377 162,378 169,380 176,383 182,387 200,370 187,360 174,355 161,352 148,350 134,352 121,356 114,360 102,368 102,370 102,370
+poly Right 190,397 208,379 218,390 222,402 226,419 227,434 224,447 221,457 215,467 208,476 190,459 198,445 201,430 199,413 196,406 190,398 190,397 190,397
+poly Down 182,465 199,485 185,495 168,502 150,504 138,504 126,501 115,496 106,489 101,484 118,468 130,474 142,477 156,477 167,475 174,472 181,466 182,465 182,465
+poly Left 93,475 111,459 106,450 100,438 99,428 100,416 104,406 110,396 92,377 81,391 75,404 72,419 72,434 75,450 81,463 91,476 93,475 93,475

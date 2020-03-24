@@ -1,0 +1,45 @@
+#$MTIMFH
+#$-:Image Map file created by Map THIS!
+#$-:Map THIS! free image map editor by Todd C. Wilson
+#$-:Please do not edit lines starting with "#$"
+#$VERSION:1.30
+#$TITLE:URC-6420
+#$AUTHOR:Rob Crowe
+#$DATE:Mon Dec 02 17:21:07 2019
+#$PATH:C:\Users\RCrowe\Documents\JP1\RM\Images\
+#$GIF:URC-6420.jpg
+#$FORMAT:ncsa
+#$EOH
+circle TV  71,54 71,66
+circle Cable/SAT  148,54 148,67
+circle 1  55,105 55,121
+circle 2  112,105 112,122
+circle 3  166,105 166,122
+circle 4  56,148 56,164
+circle 5  112,149 112,166
+circle 6  165,149 165,165
+circle 7  63,194 63,211
+circle 8  113,193 113,210
+circle 9  160,194 160,208
+circle 0  112,238 112,255
+circle AV  68,239 68,255
+circle Menu  154,237 154,254
+circle OK  112,319 112,337
+circle Vol+  76,401 76,418
+circle Teletext  67,570 67,589
+circle ExitTT  162,570 162,587
+circle Ch+  150,399 150,415
+circle Ch-  159,445 159,458
+circle Mute  113,426 113,439
+circle Guide  62,489 62,505
+circle Info  115,488 115,503
+circle Back  167,488 167,503
+circle Red  58,531 58,543
+circle Green  95,531 95,544
+circle Yellow  133,530 133,542
+circle Blue  170,528 170,540
+circle Vol-  69,444 69,456
+poly Up 100,295 112,273 125,293 102,293 101,293 102,292 100,295
+poly Right 138,309 138,332 159,320 138,309
+poly Down 105,343 128,343 116,367 103,344 105,343
+poly Left 88,311 88,332 65,321 88,309 88,311
