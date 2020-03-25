@@ -7,6 +7,10 @@ Changes for v2.10
 - Support learned signal conversion to further NEC-style executors (Graham)
 - Remove need for explicit configuration file in irptransmogrifier.[sh,bat] (Bengt)
 - Improve AutoAssign for functions to buttons (Bengt)
+-- Release build 3
+- Update digitmaps.bin to 744 (Rob, Graham)
+- Update the included IrpTransmogrifier to v1.2.5 (Bengt, Graham)
+- Add/amend over 20 RDF files, with map and image files as needed (Rob, Graham)
 
 Changes for v2.09
 -- Private build 1

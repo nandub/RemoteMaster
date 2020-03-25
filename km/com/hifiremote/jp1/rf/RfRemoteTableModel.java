@@ -85,6 +85,8 @@ public class RfRemoteTableModel extends JP1TableModel< RfRemote >
   
   private String getRowValue( int row, RfRemote rfRemote )
   {
+    if ( rfRemote == null )
+      return null;
     Pairing pair = pairIndex == null || pairIndex < 0 ? null : rfRemote.pairings.get( pairIndex );
     if ( row == 1 )
       return rfRemote.extAddr != null ? RfTools.getAddrString( rfRemote.extAddr )
