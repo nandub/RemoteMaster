@@ -105,6 +105,7 @@ import com.hifiremote.jp1.extinstall.RMExtInstall;
 import com.hifiremote.jp1.extinstall.RMWavPlayer;
 import com.hifiremote.jp1.io.BLERemote;
 import com.hifiremote.jp1.io.CommHID;
+import com.hifiremote.jp1.io.CommHID.Response;
 import com.hifiremote.jp1.io.JP2BT;
 import com.hifiremote.jp1.io.JPS;
 import com.hifiremote.jp1.io.IO;
@@ -138,7 +139,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
 
   /** Description of the Field. */
   public final static String version = "v2.10";
-  public final static int buildVer = 3;
+  public final static int buildVer = 4;
   
   public enum WavOp { NEW, MERGE, SAVE, PLAY };
   
@@ -422,7 +423,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
 
   private JMenuItem forumItem = null;
   
-  private JMenuItem powerManagementItem = null;
+//  private JMenuItem powerManagementItem = null;
   
   private int tooltipDelay = 0;
   private int tooltipDefaultDelay = 0;
@@ -3222,9 +3223,9 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
       forumItem.addActionListener( this );
       menu.add( forumItem );
       
-      powerManagementItem = new JMenuItem( "Enhanced Power Management info", KeyEvent.VK_E );
-      powerManagementItem.addActionListener( this );
-      menu.add( powerManagementItem );
+//      powerManagementItem = new JMenuItem( "Enhanced Power Management info", KeyEvent.VK_E );
+//      powerManagementItem.addActionListener( this );
+//      menu.add( powerManagementItem );
 
       menu.addSeparator();
     }
@@ -4877,6 +4878,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
     {
       CommHID ioHID = ( CommHID )ioOut;
       int enabled = ioHID.getEnhancedPowerManagementStatus();
+
       if ( enabled < 0 )
       {
         System.err.println( "Enhanced Power Management is not supported" );
@@ -4885,17 +4887,68 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
       {
         String title = "Enhanced Power Management";
         String message = 
-            "Uploading or downloading from this remote requires Enhanced Power Management\n"
-                + "to be disabled in Windows.  A zip file with instructions on how to do this,\n"
-                + "including registry patches to do so and an explanation of how to do so manually\n"
-                + "with regedit, is available in the JP1 forum.  There is a link to this file from\n"
-                + "the Help menu.  It is preferable to use regedit to edit the Windows registry\n"
-                + "directly if you feel confident in doing so.  The registry key you need to change\n"
-                + "is at:\n\n" + ( ( CommHID )ioOut ).getRegistryKey() + "\n\n"
-                + "where you need to change the value of \"EnhancedPowerManagementEnabled\" from 1 to 0\n"
-                + "by right-clicking and selecting Modify.\n\n"
-                + "After this change, you need to disconnect and reconnect the remote from the PC.";
-        JOptionPane.showMessageDialog( null, message, title, JOptionPane.ERROR_MESSAGE );
+            "Uploading or downloading from this remote requires Enhanced Power Management to\n"
+                + "be disabled in the Windows Registry.  This change requires administrative privileges.\n"
+                + "You have a choice of two methods to do this:\n\n"
+                + "Method A:  RMIR can do it for you, but you will have to close this RMIR session\n"
+                + "(press the Cancel button in this message) and open it again in administrative mode.\n"
+                + "To do so, right-click the RMIR shortcut (NOT the RemoteMaster.jar file) and select \n"
+                + "\"Run as administrator\".  Then repeat the download attempt and when you come back\n"
+                + "to this message, press the Method A button.\n\n"
+                + "Method B:  Use the Registry Editor (regedit.exe) to make the change manually.  If you\n"
+                + "press the Method B button, it will display detailed instructions on exactly how to do this.\n"
+                + "With this method you do not have to close this RMIR session, so you can keep the\n"
+                + "instructions displayed.";
+        String[] options = { "Method A", "Method B", "Cancel" };
+        int reply = JOptionPane.showOptionDialog( this, message, title, JOptionPane.YES_NO_CANCEL_OPTION, 
+            JOptionPane.INFORMATION_MESSAGE, null, options, options[ 2 ] );
+            
+        if ( reply == 0 )
+        {
+          Response response = ioHID.setEnhancedPowerManagementEnabled( false );
+          int msgType = JOptionPane.INFORMATION_MESSAGE;
+          String msg = null;
+          if ( response.error != null )
+          {
+            msgType = JOptionPane.ERROR_MESSAGE;
+            msg = response.error;
+            msg += "\nIf access is denied, it is usually because RMIR has not been run\n"
+                + "as administrator.  The required registry edit can only be made in\n"
+                + "administrative mode.  You need to close RMIR and re-open it by\n"
+                + "right-clicking the RMIR shortcut (NOT the RemoteMaster.jar file)\n"
+                + "and selecting \"Run as administrator\".";
+          }
+          else
+          {
+            msg = response.output;
+            msg += "\nFollowing a successful registry edit, you need to disconnect the\n"
+                + "remote from the PC and then reconnect it.  When you continue from\n"
+                + "here by pressing OK, it will show \"No remotes found!\", but if you\n"
+                + "repeat the download (there is no need to close and re-open RMIR) it\n"
+                + "will work normally.  RMIR only needs to be run as administrator to\n"
+                + "make this change.  Subsequent RMIR sessions should be made in standard\n"
+                + "mode in the usual way.  This setting change is normally persistent but\n"
+                + "may need to be repeated after a Windows update.";
+          }
+          JOptionPane.showMessageDialog( this, msg, title, msgType );            
+        }
+        else if ( reply == 1 )
+        {
+          message = 
+              "Here is how to use the Registry Editor to disable Enhanced Power Management.  You can\n"
+                  + "use any means to open the Registry Editor, but the simplest is to select \"Run\" from\n"
+                  + "the Start menu and enter \"regedit\" (without the quotes) in the text box that then opens.\n"
+                  + "The registry key you need to change is at:\n\n"
+                  + ( ( CommHID )ioOut ).getRegistryKey() + "\n\n"
+                  + "where you need to change the value of \"EnhancedPowerManagementEnabled\" from 1 to 0.\n"
+                  + "Navigate to this entry, then edit it by right-clicking and selecting Modify.\n\n"
+                  + "After this change, you need to disconnect the remote from the PC and then reconnect it.\n"
+                  + "When you continue from here by pressing OK, it will show \"No remotes found!\", but if you\n"
+                  + "repeat the download (there is no need to close and re-open RMIR) it will work normally.\n"
+                  + "This setting change is normally persistent but may need to be repeated after a Windows\n"
+                  + "update.";
+          JOptionPane.showMessageDialog( null, message, title, JOptionPane.ERROR_MESSAGE );;
+        }
         ioOut = null;
       }
     }
@@ -5952,11 +6005,11 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
         URL url = new URL( "http://www.hifi-remote.com/forums/" );
         desktop.browse( url.toURI() );
       }
-      else if ( source == powerManagementItem )
-      {
-        URL url = new URL( "http://www.hifi-remote.com/forums/dload.php?action=file&file_id=14564" );
-        desktop.browse( url.toURI() );
-      }
+//      else if ( source == powerManagementItem )
+//      {
+//        URL url = new URL( "http://www.hifi-remote.com/forums/dload.php?action=file&file_id=14564" );
+//        desktop.browse( url.toURI() );
+//      }
       else if ( source == irpTransmogrifierItem )
       {
         System.err.println( "Setting IrpTransmogrifier as decoder for Learned Signals" );

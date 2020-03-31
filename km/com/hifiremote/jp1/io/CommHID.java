@@ -150,6 +150,12 @@ public class CommHID extends IO
     AVL, DIGITAL, XZITE, UNKNOWN
   }
   
+  public class Response
+  {
+    public String output = null;
+    public String error = null;
+  }
+  
   public class FileData
   {
     public String zName = null;
@@ -200,7 +206,7 @@ public class CommHID extends IO
   }
 
   public String getInterfaceVersion() {
-    return "1.0";
+    return "1.1";
   }
 
   public String[] getPortNames() {
@@ -2659,6 +2665,69 @@ public class CommHID extends IO
         + "          VID_06E7&PID_" + String.format( "%04X\n", thisPID )
         + "            " + deviceID + "\n"
         + "              Device Parameters";
+  }
+  
+  public Response setEnhancedPowerManagementEnabled( boolean status )
+  {
+    Response response = new Response();
+    try
+    {
+      String cmd = "reg add \"HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Enum\\USB\\VID_06E7&PID_"
+          + String.format( "%04X\\", thisPID ) + deviceID + "\\Device Parameters\""
+          + " /v EnhancedPowerManagementEnabled /t REG_DWORD /d "
+          + ( status ? "1 /f" : "0 /f" );
+      System.err.println( "Setting Enhanced Power Management status with command:" );
+      System.err.println( "  " + cmd );
+      Process process = Runtime.getRuntime().exec( cmd );
+      BufferedReader reader = new BufferedReader(
+          new InputStreamReader(process.getInputStream()));
+      BufferedReader errorReader = new BufferedReader(
+          new InputStreamReader(process.getErrorStream()));
+      process.waitFor();
+      String line = null;
+      
+      int count = 0;
+      StringBuilder sb = new StringBuilder();
+      while ( (line = reader.readLine()) != null ) 
+      {
+        if ( count > 0 )
+        {
+          sb.append( "\n" );
+        }  
+        sb.append( line );
+        count++;
+        if ( count > 5 )
+          break;
+      }
+      response.output = sb.toString();
+      reader.close();
+      
+      count = 0;
+      sb = new StringBuilder();
+      while ( (line = errorReader.readLine()) != null ) 
+      {
+        if ( count > 0 )
+        {
+          sb.append( "\n" );
+        }
+        sb.append( line );
+        count++;
+        if ( count > 5 )
+          break;
+      }
+      response.error = sb.toString();
+      if ( response.error.trim().isEmpty() )
+      {
+        response.error = null;
+      }
+      errorReader.close();
+    }
+    catch ( Exception e )
+    {
+      response.output = null;
+      response.error = e.getMessage();
+    }
+    return response;
   }
   
   private String getFDRAlangFile()

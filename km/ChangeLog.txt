@@ -11,6 +11,8 @@ Changes for v2.10
 - Update digitmaps.bin to 744 (Rob, Graham)
 - Update the included IrpTransmogrifier to v1.2.5 (Bengt, Graham)
 - Add/amend over 20 RDF files, with map and image files as needed (Rob, Graham)
+-- Private build 4
+- Create facility for RMIR to perform update of registry setting for Enhanced Power Management (Graham)
 
 Changes for v2.09
 -- Private build 1
