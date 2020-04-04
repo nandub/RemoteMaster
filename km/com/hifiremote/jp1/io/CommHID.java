@@ -3995,8 +3995,9 @@ public class CommHID extends IO
      *   The maximum size of an FDRA read or write
      */
     private final static int chunkSize = 0x4000;
-
-   
+    
+    public static String lastRegistryKey = null;
+    
 }
 
   

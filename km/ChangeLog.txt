@@ -13,6 +13,9 @@ Changes for v2.10
 - Add/amend over 20 RDF files, with map and image files as needed (Rob, Graham)
 -- Private build 4
 - Create facility for RMIR to perform update of registry setting for Enhanced Power Management (Graham)
+-- Private build 5
+- Restructure the new registry update procedure as suggested by Dave Johnson (Graham)
+- Minor change to Setup.sh for Linux, also re-named setup.sh to comply with Linux conventions (Bengt, Graham)
 
 Changes for v2.09
 -- Private build 1

@@ -120,7 +120,7 @@ EOF
 # Force user to answer Y or N (or equivalently y or n)
 reply=x
 while !  echo "YN" | grep -qi $reply; do
-echo -n "Please answer Y or N. > "
+printf "%s" "Please answer Y or N. > "
 read reply
 done
 
