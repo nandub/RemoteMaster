@@ -16,6 +16,8 @@ Changes for v2.10
 -- Private build 5
 - Restructure the new registry update procedure as suggested by Dave Johnson (Graham)
 - Minor change to Setup.sh for Linux, also re-named setup.sh to comply with Linux conventions (Bengt, Graham)
+-- Private build 6
+- Add a feature for automated re-enabling of Enhanced Power Management in case it ever becomes necessary (Graham)
 
 Changes for v2.09
 -- Private build 1

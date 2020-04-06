@@ -139,7 +139,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
 
   /** Description of the Field. */
   public final static String version = "v2.10";
-  public final static int buildVer = 5;
+  public final static int buildVer = 6;
   
   public enum WavOp { NEW, MERGE, SAVE, PLAY };
   
@@ -266,6 +266,8 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
 
   /** The save as item. */
   private RMAction saveAsAction = null;
+  
+  private RMAction xziteReenableAction = null;
 
   private JMenuItem installExtenderItem = null;
   private JMenuItem importFromWavNewItem = null;
@@ -1766,6 +1768,46 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
             rfTools  = new RfTools( RemoteMaster.this );
           }
         }
+        else if ( command == "REENABLE" )
+        {
+          if ( CommHID.lastRegistryKey == null )
+          {
+            return;
+          }
+          
+          String title = "Re-enable Enhanced Power Management";
+          String message = 
+              "An XSight/Nevo remote needs Enhanced Power Management disabled if it is to be used\n"
+            + "with RMIR.  If you re-enable it for the current remote, you will no longer be able to use it\n"
+            + "with RMIR until you disable it again.  If you really want to re-enable it, you must be running\n"
+            + "RMIR as administrator.  If you are not doing so, please press No and exit RMIR.  Then\n"
+            + "right-click an RMIR shortcut and select \"Run as administrator\".  Download the remote\n"
+            + "again and return to this link.\n\n"
+            + "Are you sure you wish to continue?";
+          int reply = NegativeDefaultButtonJOptionPane.showConfirmDialog( RemoteMaster.this, message, title, JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE );
+          if ( reply == JOptionPane.YES_OPTION )
+          {
+            Response response = CommHID.setEnhancedPowerManagementEnabled( true );
+            int msgType = JOptionPane.ERROR_MESSAGE;
+            if ( response == null )
+            {
+              message = "Re-enabling Enhanced Power Management failed.";
+            }
+            else if ( response.error != null )
+            {
+              message = response.error + "\n"
+                  + "You need to be running RMIR as administrator to change this registry setting.";
+            }
+            else
+            {
+              message = response.output + "\n"
+                  + "Enhanced Power Management has been re-enabled for this remote.  You will not be\n"
+                  + "able to use it with RMIR until you disable this setting again.";
+              msgType = JOptionPane.INFORMATION_MESSAGE;
+            }
+            JOptionPane.showMessageDialog( RemoteMaster.this, message, title, msgType );
+          }
+        }
       }
       catch ( Exception ex )
       {
@@ -3083,6 +3125,13 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
     xziteRegItem.setVisible( false );
     menu.add( xziteRegItem );
     
+    xziteReenableAction = new RMAction( "Re-enable Enhanced Power Management", "REENABLE", null, 
+        "<html>Re-enable Enhanced Power Management for a remote.  This action is only enabled after a<br>"
+            + "download from the XSight/Nevo remote concerned and once re-enabled, RMIR will not work<br>"
+            + "with that remote until Enhanced Power Management is disabled again.</html>", 
+        null );
+    xziteReenableAction.setEnabled( false );
+    
     xziteOps = new JMenu( "XSight operations" );
     menu.add( xziteOps );
     xziteOps.setVisible( false );
@@ -3119,6 +3168,8 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
  
     xziteOps.addSeparator();
     
+    xziteOps.add( new JMenuItem( xziteReenableAction ) );
+    
     forceUpgradeItem = new JCheckBoxMenuItem( "Force XSight Firmware Upgrade" );
     forceUpgradeItem.setSelected( false );
     forceUpgradeItem.setToolTipText( "<html>Selecting this option will force download of an XSight<br>"
@@ -3148,6 +3199,8 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
     digitalOps = new JMenu( "XSight operations" );
     menu.add( digitalOps );
     digitalOps.setVisible( false );
+    
+    digitalOps.add( new JMenuItem( xziteReenableAction ) );
     
     forceFDRAUpgradeItem = new JCheckBoxMenuItem( "Force XSight Firmware Upgrade" );
     forceFDRAUpgradeItem.setSelected( false );
@@ -4886,6 +4939,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
     
     CommHID.lastRegistryKey = null;
     xziteRegItem.setVisible( false );
+    xziteReenableAction.setEnabled( false );
     if ( ioNeedsPowerManagementCheck( ioOut ) )
     {
       CommHID ioHID = ( CommHID )ioOut;
@@ -4893,8 +4947,8 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
 
       if ( enabled >= 0 )
       {
-        CommHID.lastRegistryKey = ioHID.getRegistryKey();
         xziteRegItem.setVisible( true );
+        xziteReenableAction.setEnabled( true );
       }
 
       if ( enabled < 0 )
@@ -4906,7 +4960,13 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
         System.err.println( "Attempting to disable Enhanced Power Management" );
         String title = "Enhanced Power Management";
         Response response = ioHID.setEnhancedPowerManagementEnabled( false );
-        if ( response.error != null )
+        if ( response == null )
+        {
+          String message = "Attempt to disable Enhanced Power Management failed.";
+          JOptionPane.showMessageDialog( this, message, title, JOptionPane.ERROR_MESSAGE );
+          ioOut = null;
+        }
+        else if ( response.error != null )
         {
           System.err.println( response.error );
           String message = 
@@ -5635,10 +5695,12 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
         String message = 
             "Enhanced Power Management must be disabled for an XSight/Nevo remote used with RMIR.\n"
                 + "To change this setting with the Registry Editor (regedit.exe), open it and navigate to the\n"
-                + "following registry key:\n\n" + CommHID.lastRegistryKey + "\n\n"
+                + "following registry key:\n\n" + CommHID.displayRegistryKey() + "\n\n"
                 + "where you need to edit the value of \"EnhancedPowerManagementEnabled\" by right-clicking\n"
                 + "it and selecting Modify.  Set it to 0 to disable it or 1 to enable it.  After this change, you\n"
-                + "need to disconnect the remote from the PC and then reconnect it.";
+                + "need to disconnect the remote from the PC and then reconnect it.\n\n"
+                + "If you are wanting to re-enable this setting, it can also be done with RMIR with the item\n"
+                + "\"Re-enable Enhanced Power Management\" on the \"XSight operations\" submenu.";
         JOptionPane.showMessageDialog( null, message, title, JOptionPane.INFORMATION_MESSAGE );
       }
       else if ( source == parseIRDBItem )

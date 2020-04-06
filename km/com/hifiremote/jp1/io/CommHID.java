@@ -150,7 +150,7 @@ public class CommHID extends IO
     AVL, DIGITAL, XZITE, UNKNOWN
   }
   
-  public class Response
+  public static class Response
   {
     public String output = null;
     public String error = null;
@@ -2623,7 +2623,7 @@ public class CommHID extends IO
         String title = "Firmware upgrade";
         String message = "The remote has opened in a new mode in which Enhanced Power Management\n"
             + "is still enabled.  Please use regedit to disable it. The key that needs\n"
-            + "to be changed is at:\n\n" + getRegistryKey() + "\n\n"
+            + "to be changed is at:\n\n" + displayRegistryKey() + "\n\n"
             + "where EnhancedPowerManagementEnabled needs to be changed from 1 to 0.\n"
             + "Right-click the entry and select Modify, enter the new value 0 and press\n"
             + "OK.  After making this change, you need to disconnect and reconnect the\n"
@@ -2655,29 +2655,61 @@ public class CommHID extends IO
     return true;
   }
 
-  public String getRegistryKey()
+  public String[] getRegistryKey()
   {
-    return "HKEY_LOCAL_MACHINE\n"
-        + "  SYSTEM\n"
-        + "    CurrentControlSet\n"
-        + "      Enum\n"
-        + "        USB\n"
-        + "          VID_06E7&PID_" + String.format( "%04X\n", thisPID )
-        + "            " + deviceID + "\n"
-        + "              Device Parameters";
+    return new String[] {
+        "HKEY_LOCAL_MACHINE",
+        "SYSTEM",
+        "CurrentControlSet",
+        "Enum",
+        "USB",
+        "VID_06E7&PID_" + String.format( "%04X", thisPID ),
+        deviceID,
+        "Device Parameters"
+    };
   }
   
-  public Response setEnhancedPowerManagementEnabled( boolean status )
+  public static String displayRegistryKey()
   {
+    StringBuilder sb = new StringBuilder();
+    String spaces = "";
+    for ( String s : lastRegistryKey )
+    {
+      if ( !spaces.isEmpty() ) 
+      {
+        sb.append( "\n");
+        sb.append( spaces );
+      }
+      sb.append( s );
+      spaces += "  ";
+    }
+    return sb.toString();
+  }
+
+  public static Response setEnhancedPowerManagementEnabled( boolean status )
+  {
+    if ( lastRegistryKey == null )
+    {
+      return null;
+    }
     Response response = new Response();
     try
     {
-      String cmd = "reg add \"HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Enum\\USB\\VID_06E7&PID_"
-          + String.format( "%04X\\", thisPID ) + deviceID + "\\Device Parameters\""
-          + " /v EnhancedPowerManagementEnabled /t REG_DWORD /d "
-          + ( status ? "1 /f" : "0 /f" );
-      System.err.println( "Setting Enhanced Power Management status with command:" );
-      System.err.println( "  " + cmd );
+      StringBuilder sb = new StringBuilder();
+      int n = 0;
+      for ( String s : lastRegistryKey )
+      {
+        if ( n++ > 0 ) sb.append( "\\" );
+        sb.append( s );
+      }
+      String key = sb.toString();
+      String[] cmd = new String[] {
+          "reg", "add", key, "/v", "EnhancedPowerManagementEnabled",
+          "/t", "REG_DWORD", "/d", ( status ? "1" : "0" ), "/f"
+      };
+      
+      System.err.println( "Setting Enhanced Power Management status with command array:" );
+      System.err.println( "  " + Arrays.toString( cmd ) );
       Process process = Runtime.getRuntime().exec( cmd );
       BufferedReader reader = new BufferedReader(
           new InputStreamReader(process.getInputStream()));
@@ -2687,7 +2719,7 @@ public class CommHID extends IO
       String line = null;
       
       int count = 0;
-      StringBuilder sb = new StringBuilder();
+      sb = new StringBuilder();
       while ( (line = reader.readLine()) != null ) 
       {
         if ( count > 0 )
@@ -3287,6 +3319,7 @@ public class CommHID extends IO
       System.err.println( "Error in accessing Enhanced Power Management Status" );
       return -1;
     }
+    lastRegistryKey = getRegistryKey();
     return enabled;
   }
   
@@ -3996,7 +4029,7 @@ public class CommHID extends IO
      */
     private final static int chunkSize = 0x4000;
     
-    public static String lastRegistryKey = null;
+    public static String[] lastRegistryKey = null;
     
 }
 
