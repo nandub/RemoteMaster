@@ -90,7 +90,7 @@
 			<zipfileset src="${src}/DecodeIR_245.zip" includes="**/DecodeIR.dll,DecodeIR.html,Docs/*.txt" filemode="555"/>
           	<zipfileset src="${src}/RdfAndImages.zip" includes="**/*" defaultexcludes="no"/>
           	<zipfileset dir="${src}" includes="rmirwin10ble/**/*.dll"/>
-            <zipfileset dir="${src}" includes="Setup.sh,linux_xsight.rules,AddOns/ReadMe.txt" filemode="755" />
+            <zipfileset dir="${src}" includes="setup.sh,linux_xsight.rules,AddOns/ReadMe.txt" filemode="755" />
           	<zipfileset dir="${src}" includes="RFToolsTest/*.*" filemode="755" />		
 			<!-- Tutorial is now on the wiki
           	<zipfileset dir="${src}" includes="tutorial.htm" />

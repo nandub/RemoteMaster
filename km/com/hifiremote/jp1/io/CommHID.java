@@ -206,7 +206,7 @@ public class CommHID extends IO
   }
 
   public String getInterfaceVersion() {
-    return "1.1";
+    return "1.2";
   }
 
   public String[] getPortNames() {

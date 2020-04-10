@@ -18,6 +18,9 @@ Changes for v2.10
 - Minor change to Setup.sh for Linux, also re-named setup.sh to comply with Linux conventions (Bengt, Graham)
 -- Private build 6
 - Add a feature for automated re-enabling of Enhanced Power Management in case it ever becomes necessary (Graham)
+-- Release build 7
+- Update CommHID version to 1.2 (Graham)
+- Minor updating of messages (Graham)
 
 Changes for v2.09
 -- Private build 1

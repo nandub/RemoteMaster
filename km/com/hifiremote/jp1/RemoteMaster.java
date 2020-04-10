@@ -139,7 +139,7 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
 
   /** Description of the Field. */
   public final static String version = "v2.10";
-  public final static int buildVer = 6;
+  public final static int buildVer = 7;
   
   public enum WavOp { NEW, MERGE, SAVE, PLAY };
   
@@ -1802,7 +1802,9 @@ public class RemoteMaster extends JP1Frame implements ActionListener, PropertyCh
             {
               message = response.output + "\n"
                   + "Enhanced Power Management has been re-enabled for this remote.  You will not be\n"
-                  + "able to use it with RMIR until you disable this setting again.";
+                  + "able to use it with RMIR until you disable this setting again.  Please note that\n"
+                  + "if you attempt a download while still running as administrator, the setting will\n"
+                  + "be automatically disabled.  Run RMIR in standard mode to prevent this happening.";
               msgType = JOptionPane.INFORMATION_MESSAGE;
             }
             JOptionPane.showMessageDialog( RemoteMaster.this, message, title, msgType );
