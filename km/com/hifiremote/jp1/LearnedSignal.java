@@ -4,12 +4,13 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 
+import org.harctoolbox.analyze.Analyzer;
+import org.harctoolbox.analyze.Analyzer.AnalyzerParams;
+import org.harctoolbox.analyze.NoDecoderMatchException;
 import org.harctoolbox.ircore.InvalidArgumentException;
 import org.harctoolbox.ircore.IrSignal;
 import org.harctoolbox.ircore.ModulatedIrSequence;
@@ -22,6 +23,7 @@ import org.harctoolbox.irp.InvalidNameException;
 import org.harctoolbox.irp.IrpDatabase;
 import org.harctoolbox.irp.IrpParseException;
 import org.harctoolbox.irp.NamedProtocol;
+import org.harctoolbox.irp.Protocol;
 import org.harctoolbox.irp.UnknownProtocolException;
 
 import com.hifiremote.decodeir.DecodeIRCaller;
@@ -377,30 +379,31 @@ public class LearnedSignal extends Highlight
         return null;
       }
       
-      decodes = new ArrayList< LearnedSignalDecode >();
-
-      if ( usingDecodeIR )
+      try
       {
-        getDecodeIR();
-        decodeIR.setBursts( ul.durations, ul.repeat, ul.extra );
-        decodeIR.setFrequency( ul.frequency );
-        decodeIR.initDecoder();
+        // irSignal is used for analysis, whichever decoder is selected
+        irSignal = new IrSignal( ul.durations, ul.oneTime, ul.repeat, ul.frequency );
+        decodes = new ArrayList< LearnedSignalDecode >();
 
-        while ( decodeIR.decode() )
+        if ( usingDecodeIR )
         {
-          decodes.add( new LearnedSignalDecode( decodeIR ) );
-        }
-      }     
-      else
-      {
-        try
+          getDecodeIR();
+          decodeIR.setBursts( ul.durations, ul.repeat, ul.extra );
+          decodeIR.setFrequency( ul.frequency );
+          decodeIR.initDecoder();
+
+          while ( decodeIR.decode() )
+          {
+            decodes.add( new LearnedSignalDecode( decodeIR ) );
+          }
+        }     
+        else
         {
           if ( ( tmDecoder = getTmDecoder() ) == null )
           {
             return null;
           }
 
-          IrSignal irSignal = new IrSignal( ul.durations, ul.oneTime, ul.repeat, ul.frequency );
           SimpleDecodesSet sigDecodes = tmDecoder.decodeIrSignal( irSignal, tmDecoderParams );
           
           if ( sigDecodes == null || sigDecodes.size() == 0 )
@@ -430,16 +433,41 @@ public class LearnedSignal extends Highlight
             if ( lsd.decode != null )
               decodes.add( lsd );
           };
-
         }
-        catch ( InvalidArgumentException e )
-        {
-          System.err.println( "*** Error: Invalid argument in IrSignal" );
-          return null;
-        }
+      }
+      catch ( InvalidArgumentException e )
+      {
+        System.err.println( "*** Error: Invalid argument in IrSignal" );
+        return null;
       }
     }
     return decodes;
+  }
+  
+  public String getAnalysis( AnalyzerParams aParms, int radix )
+  {
+    if ( irSignal == null )
+      return null;
+    
+    String s = null;
+    try
+    {
+      Analyzer analyzer = new Analyzer( irSignal );
+      List< Protocol > pList = analyzer.searchBestProtocol( aParms );
+      if ( pList.size() > 0 )
+      {
+        s = pList.get( 0 ).toIrpString( radix );
+      }
+    }
+    catch ( InvalidArgumentException e )
+    {
+      e.printStackTrace();
+    }
+    catch ( NoDecoderMatchException e )
+    {
+      return null;
+    }
+    return s;
   }
 
   private LearnedSignalTimingAnalyzer timingAnalyzer = null;
@@ -559,6 +587,16 @@ public class LearnedSignal extends Highlight
     return list;
   }
 
+  public LearnedSignalDecode getTableDecode()
+  {
+    return tableDecode;
+  }
+
+  public void setTableDecode( LearnedSignalDecode tableDecode )
+  {
+    this.tableDecode = tableDecode;
+  }
+
   /** The decode ir. */
   private static DecodeIRCaller decodeIR = null;
   private static int hasDecodeIR = 0;
@@ -566,5 +604,7 @@ public class LearnedSignal extends Highlight
   private static IrpDatabase tmDatabase = null;
   private static ExecutorWrapperDatabase ewDatabase = null;
   private static DecoderParameters tmDecoderParams = null;
-  //private IrSignal irSignal = null;
+  
+  private IrSignal irSignal = null;
+  private LearnedSignalDecode tableDecode = null;
 }

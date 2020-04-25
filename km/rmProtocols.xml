@@ -2,14 +2,58 @@
 <?xml-stylesheet type="text/xsl" href="IrpProtocols2html.xsl"?>
 <!--
 This is a patch file for IrpProtocols.xml included in IrpTransmogrifier.  When displayed, its version number
-is appended to that of the main file, with '+' as separator.  Currently it has no entries.
+is appended to that of the main file, with '+' as separator.
 -->
 
 <irp:protocols xmlns="http://www.w3.org/1999/xhtml"
                xmlns:xi="http://www.w3.org/2001/XInclude"
                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster"
-               version="rm2020-03-22"
+               version="rm2020-04-25"
                xsi:schemaLocation="http://www.harctoolbox.org/irp-protocols http://www.harctoolbox.org/schemas/irp-protocols.xsd"
                xmlns:irp="http://www.harctoolbox.org/irp-protocols">
+    <irp:protocol name="NEC1-f16">
+        <irp:documentation>
+            A relaxed form (but used in some real devices) of the <a href="#NEC1">NEC1</a> protocol. Byte 3 and byte 4 are independent.
+	    NEC1-Yamaha is a special case of this, in which bytes 3 and 4 are related but in a different manner than in a standard
+	    NEC1 signal.  The NEC1 standard is that byte 4 is the complement of byte 3.  The relationship in an NEC1-Yamaha signal
+	    is determined by a style parameter with values Y1, Y2 and Y3 as follows:
+            <p>Y1: Only bits 0-6 are complemented.<br/>
+            Y2: Only bits 1-7 are complemented.<br/>
+            Y3: Only bits 1-6 are complemented.</p>
+        </irp:documentation>
+    </irp:protocol>
+    <irp:protocol name="NEC2-f16">
+        <irp:documentation>
+            A relaxed form (but used in some real devices) of the <a href="#NEC2">NEC2</a> protocol. Byte 3 and byte 4 are independent.
+	    NEC2-Yamaha is a special case of this, in which bytes 3 and 4 are related but in a different manner than in a standard
+	    NEC2 signal.  The NEC2 standard is that byte 4 is the complement of byte 3.  The relationship in an NEC2-Yamaha signal
+	    is determined by a style parameter with values Y1, Y2 and Y3 as follows:
+            <p>Y1: Only bits 0-6 are complemented.<br/>
+            Y2: Only bits 1-7 are complemented.<br/>
+            Y3: Only bits 1-6 are complemented.</p>
+        </irp:documentation>
+    </irp:protocol>
+    <irp:protocol name="NECx1-f16">
+        <irp:documentation>
+            A relaxed form (but used in some real devices) of the <a href="#NECx1">NECx1</a> protocol. Byte 3 and byte 4 are independent.
+	    NECx1-Yamaha is a special case of this, in which bytes 3 and 4 are related but in a different manner than in a standard
+	    NECx1 signal.  The NECx1 standard is that byte 4 is the complement of byte 3.  The relationship in an NECx1-Yamaha signal
+	    is determined by a style parameter with values Y1, Y2 and Y3 as follows:
+            <p>Y1: Only bits 0-6 are complemented.<br/>
+            Y2: Only bits 1-7 are complemented.<br/>
+            Y3: Only bits 1-6 are complemented.</p>
+        </irp:documentation>
+    </irp:protocol>
+    <irp:protocol name="NECx2-f16">
+        <irp:documentation>
+            A relaxed form (but used in some real devices) of the <a href="#NECx2">NECx2</a> protocol. Byte 3 and byte 4 are independent.
+	    NECx2-Yamaha is a special case of this, in which bytes 3 and 4 are related but in a different manner than in a standard
+	    NECx2 signal.  The NECx2 standard is that byte 4 is the complement of byte 3.  The relationship in an NECx2-Yamaha signal
+	    is determined by a style parameter with values Y1, Y2 and Y3 as follows:
+            <p>Y1: Only bits 0-6 are complemented.<br/>
+            Y2: Only bits 1-7 are complemented.<br/>
+            Y3: Only bits 1-6 are complemented.</p>
+        </irp:documentation>
+    </irp:protocol>
 </irp:protocols>

@@ -244,12 +244,15 @@ public class LearnedSignalTableModel extends JP1TableModel< LearnedSignal >
       case 7: // protocol
         if ( numDecodes == 0 )
         {
+          l.setTableDecode( null );
           return "** None **";
         }
         if ( numDecodes > 1 )
         {
+          l.setTableDecode( null );
           return "** Multiple **";
         }
+        l.setTableDecode( decode );
         return decode.protocolName;
       case 8: // device
         if ( decode.device == -1 )

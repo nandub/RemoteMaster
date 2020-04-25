@@ -21,6 +21,8 @@ Changes for v2.10
 -- Release build 7
 - Update CommHID version to 1.2 (Graham)
 - Minor updating of messages (Graham)
+--Private build 8
+- Add analysis and documentation features to the Learned Signals panel (Graham)
 
 Changes for v2.09
 -- Private build 1

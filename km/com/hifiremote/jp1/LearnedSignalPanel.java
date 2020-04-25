@@ -3,19 +3,26 @@ package com.hifiremote.jp1;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
 import java.awt.event.ActionEvent;
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Map;
 import java.util.Set;
 
 import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.ButtonGroup;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
 import javax.swing.JComponent;
@@ -23,19 +30,31 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.JTextPane;
 import javax.swing.SwingUtilities;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.TransferHandler;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.table.DefaultTableCellRenderer;
 
+import org.harctoolbox.analyze.Burst;
+import org.harctoolbox.ircore.IrCoreUtils;
+import org.harctoolbox.ircore.XmlUtils;
+import org.harctoolbox.analyze.Analyzer.AnalyzerParams;
+import org.harctoolbox.irp.BitDirection;
 import org.harctoolbox.irp.IrpDatabase;
 import org.harctoolbox.irp.NamedProtocol;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
-import com.hifiremote.jp1.Executor;
 import com.hifiremote.jp1.Executor.ExecutorWrapper;
+import com.hifiremote.jp1.ProtocolDataPanel.DisplayArea;
 
 /**
  * The Class LearnedSignalPanel.
@@ -128,14 +147,97 @@ public class LearnedSignalPanel extends RMTablePanel< LearnedSignal >
 //    timingSummaryButton.setVisible( Boolean.parseBoolean( RemoteMaster.getProperties().getProperty( "LearnedSignalTimingAnalysis", "false" ) ) );
     buttonPanel.add( timingSummaryButton );
     
+    lsbBtn = new JRadioButton( "lsb" );
+    msbBtn = new JRadioButton( "msb" );
+    lsbBtn.setSelected( true );
+    ButtonGroup group = new ButtonGroup();
+    group.add( lsbBtn );
+    group.add( msbBtn );
+    lsbBtn.addActionListener( this );
+    msbBtn.addActionListener( this );
+    
+    invertCheck = new JCheckBox( "invert" );
+    invertCheck.addActionListener( this );
+    
+    docuButton = new JButton( "Open documentation" );
+    docuButton.setToolTipText( 
+        "<html>Displays documentation for the protocol identified<br>"
+        + "by the decode for the selected signal.  Not available<br>"
+        + "when the decoder is DecodeIR.</html>" );
+    docuButton.addActionListener( this );
+    
+    JLabel irpAnalysisLabel = new JLabel( "IRP from analysis: ");
+    Dimension d1 = irpAnalysisLabel.getPreferredSize();
+    JLabel irpDecodeLabel = new JLabel( "IRP from decode: ");
+    Dimension d2 = irpDecodeLabel.getPreferredSize();
+    int maxw = Math.max( d1.width, d2.width );
+    irpAnalysisLabel.setPreferredSize( new Dimension( maxw, d1.height ) );
+    irpDecodeLabel.setPreferredSize( new Dimension( maxw, d2.height ) );
+    
+    Box analysisBox = Box.createVerticalBox();
+    analysisBox.setBorder( BorderFactory.createCompoundBorder( 
+        BorderFactory.createTitledBorder( "Selected signal: " ), 
+        BorderFactory.createEmptyBorder( 0, 5, 5, 5 ) ) );
+    footerPanel.add( analysisBox, BorderLayout.PAGE_START );
+    footerPanel.setBorder( BorderFactory.createEmptyBorder( 5, 0, 0, 0 ) );
+    
+    JPanel optionsPanel = new JPanel( new BorderLayout() );
+    JPanel analysisPanel = new JPanel( new FlowLayout( FlowLayout.LEFT ) );
+    optionsPanel.add( analysisPanel, BorderLayout.LINE_START );
+    analysisPanel.add( new JLabel( "Options: ") );
+    analysisPanel.add( lsbBtn );
+    analysisPanel.add( msbBtn );
+    analysisPanel.add( Box.createHorizontalStrut( 10 ) );
+    analysisPanel.add( invertCheck );
+    analysisPanel.add( Box.createHorizontalStrut( 10 ) );
+    analysisPanel.add( new JLabel( "Value base: ") );
+    group = new ButtonGroup();
+    Map< String, Integer > radixMap = new HashMap< String, Integer >( radixInts.size() );
+    radixBtns = new ArrayList< JRadioButton >( radixInts.size() );
+    for ( int i = 0; i < radixInts.size(); i++ )
+    {
+      JRadioButton rBtn = new JRadioButton( "" + radixInts.get( i ) );
+      radixBtns.add( rBtn );
+      radixMap.put( radixPfx.get( i ), radixInts.get( i ) );
+      group.add( rBtn );
+      rBtn.addActionListener( this );
+      analysisPanel.add( rBtn );
+    }
+    IrCoreUtils.setRadixPrefixes( radixMap );
+    radix = 16;
+    radixBtns.get( 4 ).setSelected( true );  // Default, hexadecimal
+    
+    analysisPanel = new JPanel( new FlowLayout( FlowLayout.RIGHT ) );
+    analysisPanel.add( docuButton );
+    optionsPanel.add( analysisPanel, BorderLayout.LINE_END );
+    analysisBox.add( optionsPanel );
+    
+    irpAnalysisField = new JTextField();
+    analysisPanel = new JPanel( new BorderLayout() );
+    analysisPanel.setBorder( BorderFactory.createEmptyBorder( 0, 5, 0, 5 ) );
+    analysisPanel.add( irpAnalysisLabel, BorderLayout.LINE_START );
+    analysisPanel.add( irpAnalysisField, BorderLayout.CENTER );
+    analysisBox.add( analysisPanel );
+    
+    irpDecodeField = new JTextField();
+    analysisPanel = new JPanel( new BorderLayout() );
+    analysisPanel.setBorder( BorderFactory.createEmptyBorder( 5, 5, 0, 5 ) );
+    analysisPanel.add( irpDecodeLabel, BorderLayout.LINE_START );
+    analysisPanel.add( irpDecodeField, BorderLayout.CENTER );
+    analysisBox.add( analysisPanel );
+  
+    aParms = new AnalyzerParams( null, null, BitDirection.lsb, false, null, 32, false, new Burst.Preferences(), new ArrayList<>(0) );
     refresh();
   }
 
   @Override
   protected void refresh()
   {
-    convertToUpgradeButton.setEnabled( !Boolean.parseBoolean( RemoteMaster.getProperties().getProperty( "UseDecodeIR", "false" ) ) );    
-    timingSummaryButton.setVisible( Boolean.parseBoolean( RemoteMaster.getProperties().getProperty( "LearnedSignalTimingAnalysis", "false" ) ) );
+    boolean usingDecodeIR = Boolean.parseBoolean( RemoteMaster.getProperties().getProperty( "UseDecodeIR", "false" ) );
+    convertToUpgradeButton.setEnabled( !usingDecodeIR );
+    docuButton.setEnabled( false );
+    irpDecodeField.setEnabled( !usingDecodeIR );
+    timingSummaryButton.setVisible( Boolean.parseBoolean( RemoteMaster.getProperties().getProperty( "LearnedSignalTimingAnalysis", "false" ) ) ); 
   }
 
   /**
@@ -207,7 +309,6 @@ public class LearnedSignalPanel extends RMTablePanel< LearnedSignal >
     }
   }
 
-  
   public void actionPerformed( ActionEvent e )
   {
     Object source = e.getSource();
@@ -234,6 +335,71 @@ public class LearnedSignalPanel extends RMTablePanel< LearnedSignal >
     else if ( source == copyButton )
     {
       table.getTransferHandler().exportToClipboard( table, clipboard, TransferHandler.COPY );
+    }
+    else if ( source == lsbBtn || source == msbBtn || source == invertCheck )
+    {
+      BitDirection bDir = lsbBtn.isSelected() ? BitDirection.lsb : BitDirection.msb;
+      boolean doInvert = invertCheck.isSelected();
+      if ( aParms.getBitDirection() != bDir || aParms.isInvert() != doInvert )
+      {
+        aParms = new AnalyzerParams( aParms.getFrequency(), null, bDir, false, null, 32, doInvert, new Burst.Preferences(), new ArrayList<>(0) );
+        analyzeRow();
+      }
+    }
+    else if ( radixBtns.contains( source ) )
+    {
+      int newRadix = radixInts.get( radixBtns.indexOf( source ) );
+      if ( radix != newRadix )
+      {
+        radix = newRadix;
+        analyzeRow();
+      }
+    }
+    else if ( source == docuButton )
+    {
+      int row = table.getSelectedRow();
+      LearnedSignal ls = model.getRow( row );
+      LearnedSignalDecode lsd = ls.getTableDecode();
+      NamedProtocol np = null;
+      String docu = null;
+      String docuTitle = "Documentation";
+      if ( lsd != null && lsd.decode != null && ( np = lsd.decode.getNamedProtocol() ) != null )
+      {
+        docuTitle = np.getName() + " Documentation";
+        if ( np.getDocumentation() != null )
+        {
+          Document doc = XmlUtils.newDocument( true );
+          Element root = doc.createElementNS( null, "html" );          
+          doc.appendChild( root );
+          root.appendChild( doc.importNode( np.getDocumentation(), true ) );
+          ByteArrayOutputStream baos = new ByteArrayOutputStream();
+          XmlUtils.printHtmlDOM( baos, doc, "UTF-8" );
+          docu = baos.toString();
+        }
+        else
+        {
+          docu = "There is no documentation for this protocol.";
+        }
+      }
+      else
+      {
+        docu = "No documentation available.";
+      }
+      JPanel panel = new JPanel( new BorderLayout() );
+      String info = "This is an extract from the menu item \"Help > IrpTransmogrifier Protocols\".  "
+          + "Hyperlinks, which are often cross-references within that document, are not functional.  "
+          + "See the corresponding entry in the full document for active hyperlinks.";
+      DisplayArea da = new DisplayArea( info, null );
+      JTextPane docuPane = new JTextPane();
+      docuPane.setContentType( "text/html" );
+      docuPane.setText( docu );
+      docuPane.setCaretPosition( 0 );
+      JScrollPane scrollPane = new JScrollPane( docuPane );
+      scrollPane.setPreferredSize( new Dimension( 400, 400 ) );
+      panel.add( da, BorderLayout.PAGE_START );
+      panel.add( scrollPane, BorderLayout.CENTER );
+      String[] options = new String[] { "Close" };
+      JOptionPane.showOptionDialog( this, panel, docuTitle, 0, JOptionPane.PLAIN_MESSAGE, null, options, options[ 0 ] );
     }
     else
       super.actionPerformed( e );
@@ -709,14 +875,80 @@ public class LearnedSignalPanel extends RMTablePanel< LearnedSignal >
 //      convertToUpgradeButton.setEnabled( table.getSelectedRowCount() >= 1 );
       copyButton.setEnabled( table.getSelectedRowCount() >= 1 );
     }
+    analyzeRow();
+  }
+  
+  private void analyzeRow()
+  {
+    if ( table.getSelectedRowCount() == 1 )
+    {
+      int row = table.getSelectedRow();
+      LearnedSignal ls = model.getRow( row );
+      double freq = ls.getUnpackLearned().frequency;
+      aParms = new AnalyzerParams( freq, null, aParms.getBitDirection(), false, null, 32, aParms.isInvert(), new Burst.Preferences(), new ArrayList<>(0) );
+      irpAnalysisField.setText( ls.getAnalysis( aParms, radix ) );
+      
+      LearnedSignalDecode lsd = ls.getTableDecode();
+      NamedProtocol np = null;
+      if ( lsd != null && lsd.decode != null && ( np = lsd.decode.getNamedProtocol() ) != null )
+      {
+        String irpStr = np.toIrpString( radix );
+        int split = irpStr.lastIndexOf( '[' );
+        if ( split >= 0 )
+        {
+          irpStr = irpStr.substring( 0, split );
+        }
+        
+        // Now create a definitions section from the decode
+        String params = lsd.decode.toString( radix, "," );
+        split = params.indexOf( '{' );
+        if ( split >= 0 )
+        {
+          params = params.substring( split );
+          split = params.indexOf( '}' );
+          params = params.substring( 0, split + 1 );
+        }
+        else
+        {
+          params = "";
+        }
+        irpStr += params;
+        // Merge this into the definitions section, if any, of the IRP
+        irpStr = irpStr.replace( "}{", "," );
+        irpDecodeField.setText( irpStr );
+        docuButton.setEnabled( true );
+      }
+      else
+      {
+        irpDecodeField.setText( null );
+        docuButton.setEnabled( false );
+      }
+    }
+    else
+    {
+      irpAnalysisField.setText( null );
+      irpDecodeField.setText( null );
+      docuButton.setEnabled( false );
+    }
   }
 
   private RemoteConfiguration remoteConfig = null;
   
   private JButton convertToUpgradeButton = null;
   private JButton timingSummaryButton = null;
-  
+  private JButton docuButton = null;
+  private JTextField irpAnalysisField = null;
+  private JTextField irpDecodeField = null;
   private JButton copyButton = null;
   private Clipboard clipboard = null;
   private Toolkit kit = null;
+  private JRadioButton lsbBtn = null;
+  private JRadioButton msbBtn = null;
+  private List< JRadioButton > radixBtns = null;
+  private int radix = 16;
+  private JCheckBox invertCheck = null;
+  private AnalyzerParams aParms = null;
+
+  public static List< Integer > radixInts = Arrays.asList( 2, 4, 8, 10, 16 );
+  public static List< String > radixPfx = Arrays.asList( "0b", "0q", "0", "", "0x" );
 }

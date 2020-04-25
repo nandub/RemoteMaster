@@ -1,0 +1,3117 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:irp="http://www.harctoolbox.org/irp-protocols" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<head>
+<title>IRP protocols version 2020-03-22</title>
+<style type="text/css">
+                    div.documentation { }
+                    div.irp { font-family:'Lucida Console', monospace;
+                    background: LightGray;
+                    }
+                    div.protocol {
+                    padding-top: 1ex;
+                    }
+                    div.protocol-title {
+                    font-size: 120%;
+                    font-weight: bold;
+
+                    }
+                    div.alias {
+                    padding-top: 1ex;
+                    }
+                    div.alias-title {
+                    font-size: 120%;
+                    font-weight: bold;
+
+                    }
+                    span.parametername { font-family:'Lucida Console', monospace;
+                    font-weight: bold;
+                    }
+                </style>
+</head>
+<body>
+<h1>List of Irp Protocols, version 2020-03-22</h1>
+<h2>Contents:</h2>
+<ul>
+<li>
+<a href="#Glossary">Glossary</a>
+</li>
+<h3>Protocols</h3>
+<li>
+<a href="#48-NEC">48-NEC</a>
+</li>
+<li>
+<a href="#48-NEC1">48-NEC1</a>
+</li>
+<li>
+<a href="#48-NEC2">48-NEC2</a>
+</li>
+<li>
+<a href="#AdNotam">AdNotam</a>
+</li>
+<li>
+<a href="#Aiwa">Aiwa</a>
+</li>
+<li>
+<a href="#Aiwa2">Aiwa2</a>
+</li>
+<li>
+<a href="#Akai">Akai</a>
+</li>
+<li>
+<a href="#Akord">Akord</a>
+</li>
+<li>
+<a href="#Amino">Amino</a>
+</li>
+<li>
+<a href="#Amino-56">Amino-56</a>
+</li>
+<li>
+<a href="#Anthem">Anthem</a>
+</li>
+<li>
+<a href="#Anthem_relaxed">Anthem_relaxed</a>
+</li>
+<li>
+<a href="#Apple">Apple</a>
+</li>
+<li>
+<a href="#Archer">Archer</a>
+</li>
+<li>
+<a href="#arctech">arctech</a>
+</li>
+<li>
+<a href="#arctech-38">arctech-38</a>
+</li>
+<li>
+<a href="#Audiovox">Audiovox</a>
+</li>
+<li>
+<a href="#B&amp;O">B&amp;O</a>
+</li>
+<li>
+<a href="#B&amp;O repeat">B&amp;O repeat</a>
+</li>
+<li>
+<a href="#Barco">Barco</a>
+</li>
+<li>
+<a href="#Blaupunkt">Blaupunkt</a>
+</li>
+<li>
+<a href="#Blaupunkt_relaxed">Blaupunkt_relaxed</a>
+</li>
+<li>
+<a href="#Bose">Bose</a>
+</li>
+<li>
+<a href="#Bryston">Bryston</a>
+</li>
+<li>
+<a href="#CanalSat">CanalSat</a>
+</li>
+<li>
+<a href="#CanalSatLD">CanalSatLD</a>
+</li>
+<li>
+<a href="#Canon">Canon</a>
+</li>
+<li>
+<a href="#Denon">Denon</a>
+</li>
+<li>
+<a href="#Denon{1}">Denon{1}</a>
+</li>
+<li>
+<a href="#Denon{2}">Denon{2}</a>
+</li>
+<li>
+<a href="#Denon-K">Denon-K</a>
+</li>
+<li>
+<a href="#Dgtec">Dgtec</a>
+</li>
+<li>
+<a href="#Digivision">Digivision</a>
+</li>
+<li>
+<a href="#DirecTV_3FG">DirecTV_3FG</a>
+</li>
+<li>
+<a href="#DirecTV_P0">DirecTV_P0</a>
+</li>
+<li>
+<a href="#DirecTV_P1">DirecTV_P1</a>
+</li>
+<li>
+<a href="#DirecTV_P2">DirecTV_P2</a>
+</li>
+<li>
+<a href="#DirecTV_P3">DirecTV_P3</a>
+</li>
+<li>
+<a href="#DirecTV_P4">DirecTV_P4</a>
+</li>
+<li>
+<a href="#DirecTV_P5">DirecTV_P5</a>
+</li>
+<li>
+<a href="#Dish_Network">Dish_Network</a>
+</li>
+<li>
+<a href="#Dishplayer">Dishplayer</a>
+</li>
+<li>
+<a href="#Dysan">Dysan</a>
+</li>
+<li>
+<a href="#Elan">Elan</a>
+</li>
+<li>
+<a href="#Elunevision">Elunevision</a>
+</li>
+<li>
+<a href="#Emerson">Emerson</a>
+</li>
+<li>
+<a href="#entone">entone</a>
+</li>
+<li>
+<a href="#Epson">Epson</a>
+</li>
+<li>
+<a href="#F12">F12</a>
+</li>
+<li>
+<a href="#F12_relaxed">F12_relaxed</a>
+</li>
+<li>
+<a href="#F12-0">F12-0</a>
+</li>
+<li>
+<a href="#F12-1">F12-1</a>
+</li>
+<li>
+<a href="#F32">F32</a>
+</li>
+<li>
+<a href="#Fujitsu">Fujitsu</a>
+</li>
+<li>
+<a href="#Fujitsu_Aircon">Fujitsu_Aircon</a>
+</li>
+<li>
+<a href="#Fujitsu_Aircon_old">Fujitsu_Aircon_old</a>
+</li>
+<li>
+<a href="#Fujitsu-128">Fujitsu-128</a>
+</li>
+<li>
+<a href="#Fujitsu-56">Fujitsu-56</a>
+</li>
+<li>
+<a href="#G.I.4DTV">G.I.4DTV</a>
+</li>
+<li>
+<a href="#G.I.4DTV_relaxed">G.I.4DTV_relaxed</a>
+</li>
+<li>
+<a href="#G.I.Cable">G.I.Cable</a>
+</li>
+<li>
+<a href="#GI RG">GI RG</a>
+</li>
+<li>
+<a href="#Grundig16">Grundig16</a>
+</li>
+<li>
+<a href="#Grundig16-30">Grundig16-30</a>
+</li>
+<li>
+<a href="#GuangZhou">GuangZhou</a>
+</li>
+<li>
+<a href="#GwtS">GwtS</a>
+</li>
+<li>
+<a href="#GXB">GXB</a>
+</li>
+<li>
+<a href="#Humax 4Phase">Humax 4Phase</a>
+</li>
+<li>
+<a href="#InterVideo RC-201">InterVideo RC-201</a>
+</li>
+<li>
+<a href="#IODATAn">IODATAn</a>
+</li>
+<li>
+<a href="#Jerrold">Jerrold</a>
+</li>
+<li>
+<a href="#JVC">JVC</a>
+</li>
+<li>
+<a href="#JVC_alt">JVC_alt</a>
+</li>
+<li>
+<a href="#JVC{2}">JVC{2}</a>
+</li>
+<li>
+<a href="#JVC-48">JVC-48</a>
+</li>
+<li>
+<a href="#JVC-56">JVC-56</a>
+</li>
+<li>
+<a href="#Kaseikyo">Kaseikyo</a>
+</li>
+<li>
+<a href="#Kaseikyo56">Kaseikyo56</a>
+</li>
+<li>
+<a href="#Kathrein">Kathrein</a>
+</li>
+<li>
+<a href="#Konka">Konka</a>
+</li>
+<li>
+<a href="#Logitech">Logitech</a>
+</li>
+<li>
+<a href="#Lumagen">Lumagen</a>
+</li>
+<li>
+<a href="#Lutron">Lutron</a>
+</li>
+<li>
+<a href="#Matsui">Matsui</a>
+</li>
+<li>
+<a href="#MCE">MCE</a>
+</li>
+<li>
+<a href="#MCIR-2-kbd">MCIR-2-kbd</a>
+</li>
+<li>
+<a href="#MCIR-2-mouse">MCIR-2-mouse</a>
+</li>
+<li>
+<a href="#Metz19">Metz19</a>
+</li>
+<li>
+<a href="#Mitsubishi">Mitsubishi</a>
+</li>
+<li>
+<a href="#Mitsubishi-K">Mitsubishi-K</a>
+</li>
+<li>
+<a href="#NEC">NEC</a>
+</li>
+<li>
+<a href="#NEC1">NEC1</a>
+</li>
+<li>
+<a href="#NEC1-f16">NEC1-f16</a>
+</li>
+<li>
+<a href="#NEC1-rnc">NEC1-rnc</a>
+</li>
+<li>
+<a href="#NEC2">NEC2</a>
+</li>
+<li>
+<a href="#NEC2-f16">NEC2-f16</a>
+</li>
+<li>
+<a href="#NEC-f16">NEC-f16</a>
+</li>
+<li>
+<a href="#NEC-Shirriff">NEC-Shirriff</a>
+</li>
+<li>
+<a href="#NEC-Shirriff-32">NEC-Shirriff-32</a>
+</li>
+<li>
+<a href="#NECx1">NECx1</a>
+</li>
+<li>
+<a href="#NECx1-f16">NECx1-f16</a>
+</li>
+<li>
+<a href="#NECx2">NECx2</a>
+</li>
+<li>
+<a href="#NECx2-f16">NECx2-f16</a>
+</li>
+<li>
+<a href="#Nokia">Nokia</a>
+</li>
+<li>
+<a href="#Nokia12">Nokia12</a>
+</li>
+<li>
+<a href="#Nokia32">Nokia32</a>
+</li>
+<li>
+<a href="#Nova Pace">Nova Pace</a>
+</li>
+<li>
+<a href="#NRC16">NRC16</a>
+</li>
+<li>
+<a href="#NRC16-32">NRC16-32</a>
+</li>
+<li>
+<a href="#NRC17">NRC17</a>
+</li>
+<li>
+<a href="#Ortek_NEClike">Ortek_NEClike</a>
+</li>
+<li>
+<a href="#OrtekMCE">OrtekMCE</a>
+</li>
+<li>
+<a href="#OrtekMCE_relaxed">OrtekMCE_relaxed</a>
+</li>
+<li>
+<a href="#PaceMSS">PaceMSS</a>
+</li>
+<li>
+<a href="#Panasonic">Panasonic</a>
+</li>
+<li>
+<a href="#Panasonic_Old">Panasonic_Old</a>
+</li>
+<li>
+<a href="#Panasonic2">Panasonic2</a>
+</li>
+<li>
+<a href="#PCTV">PCTV</a>
+</li>
+<li>
+<a href="#pid-0001">pid-0001</a>
+</li>
+<li>
+<a href="#pid-0003">pid-0003</a>
+</li>
+<li>
+<a href="#pid-0004">pid-0004</a>
+</li>
+<li>
+<a href="#pid-0083">pid-0083</a>
+</li>
+<li>
+<a href="#Pioneer">Pioneer</a>
+</li>
+<li>
+<a href="#Pioneer-Mix">Pioneer-Mix</a>
+</li>
+<li>
+<a href="#Proton">Proton</a>
+</li>
+<li>
+<a href="#Proton-40">Proton-40</a>
+</li>
+<li>
+<a href="#RC5">RC5</a>
+</li>
+<li>
+<a href="#RC5-7F">RC5-7F</a>
+</li>
+<li>
+<a href="#RC5-7F-57">RC5-7F-57</a>
+</li>
+<li>
+<a href="#RC5x">RC5x</a>
+</li>
+<li>
+<a href="#RC6">RC6</a>
+</li>
+<li>
+<a href="#RC6-6-20">RC6-6-20</a>
+</li>
+<li>
+<a href="#RC6-M-16">RC6-M-16</a>
+</li>
+<li>
+<a href="#RC6-M-28">RC6-M-28</a>
+</li>
+<li>
+<a href="#RC6-M-32">RC6-M-32</a>
+</li>
+<li>
+<a href="#RC6-M-56">RC6-M-56</a>
+</li>
+<li>
+<a href="#RCA">RCA</a>
+</li>
+<li>
+<a href="#RCA(Old)">RCA(Old)</a>
+</li>
+<li>
+<a href="#RCA-38">RCA-38</a>
+</li>
+<li>
+<a href="#RCA-38(Old)">RCA-38(Old)</a>
+</li>
+<li>
+<a href="#RECS80">RECS80</a>
+</li>
+<li>
+<a href="#RECS80-0045">RECS80-0045</a>
+</li>
+<li>
+<a href="#RECS80-0068">RECS80-0068</a>
+</li>
+<li>
+<a href="#RECS80-0090">RECS80-0090</a>
+</li>
+<li>
+<a href="#Replay">Replay</a>
+</li>
+<li>
+<a href="#Revox">Revox</a>
+</li>
+<li>
+<a href="#Roku">Roku</a>
+</li>
+<li>
+<a href="#Rs200">Rs200</a>
+</li>
+<li>
+<a href="#RTI_Relay">RTI_Relay</a>
+</li>
+<li>
+<a href="#RTI_Relay_alt">RTI_Relay_alt</a>
+</li>
+<li>
+<a href="#Sampo">Sampo</a>
+</li>
+<li>
+<a href="#Samsung20">Samsung20</a>
+</li>
+<li>
+<a href="#Samsung36">Samsung36</a>
+</li>
+<li>
+<a href="#Samsung-SMT-G">Samsung-SMT-G</a>
+</li>
+<li>
+<a href="#ScAtl-6">ScAtl-6</a>
+</li>
+<li>
+<a href="#Sejin-1-38">Sejin-1-38</a>
+</li>
+<li>
+<a href="#Sejin-1-56">Sejin-1-56</a>
+</li>
+<li>
+<a href="#Sharp">Sharp</a>
+</li>
+<li>
+<a href="#Sharp{1}">Sharp{1}</a>
+</li>
+<li>
+<a href="#Sharp{2}">Sharp{2}</a>
+</li>
+<li>
+<a href="#SharpDVD">SharpDVD</a>
+</li>
+<li>
+<a href="#SIM2">SIM2</a>
+</li>
+<li>
+<a href="#Solidtek16">Solidtek16</a>
+</li>
+<li>
+<a href="#Somfy">Somfy</a>
+</li>
+<li>
+<a href="#Sony12">Sony12</a>
+</li>
+<li>
+<a href="#Sony15">Sony15</a>
+</li>
+<li>
+<a href="#Sony20">Sony20</a>
+</li>
+<li>
+<a href="#Sony8">Sony8</a>
+</li>
+<li>
+<a href="#SonyDSP">SonyDSP</a>
+</li>
+<li>
+<a href="#SonyDSP_relaxed">SonyDSP_relaxed</a>
+</li>
+<li>
+<a href="#StreamZap">StreamZap</a>
+</li>
+<li>
+<a href="#StreamZap-57">StreamZap-57</a>
+</li>
+<li>
+<a href="#Sunfire">Sunfire</a>
+</li>
+<li>
+<a href="#TDC-38">TDC-38</a>
+</li>
+<li>
+<a href="#TDC-56">TDC-56</a>
+</li>
+<li>
+<a href="#Teac-K">Teac-K</a>
+</li>
+<li>
+<a href="#Thomson">Thomson</a>
+</li>
+<li>
+<a href="#Thomson7">Thomson7</a>
+</li>
+<li>
+<a href="#Tivo">Tivo</a>
+</li>
+<li>
+<a href="#Velleman">Velleman</a>
+</li>
+<li>
+<a href="#Velodyne">Velodyne</a>
+</li>
+<li>
+<a href="#Viewstar">Viewstar</a>
+</li>
+<li>
+<a href="#Whynter">Whynter</a>
+</li>
+<li>
+<a href="#X10">X10</a>
+</li>
+<li>
+<a href="#X10_18">X10_18</a>
+</li>
+<li>
+<a href="#X10_8">X10_8</a>
+</li>
+<li>
+<a href="#X10.n">X10.n</a>
+</li>
+<li>
+<a href="#Xiaomi">Xiaomi</a>
+</li>
+<li>
+<a href="#XMP">XMP</a>
+</li>
+<li>
+<a href="#XMP-1">XMP-1</a>
+</li>
+<li>
+<a href="#XMP-2">XMP-2</a>
+</li>
+<li>
+<a href="#XMPff">XMPff</a>
+</li>
+<li>
+<a href="#XMPff-1">XMPff-1</a>
+</li>
+<li>
+<a href="#XMPff-2">XMPff-2</a>
+</li>
+<li>
+<a href="#Zaptor-36">Zaptor-36</a>
+</li>
+<li>
+<a href="#Zaptor-56">Zaptor-56</a>
+</li>
+<li>
+<a href="#Zenith">Zenith</a>
+</li>
+<li>
+<a href="#Zenith5">Zenith5</a>
+</li>
+<li>
+<a href="#Zenith6">Zenith6</a>
+</li>
+<li>
+<a href="#Zenith7">Zenith7</a>
+</li>
+<li>
+<a href="#Zenith8">Zenith8</a>
+</li>
+<h3>Aliases</h3>
+<li>
+<a href="#G.I.Cable">GI Cable</a>
+</li>
+<li>
+<a href="#IODATAn">IODATAn-x-y</a>
+</li>
+<li>
+<a href="#PaceMSS">Pace</a>
+</li>
+<li>
+<a href="#Replay">RC6-6-24</a>
+</li>
+<li>
+<a href="#MCE">RC6-6-32</a>
+</li>
+<li>
+<a href="#Replay">RC6A</a>
+</li>
+<li>
+<a href="#CanalSat">ruwido r-step</a>
+</li>
+</ul>
+<h2>Protocols</h2>
+<div class="protocol" id="48-NEC">
+<div class="protocol-title">48-NEC</div>
+<div class="irp">{38.4k,564}&lt;1,-1|1,-3&gt;(16,-8,D:8,S:8,F:8,~F:8,E:8,~E:8,1,^108m)[D:0..255,S:0..255=255-D,F:0..255,E:0..255]</div>
+<div class="parameter">
+<span class="parametername">decode-only: </span>true</div>
+<div class="documentation">Like <a xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="#DecodeIR">DecodeIR</a>, we call a 48-NEC* signal without repeat "48-NEC".</div>
+</div>
+<div class="protocol" id="48-NEC1">
+<div class="protocol-title">48-NEC1</div>
+<div class="irp">{38.4k,564}&lt;1,-1|1,-3&gt;(16,-8,D:8,S:8,F:8,~F:8,E:8,~E:8,1,^108m,(16,-4,1,^108m)*)[D:0..255,S:0..255=255-D,F:0..255,E:0..255]</div>
+<div class="parameter">
+<span class="parametername">reject-repeatless: </span>true</div>
+</div>
+<div class="protocol" id="48-NEC2">
+<div class="protocol-title">48-NEC2</div>
+<div class="irp">{38.4k,564}&lt;1,-1|1,-3&gt;(16,-8,D:8,S:8,F:8,~F:8,E:8,~E:8,1,^108m)*[D:0..255,S:0..255=255-D,F:0..255,E:0..255]</div>
+<div class="parameter">
+<span class="parametername">reject-repeatless: </span>true</div>
+</div>
+<div class="protocol" id="AdNotam">
+<div class="protocol-title">AdNotam</div>
+<div class="irp">{35.7k,895,msb}&lt;1,-1|-1,1&gt;(1,-2,1,D:6,F:6,^114m)*[D:0..63,F:0..63]</div>
+<div class="documentation">Very similar to <a xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="#RC5">RC5</a>, except AdNotam uses two start bits, and no toggle bit.</div>
+</div>
+<div class="protocol" id="Aiwa">
+<div class="protocol-title">Aiwa</div>
+<div class="irp">{38.123k,550}&lt;1,-1|1,-3&gt;(16,-8,D:8,S:5,~D:8,~S:5,F:8,~F:8,1,-42,(16,-8,1,-165)*)[D:0..255,S:0..31,F:0..255]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>005E:2</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>009E[S;D,F]</div>
+</div>
+<div class="protocol" id="Aiwa2">
+<div class="protocol-title">Aiwa2</div>
+<div class="irp">
+{38k,550}&lt;1,-1|1,-3&gt;(16,-8,D:8,S:5,~D:8,~S:5,F:8,~F:8,1,-42)* [D:0..255,S:0..31,F:0..255]
+</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>005E:2</div>
+<div class="documentation">Source: Dave Reed's program <a xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="http://www.hifi-remote.com/forums/viewtopic.php?t=100614">Teaser</a>.</div>
+</div>
+<div class="protocol" id="Akai">
+<div class="protocol-title">Akai</div>
+<div class="irp">{38k,289}&lt;1,-2.6|1,-6.3&gt;(D:3,F:7,1,^25.3m)*[D:0..7,F:0..127]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>000D[D:2;D:1:2,F]</div>
+<div class="documentation"/>
+</div>
+<div class="protocol" id="Akord">
+<div class="protocol-title">Akord</div>
+<div class="irp">{37.0k,477,msb}&lt;1,-1|1,-2&gt;(18,-8,D:8,S:8,F:8,~F:8,1,-40m,(18,-5,1,-78m)*)[D:0..255,S:0..255,F:0..255]</div>
+<div class="documentation">Protocol found in Akord HDMI switches. Similar to <a xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="#NEC1">NEC1</a>, but with different timing.
+            See <a xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="http://www.hifi-remote.com/forums/viewtopic.php?p=137873">forum thread</a>.</div>
+</div>
+<div class="protocol" id="Amino">
+<div class="protocol-title">Amino</div>
+<div class="irp">{37.3k,268,msb}&lt;-1,1|1,-1&gt;(T=1,(7,-6,3,D:4,1:1,T:1,1:2,0:8,F:8,15:4,C:4,-79m,T=0)+){C =(D:4+4*T+9+F:4+F:4:4+15)&amp;15} [D:0..15,F:0..255]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>
+            </div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>
+            </div>
+<div class="parameter">
+<span class="parametername">prefer-over: </span>Amino-56</div>
+<div class="parameter">
+<span class="parametername">absolute-tolerance: </span>100</div>
+<div class="parameter">
+<span class="parametername">relative-tolerance: </span>0.2</div>
+<div class="documentation">Amino equipment use both 37 and 56KHz, but the duration of the half-bit is always 268.
+            <a xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="#Zaptor-36">Zaptor</a> is a closely related protocol which for which the half-bit duration is 330.</div>
+</div>
+<div class="protocol" id="Amino-56">
+<div class="protocol-title">Amino-56</div>
+<div class="irp">{56.0k,268,msb}&lt;-1,1|1,-1&gt;(T=1,(7,-6,3,D:4,1:1,T:1,1:2,0:8,F:8,15:4,C:4,-79m,T=0)+){C =(D:4+4*T+9+F:4+F:4:4+15)&amp;15} [D:0..15,F:0..255]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>
+            </div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>
+            </div>
+<div class="parameter">
+<span class="parametername">absolute-tolerance: </span>100</div>
+<div class="parameter">
+<span class="parametername">relative-tolerance: </span>0.2</div>
+</div>
+<div class="protocol" id="Anthem">
+<div class="protocol-title">Anthem</div>
+<div class="irp">{38.0k,605}&lt;1,-1|1,-3&gt;((8000u,-4000u,D:8,S:8,F:8,C:8,1,-25m)2, 8000u,-4000u,D:8,S:8,F:8,C:8,1,-100)* { C=~(D+S+F+255):8} [D:0..255,S:0..255,F:0..255]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>0123[D,S,F:-2:6;F:6]</div>
+<div class="parameter">
+<span class="parametername">prefer-over: </span>Anthem_relaxed</div>
+<div class="parameter">
+<span class="parametername">prefer-over: </span>NEC2-f16</div>
+<div class="documentation">Anthem framing is very similar to <a xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="#NEC1">NEC</a>, and also uses 32 bits of data. However, the leadout is much shorter. The signal is sent at least 3 times. Anthem usually splits F into a 2 bit unit number, and a 6 bit function number.</div>
+</div>
+<div class="protocol" id="Anthem_relaxed">
+<div class="protocol-title">Anthem_relaxed</div>
+<div class="irp">{38.0k,605}&lt;1,-1|1,-3&gt;(8000u,-4000u,D:8,S:8,F:8,C:8,1,-25m)* { C=~(D+S+F+255):8} [D:0..255,S:0..255,F:0..255]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>
+            </div>
+<div class="parameter">
+<span class="parametername">decode-only: </span>true</div>
+<div class="documentation">
+            <a xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="#relaxed">Relaxed version</a> of the Anthem protocol.</div>
+</div>
+<div class="protocol" id="Apple">
+<div class="protocol-title">Apple</div>
+<div class="irp">{38.4k,564}&lt;1,-1|1,-3&gt;(16,-8,D:8,S:8,C:1,F:7,PairID:8,1,^108m,(16,-4,1,^108m)*){C=1-(#F+#PairID)%2,S=135}[D:0..255=238,F:0..127,PairID:0..255]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>01E0{S=135,E=PairID}[D?0,E|||D?1,S,D?2,D?3;F,??,0]</div>
+<div class="parameter">
+<span class="parametername">prefer-over: </span>NEC1-f16</div>
+<div class="parameter">
+<span class="parametername">prefer-over: </span>NEC2-f16</div>
+<div class="parameter">
+<span class="parametername">prefer-over: </span>NEC1</div>
+<div class="parameter">
+<span class="parametername">prefer-over: </span>NEC-Shirriff-32</div>
+<div class="documentation">C=1 if the number of 1 bits in the fields F and I is even.  I is the remote ID. Apple uses the same framing as <a xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="#NEC1">NEC1</a>, with D=238 in normal use, 224 while pairing.</div>
+</div>
+<div class="protocol" id="Archer">
+<div class="protocol-title">Archer</div>
+<div class="irp">{0k,12}&lt;1,-3.3m|1,-4.7m&gt;(F:5,1,-9.7m)* [F:0..31]</div>
+<div class="parameter">
+<span class="parametername">relative-tolerance: </span>0.1</div>
+<div class="documentation">This is not a robust protocol, so <A xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="#spurious">spurious decodes</A> are likely.</div>
+</div>
+<div class="protocol" id="arctech">
+<div class="protocol-title">arctech</div>
+<div class="irp">{0k,388}&lt;1,-3|3,-1&gt;(&lt;0:2|2:2&gt;((D-1):4,(S-1):4),40:7,F:1,0:1,-10.2m)*[D:1..16,S:1..16,F:0..1]</div>
+<div class="documentation">
+<p xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster">Protocol used by several manufacturers of 433MHz RF controlled switches, like
+            <a href="http://www.intertechno.at">Intertechno</a>, Duewi, ELRO, KlikAanKlikUit, and the URC light control kit, and many other.
+            Appears to be introduced by the Taiwanese firm <a href="http://www.arctech.com.tw">ARC Technology</a>.
+            These codes correspond to switches with code wheels, having an "House number" ranging from "A" to "P",
+            in the IRP above corresponding to D=1 up to 16 for "P".
+            They also have an "Address", ranging from 1 to 16, corresponding to the parameter "S" in the IRP.
+            Note that e.g. Intertechno makes switches "with code wheel" and "without code wheel",
+            the latter having a much larger addressing space, and unfortunately cannot be controlled by the present protocol.
+            F=0 is the power off command, F=1 the power on command.
+            The power on command is also used for dimming, both up and down.</p>
+
+                <p xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster">In some One for All remotes, for example the URC-7781,
+                    the setup codes 2200,2201,...,2215 correspond to this protocol, 2200 for house "A", up to 2215 for house "P".</p>
+        </div>
+</div>
+<div class="protocol" id="arctech-38">
+<div class="protocol-title">arctech-38</div>
+<div class="irp">{38k,388}&lt;1,-3|3,-1&gt;(&lt;0:2|2:2&gt;((D-1):4,(S-1):4),40:7,F:1,0:1,-10.2m)*[D:1..16,S:1..16,F:0..1]</div>
+<div class="documentation">Same as <a xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="#arctech">arctech</a>, but with an IR-typical modulation.</div>
+</div>
+<div class="protocol" id="Audiovox">
+<div class="protocol-title">Audiovox</div>
+<div class="irp">{40k,500}&lt;1,-1|1,-3&gt;(16,-8,D:8,1,-8,F:8,1,-40)*[D:0..255,F:0..255]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>005D[D;F]</div>
+<div class="documentation"/>
+</div>
+<div class="protocol" id="B&amp;O">
+<div class="protocol-title">B&amp;O</div>
+<div class="irp">
+{455k,3125,msb}&lt;200u,-zeroGap,zeroGap=2,oneGap=3 | 200u,-oneGap,zeroGap=1,oneGap=2&gt;
+(200u,-1,200u,-1,200u,-5,D:9,F:8,200u,-4,200u,-100m)
+{zeroGap=1, oneGap=3}
+[D:0..511,F:0..255]
+</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>00EB[D:1:8,D:8,1;F,F]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>00EB:4[D:1:8,D:8,1;F]</div>
+<div class="parameter">
+<span class="parametername">frequency-tolerance: </span>-1</div>
+<div class="documentation">455kHz protocol used by some Bang &amp; Olufsen equipment.
+            <a xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="http://www.hifi-remote.com/forums/viewtopic.php?t=12486">Forum thread.</a>
+        </div>
+</div>
+<div class="protocol" id="B&amp;O repeat">
+<div class="protocol-title">B&amp;O repeat</div>
+<div class="irp">
+{455k,3125,msb}&lt;200u,-zeroGap,zeroGap=2,oneGap=3 | 200u,-oneGap,zeroGap=1,oneGap=2&gt;
+(200u,-1,200u,-1,200u,-5,D:9,F:8,200u,-4)
+{zeroGap=1, oneGap=3}
+[D:0..511,F:0..255]
+</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>00EB:4[D:1:8,D:8,1;F]</div>
+<div class="parameter">
+<span class="parametername">frequency-tolerance: </span>-1</div>
+<div class="documentation">From David Reed's program <a xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="http://www.hifi-remote.com/forums/viewtopic.php?t=100614">Teaser</a>.</div>
+</div>
+<div class="protocol" id="Barco">
+<div class="protocol-title">Barco</div>
+<div class="irp">{0k,10}&lt;1,-5|1,-15&gt;(1,-25, D:5,F:6, 1,-25,1,-120m)*[D:0..31,F:0..63]</div>
+<div class="parameter">
+<span class="parametername">absolute-tolerance: </span>60</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>002A</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>00F3</div>
+<div class="documentation">This protocol uses no modulation of the signal.
+
+This is a moderately robust protocol, but <A xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="#spurious">spurious decodes</A> are still possible.</div>
+</div>
+<div class="protocol" id="Blaupunkt">
+<div class="protocol-title">Blaupunkt</div>
+<div class="irp">
+{30.3k,512}&lt;-1,1|1,-1&gt;(1,-5,1023:10, -44, (1,-5,1:1,F:6,D:3,-236)+ ,1,-5,1023:10,-44)[F:0..63,D:0..7]
+</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>00A5[D,0;F]</div>
+<div class="parameter">
+<span class="parametername">prefer-over: </span>Blaupunkt_relaxed</div>
+<div class="documentation"/>
+</div>
+<div class="protocol" id="Blaupunkt_relaxed">
+<div class="protocol-title">Blaupunkt_relaxed</div>
+<div class="irp">
+{30.3k,512}&lt;-1,1|1,-1&gt;(1,-5,1023:10, -44, (1,-5,1:1,F:6,D:3,-236)* ,1,-5,1023:10,-44)[F:0..63,D:0..7]
+</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>
+            </div>
+<div class="parameter">
+<span class="parametername">decode-only: </span>true</div>
+</div>
+<div class="protocol" id="Bose">
+<div class="protocol-title">Bose</div>
+<div class="irp">{38.0k,500,msb}&lt;1,-1|1,-3&gt;(2,-3,F:8,~F:8,1,-50m)* [F:0..255]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>010C</div>
+<div class="documentation"/>
+</div>
+<div class="protocol" id="Bryston">
+<div class="protocol-title">Bryston</div>
+<div class="irp">{38.0k,315}&lt;1,-6|6,-1&gt;(D:10,F:8,-18m)* [D:0..1023,F:0..255]</div>
+<div class="parameter">
+<span class="parametername">minimum-leadout: </span>15000</div>
+<div class="documentation"/>
+</div>
+<div class="protocol" id="CanalSat">
+<div class="protocol-title">CanalSat</div>
+<div class="irp">{55.5k,250,msb}&lt;-1,1|1,-1&gt;(T=0,(1,-1,D:7,S:6,T:1,0:1,F:7,-89m,T=1)+)[D:0..127,S:0..63,F:0..127]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>018C</div>
+<div class="parameter">
+<span class="parametername">alt_name: </span>ruwido r-step</div>
+<div class="documentation">
+            The <A xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="#repeat">repeat frames</A> are not all identical.
+            T toggles within a single signal, with T=0 for the start frame and T=1 for all repeats.
+            The official name for CanalSat is "ruwido r-step".
+        </div>
+</div>
+<div class="protocol" id="CanalSatLD">
+<div class="protocol-title">CanalSatLD</div>
+<div class="irp">{56k,320,msb}&lt;-1,1|1,-1&gt;(T=0,(1,-1,D:7,S:6,T:1,0:1,F:6,~F:1,-85m,T=1)+)[D:0..127,S:0..63,F:0..63]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>018C:JP1</div>
+<div class="documentation">The official name for CanalSatLD is "ruwido r-step"</div>
+</div>
+<div class="protocol" id="Canon">
+<div class="protocol-title">Canon</div>
+<div class="irp">{33k,1}&lt;16p,-240p|16p,-175p&gt;(F:1)2[F:0..1]</div>
+<div class="parameter">
+<span class="parametername">relative-tolerance: </span>0.1</div>
+<div class="parameter">
+<span class="parametername">absolute-tolerance: </span>50</div>
+<div class="documentation">IR protocol for many Canon cameras. With F=0 it triggers immediately, F=1 it triggers after a delay of approximately two seconds.</div>
+</div>
+<div class="protocol" id="Denon">
+<div class="protocol-title">Denon</div>
+<div class="irp">{38k,264}&lt;1,-3|1,-7&gt;(D:5,F:8,0:2,1,-165,D:5,~F:8,3:2,1,-165)* [D:0..31,F:0..255]</div>
+<div class="parameter">
+<span class="parametername">prefer-over: </span>Denon{1}</div>
+<div class="parameter">
+<span class="parametername">prefer-over: </span>Denon{2}</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>001C[D;F]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>009C(Denon Combo (Official))[;D,1,F]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>009C:JP1[;D,F]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>01C8[;0,D,F]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>01AC[0;0,D,F]</div>
+<div class="documentation">
+            A Denon signal has two halves, either one of which is enough to fully decode the information.
+            When one half is seen it will be decoded as <a xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="#Denon{1}">Denon{1}</a> or <a xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="#Denon{2}">Denon{2}</a>.
+            Denon, Denon{1} and Denon{2} all represent the same protocol when correct,
+            but only Denon is robust.
+        </div>
+</div>
+<div class="protocol" id="Denon-K">
+<div class="protocol-title">Denon-K</div>
+<div class="irp">{37k,432}&lt;1,-1|1,-3&gt;(8,-4,84:8,50:8,0:4,D:4,S:4,F:12,((D*16)^S^(F*16)^(F:8:4)):8,1,-173)* [D:0..15,S:0..15,F:0..4095]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>00CD:2[D;S,F]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>01C8[D?0,S?0,D?1,S?1,D?2,S?2,D?3,S?3,D?4,S?4,D?5,S?5;0,,,??,F]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>01AC[D,S;0,,,F]</div>
+<div class="parameter">
+<span class="parametername">prefer-over: </span>Kaseikyo</div>
+<div class="documentation">
+            Denon-K is the member of the <a xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="#Kaseikyo">Kaseikyo</a> family with OEM_code1=84 and OEM_code2=50.
+            It uses the same check byte rules as <a xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="#Panasonic">Panasonic</a> protocol, but uses the data bits differently.
+        </div>
+</div>
+<div class="protocol" id="Denon{1}">
+<div class="protocol-title">Denon{1}</div>
+<div class="irp">{38k,264}&lt;1,-3|1,-7&gt;(D:5,F:8,0:2,1,-165)* [D:0..31,F:0..255]</div>
+<div class="parameter">
+<span class="parametername">decode-only: </span>true</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>001C[D;F]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>009C(Denon Combo (Official))[;D,,F]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>009C:JP1[;D,F]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>01C8[;0,D,F]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>01AC[;0,D,F]</div>
+<div class="documentation">See <a xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="#Denon">Denon</a>.</div>
+</div>
+<div class="protocol" id="Denon{2}">
+<div class="protocol-title">Denon{2}</div>
+<div class="irp">{38k,264}&lt;1,-3|1,-7&gt;(D:5,~F:8,3:2,1,-165)* [D:0..31,F:0..255]</div>
+<div class="parameter">
+<span class="parametername">decode-only: </span>true</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>001C[D;F]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>009C(Denon Combo (Official))[;D,,F]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>009C:JP1[;D,F]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>01C8[;0,D,F]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>01AC[;0,D,F]</div>
+<div class="documentation">See <a xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="#Denon">Denon</a>.</div>
+</div>
+<div class="protocol" id="Dgtec">
+<div class="protocol-title">Dgtec</div>
+<div class="irp">{38k,560}&lt;1,-1|1,-3&gt;(16,-8,D:8,F:8,~F:8,1,^108m,(16,-4,1,^108m)*) [D:0..255,F:0..255]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>016A:2</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>016A</div>
+</div>
+<div class="protocol" id="Digivision">
+<div class="protocol-title">Digivision</div>
+<div class="irp">
+{38.0k,182}&lt;3,-3|3,-6&gt;(20,-10,D:8,Dev2:8,Dev3:8,20,-10,F:8,~F:8,3,^108m,(20,-20,3,^108m)*)
+[D:0..255,Dev2:0..255,Dev3:0..255,F:0..255]
+            </div>
+<div class="documentation">See <a xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="#GuangZhou">GuangZhou</a>, which has identical framing but with different bit definitions.</div>
+</div>
+<div class="protocol" id="DirecTV_3FG">
+<div class="protocol-title">DirecTV_3FG</div>
+<div class="irp">{38k,600,msb}&lt;1,-1|1,-2|2,-1|2,-2&gt;(10,-2,(D:4,F:8,C:4,1,-30m,5,-2)*){C=7*(F:2:6)+5*(F:2:4)+3*(F:2:2)+(F:2)}[D:0..15,F:0..255]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>0162[D;F]</div>
+<div class="documentation">There are six variants of the DirecTV protocol, distinguished in RemoteMaster by the parameter "Parm" on the Setup page.  The Parm value is shown in the Misc field of DecodeIR.  The IRP notation above corresponds to the default Parm=3.  The various Parm values correspond to three different frequencies (the 38k in the above) and two different lead-out times (the -50 in the above).  The corresponding values are:
+
+<ul xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster"> <li>Parm=0 : 40k, -15</li> <li>Parm=1 : 40k, -50</li> <li>Parm=2 : 38k, -15</li> <li>Parm=3 : 38k, -50</li> <li>Parm=4 : 57k, -15</li> <li>Parm=5 : 57k, -50</li> </ul>
+        </div>
+</div>
+<div class="protocol" id="DirecTV_P0">
+<div class="protocol-title">DirecTV_P0</div>
+<div class="irp">{40k,600,msb}&lt;1,-1|1,-2|2,-1|2,-2&gt;([10][5],-2,D:4,F:8,C:4,1,-15){C=7*(F:2:6)+5*(F:2:4)+3*(F:2:2)+(F:2)}[D:0..15,F:0..255]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>
+            </div>
+<div class="parameter">
+<span class="parametername">min-leadout: </span>7000</div>
+<div class="parameter">
+<span class="parametername">frequency-tolerance: </span>1000</div>
+<div class="documentation">There are six variants of the DirecTV protocol, distinguished in RemoteMaster by the parameter "Parm" on the Setup page.
+            The Parm value is shown in the Misc field of DecodeIR.  The IRP notation above corresponds to the default Parm=3.
+            The various Parm values correspond to three different frequencies (the 38k in the above) and two different lead-out times (the -50 in the above).
+            The corresponding values are:
+
+            <ul xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster">
+                <li>Parm=0 : 40k, -15</li>
+                <li>Parm=1 : 40k, -50</li>
+                <li>Parm=2 : 38k, -15</li>
+                <li>Parm=3 : 38k, -50</li>
+                <li>Parm=4 : 57k, -15</li>
+                <li>Parm=5 : 57k, -50</li>
+            </ul>
+        </div>
+</div>
+<div class="protocol" id="DirecTV_P1">
+<div class="protocol-title">DirecTV_P1</div>
+<div class="irp">{40k,600,msb}&lt;1,-1|1,-2|2,-1|2,-2&gt;([10][5],-2,D:4,F:8,C:4,1,-50){C=7*(F:2:6)+5*(F:2:4)+3*(F:2:2)+(F:2)}[D:0..15,F:0..255]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>
+            </div>
+<div class="parameter">
+<span class="parametername">frequency-tolerance: </span>1000</div>
+<div class="parameter">
+<span class="parametername">prefer-over: </span>DirecTV_P0</div>
+<div class="documentation">There are six variants of the DirecTV protocol, distinguished in RemoteMaster by the parameter "Parm" on the Setup page.
+            The Parm value is shown in the Misc field of DecodeIR.  The IRP notation above corresponds to the default Parm=3.
+            The various Parm values correspond to three different frequencies (the 38k in the above) and two different lead-out times (the -50 in the above).
+            The corresponding values are:
+
+            <ul xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster">
+                <li>Parm=0 : 40k, -15</li>
+                <li>Parm=1 : 40k, -50</li>
+                <li>Parm=2 : 38k, -15</li>
+                <li>Parm=3 : 38k, -50</li>
+                <li>Parm=4 : 57k, -15</li>
+                <li>Parm=5 : 57k, -50</li>
+            </ul>
+        </div>
+</div>
+<div class="protocol" id="DirecTV_P2">
+<div class="protocol-title">DirecTV_P2</div>
+<div class="irp">{38k,600,msb}&lt;1,-1|1,-2|2,-1|2,-2&gt;([10][5],-2,D:4,F:8,C:4,1,-15){C=7*(F:2:6)+5*(F:2:4)+3*(F:2:2)+(F:2)}[D:0..15,F:0..255]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>
+            </div>
+<div class="parameter">
+<span class="parametername">min-leadout: </span>7000</div>
+<div class="parameter">
+<span class="parametername">frequency-tolerance: </span>1000</div>
+<div class="documentation">There are six variants of the DirecTV protocol, distinguished in RemoteMaster by the parameter "Parm" on the Setup page.
+            The Parm value is shown in the Misc field of DecodeIR.  The IRP notation above corresponds to the default Parm=3.
+            The various Parm values correspond to three different frequencies (the 38k in the above) and two different lead-out times (the -50 in the above).
+            The corresponding values are:
+
+            <ul xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster">
+                <li>Parm=0 : 40k, -15</li>
+                <li>Parm=1 : 40k, -50</li>
+                <li>Parm=2 : 38k, -15</li>
+                <li>Parm=3 : 38k, -50</li>
+                <li>Parm=4 : 57k, -15</li>
+                <li>Parm=5 : 57k, -50</li>
+            </ul>
+        </div>
+</div>
+<div class="protocol" id="DirecTV_P3">
+<div class="protocol-title">DirecTV_P3</div>
+<div class="irp">{38k,600,msb}&lt;1,-1|1,-2|2,-1|2,-2&gt;([10][5],-2,D:4,F:8,C:4,1,-50){C=7*(F:2:6)+5*(F:2:4)+3*(F:2:2)+(F:2)}[D:0..15,F:0..255]</div>
+<div class="parameter">
+<span class="parametername">frequency-tolerance: </span>1000</div>
+<div class="parameter">
+<span class="parametername">prefer-over: </span>DirecTV_P2</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>
+            </div>
+<div class="documentation">There are six variants of the DirecTV protocol, distinguished in RemoteMaster by the parameter "Parm" on the Setup page.
+            The Parm value is shown in the Misc field of DecodeIR.  The IRP notation above corresponds to the default Parm=3.
+            The various Parm values correspond to three different frequencies (the 38k in the above) and two different lead-out times (the -50 in the above).
+            The corresponding values are:
+
+            <ul xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster">
+                <li>Parm=0 : 40k, -15</li>
+                <li>Parm=1 : 40k, -50</li>
+                <li>Parm=2 : 38k, -15</li>
+                <li>Parm=3 : 38k, -50</li>
+                <li>Parm=4 : 57k, -15</li>
+                <li>Parm=5 : 57k, -50</li>
+            </ul>
+        </div>
+</div>
+<div class="protocol" id="DirecTV_P4">
+<div class="protocol-title">DirecTV_P4</div>
+<div class="irp">{57k,600,msb}&lt;1,-1|1,-2|2,-1|2,-2&gt;([10][5],-2,D:4,F:8,C:4,1,-15){C=7*(F:2:6)+5*(F:2:4)+3*(F:2:2)+(F:2)}[D:0..15,F:0..255]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>
+            </div>
+<div class="parameter">
+<span class="parametername">min-leadout: </span>7000</div>
+<div class="parameter">
+<span class="parametername">frequency-tolerance: </span>1000</div>
+<div class="documentation">There are six variants of the DirecTV protocol, distinguished in RemoteMaster by the parameter "Parm" on the Setup page.
+            The Parm value is shown in the Misc field of DecodeIR.  The IRP notation above corresponds to the default Parm=3.
+            The various Parm values correspond to three different frequencies (the 38k in the above) and two different lead-out times (the -50 in the above).
+            The corresponding values are:
+
+            <ul xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster">
+                <li>Parm=0 : 40k, -15</li>
+                <li>Parm=1 : 40k, -50</li>
+                <li>Parm=2 : 38k, -15</li>
+                <li>Parm=3 : 38k, -50</li>
+                <li>Parm=4 : 57k, -15</li>
+                <li>Parm=5 : 57k, -50</li>
+            </ul>
+        </div>
+</div>
+<div class="protocol" id="DirecTV_P5">
+<div class="protocol-title">DirecTV_P5</div>
+<div class="irp">{57k,600,msb}&lt;1,-1|1,-2|2,-1|2,-2&gt;([10][5],-2,D:4,F:8,C:4,1,-50){C=7*(F:2:6)+5*(F:2:4)+3*(F:2:2)+(F:2)}[D:0..15,F:0..255]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>
+            </div>
+<div class="parameter">
+<span class="parametername">frequency-tolerance: </span>1000</div>
+<div class="parameter">
+<span class="parametername">prefer-over: </span>DirecTV_P4</div>
+<div class="documentation">There are six variants of the DirecTV protocol, distinguished in RemoteMaster by the parameter "Parm" on the Setup page.
+            The Parm value is shown in the Misc field of DecodeIR.  The IRP notation above corresponds to the default Parm=3.
+            The various Parm values correspond to three different frequencies (the 38k in the above) and two different lead-out times (the -50 in the above).
+            The corresponding values are:
+
+            <ul xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster">
+                <li>Parm=0 : 40k, -15</li>
+                <li>Parm=1 : 40k, -50</li>
+                <li>Parm=2 : 38k, -15</li>
+                <li>Parm=3 : 38k, -50</li>
+                <li>Parm=4 : 57k, -15</li>
+                <li>Parm=5 : 57k, -50</li>
+            </ul>
+        </div>
+</div>
+<div class="protocol" id="Dish_Network">
+<div class="protocol-title">Dish_Network</div>
+<div class="irp">{57.6k,406}&lt;1,-7|1,-4&gt;(1,-15,(F:-6,S:5,D:5,1,-15)+) [F:0..63,S:0..31,D:0..31]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>0002[S+1,D;F]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>0002:2[S+1,D;F]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>0002:3[S+1,D;F]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>0002:5(Dish Network)[D?0,D?1,D?2,D?3,S+1;??,F]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>0002:5(Dish Network Combo)[D?0,D?1,D?2,D?3,S+1;??,F]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>0002:6(Dish Network Combo)[D?0,D?1,D?2,D?3,S+1;??,F]</div>
+<div class="documentation">This is not a robust protocol, so <A xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="#spurious">spurious decodes</A> are likely.
+            See <a xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="http://www.hifi-remote.com/forums/viewtopic.php?t=13923">this thread</a> for a discussion.
+        </div>
+</div>
+<div class="protocol" id="Dishplayer">
+<div class="protocol-title">Dishplayer</div>
+<div class="irp">{38.4k,535,msb}&lt;1,-5|1,-3&gt;(1,-11,(F:6,S:5,D:2,1,-11)+) [F:0..63,S:0..31,D:0..3]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>010F[D,S;F]</div>
+<div class="documentation">This is not a robust protocol, so <A xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="#spurious">spurious decodes</A> are likely.</div>
+</div>
+<div class="protocol" id="Dysan">
+<div class="protocol-title">Dysan</div>
+<div class="irp">
+    {780,38k}&lt;1,-1|1,-2&gt;(3,-1,D:7,F:8,1,-104m)*
+            [D:0..127,F:0..255]
+            </div>
+</div>
+<div class="protocol" id="Elan">
+<div class="protocol-title">Elan</div>
+<div class="irp">{0k,398,msb}&lt;1,-1|1,-2&gt;(3,-2,D:8,~D:8,2,-2,F:8,~F:8,1,^50m)* [D:0..255,F:0..255]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>01F8[D;F]</div>
+<div class="documentation">See the <A xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="http://www.hifi-remote.com/forums/viewtopic.php?p=87473">JP1-forum thread</A>.</div>
+</div>
+<div class="protocol" id="Elunevision">
+<div class="protocol-title">Elunevision</div>
+<div class="irp">{0k,358,msb}&lt;1,-3|3,-1&gt;(10,-3,D:24,F:8,-7)*{D=0xf48080} [F:0..255]</div>
+<div class="documentation">Elunevision Luna motorized projector screen remote.
+            <a xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="https://sourceforge.net/p/lirc/mailman/message/36646738/">Posting on Lirc mailing list.</a>
+        </div>
+</div>
+<div class="protocol" id="Emerson">
+<div class="protocol-title">Emerson</div>
+<div class="irp">{36.7k,872}&lt;1,-1|1,-3&gt;(4,-4,D:6,F:6,~D:6,~F:6,1,-39)* [D:0..63,F:0..63]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>0065[D?0,D?1,D?2;??,F]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>0065:2[D?0,D?1,D?2,D?3;??,F]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>0065:old</div>
+<div class="parameter">
+<span class="parametername">prefer-over: </span>Sampo</div>
+<div class="parameter">
+<span class="parametername">prefer-over: </span>ScAtl-6</div>
+</div>
+<div class="protocol" id="entone">
+<div class="protocol-title">entone</div>
+<div class="irp">
+{36k,444,msb}&lt;-1,1|1,-1&gt;(6,-2,1:1,M:3,&lt;-2,2|2,-2&gt;(T:1),0xE60396FFFFF:44,F:8,0:4,-131.0m)*{M=6,T=0}[F:0..255]
+</div>
+<div class="parameter">
+<span class="parametername">prefer-over: </span>RC6-M-56</div>
+<div class="documentation">A special case of the <a xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="#RC6-M-56">RC6-M-56</a> protocol, used in the Entone Amulet.
+        See <a xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="http://www.hifi-remote.com/forums/viewtopic.php?t=12561">this forum thread</a>.</div>
+</div>
+<div class="protocol" id="Epson">
+<div class="protocol-title">Epson</div>
+<div class="irp">
+            {38.4k,577}&lt;2,-1|1,-2|1,-1|2,-2&gt;((4,-1,D:8,T1:2,OBC:6,T2:2,S:8,1,-75m)*,(4,-1,D:8,~F1:2,OBC:6,~F2:2,S:8,1,-250m))
+               [D:0..255,S:0..255,OBC:0..63,T1:0..3,T2:0..3,F1:0..3,F2:0..3]
+            </div>
+<div class="documentation">
+            <a xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="http://www.hifi-remote.com/forums/viewtopic.php?t=17051">Forum thread</a>
+        </div>
+</div>
+<div class="protocol" id="F12">
+<div class="protocol-title">F12</div>
+<div class="irp">{37.9k,422}&lt;1,-3|3,-1&gt;((D:3,S:1,F:8,-80)2)*  [D:0..7,S:0..1,F:0..255]</div>
+<div class="parameter">
+<span class="parametername">prefer-over: </span>F12_relaxed</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>001A[D;F]</div>
+<div class="documentation">Old version of the F12 specification.
+        </div>
+</div>
+<div class="protocol" id="F12-0">
+<div class="protocol-title">F12-0</div>
+<div class="irp">
+{37.9k,422}&lt;1,-3|3,-1&gt;(D:3,H:1,F:8,-34,D:3,H:1,F:8) {H=0} [D:0..7,F:0..0xFF]
+</div>
+<div class="documentation">Taken from <a xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="http://www.hifi-remote.com/wiki/index.php?title=DecodeIR#F12">DecodeIR</a>, case H=0.
+        </div>
+</div>
+<div class="protocol" id="F12-1">
+<div class="protocol-title">F12-1</div>
+<div class="irp">
+{37.9k,422}&lt;1,-3|3,-1&gt;(D:3,H:1,F:8,-34,D:3,H:1,F:8,-88,D:3,H:1,F:8,-34,D:3,H:1,F:8)* {H=1} [D:0..7,F:0..0xFF]
+</div>
+<div class="documentation">Taken from <a xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="http://www.hifi-remote.com/wiki/index.php?title=DecodeIR#F12">DecodeIR</a>, case H=1.
+        </div>
+</div>
+<div class="protocol" id="F12_relaxed">
+<div class="protocol-title">F12_relaxed</div>
+<div class="irp">{37.9k,422}&lt;1,-3|3,-1&gt;(D:3,S:1,F:8,-80)*  [D:0..7,S:0..1,F:0..255]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>
+            </div>
+<div class="parameter">
+<span class="parametername">minimum-leadout: </span>6000</div>
+<div class="documentation">Relaxed version of the F12 specification.
+        </div>
+</div>
+<div class="protocol" id="F32">
+<div class="protocol-title">F32</div>
+<div class="irp">{37.9k,422,msb}&lt;1,-3|3,-1&gt;(D:8,S:8,F:8,E:8,-100m)*  [D:0..255,S:0..255,F:0..255,E:0..255]</div>
+<div class="documentation">The meaning of the 32 bits of data is unknown, and the assignment to D, S, F, and E is arbitrary.</div>
+</div>
+<div class="protocol" id="Fujitsu">
+<div class="protocol-title">Fujitsu</div>
+<div class="irp">{37k,432}&lt;1,-1|1,-3&gt;(8,-4,20:8,99:8,0:4,E:4,D:8,S:8,F:8,1,-110)* [D:0..255,S:0..255=D,F:0..255,E:0..15=0]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>00F8[D;F,S]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>00F8:2[D;F,S]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>00F8:3[D;F,S]</div>
+<div class="documentation">Fujitsu is the member of the <a xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="#Kaseikyo">Kaseikyo</a> family with OEM_code1=20 and OEM_code2=99.
+        There is no checksum, so the risk of an incorrect decode is much higher than in other Kaseikyo protocols.</div>
+</div>
+<div class="protocol" id="Fujitsu-128">
+<div class="protocol-title">Fujitsu-128</div>
+<div class="irp">{38.4k,413}&lt;1,-1|1,-3&gt;(8, -4, A0:8, A1:8, A2:8, A3:8, A4:8, A5:8, A6:8, A7:8, A8:8, A9:8, A10:8, A11:8, A12:8, A13:8, A14:8, A15:8, 1, -104.3m)*
+                    [A0:0..255, A1:0..255, A2:0..255,  A3:0..255,  A4:0..255,  A5:0..255,  A6:0..255,  A7:0..255,
+                     A8:0..255, A9:0..255, A10:0..255, A11:0..255, A12:0..255, A13:0..255, A14:0..255, A15:0..255]</div>
+</div>
+<div class="protocol" id="Fujitsu-56">
+<div class="protocol-title">Fujitsu-56</div>
+<div class="irp">{37k,432}&lt;1,-1|1,-3&gt;(8,-4,20:8,99:8,0:4,E:4,D:8,S:8,X:8,F:8,1,-110)* [D:0..255,S:0..255=D,F:0..255,E:0..15=0,X:0..255=0]</div>
+</div>
+<div class="protocol" id="Fujitsu_Aircon">
+<div class="protocol-title">Fujitsu_Aircon</div>
+<div class="irp">
+{38.4k,413}&lt;1,-1|1,-3&gt;
+(8, -4, A0:8, A1:8, A2:8, A3:8, A4:8, A5:8, A6:8, A7:8,
+wOn:4, A:4, B:4, C:4, D:4, E:4, tOff:11, fOff:1, tOn:11, fOn:1,
+A14:8, A15:8, 1, -104.3m)*
+{A0=20, A1=99, A2=0, A3=16, A4=16, A5=254, A6=9, A7=48, A14=32,
+A15=256 -(16*A+wOn+(16*C+B)+(16*E+D)+tOff:8+(tOff:3:8+fOff*8+16*tOn:4)+(tOn:7:4+128*fOn)+80)%256}
+[A:0..15, B:0..15, C:0..15, D:0..15, E:0..15, fOff:0..1, fOn:0..1, tOff:0..1024, tOn:0..1024, wOn:0..1]
+</div>
+<div class="parameter">
+<span class="parametername">prefer-over: </span>Fujitsu-128</div>
+<div class="documentation">
+            Protocol for Fujitsu inverter air conditioning. <a xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="http://www.remotecentral.com/cgi-bin/mboard/rc-discrete/thread.cgi?4894">RemoteCentral thread</a>.
+            This version is a re-parametrization of 3FG's version, allowing for decoding.
+        </div>
+</div>
+<div class="protocol" id="Fujitsu_Aircon_old">
+<div class="protocol-title">Fujitsu_Aircon_old</div>
+<div class="irp">Fujitsu-128
+                   {A0=20, A1=99, A2=0, A3=16, A4=16, A5=254, A6=9, A7=48,
+                    A8=16*A + wOn, A9=16*C + B, A10=16*E:4 + D:4, A11=tOff:8, A12=tOff:3:8+fOff*8+16*tOn:4,
+                    A13=tOn:7:8+128*fOn, A14=32, A15=256 -(A8+A9+A10+A11+A12+A13+80)%256}
+           [A:0..15, wOn:0..1, B:0..15, C:0..15, D:0..15, E:0..15, tOff:0..1024, tOn:0..1024, fOff:0..1, fOn:0..1]</div>
+<div class="parameter">
+<span class="parametername">decodable: </span>false</div>
+<div class="documentation">Protocol for Fujitsu inverter air conditioning. <a xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="http://www.remotecentral.com/cgi-bin/mboard/rc-discrete/thread.cgi?4894">RemoteCentral thread</a>.</div>
+</div>
+<div class="protocol" id="G.I.4DTV">
+<div class="protocol-title">G.I.4DTV</div>
+<div class="irp">
+{37.3k,992}&lt;1,-1|1,-3&gt;(5,-2,F:6,D:2,C0:1,C1:1,C2:1,C3:1,1,-60)*
+{
+C0=D:1:2 + #(F&amp;25) + #(D&amp;1),
+C1=D:1:2 + #(F&amp;43) + #(D&amp;3),
+C2=D:1:2 + #(F&amp;22) + #(D&amp;3),
+C3=D:1:2 + #(F&amp;44) + #(D&amp;2)
+}[D:0..7, F:0..63]
+       </div>
+<div class="parameter">
+<span class="parametername">prefer-over: </span>G.I.4DTV_relaxed</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>00A4[D;F]</div>
+<div class="documentation">
+            This is a moderately robust protocol, but <A xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="#spurious">spurious decodes</A> are still possible.
+            Unit (device) numbers from 0 to 7 are supported.
+            The check sum C is a Hamming Code, which can correct single bit errors.
+            D:1:2 is encoded in the checksum. See <a xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="http://www.hifi-remote.com/forums/viewtopic.php?p=103934#103934">forum thread</a>.
+        </div>
+</div>
+<div class="protocol" id="G.I.4DTV_relaxed">
+<div class="protocol-title">G.I.4DTV_relaxed</div>
+<div class="irp">{37.3k,992}&lt;1,-1|1,-3&gt;(5,-2,F:6,D:2,C:4,1,-60)*[D:0..3, F:0..63, C:0..15]</div>
+<div class="documentation">Relaxed version of <a xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="#G.I.4DTV">G.I.4DTV</a> &mdash; the checksum is not checked but considered a parameter.</div>
+</div>
+<div class="protocol" id="G.I.Cable">
+<div class="protocol-title">G.I.Cable</div>
+<div class="irp">{38.7k,490}&lt;1,-4.5|1,-9&gt;(18,-9,F:8,D:4,C:4,1,-84,(18,-4.5,1,-178)*){C = -(D + F:4 + F:4:4)} [D:0..15,F:0..255]</div>
+<div class="parameter">
+<span class="parametername">alt_name: </span>GI Cable</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>00C4</div>
+</div>
+<div class="protocol" id="GI RG">
+<div class="protocol-title">GI RG</div>
+<div class="irp">{37.3k,1000, msb}&lt;1,-1|1,-3&gt;(5,-3,F:6,S:2,D:8,1,-60)*[D:0..255, S:0..3, F:0..63]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>0177</div>
+<div class="documentation">
+            This is a moderately robust protocol, but <A xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="#spurious">spurious decodes</A> are still possible.
+            Typical usage is the GI/Next Level/Motorola RC2x00 series.
+        </div>
+</div>
+<div class="protocol" id="Grundig16">
+<div class="protocol-title">Grundig16</div>
+<div class="irp">{35.7k,578,msb}&lt;-4,2|-3,1,-1,1|-2,1,-2,1|-1,1,-3,1&gt;(806u,-2960u,1346u,T:1,F:8,D:7,-100)*[D:0..127,F:0..255,T@:0..1=0]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>0112[D:6,F&gt;127;D:1:6,F]</div>
+<div class="documentation">
+            These are two variants of the same protocol, differing only in frequency.
+            The IRP notation is corrected from previous versions of this document, to make it consistent with DecodeIR.
+        </div>
+</div>
+<div class="protocol" id="Grundig16-30">
+<div class="protocol-title">Grundig16-30</div>
+<div class="irp">{30.3k,578,msb}&lt;-4,2|-3,1,-1,1|-2,1,-2,1|-1,1,-3,1&gt;(806u,-2960u,1346u,T:1,F:8,D:7,-100)* [D:0..127,F:0..255,T:0..1]</div>
+<div class="documentation">See <a xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="#Grundig16">Grundig16</a>
+</div>
+</div>
+<div class="protocol" id="GuangZhou">
+<div class="protocol-title">GuangZhou</div>
+<div class="irp">
+ {38.0k,182}&lt;3,-3|3,-6&gt;(20,-10,T:2,D:6,F:8,S:8,20,-10,~T:2,D:6,~F:8,3,^108m,(20,-20,3,^108m)*){T=3}
+            [D:0..63,F:0..255,S:0..255]
+            </div>
+<div class="documentation">
+                <a xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="http://www.hifi-remote.com/forums/viewtopic.php?t=14600">Forum thread.</a>
+            </div>
+</div>
+<div class="protocol" id="GwtS">
+<div class="protocol-title">GwtS</div>
+<div class="irp">{38.005k,417,lsb}&lt;1|-1&gt;(0:1,D:8,1:2,F:8,1:2,CRC:8,1:1)[D:0..255=144,F:0..255,CRC:0..255]</div>
+<div class="documentation">
+            <p xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster">Protocol for Disney's Glow with the Show Hat/Ears, see <a href="http://www.hifi-remote.com/forums/viewtopic.php?t=14541">forum thread</a>.
+            Unfortunately, the IRP engine cannot compute the <a href="#CRC">CRC</a>, but the user has to enter it as a parameter.</p>
+
+<p xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster">The known commands are, together with their F and CRC values, as follows:</p>
+
+<table xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" border="1">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>F</th>
+            <th>CRC</th>
+        </tr>
+    </thead>
+    <tr>
+        <td>off</td>
+        <td>0x60</td>
+        <td>166</td>
+    </tr>
+    <tr>
+        <td>blue</td>
+        <td>0x61</td>
+        <td>248</td>
+    </tr>
+    <tr>
+        <td>green</td>
+        <td>0x62</td>
+        <td>26</td>
+    </tr>
+    <tr>
+        <td>cyan</td>
+        <td>0x63</td>
+        <td>68</td>
+    </tr>
+    <tr>
+        <td>red</td>
+        <td>0x64</td>
+        <td>199</td>
+    </tr>
+    <tr>
+        <td>magenta</td>
+        <td>0x65</td>
+        <td>153</td>
+    </tr>
+    <tr>
+        <td>yellow</td>
+        <td>0x66</td>
+        <td>123</td>
+    </tr>
+    <tr>
+        <td>white</td>
+        <td>0x67</td>
+        <td>37</td>
+    </tr>
+    <tr>
+        <td>off_r</td>
+        <td>0x68</td>
+        <td>100</td>
+    </tr>
+    <tr>
+        <td>blue_r</td>
+        <td>0x69</td>
+        <td>58</td>
+    </tr>
+    <tr>
+        <td>green_r</td>
+        <td>0x6A</td>
+        <td>216</td>
+    </tr>
+    <tr>
+        <td>cyan_r</td>
+        <td>0x6B</td>
+        <td>134</td>
+    </tr>
+    <tr>
+        <td>red_r</td>
+        <td>0x6C</td>
+        <td>5</td>
+    </tr>
+    <tr>
+        <td>magenta_r</td>
+        <td>0x6D</td>
+        <td>91</td>
+    </tr>
+    <tr>
+        <td>yellow_r</td>
+        <td>0x6E</td>
+        <td>185</td>
+    </tr>
+    <tr>
+        <td>white_r</td>
+        <td>0x6F</td>
+        <td>231</td>
+    </tr>
+</table>
+        </div>
+</div>
+<div class="protocol" id="GXB">
+<div class="protocol-title">GXB</div>
+<div class="irp">{38.3k,520,msb}&lt;1,-3|3,-1&gt;(1,-1,D:4,F:8,P:1,1,^100m)*{P=1-#F%2}[D:0..15,F:0..255]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>01FF:JP1GXB[;D,F]</div>
+<div class="documentation">Decoder for a nonstandard Xbox remote.</div>
+</div>
+<div class="protocol" id="Humax 4Phase">
+<div class="protocol-title">Humax 4Phase</div>
+<div class="irp">{56k,105, msb}&lt;-2,2|-3,1|1,-3|2,-2&gt;(T=0,(2,-2,D:6,S:6,T:2,F:7,~F:1,^95m,T=1)+)  [D:0..63, S:0..63, F:0..127]</div>
+<div class="parameter">
+<span class="parametername">absolute-tolerance: </span>50</div>
+<div class="parameter">
+<span class="parametername">relative-tolerance: </span>0.1</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>01DD</div>
+<div class="documentation">
+            <a xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="http://www.hifi-remote.com/forums/viewtopic.php?t=14219">Forum thread</a>.
+        </div>
+</div>
+<div class="protocol" id="InterVideo RC-201">
+<div class="protocol-title">InterVideo RC-201</div>
+<div class="irp">{38k,300}&lt;1,-1|1,-3&gt;(10,-5,0:1,F:6,768:10,1,-10m)* [F:0..63]</div>
+<div class="documentation">Used by a remote marked as <i xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster">InterVideo RC-201</i> that is paired with a USB HID receiver simply marked as <i xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster">RC-201</i>. Exact carrier frequency not known.</div>
+</div>
+<div class="protocol" id="IODATAn">
+<div class="protocol-title">IODATAn</div>
+<div class="irp">{38k,550}&lt;1,-1|1,-3&gt;(16,-8,x:7,D:7,S:7,y:7,F:8,C:4,1,^108m)* {n = F:4 ^ F:4:4 ^ C:4} [D:0..127,S:0..127,F:0..255,C:0..15=0,x:0..127=0,y:0..127=0]</div>
+<div class="parameter">
+<span class="parametername">alt_name: </span>IODATAn-x-y</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>01FF:JP1IOD[D,S,F:4^F:4:4^C:4,x,y;F]</div>
+<div class="documentation">
+            This is potentially a class of protocols distinguished by values of <i xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster">n</i>, <i xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster">x</i> and <i xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster">y</i> with <i xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster">n</i> = 0..15 and <i xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster">x</i>, <i xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster">y</i> = 0..127.
+            If <i xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster">x</i> and <i xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster">y</i> are both zero, they are omitted.
+            The only known example is IODATA1.
+        </div>
+</div>
+<div class="protocol" id="Jerrold">
+<div class="protocol-title">Jerrold</div>
+<div class="irp">{0k,44}&lt;1,-7.5m|1,-11.5m&gt;(F:5,1,-23.5m)* [F:0..31]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>0006</div>
+<div class="documentation">This is not a robust protocol, so <A xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="#spurious">spurious decodes</A> are likely.</div>
+</div>
+<div class="protocol" id="JVC">
+<div class="protocol-title">JVC</div>
+<div class="irp">{37.9k,527,33%}&lt;1,-1|1,-3&gt;(16,-8,D:8,F:8,1,^59.08m,(D:8,F:8,1,^46.42m)*) [D:0..255,F:0..255]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>0034</div>
+<div class="parameter">
+<span class="parametername">prefer-over: </span>JVC_alt</div>
+<div class="documentation">
+            JVC{2} indicates a JVC signal from which the lead-in is missing.
+            The JVC protocol has lead-in on only the first frame, so it is quite easy to have it missing from a learned signal.
+            So when JVC{2} is correct, it means the same as JVC.
+            It is very similar in structure and timing to <A xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="#Mitsubishi">Mitsubishi</A> protocol.
+            <a xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="http://support.jvc.com/consumer/support/documents/RemoteCodes.pdf">JVC documentation</a>.
+        </div>
+</div>
+<div class="protocol" id="JVC-48">
+<div class="protocol-title">JVC-48</div>
+<div class="irp">{37k,432}&lt;1,-1|1,-3&gt;(8,-4,3:8,1:8,D:8,S:8,F:8,(D^S^F):8,1,-173)* [D:0..255,S:0..255,F:0..255]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>00C9</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>001F[D&amp;239,S&amp;254,3,1;D:1:4,S:1,F]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>001F:8(Panasonic VCR Combo)[D&amp;239,S&amp;254,3,1;D:1:4,S:1,F]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>001F:8(Panasonic Mixed Combo;;
+            D.S=0.0,0.1,0.2,0.3.0.4,1.0,1.1,1.2,1.3,1.4,2.0,2.2,2.3,2.4,3.0,3.3,3.4,4.0,4.4,5.0)
+            [D?0D,D?1D|||S?0S,D?2D|||S?1S,D?3D|||S?2S,D?4D|||S?3S,D?5D|||S?4S,3,1;??D,??S,F]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>01C9[;D,S,F]</div>
+<div class="documentation">
+            JVC-48 is the member of the <a xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="#Kaseikyo">Kaseikyo</a> family with OEM_code1=3 and OEM_code2=31.
+        </div>
+</div>
+<div class="protocol" id="JVC-56">
+<div class="protocol-title">JVC-56</div>
+<div class="irp">{37k,432}&lt;1,-1|1,-3&gt;(8,-4,3:8,1:8,D:8,S:8,X:8,F:8,(D^S^X^F):8,1,-173)*[D:0..255,S:0..255,F:0..255,X:0..255]</div>
+</div>
+<div class="protocol" id="JVC_alt">
+<div class="protocol-title">JVC_alt</div>
+<div class="irp">{37.9k,527,33%}&lt;1,-1|1,-3&gt;(16,-8,(D:8,F:8,1,^46.42m)*) [D:0..255,F:0..255]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>0034</div>
+<div class="parameter">
+<span class="parametername">reject-repeatless: </span>true</div>
+<div class="documentation">
+            This is a version of the JVC protocol for signals that has been (too much) reduced by the repeat finder.
+        </div>
+</div>
+<div class="protocol" id="JVC{2}">
+<div class="protocol-title">JVC{2}</div>
+<div class="irp">{37.9k,527,33%}&lt;1,-1|1,-3&gt;(D:8,F:8,1,^46.42m)* [D:0..255,F:0..255]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>0034</div>
+<div class="documentation">See <a xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="#JVC">JVC</a>.</div>
+</div>
+<div class="protocol" id="Kaseikyo">
+<div class="protocol-title">Kaseikyo</div>
+<div class="irp">{37k,432}&lt;1,-1|1,-3&gt;(8,-4,M:8,N:8,X:4,D:4,S:8,F:8,E:4,C:4,1,-173)* {X=((M^N)::4)^(M^N), chksum=D^S^F^(E*16), C=chksum::4 ^ chksum}[D:0..15,S:0..255,F:0..255,E:0..15,M:0..255,N:0..255]</div>
+<div class="parameter">
+<span class="parametername">relative-tolerance: </span>0.035</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>00F8:3{Z=D^S^F^(E*16),C=Z::4^Z,G=(C&lt;&lt;4)|E}[M,N,D,S;F,G]</div>
+<div class="documentation">
+            This is the nominal form of the Kaseikyo protocol.
+        </div>
+</div>
+<div class="protocol" id="Kaseikyo56">
+<div class="protocol-title">Kaseikyo56</div>
+<div class="irp">{37k,432}&lt;1,-1|1,-3&gt;(8,-4,M:8,N:8,H:4,D:4,S:8,E:8,F:8,G:8,1,-173)* {H=((M^N)::4)^(M^N), chksum=S^G^F^(E*16)^D, C=chksum::4 ^ chksum}[D:0..15,S:0..255,F:0..255,G:0..255,M:0..255,N:0..255,E:0..255]</div>
+<div class="parameter">
+<span class="parametername">relative-tolerance: </span>0.04</div>
+<div class="documentation">
+            Kaseikyo56 is a lengthened version of the <a xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="#Kaseikyo">Kaseikyo</a> family of protocols.
+            It has the same OEM codes indicating the same manufacturers as Kaseikyo,
+            and it has the same variation (by manufacturer) in check byte and other details as Kaseikyo.
+        </div>
+</div>
+<div class="protocol" id="Kathrein">
+<div class="protocol-title">Kathrein</div>
+<div class="irp">{38k,540}&lt;1,-1|1,-3&gt;(16,-8,D:4,~D:4,F:8,~F:8,1,^105m,(16,-8,F:8,1,^105m)+)[D:0..15,F:0..255]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>0066</div>
+<div class="documentation">
+            This protocol signals repeats by the use of <a xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="#ditto">dittos</a>.
+            It is unusual in that the ditto frame carries part of the signal data, specifically F.
+            Similar to <a xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="#Logitech">Logitech</a>, but both decodes give the same device number and OBC.
+        </div>
+</div>
+<div class="protocol" id="Konka">
+<div class="protocol-title">Konka</div>
+<div class="irp">{38k,500,msb}&lt;1,-3|1,-5&gt;(6,-6,D:8,F:8,1,-8,1,-46)* [D:0..255,F:0..255]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>019B</div>
+</div>
+<div class="protocol" id="Logitech">
+<div class="protocol-title">Logitech</div>
+<div class="irp">{38k,127}&lt;3,-4|3,-8&gt;(31,-36,D:4,~D:4,F:8,~F:8,3,-50m)*[D:0..15,F:0..255]</div>
+<div class="documentation">
+            This protocol is used with Logitech's PS3 adapter.
+            Similar to <a xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="#Kathrein">Kathrein</a>.
+        </div>
+</div>
+<div class="protocol" id="Lumagen">
+<div class="protocol-title">Lumagen</div>
+<div class="irp">{38.4k,416,msb}&lt;1,-6|1,-12&gt;(D:4,C:1,F:7,1,-26)* {C = (#F+1)&amp;1} [D:0..15,F:0..127]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>01FF:JP1Luma</div>
+<div class="documentation"/>
+</div>
+<div class="protocol" id="Lutron">
+<div class="protocol-title">Lutron</div>
+<div class="irp">
+            {40k,2300,msb}&lt;-1|1&gt;(255:8,X:24,0:4)*[X:0..0xFFFFFF]
+    </div>
+<div class="documentation">
+        From the <a xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="DecodeIR">DecodeIR</a> documentation:
+        <blockquote xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster">
+            <div>
+                This is an unusual protocol in that an 8-bit device code and 8-bit OBC are encoded
+                in a 24-bit error-correcting code as the X of the IRP notation.
+                This is constructed as follows.
+                First two parity bits are appended to the 16 data bits to give even parity for the two sets
+                of 9 bits taken alternately.
+                The resulting 18-bit sequence is then treated as 6 octal digits (0-7) expressed in 3-bit binary code.
+                These are then re-coded in the 3-bit Gray code
+                (also called, more descriptively, the reflected-binary code) with a parity bit to give odd parity,
+                so giving 6 4-bit groups treated as a single 24-bit sequence.
+                The whole thing allows any single-bit error in transmission to be identified and corrected.</div>
+        </blockquote>
+    </div>
+</div>
+<div class="protocol" id="Matsui">
+<div class="protocol-title">Matsui</div>
+<div class="irp">{38k,525}&lt;1,-1|1,-3&gt;(D:3,F:7,1,^30.5m)* [D:0..7,F:0..127]</div>
+<div class="documentation">This is not a robust protocol, so <A xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="#spurious">spurious decodes</A> are likely.</div>
+</div>
+<div class="protocol" id="MCE">
+<div class="protocol-title">MCE</div>
+<div class="irp">{36k,444,msb}&lt;-1,1|1,-1&gt;((6,-2,1:1,6:3,-2,2,OEM1:8,S:8,T:1,D:7,F:8,^107m)*,T=1-T) {OEM1=128}[D:0..127,S:0..255,F:0..255,T@:0..1=0]</div>
+<div class="parameter">
+<span class="parametername">prefer-over: </span>RC6-M-32</div>
+<div class="parameter">
+<span class="parametername">alt_name: </span>RC6-6-32</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>012A:2[D,S;F]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>012A[D,S;F]</div>
+<div class="documentation">
+            MCE is a member of the RC6 family.
+            Technically it is <a xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="#RC6-M-32">RC6-6-32</a> with the standard toggle bit zero,
+            with the OEM1 field equal to 128, and with a nonstandard (for the RC6 family) toggle bit added.
+        </div>
+</div>
+<div class="protocol" id="MCIR-2-kbd">
+<div class="protocol-title">MCIR-2-kbd</div>
+<div class="irp">
+ {300,msb}&lt;-1,1|1,-1&gt;(9,32:8,C:5,0:8,F:8,M:8,-74m)*
+{c1 =  #(F &amp; 0b11111000) % 2,
+ c2 = (#(F &amp; 0b00000111) + #(M &amp; 0b00110000)) % 2,
+ c3 = (#(F &amp; 0b11000111) + #(M &amp; 0b10001110)) % 2,
+ c4 = (#(F &amp; 0b00110110) + #(M &amp; 0b10101101)) % 2,
+ c5 = (#(F &amp; 0b10101101) + #(M &amp; 0b10011011)) % 2,
+ C = (c1 &lt;&lt; 4) | (c2 &lt;&lt; 3) | (c3 &lt;&lt; 2) | (c4 &lt;&lt; 1) | c5 }
+[F:0..255,M:0..255]
+            </div>
+<div class="documentation">
+            A RC6-ish keyboard IR protocol used by the Microsoft Remote Keyboard
+            for Windows Media Center Edition, referred to by Microsoft's Windows Media Center
+            remote specification docs as "an internal protocol called MCIR-2".
+            See <a xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="http://www.hifi-remote.com/forums/viewtopic.php?t=100888">HiFi-Remote thread</a> and
+            <a xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="https://github.com/torvalds/linux/blob/master/drivers/media/rc/ir-mce_kbd-decoder.c">Linux media driver</a>.
+        </div>
+</div>
+<div class="protocol" id="MCIR-2-mouse">
+<div class="protocol-title">MCIR-2-mouse</div>
+<div class="irp">
+{300,msb}&lt;-1,1|1,-1&gt;(9,8:8,C:5,y:7,x:7,R:1,L:1,F:5,-10.7m)*
+[C:0..31,L:0..1,R:0..1,x:0..127,y:0..127,F:0..31]
+            </div>
+<div class="documentation">
+            A RC6-ish mouse IR protocol used by the Microsoft Remote Keyboard
+            for Windows Media Center Edition, referred to by Microsoft's Windows Media Center
+            remote specification docs as "an internal protocol called MCIR-2".
+            See <a xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="http://www.hifi-remote.com/forums/viewtopic.php?t=100888">HiFi-Remote thread</a> and
+            <a xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="https://github.com/torvalds/linux/blob/master/drivers/media/rc/ir-mce_kbd-decoder.c">Linux media driver</a>.
+        </div>
+</div>
+<div class="protocol" id="Metz19">
+<div class="protocol-title">Metz19</div>
+<div class="irp">{37.9k,106,msb}&lt;4,-9|4,-16&gt;((8,-22,T:1,D:3,~D:3,F:6,~F:6,4,-125m)*,T=1-T)[D:0..7,F:0..63,T@:0..1=0]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>01FF:JP1Metz</div>
+<div class="documentation">The toggle bit T is inverted each time a new button press occurs.</div>
+</div>
+<div class="protocol" id="Mitsubishi">
+<div class="protocol-title">Mitsubishi</div>
+<div class="irp">{32.6k,300}&lt;1,-3|1,-7&gt;(D:8,F:8,1,-80)* [D:0..127,F:0..255]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>0014[D;F]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>01A4[D;F]</div>
+<div class="documentation">
+            This is not a robust protocol, so <A xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="#spurious">spurious decodes</A> are likely.
+            It is also very similar in structure and timing to <A xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="#JVC">JVC{2}</A> protocol.
+        </div>
+</div>
+<div class="protocol" id="Mitsubishi-K">
+<div class="protocol-title">Mitsubishi-K</div>
+<div class="irp">{37k,432}&lt;1,-1|1,-3&gt;(8,-4,35:8,203:8,X:4,D:8,S:8,F:8,T:4,1,-100)* {X=6,T=-S:4:0-S:4:4-F:4:0-F:4:4+15}[D:0..255,F:0..255, S:0..255]</div>
+<div class="documentation">Mitsubishi-K is the member of the <a xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="#Kaseikyo">Kaseikyo</a> family with OEM_code1=35 and OEM_code2=203.</div>
+</div>
+<div class="protocol" id="NEC">
+<div class="protocol-title">NEC</div>
+<div class="irp">{38.4k,564}&lt;1,-1|1,-3&gt;(16,-8,D:8,S:8,F:8,~F:8,1,^108m) [D:0..255,S:0..255=255-D,F:0..255]</div>
+<div class="parameter">
+<span class="parametername">prefer-over: </span>NEC-Shirriff-32</div>
+<div class="parameter">
+<span class="parametername">prefer-over: </span>NEC-f16</div>
+<div class="parameter">
+<span class="parametername">prefer-over: </span>NEC1-f16</div>
+<div class="parameter">
+<span class="parametername">prefer-over: </span>NEC2-f16</div>
+<div class="parameter">
+<span class="parametername">prefer-over: </span>NEC1-rnc</div>
+<div class="parameter">
+<span class="parametername">prefer-over: </span>Roku</div>
+<div class="parameter">
+<span class="parametername">decode-only: </span>true</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>005A(NEC1)</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>005A(NEC2)</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>01AD[;D,S,F:8,~F:8]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>011A:JP1[D?0,S?0,D?1,S?1,D?2,S?2,D?3,S?3;F,??,,0]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>01BA[D,S;F:8,~F:8]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>01EA(;S==~D:8)[F,~F:8;D]</div>
+<div class="documentation">
+            Inspired by <a xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="#DecodeIR">DecodeIR</a>, we call a NEC signal without <a xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="#repeat">repeat</a> "NEC".
+            This decode normally indicates an incomplete learn.
+        </div>
+</div>
+<div class="protocol" id="NEC-f16">
+<div class="protocol-title">NEC-f16</div>
+<div class="irp">{38.4k,564}&lt;1,-1|1,-3&gt;(16,-8,D:8,S:8,F:8,E:8,1,^108m) [D:0..255,S:0..255=255-D,F:0..255,E:0..255=255-F]</div>
+<div class="parameter">
+<span class="parametername">prefer-over: </span>NEC-Shirriff-32</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>
+            </div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>
+            </div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>01BA[D,S;F,E]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>01FF:JP1f16[D,S,F;E]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>01EA(;S==~D:8)[F,E;D]</div>
+<div class="documentation">
+            A relaxed form (but used in some real devices) of the <a xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="#NEC">NEC</a> protocol. Byte 3 and byte 4 are independent.
+        </div>
+</div>
+<div class="protocol" id="NEC-Shirriff">
+<div class="protocol-title">NEC-Shirriff</div>
+<div class="irp">{38.4k,msb,564}&lt;1,-1|1,-3&gt;(16,-8,data:length,1,-1) [data:0..UINT32_MAX,length:1..64]</div>
+<div class="parameter">
+<span class="parametername">decodable: </span>false</div>
+<div class="documentation">
+            Like <a xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="#NEC1">NEC1</a> but without <a xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="#repeat">repeat</a>, just one large parameter, and msb bit order, no ending silence, and undetermined payload length.
+            This is how NEC protocols are referred to in the Arduino <a xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="https://github.com/z3t0/Arduino-IRremote">IRremote</a> project, originated by Ken Shirriff.
+        </div>
+</div>
+<div class="protocol" id="NEC-Shirriff-32">
+<div class="protocol-title">NEC-Shirriff-32</div>
+<div class="irp">{38.4k,msb,564}&lt;1,-1|1,-3&gt;(16,-8,data:32,1,-1) [data:0..UINT32_MAX]</div>
+<div class="documentation">The <a xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="#NEC-Shirriff">NEC-Shirriff</a> protocol with payload length set to 32, making it viable for decoding.</div>
+</div>
+<div class="protocol" id="NEC1">
+<div class="protocol-title">NEC1</div>
+<div class="irp">{38.4k,564}&lt;1,-1|1,-3&gt;(16,-8,D:8,S:8,F:8,~F:8,1,^108m,(16,-4,1,^108m)*) [D:0..255,S:0..255=255-D,F:0..255]</div>
+<div class="parameter">
+<span class="parametername">prefer-over: </span>NEC1-rnc</div>
+<div class="parameter">
+<span class="parametername">prefer-over: </span>Pioneer</div>
+<div class="parameter">
+<span class="parametername">reject-repeatless: </span>true</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>005A</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>011A[D?0,S?0,D?1,S?1;F,??,0]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>011A:2[D?0,S?0,D?1,S?1,D?2,S?2,D?3,S?3;F,??,0]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>017E[D,S?0,S?1,S?2,S?3;??,,F,0]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>0246[D,S?0,S?1,S?2,S?3,S?4,S?5;??,,F,0]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>00B6[D;S,F]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>00B6:JP1[D,0;S,F]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>01AD[;D,S,F:8,~F:8]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>011A:JP1[D?0,S?0,D?1,S?1,D?2,S?2,D?3,S?3;F,??,0,0]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>01BA[D,S;F:8,~F:8]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>01EA(;S==~D:8)[F,~F:8;D,0]</div>
+<div class="documentation">
+            The most commonly used version of the NEC protocol, repeating with <a xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="#dittos">dittos</a>.
+            <a xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="https://www.sbprojects.net/knowledge/ir/nec.php">Tutorial</a>.
+        </div>
+</div>
+<div class="protocol" id="NEC1-f16">
+<div class="protocol-title">NEC1-f16</div>
+<div class="irp">{38.4k,564}&lt;1,-1|1,-3&gt;(16,-8,D:8,S:8,F:8,E:8,1,^108m,(16,-4,1,^108m)*) [D:0..255,S:0..255=255-D,F:0..255,E:0..255=255-F]</div>
+<div class="parameter">
+<span class="parametername">prefer-over: </span>NEC-Shirriff-32</div>
+<div class="parameter">
+<span class="parametername">prefer-over: </span>NEC-f16</div>
+<div class="parameter">
+<span class="parametername">reject-repeatless: </span>true</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>
+            </div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>
+            </div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>01BA[D,S;F,E]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>01FF:JP1f16[D,S,F;E]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>01EA(;S==~D:8)[F,E;D,0]</div>
+<div class="documentation">
+            A relaxed form (but used in some real devices) of the <a xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="#NEC1">NEC1</a> protocol. Byte 3 and byte 4 are independent.
+       </div>
+</div>
+<div class="protocol" id="NEC1-rnc">
+<div class="protocol-title">NEC1-rnc</div>
+<div class="irp">{38.4k,564}&lt;1,-1|1,-3&gt;(16,-8,D:8,S:8,F:8,~F:4:4,~F:4,1,^108m,(16,-4,1,^108m)*) [D:0..255,S:0..255=255-D,F:0..255]</div>
+<div class="parameter">
+<span class="parametername">prefer-over: </span>NEC1-f16</div>
+<div class="parameter">
+<span class="parametername">prefer-over: </span>NEC-Shirriff-32</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>0206</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>01AD[;D,S,F,~(((F:4)&lt;&lt;4)|F:4:4):8]</div>
+<div class="documentation">
+            Variant of the <a xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="#NEC1">NEC1</a> protocol with the checksum in byte 4 different.
+        </div>
+</div>
+<div class="protocol" id="NEC2">
+<div class="protocol-title">NEC2</div>
+<div class="irp">{38.4k,564}&lt;1,-1|1,-3&gt;(16,-8,D:8,S:8,F:8,~F:8,1,^108m)* [D:0..255,S:0..255=255-D,F:0..255]</div>
+<div class="parameter">
+<span class="parametername">prefer-over: </span>NEC</div>
+<div class="parameter">
+<span class="parametername">prefer-over: </span>NEC-Shirriff-32</div>
+<div class="parameter">
+<span class="parametername">prefer-over: </span>NEC2-f16</div>
+<div class="parameter">
+<span class="parametername">reject-repeatless: </span>true</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>005A</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>011A[D?0,S?0,D?1,S?1;F,??,1]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>011A:2[D?0,S?0,D?1,S?1,D?2,S?2,D?3,S?3;F,??,1]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>017E[D,S?0,S?1,S?2,S?3;??,,F,1]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>0246[D,S?0,S?1,S?2,S?3,S?4,S?5;??,,F,1]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>00B6:JP1[D,1;S,F]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>01EA(;S==~D:8)[F,~F:8;D,1]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>011A:JP1[D?0,S?0,D?1,S?1,D?2,S?2,D?3,S?3;F,??,1,0]</div>
+<div class="documentation">
+            A variant of the NEC protocol, that repeats by repeating the whole intro sequence.
+            <a xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="#Pioneer">Pioneer</a> is distinguished from NEC2 only by frequency.
+        </div>
+</div>
+<div class="protocol" id="NEC2-f16">
+<div class="protocol-title">NEC2-f16</div>
+<div class="irp">{38.4k,564}&lt;1,-1|1,-3&gt;(16,-8,D:8,S:8,F:8,E:8,1,^108m)* [D:0..255,S:0..255=255-D,F:0..255,E:0..255=255-F]</div>
+<div class="parameter">
+<span class="parametername">prefer-over: </span>NEC-Shirriff-32</div>
+<div class="parameter">
+<span class="parametername">reject-repeatless: </span>true</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>
+            </div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>
+            </div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>01EA(;S==~D:8)[F,E;D,1]</div>
+<div class="documentation">
+            A relaxed form (but used in some real devices) of the <a xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="#NEC2">NEC2</a> protocol. Byte 3 and byte 4 are independent.
+        </div>
+</div>
+<div class="protocol" id="NECx1">
+<div class="protocol-title">NECx1</div>
+<div class="irp">{38.4k,564}&lt;1,-1|1,-3&gt;(8,-8,D:8,S:8,F:8,~F:8,1,^108m,(8,-8,D:1,1,^108m)*) [D:0..255,S:0..255=255-D,F:0..255]</div>
+<div class="parameter">
+<span class="parametername">reject-repeatless: </span>true</div>
+<div class="parameter">
+<span class="parametername">prefer-over: </span>NECx1-f16</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>005A</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>011A[D?0,S?0,D?1,S?1;F,??,2]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>011A:2[D?0,S?0,D?1,S?1,D?2,S?2,D?3,S?3;F,??,2]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>011A:JP1[D?0,S?0,D?1,S?1,D?2,S?2,D?3,S?3;F,??,2,0]</div>
+</div>
+<div class="protocol" id="NECx1-f16">
+<div class="protocol-title">NECx1-f16</div>
+<div class="irp">{38.4k,564}&lt;1,-1|1,-3&gt;(8,-8,D:8,S:8,F:8,E:8,1,^108m,(8,-8,D:1,1,^108m)*) [D:0..255,S:0..255=255-D,F:0..255,E:0..255=255-F]</div>
+<div class="parameter">
+<span class="parametername">prefer-over: </span>NECx-f16</div>
+<div class="parameter">
+<span class="parametername">reject-repeatless: </span>true</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>
+            </div>
+<div class="documentation">
+            A relaxed form (but used in some real devices) of the <a xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="#NECx1">NECx1</a> protocol. Byte 3 and byte 4 are independent.
+       </div>
+</div>
+<div class="protocol" id="NECx2">
+<div class="protocol-title">NECx2</div>
+<div class="irp">{38.4k,564}&lt;1,-1|1,-3&gt;(8,-8,D:8,S:8,F:8,~F:8,1,^108m)* [D:0..255,S:0..255=255-D,F:0..255]</div>
+<div class="parameter">
+<span class="parametername">prefer-over: </span>NECx2-f16</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>005A</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>011A[D?0,S?0,D?1,S?1;F,??,3]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>011A:2[D?0,S?0,D?1,S?1,D?2,S?2,D?3,S?3;F,??,3]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>011A:JP1[D?0,S?0,D?1,S?1,D?2,S?2,D?3,S?3;F,??,3,0]</div>
+</div>
+<div class="protocol" id="NECx2-f16">
+<div class="protocol-title">NECx2-f16</div>
+<div class="irp">{38.4k,564}&lt;1,-1|1,-3&gt;(8,-8,D:8,S:8,F:8,E:8,1,^108m)* [D:0..255,S:0..255=255-D,F:0..255,E:0..255=255-F]</div>
+<div class="parameter">
+<span class="parametername">prefer-over: </span>NECx-f16</div>
+<div class="parameter">
+<span class="parametername">reject-repeatless: </span>true</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>
+            </div>
+<div class="documentation">
+            A relaxed form (but used in some real devices) of the <a xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="#NECx2">NECx2</a> protocol. Byte 3 and byte 4 are independent.
+       </div>
+</div>
+<div class="protocol" id="Nokia">
+<div class="protocol-title">Nokia</div>
+<div class="irp">{36k,1p,msb}&lt;6,-10|6,-16|6,-22|6,-28&gt;(15,-10,D:8,S:8,F:8,6,^100m)* [D:0..255,S:0..255,F:0..255]</div>
+<div class="parameter">
+<span class="parametername">relative-tolerance: </span>0.04</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>00ED[D,S;F]</div>
+</div>
+<div class="protocol" id="Nokia12">
+<div class="protocol-title">Nokia12</div>
+<div class="irp">{36k,1p,msb}&lt;6,-10|6,-16|6,-22|6,-28&gt;(15,-10,D:4,F:8,6,^100m)*[D:0..15,F:0..255]</div>
+<div class="parameter">
+<span class="parametername">relative-tolerance: </span>0.04</div>
+</div>
+<div class="protocol" id="Nokia32">
+<div class="protocol-title">Nokia32</div>
+<div class="irp">{36k,1p,msb}&lt;6,-10|6,-16|6,-22|6,-28&gt;((15,-10,D:8,S:8,T:1,X:7,F:8,6,^100m)*,T=1-T) [D:0..255,S:0..255,F:0..255,T@:0..1=0,X:0..127]</div>
+<div class="parameter">
+<span class="parametername">absolute-tolerance: </span>50</div>
+<div class="parameter">
+<span class="parametername">relative-tolerance: </span>0.04</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>0173:1[D,S,X;F]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>0173:3[D,S,X;F]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>01E1:2[D,S;F,X]</div>
+<div class="documentation">
+            The Nokia32 protocol is one variation of the RCMM 1.5 protocol developed by Philips.
+            RCMM refers to X as "System" and to D:2,S:4:4 as "Customer".
+            The parameters have been taken from <a xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="http://www.sbprojects.com/knowledge/ir/rcmm.php">SB-projects</a>.
+        </div>
+</div>
+<div class="protocol" id="Nova Pace">
+<div class="protocol-title">Nova Pace</div>
+<div class="irp">
+    {38k, 300, msb}&lt;-1,1|1,-1&gt;((1,-1,D:10, S:8, F:8, T:1, -1, 1,-82m)*,T=1-T)
+            [D:0..1023,S:0..255,F:0..255,T@:0..1=0]
+            </div>
+<div class="documentation">
+                <a xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="http://www.hifi-remote.com/forums/viewtopic.php?t=16645">Forum thread.</a>
+            </div>
+</div>
+<div class="protocol" id="NRC16">
+<div class="protocol-title">NRC16</div>
+<div class="irp">{38k,500}&lt;-1,1|1,-1&gt;(1,-5,1:1,254:8,127:7,-15m,(1,-5,1:1,F:8,D:7,-110m)+,1,-5,1:1,254:8,127:7,-15m) [D:0..127,F:0..255]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>00B0[D,F&gt;127;F]</div>
+</div>
+<div class="protocol" id="NRC16-32">
+<div class="protocol-title">NRC16-32</div>
+<div class="irp">{32k,500}&lt;-1,1|1,-1&gt;(1,-5,1:1,254:8,127:7,-15m,(1,-5,1:1,F:8,D:7,-110m)+,1,-5,1:1,254:8,127:7,-15m) [D:0..127,F:0..255]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>0075[D,F&gt;127;F]</div>
+</div>
+<div class="protocol" id="NRC17">
+<div class="protocol-title">NRC17</div>
+<div class="irp">{500,38k,25%}&lt;-1,1|1,-1&gt;(1,-5,1:1,254:8,255:8,-28, (1,-5,1:1,F:8,D:8,-220)*, 1,-5,1:1,254:8,255:8,-200)[D:0..255,F:0..255]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>00BD:2[D;F]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>00BD[D,F&gt;127;F]</div>
+<div class="documentation">
+            Taken from <a xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="http://www.hifi-remote.com/forums/viewtopic.php?t=1044">John Fine's contribution</a> (fixed),
+            modified for the setup <a xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="http://www.sbprojects.com/knowledge/ir/nrc17.php">here</a>.
+        </div>
+</div>
+<div class="protocol" id="Ortek_NEClike">
+<div class="protocol-title">Ortek_NEClike</div>
+<div class="irp">{40.0k,564}&lt;1,-1|1,-3&gt;(16,-8,D:8,S:8,F:8,F:4:4,~F:4,1,^108m,(16,-4,1,-3,1,^108m)*)[D:0..255,S:0..255,F:0..255]</div>
+<div class="documentation">See <A xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="http://www.hifi-remote.com/forums/viewtopic.php?t=14264&amp;&amp;start=30">this thread</A>.</div>
+</div>
+<div class="protocol" id="OrtekMCE">
+<div class="protocol-title">OrtekMCE</div>
+<div class="irp">{38.6k,480}&lt;1,-1|-1,1&gt;([P=0][P=1][P=2],4,-1,D:5,P:2,F:6,C:4,-48m)+{C=3+#D+#P+#F}[D:0..31,F:0..63]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>021B:JP1</div>
+<div class="documentation">
+            The <A xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="#repeat">repeat sequences</A> are not all identical.
+            P is a position code: 0 for the start frame of a repeat sequence, 2 for the end frame and 1 for all frames in between.
+            C is a checksum, 3 more than the number of 1 bits in D, P, F together.
+        </div>
+</div>
+<div class="protocol" id="OrtekMCE_relaxed">
+<div class="protocol-title">OrtekMCE_relaxed</div>
+<div class="irp">{38.6k,480}&lt;1,-1|-1,1&gt;([][P=1][P=2],4,-1,D:5,P:2,F:6,C:4,-48m)+{C=3+#D+#P+#F}[D:0..31,F:0..63]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>
+            </div>
+<div class="documentation">
+            This is a <a xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="#relaxed">relaxed version</a> of the <a xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="#OrtekMCE">OrtekMCE protocol</a>, in that it lacks the <a xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="#intro">intro sequence</a>.
+        </div>
+</div>
+<div class="protocol" id="PaceMSS">
+<div class="protocol-title">PaceMSS</div>
+<div class="irp">{38k,630,msb}&lt;1,-7|1,-11&gt;(1,-5,1,-5,T:1,D:1,F:8,1,^120m)* [D:0..1,F:0..255,T:0..1]</div>
+<div class="parameter">
+<span class="parametername">alt_name: </span>Pace</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>0095[D;F]</div>
+<div class="documentation">This is a moderately robust protocol, but <A xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="#spurious">spurious decodes</A> are still possible.</div>
+</div>
+<div class="protocol" id="Panasonic">
+<div class="protocol-title">Panasonic</div>
+<div class="irp">{37k,432}&lt;1,-1|1,-3&gt;(8,-4,2:8,32:8,D:8,S:8,F:8,(D^S^F):8,1,-173)* [D:0..255,S:0..255,F:0..255]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>00C9</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>001F[D&amp;239,S&amp;254,2,32;~D:1:4,S:1,F]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>001F:8(Panasonic VCR Combo)[D&amp;239,S&amp;254,2,32;~D:1:4,S:1,F]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>001F:8(Panasonic Mixed Combo;;
+        D.S=0.0,0.1,0.2,0.3.0.4,1.0,1.1,1.2,1.3,1.4,2.0,2.2,2.3,2.4,3.0,3.3,3.4,4.0,4.4,5.0)
+		[D?0D,D?1D|||S?0S,D?2D|||S?1S,D?3D|||S?2S,D?4D|||S?3S,D?5D|||S?4S,2,32;??D,??S,F]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>00CD:2[D;S,F]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>00CD:JP1[D;S,F]</div>
+<div class="parameter">
+<span class="parametername">prefer-over: </span>Kaseikyo</div>
+<div class="documentation">Panasonic protocol is the most commonly seen member of the <a xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="#Kaseikyo">Kaseikyo</a> family.</div>
+</div>
+<div class="protocol" id="Panasonic2">
+<div class="protocol-title">Panasonic2</div>
+<div class="irp">{37k,432}&lt;1,-1|1,-3&gt;(8,-4,2:8,32:8,D:8,S:8,X:8,F:8,(D^S^X^F):8,1,-173)* [D:0..255,S:0..255,F:0..255,X:0..255]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>0109[D,S,X;F]</div>
+<div class="parameter">
+<span class="parametername">prefer-over: </span>Kaseikyo56</div>
+</div>
+<div class="protocol" id="Panasonic_Old">
+<div class="protocol-title">Panasonic_Old</div>
+<div class="irp">{57.6k,833}&lt;1,-1|1,-3&gt;(4,-4,D:5,F:6,~D:5,~F:6,1,-44m)* [D:0..31,F:0..63]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>0000[D?0,D?1,D?2;??,F]</div>
+</div>
+<div class="protocol" id="PCTV">
+<div class="protocol-title">PCTV</div>
+<div class="irp">{38.4k,832}&lt;-1|1&gt;(2,-8,1,D:8,F:8,2,-100m) [D:0..255,F:0..255]</div>
+</div>
+<div class="protocol" id="pid-0001">
+<div class="protocol-title">pid-0001</div>
+<div class="irp">{0k,msb}&lt;24,-9314|24,-13486&gt;(24,-21148,(F:5,1,-28m)+)[F:0..31]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>0001</div>
+</div>
+<div class="protocol" id="pid-0003">
+<div class="protocol-title">pid-0003</div>
+<div class="irp">{40.2k,389}&lt;2,-2|3,-1&gt;(F:8,~F:8,^102m)*[F:0..255]</div>
+</div>
+<div class="protocol" id="pid-0004">
+<div class="protocol-title">pid-0004</div>
+<div class="irp">{0k,msb}&lt;12,-130|12,-372&gt;(F:6,12,-27m)*[F:0..63]</div>
+</div>
+<div class="protocol" id="pid-0083">
+<div class="protocol-title">pid-0083</div>
+<div class="irp">{42.3k, 3000}&lt;1,-3,1,-7|1,-7,1,-3&gt;(F:5,1,-27)*[F:0..31]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>0083</div>
+<div class="documentation">
+            This protocol is a very limited design.
+            We have seen it used only in the UEI setup code TV/0159, which is for some TVs brand named Fisher, Sanyo and Sears.
+            It is not likely that any other code set uses this protocol.
+            So if you get a correct decode of pid-0083 you probably have a TV that can be controlled by the TV/0159 setup code.
+        </div>
+</div>
+<div class="protocol" id="Pioneer">
+<div class="protocol-title">Pioneer</div>
+<div class="irp">{40k,564}&lt;1,-1|1,-3&gt;(16,-8,D:8,S:8,F:8,~F:8,1,^108m)* [D:0..255,S:0..255=255-D,F:0..255]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>00E2(;D==~S:8)[D;F]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>007E(;F:1:5==0)[D;0,0,0,F]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>007E:2(Pioneer DVD2;F:1:5==0)[D;F]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>007E:2(Pioneer MIX)[D;0,0,0,F]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>007E:3[D;0,0,0,F]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>007E:4[D?0,D?1,D?2,D?3;0,0,??,F]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>007E:5[D?0,D?1,D?2,D?3;0,0,??,F]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>005F[D;F,F]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>006A[D?0,D?1,D?2;??,F,F]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>006A:JP1[D?0,D?1,D?2,D?3;??,F,F]</div>
+<div class="parameter">
+<span class="parametername">prefer-over: </span> (162&lt;=D &amp;&amp; D&lt;=165) || D==168 || D==170 || D==173 || D==175 ; NEC2 </div>
+<div class="parameter">
+<span class="parametername">frequency-lower: </span>39700</div>
+<div class="parameter">
+<span class="parametername">frequency-upper: </span>41000</div>
+<div class="documentation">
+            Pioneer is distinguished from <a xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="#NEC2">NEC2</a> only by frequency.
+            So if your learning system does not learn frequency accurately, it won't accurately distinguish Pioneer from NEC2.
+            All Pioneer signals should have a device number in the range 160 to 175 and no subdevice.
+            No NEC2 signal should fit those rules.
+            So you usually can determine whether the decision (by frequency) was wrong by checking the device numbers.
+
+            Many Pioneer commands are sent as combinations of two different Pioneer signals, see <a xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="#Pioneer.Mix">Pioneer-Mix</a>.
+        </div>
+</div>
+<div class="protocol" id="Pioneer-Mix">
+<div class="protocol-title">Pioneer-Mix</div>
+<div class="irp">{40k,564}&lt;1,-1|1,-3&gt;(16,-8,D0:8,~D0:8,F0:8,~F0:8,1,^108m,(16,-8,D:8,~D:8,F:8,~F:8,1,^108m)+) [D0:0..255,F0:0..255,D:0..255=D0,F:0..255=F0]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>007E(;F:1:5==1)[D0,D,F0;1,1,1,F]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>007E:2(Pioneer DVD2;F:1:5==1)[D0,D,F0;F]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>007E:2(Pioneer MIX)[D0,D,F0?1,F0?2;1,??,1,F]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>007E:3[D0,D,F0?1,F0?2,F0?3,F0?4;1,??,1,F]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>007E:4[D0,F0?1,F0?2,F0?3,F0?4,D;1,??,4,F]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>007E:5(;;D.F=3.3,..)[D0,D?1D|||F0?1F,D?2D|||F0?2F,D?3D|||F0?3F,F0?4F,D?4D;1,??F,??D,F]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>005F(;D0==D)[D;F0,F]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>006A(;D0==D)[D?0,D?1,D?2;??,F0,F]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>006A(;D0==D)[D?0,D?1,D?2,D?3;??,F0,F]</div>
+<div class="parameter">
+<span class="parametername">prefer-over: </span> (162&lt;=D &amp;&amp; D&lt;=165) || D==168 || D==170 || D==173 || D==175 ; NEC2 </div>
+<div class="parameter">
+<span class="parametername">prefer-over: </span>(D0 != D) || (F0 != F) ; Pioneer</div>
+<div class="parameter">
+<span class="parametername">frequency-lower: </span>39700</div>
+<div class="parameter">
+<span class="parametername">frequency-upper: </span>41000</div>
+<div class="documentation">
+            Two-signal version of the <a xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="#Pioneer">Pioneer</a> protocol.
+            First sends the "normal" signal (parameters D0 and F0) as <a xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="#intro">intro</a>, then,
+            as <a xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="#repeat">repeat</a>, the one determined by D and F.
+        </div>
+</div>
+<div class="protocol" id="Proton">
+<div class="protocol-title">Proton</div>
+<div class="irp">{38.5k,500}&lt;1,-1|1,-3&gt;(16,-8,D:8,1,-8,F:8,1,^63m)*[D:0..255,F:0..255]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>005C[D;F]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>011B[0;D,F]</div>
+<div class="documentation">This is not a robust protocol, so <A xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="#spurious">spurious decodes</A> are likely.</div>
+</div>
+<div class="protocol" id="Proton-40">
+<div class="protocol-title">Proton-40</div>
+<div class="irp">{40.5k,500}&lt;1,-1|1,-3&gt;(16,-8,D:8,1,-8,F:8,1,^63m)*[D:0..255,F:0..255]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>011B[1;D,F]</div>
+<div class="documentation">This is not a robust protocol, so <A xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="#spurious">spurious decodes</A> are likely.</div>
+</div>
+<div class="protocol" id="RC5">
+<div class="protocol-title">RC5</div>
+<div class="irp">{36k,msb,889}&lt;1,-1|-1,1&gt;((1,~F:1:6,T:1,D:5,F:6,^114m)*,T=1-T)[D:0..31,F:0..127,T@:0..1=0]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>00E8[D?0,F&gt;63?0,D?1,F&gt;63?1,D?2,F&gt;63?2;??,F]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>01C3[0,D?0,F&gt;63?0,D?1,F&gt;63?1,D?2,F&gt;63?2,D?3,F&gt;63?3;??,F]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>0073[;0,F,D]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>0184:2[;0,D,F]</div>
+<div class="documentation">
+            In Philips' (the creator of the protocol) terminology, "D" is called "System" and "F" is called "Command".
+            <a xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="https://www.sbprojects.net/knowledge/ir/rc5.php">Tutorial</a>.
+        </div>
+</div>
+<div class="protocol" id="RC5-7F">
+<div class="protocol-title">RC5-7F</div>
+<div class="irp">{36k,msb,889}&lt;1,-1|-1,1&gt;((1, ~D:1:5,T:1,D:5,F:7,^114m)*,T=1-T) [D:0..63,F:0..127,T@:0..1=0]</div>
+<div class="parameter">
+<span class="parametername">prefer-over: </span>StreamZap</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>0182:2[D?0,D?1,0;??,F]</div>
+</div>
+<div class="protocol" id="RC5-7F-57">
+<div class="protocol-title">RC5-7F-57</div>
+<div class="irp">{57k,msb,889}&lt;1,-1|-1,1&gt;(1, ~D:1:5,T:1,D:5,F:7,^114m)*[D:0..63,F:0..127,T@:0..1=0]</div>
+<div class="parameter">
+<span class="parametername">prefer-over: </span>StreamZap-57</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>0182:2[D?0,D?1,1;??,F]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>0182[D?0,D?1;??,F]</div>
+</div>
+<div class="protocol" id="RC5x">
+<div class="protocol-title">RC5x</div>
+<div class="irp">{36k,msb,889}&lt;1,-1|-1,1&gt;((1,~S:1:6,T:1,D:5,-4,S:6,F:6,^114m)*,T=1-T) [D:0..31,S:0..127,F:0..63,T@:0..1=0]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>00F2[D,S&gt;63;S,F]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>0073[D?0,F&gt;63?0,D?1,F&gt;63?1,D?2,F&gt;63?2,D?3,F&gt;63?3;1,F,,S]</div>
+<div class="parameter">
+<span class="parametername">relative-tolerance: </span>0.1</div>
+<div class="documentation">In Philips' (the creator of the protocol) terminology, "D" is called "System", "S" is called "Command", and F is called "Data".</div>
+</div>
+<div class="protocol" id="RC6">
+<div class="protocol-title">RC6</div>
+<div class="irp">{36k,444,msb}&lt;-1,1|1,-1&gt;((6,-2,1:1,0:3,&lt;-2,2|2,-2&gt;(T:1),D:8,F:8,^107m)*,T=1-T) [D:0..255,F:0..255,T@:0..1=0]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>0058[D;F]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>0058:2(RC-6)[D;F]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>0184:2[D?0,D?1,D?2;1,,,??,F]</div>
+<div class="parameter">
+<span class="parametername">prefer-over: </span>RC6-M-16</div>
+<div class="parameter">
+<span class="parametername">absolute-tolerance: </span>300</div>
+<div class="documentation">
+            RC6 is the name used for the first member of the RC6 family of protocols.
+            Technically this is RC6-0-16.
+            <a xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="https://www.sbprojects.net/knowledge/ir/rc6.php">Tutorial</a>.
+        </div>
+</div>
+<div class="protocol" id="RC6-6-20">
+<div class="protocol-title">RC6-6-20</div>
+<div class="irp">{36k,444,msb}&lt;-1,1|1,-1&gt;((6,-2,1:1,6:3,&lt;-2,2|2,-2&gt;(T:1),D:8,S:4,F:8,-100m)*,T=1-T)[D:0..255,S:0..15,F:0..255,T@:0..1=0]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>0020[6,D,S;F]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>0020:2[6,D,S,T;F]</div>
+<div class="parameter">
+<span class="parametername">absolute-tolerance: </span>300</div>
+<div class="documentation">This protocol is commonly used in Sky and Sky+ remotes.</div>
+</div>
+<div class="protocol" id="RC6-M-16">
+<div class="protocol-title">RC6-M-16</div>
+<div class="irp">{36k,444,msb}&lt;-1,1|1,-1&gt;((6,-2,1:1,M:3,&lt;-2,2|2,-2&gt;(T:1),D:8,F:8,^107m)*,T=1-T) [D:0..255,F:0..255,M:0..7,T@:0..1=0]</div>
+<div class="parameter">
+<span class="parametername">absolute-tolerance: </span>300</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>0058:2(RC6-M-16)[D,M;F]</div>
+</div>
+<div class="protocol" id="RC6-M-28">
+<div class="protocol-title">RC6-M-28</div>
+<div class="irp">{36k,444,msb}&lt;-1,1|1,-1&gt;((6,-2,1:1,M:3,&lt;-2,2|2,-2&gt;(T:1),D:8,S:12,F:8,-100m)*,T=1-T)[D:0..255,S:0..4095,F:0..255,M:0..7,T@:0..1=0]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>0240[D,S,M,0;F]</div>
+<div class="parameter">
+<span class="parametername">absolute-tolerance: </span>300</div>
+</div>
+<div class="protocol" id="RC6-M-32">
+<div class="protocol-title">RC6-M-32</div>
+<div class="irp">
+{36k,444,msb}&lt;-1,1|1,-1&gt;((6,-2,1:1,M:3,&lt;-2,2|2,-2&gt;(T:1),OEM1:8,OEM2:8,D:8,F:8,^107m)*,T=1-T)[OEM1:0..255,OEM2:0..255,D:0..255,F:0..255,M:0..7,T@:0..1=0]
+</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>012A:2[D,(OEM1&lt;&lt;8)+OEM2,M;F]</div>
+<div class="parameter">
+<span class="parametername">absolute-tolerance: </span>300</div>
+<div class="documentation">
+            This is the generic form for a decode of protocols in the RC6 family, restricted to 32 bits.
+            Exceptions: RC6-0-16 is displayed as simply <a xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="#RC6">RC6</a>,
+            RC6-6-24  is displayed as <a xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="#Replay">Replay</a>,
+            and some RC6-6-32 which is displayed as <a xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="#MCE">MCE</a>.
+        </div>
+</div>
+<div class="protocol" id="RC6-M-56">
+<div class="protocol-title">RC6-M-56</div>
+<div class="irp">{36k,444,msb}&lt;-1,1|1,-1&gt;(6,-2,1:1,M:3,&lt;-2,2|2,-2&gt;(T:1),C:56,-131.0m)*[M:0..7,T@:0..1=0,C:0..72057594037927935]</div>
+<div class="parameter">
+<span class="parametername">absolute-tolerance: </span>300</div>
+<div class="documentation">This is the "RC6-M-N protocol" made usable for the case of N=56.</div>
+</div>
+<div class="protocol" id="RCA">
+<div class="protocol-title">RCA</div>
+<div class="irp">{58k,460,msb}&lt;1,-2|1,-4&gt;(8,-8,D:4,F:8,~D:4,~F:8,1,-16)*[D:0..15,F:0..255]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>00AF[D;F]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>00AF:2[D,0;F]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>0114[;D,0,F]</div>
+<div class="documentation">
+            RCA and <a xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="#RCA(Old)">RCA(Old)</a> are two very similar forms of RCA protocol which differ only in that RCA(Old) has an extended lead-in
+            and a double-length ON pulse before the lead-out.
+            They are so similar that most RCA devices will accept either.
+            But some RCA devices only accept the one that really matches.
+        </div>
+</div>
+<div class="protocol" id="RCA(Old)">
+<div class="protocol-title">RCA(Old)</div>
+<div class="irp">{58k,460,msb}&lt;1,-2|1,-4&gt;([40][8],-8,D:4,F:8,~D:4,~F:8,2,-16)[D:0..15,F:0..255]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>002D[D;F]</div>
+<div class="documentation">
+            See <a xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="#RCA">RCA</a>.
+        </div>
+</div>
+<div class="protocol" id="RCA-38">
+<div class="protocol-title">RCA-38</div>
+<div class="irp">{38.7k,460,msb}&lt;1,-2|1,-4&gt;(8,-8,D:4,F:8,~D:4,~F:8,1,-16)*[D:0..15,F:0..255]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>0091</div>
+<div class="documentation">
+            These are recently discovered variants of the RCA protocol.
+            They differ from <a xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="#RCA">RCA</a> and <a xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="#RCA(Old)">RCA(Old)</a> only in the frequency,
+            which is 38.7kHz instead of the standard 58kHz.
+        </div>
+</div>
+<div class="protocol" id="RCA-38(Old)">
+<div class="protocol-title">RCA-38(Old)</div>
+<div class="irp">{38.7k,460,msb}&lt;1,-2|1,-4&gt;([40][8],-8,D:4,F:8,~D:4,~F:8,2,-16)[D:0..15,F:0..255]</div>
+<div class="documentation">See <a xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="#RCA-38">RCA-38</a>.</div>
+</div>
+<div class="protocol" id="RECS80">
+<div class="protocol-title">RECS80</div>
+<div class="irp">RECS80-0045{}[D:0..7,F:0..63, T@:0..1=0]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>0045</div>
+<div class="parameter">
+<span class="parametername">prefer-over: </span>RECS80-0045</div>
+</div>
+<div class="protocol" id="RECS80-0045">
+<div class="protocol-title">RECS80-0045</div>
+<div class="irp">{38k,158,msb}&lt;1,-31|1,-47&gt;(1:1,T:1,D:3,F:6,1,-45m)* [D:0..7,F:0..63, T@:0..1=0]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>0045</div>
+</div>
+<div class="protocol" id="RECS80-0068">
+<div class="protocol-title">RECS80-0068</div>
+<div class="irp">{33.3k,180,msb}&lt;1,-31|1,-47&gt;(1:1,T:1,D:3,F:6,1,^138m)* [D:0..7,F:0..63, T@:0..1=0]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>0068</div>
+</div>
+<div class="protocol" id="RECS80-0090">
+<div class="protocol-title">RECS80-0090</div>
+<div class="irp">{0k,158,msb}&lt;1,-31|1,-47&gt;(1:1,T:1,D:3,F:6,1,^138m)* [D:0..7,F:0..63, T@:0..1=0]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>0090</div>
+</div>
+<div class="protocol" id="Replay">
+<div class="protocol-title">Replay</div>
+<div class="irp">{36k,444,msb}&lt;-1,1|1,-1&gt;(6,-2,1:1,6:3,&lt;-2,2|2,-2&gt;(T:1),D:8,S:8,F:8,-100m/*???*/)*[D:0..255,S:0..255,F:0..255,T@:0..1=0]</div>
+<div class="parameter">
+<span class="parametername">alt_name: </span>RC6-6-24</div>
+<div class="parameter">
+<span class="parametername">alt_name: </span>RC6A</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>0092[D,S;F]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>0092:3(ReplayTV (Official))[D,S;F]</div>
+<div class="documentation">
+            Replay is a member of the RC6 family; technically it is RC6-6-24.
+        </div>
+</div>
+<div class="protocol" id="Revox">
+<div class="protocol-title">Revox</div>
+<div class="irp">{0k,15u}&lt;1,-9|1,-19&gt;(1,-29,0:1,D:4,F:6,1,-29,1,-100285u)*[D:0..15,F:0..63]</div>
+<div class="documentation">Revox uses no modulation.</div>
+</div>
+<div class="protocol" id="Roku">
+<div class="protocol-title">Roku</div>
+<div class="irp">{38.0k,564}&lt;1,-1|1,-3&gt;(16,-8,D:8,S:8,F:7,0:1,~F:7,1:1,1,^108m, (16,-8,D:8,S:8,F:7,1:1,~F:7,0:1,1,^108m)*)[D:0..255,S:0..255=255-D,F:0..127]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>021A[D,S;F]</div>
+<div class="documentation">
+            This IR protocol is very similar to <a xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="#NEC2">NEC2</a>,
+            except the repeat behavior is different. The second and additional frames of a repeating signal send the OBC + 128.
+            <a xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="http://www.hifi-remote.com/forums/viewtopic.php?p=115990#115990">Reference</a>.
+        </div>
+</div>
+<div class="protocol" id="Rs200">
+<div class="protocol-title">Rs200</div>
+<div class="irp">{35.7k,msb}&lt;50p,-120p|21p,-120p&gt;(25:6,(H4-1):2,(H3-1):2,(H2-1):2,(H1-1):2,P:1,(D-1):3,F:2,0:2,sum:4,-1160p)*{   P=~(#(D-1)+#F):1,sum=9+((H4-1)*4+(H3-1)) + ((H2-1)*4+(H1-1)) + (P*8+(D-1)) + F*4}[H1:1..4, H2:1..4, H3:1..4, H4:1..4, D:1..6, F:0..2]</div>
+<div class="documentation">This protocol is/was used by the so-called RS-200 RF (433MHz) controlled switches,
+            that were sold by <a xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="https://www.conrad.com/">Conrad Electronics</a>.
+            There is a "house numbers" consisting of four digits, each in the range 1 to 4.
+            These are called H1, H2, H3, and H4 in the IRP.
+            There is also a "device address".
+            Officially, it ranges from 1 to 4, however, at least on the hardware I (BM) tried, 5 can also be used and assigned to a receiver.
+            Also, 6 was working, and in fact controlled the "group" consisting of all devices with address 1,...,5.
+            For 7 and 8, no function has been verified.
+            F=0 is the power on command, F=1 the power off command, and F=2 the power toggle command.
+        </div>
+</div>
+<div class="protocol" id="RTI_Relay">
+<div class="protocol-title">RTI_Relay</div>
+<div class="irp">
+         {40.244k,398,msb}&lt;1,-1|-1,1&gt;(1,A:31,F:1,F:8,D:23,D:8,0:4,-19.5m)*{A=0x7fe08080}[F:0..1,D:0..255]
+        
+        </div>
+<div class="documentation">
+            Protocol used by RTI RCM-4 Relay module, see
+            <a xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="http://www.hifi-remote.com/forums/viewtopic.php?t=101276">this forum thread</a>.
+        </div>
+</div>
+<div class="protocol" id="RTI_Relay_alt">
+<div class="protocol-title">RTI_Relay_alt</div>
+<div class="irp">
+         {40.244k,398,msb}&lt;1,-1|-1,1&gt;(1,A:31,F:1,F:8,D:23,D:8,0:4,-19.5m)*{A=0x7fe08080,D=2**(4-N)}[F:0..1,N:1..4]
+        
+        </div>
+<div class="parameter">
+<span class="parametername">decodable: </span>false</div>
+<div class="documentation">
+            Different parameterization of <a xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="#RTI_Relay">RTI_Relay</a>.
+        </div>
+</div>
+<div class="protocol" id="Sampo">
+<div class="protocol-title">Sampo</div>
+<div class="irp">{38.4k, 833}&lt;1,-1|1,-3&gt;(4,-4,D:6,F:6,S:6,~F:6,1,-39)*[D:0..63,S:0..63,F:0..63]</div>
+<div class="documentation">This is a moderately robust protocol, but <A xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="#spurious">spurious decodes</A> are still possible.</div>
+</div>
+<div class="protocol" id="Samsung-SMT-G">
+<div class="protocol-title">Samsung-SMT-G</div>
+<div class="irp">
+{38.5k,497,msb}&lt;1,-1|1,-3&gt;(4497u,-4497u,D:16,1,-4497u,S:4,F:16,1,^120m)*[D:0..65335,S:0..15,F:0..65535]
+</div>
+<div class="documentation">
+            <a xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="http://www.hifi-remote.com/forums/viewtopic.php?t=14220">Forum thread</a>.</div>
+</div>
+<div class="protocol" id="Samsung20">
+<div class="protocol-title">Samsung20</div>
+<div class="irp">{38.4k,564}&lt;1,-1|1,-3&gt;(8,-8,D:6,S:6,F:8,1,^100m)*[D:0..63,S:0..63,F:0..255]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>002F</div>
+<div class="documentation">This is a moderately robust protocol, but <A xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="#spurious">spurious decodes</A> are still possible.</div>
+</div>
+<div class="protocol" id="Samsung36">
+<div class="protocol-title">Samsung36</div>
+<div class="irp">{37.9k,560,33%}&lt;1,-1|1,-3&gt;(4500u,-4500u,D:8,S:8,1,-9,E:4,F:8,~F:8,1,^108m)*[D:0..255,S:0..255,F:0..255,E:0..15]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>01B5[D,S,E;F]</div>
+<div class="parameter">
+<span class="parametername">relative-tolerance: </span>0.2</div>
+<div class="parameter">
+<span class="parametername">prefer-over: </span>Samsung-SMT-G</div>
+<div class="documentation">
+            <a xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="http://elektrolab.wz.cz/katalog/samsung_protocol.pdf">Reference</a>.</div>
+</div>
+<div class="protocol" id="ScAtl-6">
+<div class="protocol-title">ScAtl-6</div>
+<div class="irp">{57.6k,846}&lt;1,-1|1,-3&gt;(4,-4,D:6,F:6,~D:6,~F:6,1,-40)*[D:0..63,F:0..63]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>0078[D;F]</div>
+<div class="documentation">ScAtl-6 is distinguished from <a xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="#Emerson">Emerson</a> only by frequency.
+        Most Scientific Atlanta cable tuners instead use the <a xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="#Panasonic_Old">Panasonic_Old</a> protocol.</div>
+</div>
+<div class="protocol" id="Sejin-1-38">
+<div class="protocol-title">Sejin-1-38</div>
+<div class="irp">
+    {38.8k,310,msb}&lt;-1|1&gt;(&lt;8:4|4:4|2:4|1:4&gt;(3,3:2,D:8,F:8,S:8,E:4,C:4,-77))*
+    {C = D:4 + D:4:4 + F:4 + F:4:4 + S:4 + S:4:4 + E}
+    [D:0..255, S:0..255, F:0..255, E:0..15=0]
+            </div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>0161:3[0,D,S,E;F]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>0161:5[0,D,S?0,,S?1,E;0,??,F]</div>
+<div class="parameter">
+<span class="parametername">prefer-over: </span>Sejin-1-56</div>
+<div class="documentation">This is the Sejin-1 version from
+            <a xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="http://www.hifi-remote.com/wiki/index.php?title=DecodeIR#Sejin-M-38_and_Sejin-M-56">DecodeIR</a>,
+            with the following substitutions: Dx -&gt; D, Fx -&gt; F, Fy -&gt; S, L = 77.
+            (<a xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="http://www.hifi-remote.com/forums/viewtopic.php?t=100614">Teaser</a> uses a slightly different parameterization.)
+        </div>
+</div>
+<div class="protocol" id="Sejin-1-56">
+<div class="protocol-title">Sejin-1-56</div>
+<div class="irp">
+    {56.3k,310,msb}&lt;-1|1&gt;(&lt;8:4|4:4|2:4|1:4&gt;(3,3:2,D:8,F:8,S:8,E:4,C:4,-77))*
+    {C = D:4 + D:4:4 + F:4 + F:4:4 + S:4 + S:4:4 + E}
+    [D:0..255, S:0..255, F:0..255, E:0..15=0]
+            </div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>0161:3[1,D,S,E;F]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>0161:5[1,D,S?0,,S?1,E;0,??,F]</div>
+<div class="documentation">This is the Sejin-1 version from
+                <a xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="http://www.hifi-remote.com/wiki/index.php?title=DecodeIR#Sejin-M-38_and_Sejin-M-56">DecodeIR</a>,
+                with the following substitutions: Dx -&gt; D, Fx -&gt; F, Fy -&gt; S, L = 77.
+                (<a xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="http://www.hifi-remote.com/forums/viewtopic.php?t=100614">Teaser</a> uses a slightly different parameterization.)
+            </div>
+</div>
+<div class="protocol" id="Sharp">
+<div class="protocol-title">Sharp</div>
+<div class="irp">{38k,264}&lt;1,-3|1,-7&gt;(D:5,F:8,1:2,1,-165,D:5,~F:8,2:2,1,-165)*[D:0..31,F:0..255]</div>
+<div class="parameter">
+<span class="parametername">prefer-over: </span>Sharp{1}</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>001C[D;F]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>009C(Sharp Combo (Official))[;D,0,F]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>01AC[1;0,D,F]</div>
+<div class="documentation">
+            A Sharp signal, which is almost identical to <a xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="#Denon">Denon</a>, has two halves,
+            either one of which is enough to fully decode the information.
+            When one half is seen separate from the other, it will be decoded as
+            <a xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="#Sharp{1]">Sharp{1}</a> or <a xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="#Sharp{2}">Sharp{2}</a> depending on which half is decoded.
+            Sharp, Sharp{1} and Sharp{2} all represent the same protocol when they are correct, but only Sharp is robust.
+        </div>
+</div>
+<div class="protocol" id="SharpDVD">
+<div class="protocol-title">SharpDVD</div>
+<div class="irp">{38k,400}&lt;1,-1|1,-3&gt;(8,-4,170:8,90:8,15:4,D:4,S:8,F:8,E:4,C:4,1,-48)*{C = D ^ S:4:0 ^ S:4:4 ^ F:4:0 ^ F:4:4 ^ E:4}[D:0..15,S:0..255,F:0..255,E:0..15=1]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>00F8[D,S;F]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>00F8:2[D,S;F]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>00F8:3[D,S;F]</div>
+<div class="parameter">
+<span class="parametername">prefer-over: </span>Kaseikyo</div>
+<div class="documentation">SharpDVD is the member of the <a xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="#Kaseikyo">Kaseikyo</a> family with OEM_code1=170 and OEM_code2=90. E=1 in all instances seen so far.</div>
+</div>
+<div class="protocol" id="Sharp{1}">
+<div class="protocol-title">Sharp{1}</div>
+<div class="irp">{38k,264}&lt;1,-3|1,-7&gt;(D:5,F:8,1:2,1,-165)*[D:0..31,F:0..255]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>001C[D;F]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>009C(Sharp Combo (Official))[;D,0,F]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>01AC[1;0,D,F]</div>
+<div class="documentation">
+            See <a xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="#Sharp">Sharp</a>.
+        </div>
+</div>
+<div class="protocol" id="Sharp{2}">
+<div class="protocol-title">Sharp{2}</div>
+<div class="irp">{38k,264}&lt;1,-3|1,-7&gt;(D:5,~F:8,2:2,1,-165)*[D:0..31,F:0..255]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>001C[D;F]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>009C(Sharp Combo (Official))[;D,0,F]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>01AC[1;0,D,F]</div>
+<div class="documentation">
+            See <a xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="#Sharp">Sharp</a>.
+        </div>
+</div>
+<div class="protocol" id="SIM2">
+<div class="protocol-title">SIM2</div>
+<div class="irp">{38.8k,400}&lt;3,-3|3,-7&gt;(6,-7,D:8,F:8,3,^115m)[D:0..255=236,F:0..255]</div>
+<div class="documentation">
+            <a xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="http://www2.aerne.com/Public/dok-sw.nsf/0c6187bc750a16fcc1256e3c005a9740/a17a3bd85a29f8e5c1257227004dfdf8/$FILE/SIM2%20Remote%20Control%20Spec.%201.1.pdf">Reference</a>.
+            In  that document, there is a contradiction between the verbal description and the Pronto Hex code given.
+            Here we follow the Pronto form, which is also consistent with DecodeIR.
+        </div>
+</div>
+<div class="protocol" id="Solidtek16">
+<div class="protocol-title">Solidtek16</div>
+<div class="irp">{38k}&lt;-624,468|468,-624&gt;(S=0,(1820,-590,0:1,D:4,F:7,S:1,C:4,1:1,-143m,S=1)3) {C= F:4:0 + F:3:4 + 8*S } [D:0..15, F:0..127]</div>
+<div class="documentation">This is a keyboard protocol.  The make/break bit is decoded into the subdevice field.</div>
+</div>
+<div class="protocol" id="Somfy">
+<div class="protocol-title">Somfy</div>
+<div class="irp">{35.7k}&lt;308,-881|669,-520&gt;(2072,-484,F:2,D:3,C:4,-2300)*{C = F*4 + D + 3}[F:0..3,D:0..7]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>01FF:Somfy2[;D,F*4+D+3,F]</div>
+<div class="documentation">
+            F = 1 for UP or 2 for DOWN.
+            D = 1, 2 or 3 for the three observed devices, or D = 0 to control all devices together.
+        </div>
+</div>
+<div class="protocol" id="Sony12">
+<div class="protocol-title">Sony12</div>
+<div class="irp">{40k,600}&lt;1,-1|2,-1&gt;(4,-1,F:7,D:5,^45m)*[D:0..31,F:0..127]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>00CA[D?0,0?0,D?1,0?1;??,F]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>00DE[,,D;1,F]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>0027:old[;F,D]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>0027:2[;0,D,0,F]</div>
+</div>
+<div class="protocol" id="Sony15">
+<div class="protocol-title">Sony15</div>
+<div class="irp">{40k,600}&lt;1,-1|2,-1&gt;(4,-1,F:7,D:8,^45m)*[D:0..255,F:0..127]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>00CA{X=D&lt;32}[D?0,X?0,D?1,X?1;??,F]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>0027:2[;1,D,0,F]</div>
+</div>
+<div class="protocol" id="Sony20">
+<div class="protocol-title">Sony20</div>
+<div class="irp">{40k,600}&lt;1,-1|2,-1&gt;(4,-1,F:7,D:5,S:8,^45m)*[D:0..31,S:0..255,F:0..127]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>00DE[D,S;0,F]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>0027:old[D,S;F]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>0027:2[S?1,S?2,S?3,S?4;2,D,??,F]</div>
+</div>
+<div class="protocol" id="Sony8">
+<div class="protocol-title">Sony8</div>
+<div class="irp">{40k,600}&lt;1,-1|2,-1&gt;(4,-1,F:8,^45m)[F:0..255]</div>
+</div>
+<div class="protocol" id="SonyDSP">
+<div class="protocol-title">SonyDSP</div>
+<div class="irp">{40k,600}&lt;1,-1|2,-1&gt;((4,-1,96:8,18:7,^45m)3,(4,-1,195:8,^45m),(4,-1,81:8,^45m),(4,-1,F:8,^45m),
+		    (4,-1,(F^145):8,11:7,^45m))[F:0..255]
+        </div>
+<div class="parameter">
+<span class="parametername">prefer-over: </span>SonyDSP_relaxed</div>
+<div class="parameter">
+<span class="parametername">prefer-over: </span>Sony15</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>01FF:JP1DSP[;F]</div>
+</div>
+<div class="protocol" id="SonyDSP_relaxed">
+<div class="protocol-title">SonyDSP_relaxed</div>
+<div class="irp">{40k,600}&lt;1,-1|2,-1&gt;((4,-1,96:8,18:7,^45m)3,(4,-1,195:8,^45m),(4,-1,81:8,^45m),(4,-1,F:8,^45m),
+		    (4,-1,(F^145):8,11:6))[F:0..255]</div>
+<div class="parameter">
+<span class="parametername">prefer-over: </span>Sony15</div>
+<div class="parameter">
+<span class="parametername">decode-only: </span>true</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>
+            </div>
+</div>
+<div class="protocol" id="StreamZap">
+<div class="protocol-title">StreamZap</div>
+<div class="irp">{36k,msb,889}&lt;1,-1|-1,1&gt;(1,~F:1:6,T:1,D:6,F:6,^114m)*[D:0..63,F:0..63,T:0..1]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>01FF:JP1SZ[D;F]</div>
+</div>
+<div class="protocol" id="StreamZap-57">
+<div class="protocol-title">StreamZap-57</div>
+<div class="irp">{57k,msb,889}&lt;1,-1|-1,1&gt;(1,~F:1:6,T:1,D:6,F:6,^114m)*[D:0..63,F:0..63,T:0..1]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>01FF:JP1S57[D;F]</div>
+</div>
+<div class="protocol" id="Sunfire">
+<div class="protocol-title">Sunfire</div>
+<div class="irp">{38k,560,msb}&lt;1,-1|3,-1&gt;(16,-8, D:4,F:8,~D:4,~F:8, -32)*[D:0..15,F:0..255]</div>
+</div>
+<div class="protocol" id="TDC-38">
+<div class="protocol-title">TDC-38</div>
+<div class="irp">{38k,315,msb}&lt;-1,1|1,-1&gt;(1,-1,D:5,S:5,F:7,-89m)*[D:0..31,S:0..31,F:0..127]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>01BB</div>
+<div class="documentation">
+            There are two variants of this protocol, with different frequencies but with the same number of carrier cycles in each burst,
+            which makes the duration of a burst also differ.
+            TDC-38 has a 38kHz carrier and is used by Danish TDC IPTV.
+            TDC-56 has a 56.3kHz carrier and is used by Italian ALICE Home TV box.
+            These implementations effectively use a 6-bit OBC as bit 0 of F is always the complement of bit 1,
+            but there are other implementations which do not follow that pattern.
+        </div>
+</div>
+<div class="protocol" id="TDC-56">
+<div class="protocol-title">TDC-56</div>
+<div class="irp">{56.3k,213,msb}&lt;-1,1|1,-1&gt;(1,-1,D:5,S:5,F:7,-89m)*[D:0..31,S:0..31,F:0..127]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>01BD</div>
+<div class="documentation">
+            There are two variants of this protocol, with different frequencies but with the same number of carrier cycles in each burst,
+            which makes the duration of a burst also differ.
+            TDC-38 has a 38kHz carrier and is used by Danish TDC IPTV.
+            TDC-56 has a 56.3kHz carrier and is used by Italian ALICE Home TV box.
+            These implementations effectively use a 6-bit OBC as bit 0 of F is always the complement of bit 1,
+            but there are other implementations which do not follow that pattern.
+        </div>
+</div>
+<div class="protocol" id="Teac-K">
+<div class="protocol-title">Teac-K</div>
+<div class="irp">{37k,432}&lt;1,-1|1,-3&gt;(8,-4,67:8,83:8,X:4,D:4,S:8,F:8,T:8,1,-100,(8,-8,1,-100)*) {T=D+S:4:0+S:4:4+F:4:0+F:4:4} [D:0..15,S:0..255,F:0..255,X:0..15=1]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>00BB[(D&lt;&lt;4)+X,S;F]</div>
+<div class="documentation">
+            Teac-K is the member of the <a xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="#Kaseikyo">Kaseikyo</a> family with OEM_code1=67 and OEM_code2=83.
+            Teac-K uses different repeat rules and a different check byte than other Kaseikyo protocols.
+        </div>
+</div>
+<div class="protocol" id="Thomson">
+<div class="protocol-title">Thomson</div>
+<div class="irp">{33k,500}&lt;1,-4|1,-9&gt;((D:4,T:1,D:1:4,F:6,1,^80m)*,T=1-T)[D:0..31,F:0..63,T@:0..1=0]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>004B</div>
+<div class="documentation">
+            This is not a robust protocol, so <A xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="#spurious">spurious decodes</A> are likely.
+        </div>
+</div>
+<div class="protocol" id="Thomson7">
+<div class="protocol-title">Thomson7</div>
+<div class="irp">{33k,500}&lt;1,-4|1,-9&gt;((D:4,T:1,F:7,1,^80m)*,T=1-T) [D:0..15,F:0..127,T@:0..1=0]</div>
+<div class="parameter">
+<span class="parametername">prefer-over: </span>Thomson</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>004B:7</div>
+</div>
+<div class="protocol" id="Tivo">
+<div class="protocol-title">Tivo</div>
+<div class="irp">{38.4k,564}&lt;1,-1|1,-3&gt;(16,-8,D:8,S:8,F:8,U:4,~F:4:4,1,-78,(16,-4,1,-173)*) [D:133..133=133,S:48..48=48,F:0..255,U:0..15]</div>
+<div class="parameter">
+<span class="parametername">prefer-over: </span>NEC1-f16</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>0111[D,S,U;F]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>0111:2byte[D,S,U;F]</div>
+</div>
+<div class="protocol" id="Velleman">
+<div class="protocol-title">Velleman</div>
+<div class="irp">{38k,msb}&lt;700,-5060|700,-7590&gt;(1:1,T:1,D:3,F:6,700,-55m)* [D:0..7,F:0..63,T@:0..1=0]</div>
+<div class="documentation">Very similar to <a xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="#RECS80-0045">RECS80-0045</a>, except on duration is longer.</div>
+</div>
+<div class="protocol" id="Velodyne">
+<div class="protocol-title">Velodyne</div>
+<div class="irp">{38k,136,msb}&lt;210u,-760u|210u,-896u|210u,-1032u|210u,-1168u|210u,-1304u|210u,-1449u|210u,-1576u|210u,-1712u|210u,-1848u|210u,-1984u|210u,-2120u|210u,-2256u|210u,-2392u|210u,-2528u|210u,-2664u|210u,-2800u&gt;([T=0][T=8],S:4:4,~C:4,S:4,15:4,D:4,T:4,F:8,210u,-79m){C=(8+S:4+S:4:4+15+D+T+F:4+F:4:4)&amp;15}[D:0..15,S:0..255,F:0..255]</div>
+<div class="parameter">
+<span class="parametername">relative-tolerance: </span>0.04</div>
+<div class="parameter">
+<span class="parametername">absolute-tolerance: </span>100</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>01FF:JP1VD</div>
+<div class="documentation">Velodyne is a close relative of <a xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="#XMP">XMP</a>.</div>
+</div>
+<div class="protocol" id="Viewstar">
+<div class="protocol-title">Viewstar</div>
+<div class="irp">{50.5k,337}&lt;1,-8|1,-5&gt;(~F:5,1,-17)*[F:0..31]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>0021</div>
+<div class="documentation">This is not a robust protocol, so <A xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="#spurious">spurious decodes</A> are likely.</div>
+</div>
+<div class="protocol" id="Whynter">
+<div class="protocol-title">Whynter</div>
+<div class="irp">
+         {38k,750,msb}&lt;1,-1|1,-3&gt;(0:1,4,-4,F:32,1,-50m)[F:0..0xFFFFFFFF]
+  
+        </div>
+<div class="documentation">
+            From <a xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="https://github.com/z3t0/Arduino-IRremote">IRremote</a>, see also
+            <a xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="https://github.com/z3t0/Arduino-IRremote/pull/105">this issue</a>.
+            "Tested with Whynter ARC-110WD."
+        </div>
+</div>
+<div class="protocol" id="X10">
+<div class="protocol-title">X10</div>
+<div class="irp">{40.8k,565}&lt;2,-12|7,-7&gt;(7,-7,F:5,~F:5,21,-7)*[F:0..31]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>01DF</div>
+<div class="documentation">X10 and <a xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="#X10.n">X10.n</a>  are two variants of the same home automation protocol.
+            They differ in that X10.<i xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster">n</i> has a distinctive start frame that carries a sequence number,
+            the <i xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster">n</i> of the protocol name, in addition to F.
+            The repeat frames, and all frames of the X10 version, only carry the F.
+            The value of <i xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster">n</i> runs from 0 to 15 (or some lower value) and then restarts again at 0.
+            It is incremented on each successive keypress.
+            A valid X10.<i xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster">n</i> signal must have at least one repeat frame.
+        </div>
+</div>
+<div class="protocol" id="X10.n">
+<div class="protocol-title">X10.n</div>
+<div class="irp">{40.8k,565}&lt;2,-12|7,-7&gt;(F:5,N:-4,21,-7,(7,-7,F:5,~F:5,21,-7)+)[F:0..31,N:0..15]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>003F</div>
+<div class="parameter">
+<span class="parametername">reject-repeatless: </span>true</div>
+<div class="documentation">
+            See <a xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="#X10">X10</a>.
+        </div>
+</div>
+<div class="protocol" id="X10_18">
+<div class="protocol-title">X10_18</div>
+<div class="irp">{40.8k,565}&lt;2,-12|7,-7&gt;(7,-7,F:9,~F:9,21,-7)*[F:0..511]</div>
+</div>
+<div class="protocol" id="X10_8">
+<div class="protocol-title">X10_8</div>
+<div class="irp">{40.8k,565}&lt;2,-12|7,-7&gt;(7,-7,F:4,~F:4,21,-7)*[F:0..15]</div>
+</div>
+<div class="protocol" id="Xiaomi">
+<div class="protocol-title">Xiaomi</div>
+<div class="irp">
+       {36k,290,msb}&lt;2,-2|2,-3|2,-4|2,-5&gt;(1000u,-2,D:8,F:8,C:4,2,^30m)* {C=(D:4:4^D:4^F:4:4^F:4)} [D:0..255,F:0..255]
+</div>
+<div class="parameter">
+<span class="parametername">relative-tolerance: </span>0.1</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>023B[;D,F]</div>
+<div class="documentation">
+            Protocol found in the Xiaomi Mi Box Streaming Android TV Device.
+            Defined and described in <a xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="http://www.hifi-remote.com/forums/viewtopic.php?t=100421">this thread</a>.
+        </div>
+</div>
+<div class="protocol" id="XMP">
+<div class="protocol-title">XMP</div>
+<div class="irp">{38k,136,msb}&lt;210u,-760u|210u,-896u|210u,-1032u|210u,-1168u|210u,-1304u|210u,-1449u|210u,-1576u|210u,-1712u|210u,-1848u|210u,-1984u|210u,-2120u|210u,-2256u|210u,-2392u|210u,-2528u|210u,-2664u|210u,-2800u&gt;([T=0][T=8],S:4:4,C1:4,S:4,15:4,OEM:8,D:8,210u,-13.8m,S:4:4,C2:4,T:4,S:4,F:16,210u,-80.4m){ C1=-(S+S::4+15+OEM+OEM::4+D+D::4), C2=-(S+S::4+T+F+F::4+F::8+F::12) }[F:0..65535,D:0..255,S:0..255,OEM:0..255=68]</div>
+<div class="parameter">
+<span class="parametername">relative-tolerance: </span>0.04</div>
+<div class="parameter">
+<span class="parametername">absolute-tolerance: </span>100</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>016C:2[D,S,OEM;F:8:8,F:8]</div>
+<div class="documentation">
+            <a xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rm="https://sourceforge.net/projects/controlremote/files/RemoteMaster" href="http://www.hifi-remote.com/wiki/index.php/XMP#XMP.2C_XMP-1_and_XMP-2">DecodeIR documentation</a>.
+        </div>
+</div>
+<div class="protocol" id="XMP-1">
+<div class="protocol-title">XMP-1</div>
+<div class="irp">{38k,136,msb}&lt;210u,-760u|210u,-896u|210u,-1032u|210u,-1168u|210u,-1304u|210u,-1449u|210u,-1576u|210u,-1712u|210u,-1848u|210u,-1984u|210u,-2120u|210u,-2256u|210u,-2392u|210u,-2528u|210u,-2664u|210u,-2800u&gt;([T=0][T=8],S:4:4,C1:4,S:4,15:4,OEM:8,D:8,210u,-13.8m,S:4:4,C2:4,T:4,S:4,(F*256):16,210u,-80.4m){ C1=-(S+S::4+15+OEM+OEM::4+D+D::4),C2=-(S + S::4 + T + 256*F + 16*F + F + F::4) }[D:0..255, S:0..255, F:0..255, OEM:0..255=68]</div>
+<div class="parameter">
+<span class="parametername">prefer-over: </span>XMP</div>
+<div class="parameter">
+<span class="parametername">relative-tolerance: </span>0.04</div>
+<div class="parameter">
+<span class="parametername">absolute-tolerance: </span>100</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>016C:2[D,S,OEM;F:8]</div>
+</div>
+<div class="protocol" id="XMP-2">
+<div class="protocol-title">XMP-2</div>
+<div class="irp">{38k,136,msb}&lt;210u,-760u|210u,-896u|210u,-1032u|210u,-1168u|210u,-1304u|210u,-1449u|210u,-1576u|210u,-1712u|210u,-1848u|210u,-1984u|210u,-2120u|210u,-2256u|210u,-2392u|210u,-2528u|210u,-2664u|210u,-2800u&gt;([T=0][T=8],S:4:4,C1:4,S:4,15:4,OEM:8,D:8,210u,-13.8m,S:4:4,C2:4,T:4,S:4,F:16,210u,-80.4m){ C1=-(S+S::4+15+OEM+OEM::4+D+D::4),C2=-(S+S::4+T+F+F::4+F::8+F::12) }[D:0..255, S:0..255, F:0..255, OEM:0..255=68]</div>
+<div class="parameter">
+<span class="parametername">prefer-over: </span>XMP</div>
+<div class="parameter">
+<span class="parametername">relative-tolerance: </span>0.04</div>
+<div class="parameter">
+<span class="parametername">absolute-tolerance: </span>100</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>016C:2[D,S,OEM;,F]</div>
+</div>
+<div class="protocol" id="XMPff">
+<div class="protocol-title">XMPff</div>
+<div class="irp">{38k,136,msb}&lt;210u,-760u|210u,-896u|210u,-1032u|210u,-1168u|210u,-1304u|210u,-1449u|210u,-1576u|210u,-1712u|210u,-1848u|210u,-1984u|210u,-2120u|210u,-2256u|210u,-2392u|210u,-2528u|210u,-2664u|210u,-2800u&gt;([T=0][T=8][T=9],S:4:4,C1:4,S:4,15:4,OEM:8,D:8,210u,-13.8m,S:4:4,C2:4,T:4,S:4,F:16,210u,[-80.4m][-80.4m][-13.8m]){ C1=-(S+S::4+15+OEM+OEM::4+D+D::4),C2=-(S+S::4+T+F+F::4+F::8+F::12) }[F:0..65535,D:0..255,S:0..255,OEM:0..255=68]</div>
+<div class="parameter">
+<span class="parametername">relative-tolerance: </span>0.04</div>
+<div class="parameter">
+<span class="parametername">absolute-tolerance: </span>100</div>
+</div>
+<div class="protocol" id="XMPff-1">
+<div class="protocol-title">XMPff-1</div>
+<div class="irp">{38k,136,msb}&lt;210u,-760u|210u,-896u|210u,-1032u|210u,-1168u|210u,-1304u|210u,-1449u|210u,-1576u|210u,-1712u|210u,-1848u|210u,-1984u|210u,-2120u|210u,-2256u|210u,-2392u|210u,-2528u|210u,-2664u|210u,-2800u&gt;([T=0][T=8][T=9],S:4:4,C1:4,S:4,15:4,OEM:8,D:8,210u,-13.8m,S:4:4,C2:4,T:4,S:4,(F*256):16,210u,[-80.4m][-80.4m][-13.8m]){ C1=-(S+S::4+15+OEM+OEM::4+D+D::4),C2=-(S + S::4 + T + 256*F + 16*F + F + F::4) }[D:0..255, S:0..255, F:0..255, OEM:0..255=68]</div>
+<div class="parameter">
+<span class="parametername">prefer-over: </span>XMPff</div>
+<div class="parameter">
+<span class="parametername">relative-tolerance: </span>0.04</div>
+<div class="parameter">
+<span class="parametername">absolute-tolerance: </span>100</div>
+</div>
+<div class="protocol" id="XMPff-2">
+<div class="protocol-title">XMPff-2</div>
+<div class="irp">{38k,136,msb}&lt;210u,-760u|210u,-896u|210u,-1032u|210u,-1168u|210u,-1304u|210u,-1449u|210u,-1576u|210u,-1712u|210u,-1848u|210u,-1984u|210u,-2120u|210u,-2256u|210u,-2392u|210u,-2528u|210u,-2664u|210u,-2800u&gt;([T=0][T=8][T=9],S:4:4,C1:4,S:4,15:4,OEM:8,D:8,210u,-13.8m,S:4:4,C2:4,T:4,S:4,F:16,210u,[-80.4m][-80.4m][-13.8m]){ C1=-(S+S::4+15+OEM+OEM::4+D+D::4),C2=-(S+S::4+T+F+F::4+F::8+F::12) }[D:0..255, S:0..255, F:0..255, OEM:0..255=68]</div>
+<div class="parameter">
+<span class="parametername">prefer-over: </span>XMPff</div>
+<div class="parameter">
+<span class="parametername">relative-tolerance: </span>0.04</div>
+<div class="parameter">
+<span class="parametername">absolute-tolerance: </span>100</div>
+</div>
+<div class="protocol" id="Zaptor-36">
+<div class="protocol-title">Zaptor-36</div>
+<div class="irp">{36k,330,msb}&lt;-1,1|1,-1&gt;([][T=0][T=1],8,-6,2,D:8,T:1,S:7,F:8,E:4,C:4,-74m){C = (D:4+D:4:4+S:4+S:3:4+8*T+F:4+F:4:4+E)&amp;15}[D:0..255,S:0..127,F:0..127,E:0..15]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>01CD[D,S,E,0;F]</div>
+<div class="documentation">T=0 for all frames except the last, T=1 for last frame, E is a checksum seed. A protocol so far seen only in the Motorola Zaptor.</div>
+</div>
+<div class="protocol" id="Zaptor-56">
+<div class="protocol-title">Zaptor-56</div>
+<div class="irp">{56k,330,msb}&lt;-1,1|1,-1&gt;([][T=0][T=1],8,-6,2,D:8,T:1,S:7,F:8,E:4,C:4,-74m){C = (D:4+D:4:4+S:4+S:3:4+8*T+F:4+F:4:4+E)&amp;15}[D:0..255,S:0..127,F:0..127,E:0..15]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>01CD[D,S,E,1;F]</div>
+<div class="documentation">T=0 for all frames except the last, T=1 for last frame, E is a checksum seed. A protocol so far seen only in the Motorola Zaptor.</div>
+</div>
+<div class="protocol" id="Zenith">
+<div class="protocol-title">Zenith</div>
+<div class="irp">{40k,520,msb}&lt;1,-10|1,-1,1,-8&gt;(S:1,&lt;1:2|2:2&gt;(F:D),-90m)*[S:0..1,F:0..255,D:5..8]</div>
+<div class="parameter">
+<span class="parametername">decodable: </span>false</div>
+<div class="documentation">
+            An unusual protocol, in that the number of bits in the function code is variable.
+            There are also two lead-in styles, decoded as subdevice values 0 and 1.
+            Style 1 aka "double-start" is usually used in TV's, other appliances use 0 aka "single start".
+        </div>
+</div>
+<div class="protocol" id="Zenith5">
+<div class="protocol-title">Zenith5</div>
+<div class="irp">Zenith{D=5}[S:0..1,F:0..255]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>0022[5,,S;F]</div>
+<div class="documentation">Special case of the Zenith protocol, with D = 5.</div>
+</div>
+<div class="protocol" id="Zenith6">
+<div class="protocol-title">Zenith6</div>
+<div class="irp">Zenith{D=6}[S:0..1,F:0..255]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>0022[6,,S;F]</div>
+<div class="documentation">Special case of the Zenith protocol, with D = 6.</div>
+</div>
+<div class="protocol" id="Zenith7">
+<div class="protocol-title">Zenith7</div>
+<div class="irp">Zenith{D=7}[S:0..1,F:0..255]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>0022[7,,S;F]</div>
+<div class="documentation">Special case of the Zenith protocol, with D = 7.</div>
+</div>
+<div class="protocol" id="Zenith8">
+<div class="protocol-title">Zenith8</div>
+<div class="irp">Zenith{D=8}[S:0..1,F:0..255]</div>
+<div class="parameter">
+<span class="parametername">uei-executor: </span>0022[8,,S;F]</div>
+<div class="documentation">Special case of the Zenith protocol, with D = 8.</div>
+</div>
+<h2 id="Aliases">Aliases (alternative names)</h2>
+                
+                <div class="alias" id="ruwido r-step">
+<div class="alias-title">ruwido r-step</div>Alternative name for <a href="#CanalSat">CanalSat</a>.</div>
+<div class="alias" id="GI Cable">
+<div class="alias-title">GI Cable</div>Alternative name for <a href="#G.I.Cable">G.I.Cable</a>.</div>
+<div class="alias" id="IODATAn-x-y">
+<div class="alias-title">IODATAn-x-y</div>Alternative name for <a href="#IODATAn">IODATAn</a>.</div>
+<div class="alias" id="RC6-6-32">
+<div class="alias-title">RC6-6-32</div>Alternative name for <a href="#MCE">MCE</a>.</div>
+<div class="alias" id="Pace">
+<div class="alias-title">Pace</div>Alternative name for <a href="#PaceMSS">PaceMSS</a>.</div>
+<div class="alias" id="RC6-6-24">
+<div class="alias-title">RC6-6-24</div>Alternative name for <a href="#Replay">Replay</a>.</div>
+<div class="alias" id="RC6A">
+<div class="alias-title">RC6A</div>Alternative name for <a href="#Replay">Replay</a>.</div>
+<h2 id="Glossary">Glossary</h2>
+<dl>
+<dt id="CRC">Cyclic Redundancy Check (CRC)</dt>
+<dd>
+                        An elaborate form of checksum, see <a href="https://en.wikipedia.org/wiki/Cyclic_redundancy_check">Wikipedia</a>.
+                    </dd>
+<dt id="DecodeIR">DecodeIR</dt>
+<dd>Library for the decoding of
+                        IrSequences. Originally written by John Fine, extended by others; used
+                        by many widely spread programs as a shared library (IrScrutinizer version 1, IrpMaster, IrScope, RemoteMaster).
+                        Written in C++ with Java Native Interface. The current (and most likely final) version is 2.45, released in January 2015.
+                        <a href="http://www.hifi-remote.com/wiki/index.php?title=DecodeIR">Current official documentation</a>.
+                        License: public domain. <a href="http://www.hifi-remote.com/forums/dload.php?action=file&amp;file_id=13104">Binaries for Windows, Linux, and Mac</a>,
+                        <a href="https://sourceforge.net/p/controlremote/code/HEAD/tree/trunk/decodeir/">source
+                            code</a>.
+                        <a href="https://github.com/bengtmartensson/Arduino-DecodeIR">Arduino port</a>.
+                    </dd>
+<dt id="ditto">ditto</dt>
+<dd>Simple sequence, without payload information, that is repeated as a <a href="#repeat">repeat sequence</a>'s.
+                        For an example, see <a href="#NEC1">NEC1</a>.
+                    </dd>
+<dt id="ending">ending sequence</dt>
+<dd>
+                        IR sequence that is sent exactly once when a button is released, after the <a href="#repeat">repeats</a> have ended.
+                        Only present if a few protocols, like <a href="#NRC17">NRC17</a> and <a href="#OrtekMCE">OrtekMCE</a>.
+                    </dd>
+<dt id="Executor">executor</dt>
+<dd>An embedded "program" for the rendering and transmission of one
+                        or several protocols on an embedded processor. One executor can manage several protocols; also,
+                        for one protocol there may be several alternative executors. An executer has its own parameterization,
+                        more-or-less similar to the parameterization of the protocol.
+                        Used in UEI Remotes and RemoteMaster.
+                    </dd>
+<dt id="intro">intro sequence</dt>
+<dd>
+                    IR sequence that is sent exactly once when a button is held pressed.
+                        (If more is sent if the button is held, then it is the <a href="#repeat">repeat-</a> and <a href="#ending">ending</a> sequence.)
+                    </dd>
+<dt id="relaxed">relaxed protocol</dt>
+<dd>
+                        A relaxed protocol (in general recognized by the suffix <code>_relaxed</code> in the name) is a protocol,
+                        derived from another protocol, where the recognition is in some way "relaxed", for example by some checks being left out.
+                        For example, a checksum may be just reported by its value, instead of being checked
+                        (possibly leading to the decode being considered as invalid).
+                        This can be useful for identifying imperfectly learned, or otherwise flawed IR signals.
+                        It should normally be marked <code>decode-only</code>, since rendering is normally meaningless.
+                    </dd>
+<dt id="repeat">repeat sequence</dt>
+<dd>
+                        IR sequence that is sent repeatedly when a button is held down, after the <a href="#intro">intro sequence</a> has been sent.
+                    </dd>
+<dt id="spurious">spurious decodes</dt>
+<dd>An imperfectly measured signal that incorrectly matches a protocol (false positive).</dd>
+</dl>
+</body>
+</html>
