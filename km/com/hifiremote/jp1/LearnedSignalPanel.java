@@ -394,6 +394,7 @@ public class LearnedSignalPanel extends RMTablePanel< LearnedSignal >
       docuPane.setContentType( "text/html" );
       docuPane.setText( docu );
       docuPane.setCaretPosition( 0 );
+      docuPane.setEditable( false );
       JScrollPane scrollPane = new JScrollPane( docuPane );
       scrollPane.setPreferredSize( new Dimension( 400, 400 ) );
       panel.add( da, BorderLayout.PAGE_START );
