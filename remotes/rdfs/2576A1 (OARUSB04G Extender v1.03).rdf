@@ -4,7 +4,7 @@ EepromSize=$2600
 Processor=S3C80
 Processor+=MAXQ622 
 BaseAddr=$01D800
-SegmentTypes= $00 $0B $04 $DF $10 $09 $01 $07 $08
+SegmentTypes= $00 $0B $04 $DF $E0 $10 $09 $01 $07 $08
 ExtenderVersionAddr+=SIG, $0E, Hex, $0F
 MasterPowerSupport=Y
 RDFSync=5 
@@ -26,6 +26,10 @@ Pause=Internal:1
 LDKP=Internal:2
 ToadTog=Internal:3
 Multiplex=Internal:4
+
+[Settings+]
+Backlight timeout=$DF 2.0.0.2.0 (Off:$2C; 3sec:$22; 6sec:$23; 9sec:$24)
+Backlight on pickup=$E0 2.0.1.1.0 (Off; On)
 
 [Checksums]
 ^$0000:$0002..$25FF
